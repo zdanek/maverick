@@ -1,0 +1,21 @@
+// These are fall-back defaults.  They can/should be over-ridden higher up the hierarchy.
+{
+	// Set blank defaults for host/ip values.  This is to prevent parsing errors
+	"hostname": "",
+	"fqdn": "",
+	"primaryip": "",
+	"hostaliases": [],
+
+	// List of all internal IP addresses.  These IPs are used for default iptables and other access control,
+	//  so be careful what is put in here.
+	// These must be IPs, not CIDR ranges, for modules like denyhosts that can't handle ranges.
+	"all_ips": [
+		// "192.168.0.0/24",
+		// "192.168.1.0/24"
+	],
+
+	"classes" : [
+		"base"
+	]
+
+}
