@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloud9
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/home/mav/.c9/node/bin/node /srv/software/cloud9/server.js -p <%= @webport %> -l 0.0.0.0 -w /srv --packed --cache -a mav:wingman
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

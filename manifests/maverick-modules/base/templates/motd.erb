@@ -1,0 +1,40 @@
+[0m
+ [44m[37m[1m** Maverick UAV Companion Computer - <%= @servertype %> - <%= @hostname %> **[0m[1m
+
+ FQDN:         <%= @fqdn %>
+ Primary IP:   <%= @ipaddress %>
+<% if has_variable?("lsbdistdescription") then -%>
+ OS:           <%= @lsbdistdescription %>
+<% else -%>
+ OS:           <%= @operatingsystem %> <%= @operatingsystemrelease %> <%= @architecture %>
+<% end -%>
+ Kernel:       <%= @kernelrelease %>
+ Environment:  <%= @environment %>
+<% if has_variable?("raspberry_model") then -%>
+
+ Raspberry Pi Hardware
+ ---------------------
+ Model:         <%= @raspberry_model %>
+ PCB Rev:       <%= @raspberry_pcbrev %>
+ Release Date:  <%= @raspberry_reldate %>
+ Physical RAM:  <%= @raspberry_physram %>M
+ C/G Mem Split: <%= @raspberry_memcpu %>M / <%= @raspberry_memgpu %>M
+ HW Notes:      <%= @raspberry_notes %>
+ Overvolted:    <%= @raspberry_overvolted %>
+ Firmware:      <%= @raspberry_fwdate %>
+ HW MPG Codec:  <%= @raspberry_mpg2codec %>
+ HW VC1 Codec:  <%= @raspberry_vc1codec %>
+ CPU Freq:      <%= @raspberry_cpufreq %> Mhz
+ SD Card Size:  <%= @raspberry_sdsize %>M
+<% else -%>
+ Processors:   <%= @processorcount %>
+ Memory:       <%= @memorysize %>
+<% end -%>
+ [0m
+ [1m[40m[31m--------------------------------------------------[0m
+ [1m[40m[31m This is a potentially dangerous aircraft system. [0m
+ [1m[40m[31m No modifications should be made without express  [0m
+ [1m[40m[31m permission from the owner.  Any unauthorised     [0m
+ [1m[40m[31m access will be reported to the authorities.      [0m
+ [1m[40m[31m--------------------------------------------------[0m
+ [0m
