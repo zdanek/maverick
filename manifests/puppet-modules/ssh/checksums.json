@@ -1,0 +1,17 @@
+{
+  "CHANGELOG": "15458e8eb413081b0a9cec5ef4d51ba8",
+  "Gemfile": "35c4542e677a8f4c842ff0043c399ed1",
+  "LICENSE": "567e6cc3941d464d60c74d1f4abd5f46",
+  "README.md": "2f6a8abfcee59bbadd9eebc3c5505f7f",
+  "Rakefile": "3069f3d380af159f8ac19c4cbc75c183",
+  "manifests/init.pp": "50614f7c32720d7ddb6855411178c157",
+  "metadata.json": "ccdc0d05eefea6e2c9a0b85c99721c2f",
+  "spec/classes/init_spec.rb": "b4eee3b7e0a8c67812c7365f98e7c44e",
+  "spec/fixtures/hiera/hiera.yaml": "afd005f8cc148b09cf7e22c99939fedf",
+  "spec/fixtures/hiera/hieradata/fqdn/hieramerge.example.com.yaml": "7215066d93786efbfc5b480b66183d65",
+  "spec/fixtures/hiera/hieradata/specific/test_hiera_merge.yaml": "e29bf1ade75702ef47bc3c7538cd11fd",
+  "spec/spec_helper.rb": "c0df271f4a57ed230265fa51c86e993b",
+  "templates/ssh_config.erb": "93c4ac24dd34218d2d129fcac4e3d507",
+  "templates/sshd_config.erb": "4faa30da79e5f5b7d4baae39a716d6da",
+  "tests/init.pp": "f6931420bc8054d207fecf4b0855f5a7"
+}

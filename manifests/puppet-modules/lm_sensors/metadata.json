@@ -1,0 +1,67 @@
+{
+  "name": "jgazeley/lm_sensors",
+  "version": "0.2.1",
+  "author": "jgazeley",
+  "summary": "Install and configure lm_sensors hardware monitoring",
+  "license": "Apache-2.0",
+  "source": "https://github.com/djjudas21/puppet-lm_sensors",
+  "project_page": "https://github.com/djjudas21/puppet-lm_sensors",
+  "issues_url": "https://github.com/djjudas21/puppet-lm_sensors/issues",
+  "dependencies": [
+  
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific Linux",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "17",
+        "18",
+        "19",
+        "20",
+        "21"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "14.04",
+        "14.10",
+        "15.04"
+      ]
+    }
+  ]
+}

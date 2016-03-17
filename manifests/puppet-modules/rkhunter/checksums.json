@@ -1,0 +1,21 @@
+{
+  "CHANGELOG": "76572e5390325394668826bc2b54b435",
+  "Gemfile": "9842e34bf79e7ebe1b1049ead678f6aa",
+  "LICENSE": "0e118ca5f3fa18e200a0f493ad21a18e",
+  "README.md": "7f5db2eecd9816888ec7dc7dc923c362",
+  "Rakefile": "a0c76fff343dd943ac0583eb0bb1b534",
+  "manifests/config.pp": "6cf4940b263d7f50293841e9e96915ea",
+  "manifests/init.pp": "43a39942af1812c95cbc1d4c3edb4aba",
+  "manifests/package.pp": "53e0a0b4ecdb1d8dba98b5be67333873",
+  "manifests/params.pp": "de1fd630bbabc74cf53dd9ec121f0d64",
+  "manifests/service.pp": "17bcb7c7a0ee847860d5c9840a29351d",
+  "metadata.json": "dea499b499b381a3add7b8d5def88300",
+  "spec/classes/coverage_spec.rb": "5b6dfa0dd426aca0ccfae23c0a629f0b",
+  "spec/classes/rkhunter_spec.rb": "fc233862db8a5b7d7e64f91d6d7a0b46",
+  "spec/spec.opts": "a600ded995d948e393fbe2320ba8e51c",
+  "spec/spec_helper.rb": "13e09816094ac094b1c3c9feb6a17eb9",
+  "templates/etc/rkhunter.conf.erb": "81eefddc5c70e9429de94afcf3b99bbe",
+  "templates/scripts/checkWhiteList.sh.erb": "ea5775c1aeffcef95b21bc9bdd3a8a6b",
+  "templates/sysconfig/rkhunter.erb": "cfc50ab73353f4d00764ae035102e558",
+  "tests/init.pp": "d8c5c0eda4505adb18806763e8e3ab3a"
+}
