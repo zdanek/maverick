@@ -1,94 +1,57 @@
 {
-  "name": "ghoneycutt-ssh",
-  "version": "3.34.0",
-  "author": "ghoneycutt",
-  "summary": "Manages SSH",
-  "license": "Apache-2.0",
-  "source": "git://github.com/ghoneycutt/puppet-module-ssh.git",
-  "project_page": "https://github.com/ghoneycutt/puppet-module-ssh",
-  "issues_url": "https://github.com/ghoneycutt/puppet-module-ssh/issues",
+  "name": "saz-ssh",
+  "version": "2.8.1",
+  "author": "saz",
+  "summary": "Manage SSH client and server via Puppet.",
+  "license": "Apache License, Version 2.0",
+  "source": "git://github.com/saz/puppet-ssh.git",
+  "project_page": "https://github.com/saz/puppet-ssh",
+  "issues_url": "https://github.com/saz/puppet-ssh/issues",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "OracleLinux"
+    },
+    {
+      "operatingsystem": "Scientific"
+    },
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "Ubuntu"
+    },
+    {
+      "operatingsystem": "FreeBSD"
+    },
+    {
+      "operatingsystem": "OpenBSD"
+    },
+    {
+      "operatingsystem": "Gentoo"
+    },
+    {
+      "operatingsystem": "ArchLinux"
+    }
+  ],
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": ">= 3.2.0 < 5.0.0"
+      "version_requirement": "3.2.x"
     },
     {
       "name": "puppet",
-      "version_requirement": ">= 3.0.0 < 5.0.0"
+      "version_requirement": "3.x"
     }
   ],
-  "operatingsystem_support": [
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "5",
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "CentOS",
-      "operatingsystemrelease": [
-        "5",
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "OracleLinux",
-      "operatingsystemrelease": [
-        "5",
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Scientific",
-      "operatingsystemrelease": [
-        "5",
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Solaris",
-      "operatingsystemrelease": [
-        "9",
-        "10",
-        "11"
-      ]
-    },
-    {
-      "operatingsystem": "SLES",
-      "operatingsystemrelease": [
-        "11",
-        "12"
-      ]
-    },
-    {
-      "operatingsystem": "SLED",
-      "operatingsystemrelease": [
-        "11",
-        "12"
-      ]
-    },
-    {
-      "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [
-        "12.04"
-      ]
-    }
-  ],
-  "description": "Manage SSH",
+  "description": "Manage SSH client and server via puppet",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 4.6.0 < 6.0.0"},
-    {"name":"ghoneycutt/common","version_requirement":">= 1.4.1 < 2.0.0"},
-    {"name":"puppetlabs/firewall","version_requirement":">= 0.2.1 < 2.0.0"}
+    {"name":"puppetlabs/stdlib","version_requirement":">= 2.2.1"},
+    {"name":"puppetlabs/concat","version_requirement":">= 1.0.0"}
   ]
 }
