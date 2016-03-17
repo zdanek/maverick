@@ -7,4 +7,3 @@
   - defaults
   - "%{environment}/defaults"
   - "%{environment}/nodes/%{::hostname}"
-  - "%{environment}/nodes/%{::serial}"

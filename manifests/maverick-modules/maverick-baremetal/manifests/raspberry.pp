@@ -22,47 +22,52 @@ class maverick-baremetal::raspberry (
     
     if ($overclock) {
         exec { "raspberry-overlock":
-            command     => "/usr/bin/raspi-config nonint do_overclock ${overclock}",
-            unless      => "/bin/grep 'over_voltage' /boot/config.txt |/bin/grep -v '#over_voltage'"
+            command     => "/usr/bin/raspi-config nonint do_overclock ${overclock}; echo '${overclock}' >/etc/raspi-overclock",
+            unless      => "/bin/grep '${overclock}' /etc/raspi-overclock"
         }
     }
     
-    if ($devicetree) {
+    if ($devicetree == true) {
         exec { "raspberry-devicetree":
             command     => "/usr/bin/raspi-config nonint do_devicetree 0",
+            unless      => "/bin/grep '#device_tree' /boot/config.txt"
+        }
+    } else {
+        exec { "raspberry-devicetree":
+            command     => "/usr/bin/raspi-config nonint do_devicetree 1",
             unless      => "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#device_tree'"
         }
     }
 
-    if ($spi) {
+    if ($spi == true) {
         exec { "raspberry-spi":
             command     => "/usr/bin/raspi-config nonint do_spi 0",
-            unless      => "/bin/grep 'dtparam=spi' /boot/config.txt'"
+            unless      => "/bin/grep '^dtparam=spi=on' /boot/config.txt"
         }
     }
     
-    if ($i2c) {
+    if ($i2c == true) {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 0",
-            unless      => "/bin/grep 'dtparam=i2c_arm' /boot/config.txt'"
+            unless      => "/bin/grep '^dtparam=i2c_arm=on' /boot/config.txt"
         }
     }
 
     if ($serialconsole == false) {
         exec { "raspberry-serial":
             command     => "/usr/bin/raspi-config nonint do_serial 1",
-            unless      => "/bin/grep 'console=ttyAMA0' /boot/cmdline.txt'"
+            onlyif      => "/bin/grep 'console=serial' /boot/cmdline.txt"
         }
     } else {
         exec { "raspberry-serial":
             command     => "/usr/bin/raspi-config nonint do_serial 0",
-            unless      => "/bin/grep 'console=serial' /boot/cmdline.txt'"
+            unless      => "/bin/grep 'console=serial' /boot/cmdline.txt"
         }
     }
     
     exec { "raspberry-disableconfig":
-        command     => "/usr/bin/raspi-config nonint disable_raspi_config_at_boot_i2c",
-        unless      => "/bin/ls /etc/profile.d/raspi-config.sh"
+        command     => "/usr/bin/raspi-config nonint disable_raspi_config_at_boot",
+        onlyif      => "/bin/ls /etc/profile.d/raspi-config.sh"
     }
     
     exec { "raspberry-bootenv":
