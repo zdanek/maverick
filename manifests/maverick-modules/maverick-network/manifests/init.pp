@@ -3,6 +3,10 @@ class maverick-network (
     $ntpclient = "enabled",
     ) {
     
+    class { "network": 
+        hostname => "${hostname}"
+    }
+    
     if $ntpclient == "enabled" {
         include maverick-network::ntpclient
     }
