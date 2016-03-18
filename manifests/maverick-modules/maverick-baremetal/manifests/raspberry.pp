@@ -7,6 +7,7 @@ class maverick-baremetal::raspberry (
     $i2c = false,
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
     $camera = true,
+    $xgl = false,
     ) {
         
     if ($expand_root) {
@@ -85,6 +86,21 @@ class maverick-baremetal::raspberry (
         exec { "raspberry-camera":
             command     => "/usr/bin/raspi-config nonint set_camera 0; echo 'false' >/etc/raspi-camera",
             unless      => "/bin/grep 'false' /etc/raspi-camera",
+        }
+    }
+    
+    if ($xgl == true) {
+        package { ["libgl1-mesa-dri", "xcompmgr" ]:
+            ensure      => present
+        } ->
+        exec { "raspberry-xgl":
+            command     => "/usr/bin/raspi-config nonint do_gldriver 1; echo 'true' >/etc/raspi-xgl",
+            unless      => "/bin/grep 'true' /etc/raspi-xgl",
+        }
+    } else {
+        exec { "raspberry-xgl":
+            command     => "/usr/bin/raspi-config nonint do_gldriver 0; echo 'false' >/etc/raspi-xgl",
+            unless      => "/bin/grep 'false' /etc/raspi-xgl",
         }
     }
     
