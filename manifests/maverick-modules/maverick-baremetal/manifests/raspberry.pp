@@ -6,6 +6,7 @@ class maverick-baremetal::raspberry (
     $spi = false,
     $i2c = false,
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
+    $camera = true,
     ) {
         
     if ($expand_root) {
@@ -72,6 +73,18 @@ class maverick-baremetal::raspberry (
         exec { "raspberry-serial":
             command     => "/usr/bin/raspi-config nonint do_serial 0",
             unless      => "/bin/grep 'console=serial' /boot/cmdline.txt"
+        }
+    }
+    
+    if ($camera == true) {
+        exec { "raspberry-camera":
+            command     => "/usr/bin/raspi-config nonint set_camera 1; echo 'true' >/etc/raspi-camera",
+            unless      => "/bin/grep 'true' /etc/raspi-camera",
+        }
+    } else {
+        exec { "raspberry-camera":
+            command     => "/usr/bin/raspi-config nonint set_camera 0; echo 'false' >/etc/raspi-camera",
+            unless      => "/bin/grep 'false' /etc/raspi-camera",
         }
     }
     
