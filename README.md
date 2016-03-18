@@ -9,13 +9,19 @@ Puppet is a declarative Configuration Management system that is used to complete
 
 Puppet is implemented largely through modules, and there is an extensive public module library (puppet forge) to draw on.  Modules are combined like ingredients to create an overall recipe - a fully configured computer.
 
-Installation
+Raspberry Pi Installation
 ------------
+Firstly download and install a fresh copy of raspbian (https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
+Then login through serial console or ssh (ssh pi@raspberrypi.home)
 ```
 sudo apt-get update
 sudo apt-get install git
 git clone https://github.com/fnoop/maverick-puppet.git
 cd maverick-puppet
-sudo ./runme.sh
+sudo ./runme.sh --env=production --confirm
+sudo reboot
 ```
-eg. ``` sudo ./runme.sh --env=production --confirm```
+The first run must take place as above, production mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the dev environment.  After the first reboot, the dev environment can be installed if required:
+```
+sudo ./runme.sh --env=dev --confirm
+```
