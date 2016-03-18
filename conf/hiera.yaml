@@ -7,3 +7,4 @@
   - defaults
   - "%{environment}/defaults"
   - "%{environment}/nodes/%{::hostname}"
+  - "sample-nodes/${::hostname}"
