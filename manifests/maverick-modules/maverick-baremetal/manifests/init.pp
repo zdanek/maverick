@@ -8,6 +8,6 @@ class maverick-baremetal (
 	}
 
 	if ($raspberry_model) {
-		class { "maverick-baremetal::raspberry": }
+		class { "maverick-baremetal::raspberry::init": }
 	}
 }
