@@ -2,12 +2,12 @@ class maverick-cloud9 (
     $enabled = true,
     $webport = "6789",
     ) {
-    file { "/srv/software/cloud9":
+    file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
-        require		=> File["/srv/software"]
+        require		=> File["/srv/maverick/software"]
 
     } ->
-    vcsrepo { "/srv/software/cloud9":
+    vcsrepo { "/srv/maverick/software/cloud9":
         ensure		=> present,
         provider 	=> git,
         source		=> "https://github.com/c9/core.git",
@@ -20,8 +20,8 @@ class maverick-cloud9 (
         refreshonly	=> true,
     } ->
     exec { "install-cloud9":
-        command		=> "/srv/software/cloud9/scripts/install-sdk.sh",
-        cwd		    => "/srv/code/software",
+        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh",
+        cwd		    => "/srv/maverick/software/cloud9",
         timeout		=> 0,
         refreshonly	=> true,
         user        => "mav"
