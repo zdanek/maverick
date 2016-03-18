@@ -2,7 +2,7 @@ class maverick-baremetal::raspberry (
     $expand_root = true,
     $gpumem = 256,
     $overclock = "None", # "None", "High", "Turbo"
-    $devicetree = false,
+    $devicetree = true,
     $spi = false,
     $i2c = false,
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
