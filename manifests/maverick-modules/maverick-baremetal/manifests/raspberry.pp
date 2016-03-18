@@ -1,11 +1,11 @@
 class maverick-baremetal::raspberry (
     $expand_root = true,
-    $gpumem = 256,
-    $overclock = "None", # "None", "High", "Turbo"
-    $devicetree = true,
-    $spi = true,
-    $i2c = true,
-    $serialconsole = false, # Normally leave the serial lines free for dronekit
+    $gpumem = 128,
+    $overclock = "High", # "None", "High", "Turbo"
+    $devicetree = false,
+    $spi = false,
+    $i2c = false,
+    $serialconsole = true, # Normally leave the serial lines free for dronekit
     ) {
         
     if ($expand_root) {
@@ -44,12 +44,22 @@ class maverick-baremetal::raspberry (
             command     => "/usr/bin/raspi-config nonint do_spi 0",
             unless      => "/bin/grep '^dtparam=spi=on' /boot/config.txt"
         }
+    } else {
+        exec { "raspberry-spi":
+            command     => "/usr/bin/raspi-config nonint do_spi 1",
+            unless      => "/bin/grep '^dtparam=spi=off' /boot/config.txt"
+        }
     }
     
     if ($i2c == true) {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 0",
             unless      => "/bin/grep '^dtparam=i2c_arm=on' /boot/config.txt"
+        }
+    } else {
+        exec { "raspberry-i2c":
+            command     => "/usr/bin/raspi-config nonint do_i2c 1",
+            unless      => "/bin/grep '^dtparam=i2c_arm=off' /boot/config.txt"
         }
     }
 
