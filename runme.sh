@@ -13,9 +13,10 @@ fi
 
 # Define usage function
 usage () {
-	echo "--env <env>            puppet environment, currently dev or production"
-	echo "--confirm              this must be set to proceed, for safety"
-	echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does"
+	echo "--env=[dev|production]         puppet environment, currently dev or production"
+	echo "--confirm                      this must be set to proceed, for safety"
+	echo
+	echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
 	echo
 	exit 1
 }
@@ -29,7 +30,7 @@ do
 		shift
 		;;
 		--confirm)
-		CONFIRM=true
+		CONFIRM="true"
 		shift
 		;;
 		#*)
@@ -41,12 +42,14 @@ done
 # If environment not set to dev or production, exit
 if [[ "$ENV" != "dev" && "$ENV" != "production" ]]; then 
 	echo "Error: --env not set to a recognised environment (dev or production)"
+	echo
 	usage
 fi
 
 # If confirm not set, exit
-if [ "$CONFIRM" != true ]; then	
+if [ "$CONFIRM" != "true" ]; then	
 	echo "Error: --confirm not set"
+	echo
 	usage
 fi
 
