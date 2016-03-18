@@ -6,5 +6,6 @@
 	"hostname": "raspberrylcd",
 	"fqdn":     "raspberrylcd.home",
 	
-	"maverick-baremetal::raspberry::init::spi": true
+	"maverick-baremetal::raspberry::init::spi": true,
+	"maverick-baremetal::raspberry::init::i2c": true
 }
