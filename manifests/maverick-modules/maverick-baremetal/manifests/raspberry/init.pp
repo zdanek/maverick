@@ -12,8 +12,8 @@ class maverick-baremetal::raspberry::init (
         
     if ($expand_root) {
         exec { "raspberry-expandroot":
-            command     => "/usr/bin/raspi-config nonint do_expand_rootfs ",
-            creates     => "/etc/init.d/resize2fs_once",
+            command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
+            unless     => "/bin/grep 'done' /etc/raspi-expandroot",
         }
     }
         
