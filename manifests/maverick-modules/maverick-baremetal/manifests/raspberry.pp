@@ -1,11 +1,11 @@
 class maverick-baremetal::raspberry (
     $expand_root = true,
-    $gpumem = 128,
-    $overclock = "High", # "None", "High", "Turbo"
+    $gpumem = 256,
+    $overclock = "None", # "None", "High", "Turbo"
     $devicetree = false,
     $spi = false,
     $i2c = false,
-    $serialconsole = true, # Normally leave the serial lines free for dronekit
+    $serialconsole = false, # Normally leave the serial lines free for pixhawk
     ) {
         
     if ($expand_root) {
