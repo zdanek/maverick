@@ -27,7 +27,7 @@ class maverick-cloud9 (
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh",
         cwd		=> "/srv/maverick/software/cloud9",
         timeout		=> 0,
-        #refreshonly	=> true,
+        refreshonly	=> true,
         user        	=> "mav",
 	environment 	=> ["HOME=/home/mav"],
     } ->

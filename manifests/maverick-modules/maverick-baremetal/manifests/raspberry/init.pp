@@ -32,7 +32,7 @@ class maverick-baremetal::raspberry::init (
     if ($devicetree == true) {
         exec { "raspberry-devicetree":
             command     => "/usr/bin/raspi-config nonint do_devicetree 0",
-            unless      => "/bin/grep '#device_tree' /boot/config.txt"
+            onlyif	=> "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#device_tree'"
         }
     } else {
         exec { "raspberry-devicetree":
