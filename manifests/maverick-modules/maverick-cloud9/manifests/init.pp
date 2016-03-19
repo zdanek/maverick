@@ -21,13 +21,13 @@ class maverick-cloud9 (
     exec { "install-cloud9-warning":
         command		=> "/bin/echo 'Warning: First run of cloud9 install can take a long time, be patient..'",
         logoutput	=> true,
-        refreshonly	=> true,
+	creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
     } ->
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh",
         cwd		=> "/srv/maverick/software/cloud9",
+	creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
         timeout		=> 0,
-        refreshonly	=> true,
         user        	=> "mav",
 	environment 	=> ["HOME=/home/mav"],
     } ->
