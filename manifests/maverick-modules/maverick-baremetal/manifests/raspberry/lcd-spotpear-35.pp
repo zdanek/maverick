@@ -43,6 +43,10 @@ class maverick-baremetal::raspberry::lcd-spotpear-35 (
         command     => '/bin/sed /boot/cmdline.txt -i -r -e "s/fbcon\=map:([0-9]+)/fbcon=map:1/"',
         onlyif      => "/bin/grep 'fbcon\\=map:' /boot/cmdline.txt |/bin/grep -v 'fbcon\\=map:1'"
     }
+    exec { "spotpear35-addfbcon":
+	command     => '/bin/sed /boot/cmdline.txt -i -r -e "s/$/ fbcon=map:1/"',
+	unless	    => "/bin/grep 'fbcon\\=map:' /boot/cmdline.txt",
+    }
     
     # TODO: Set console font
     
