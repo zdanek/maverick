@@ -53,8 +53,10 @@ for line in f:
             data['pcbrev'] = revdata[data['revision']][2]
             data['physram'] = revdata[data['revision']][3]
             data['notes'] = revdata[data['revision']][4]
+            data['present'] = "yes"
         except:
             # Raspberry hardware not recognised, exit without returning any facts
+            print "raspberry_present=no"
             sys.exit(1)
         
     elif key == "Serial\t": 

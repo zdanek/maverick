@@ -7,7 +7,7 @@ class maverick-baremetal (
     	include maverick-baremetal::sensors
 	}
 
-	if ($raspberry_model) {
+	if ($raspberry_present == "yes") {
 		class { "maverick-baremetal::raspberry::init": }
 	}
 }

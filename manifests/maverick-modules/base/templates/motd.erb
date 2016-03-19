@@ -10,7 +10,7 @@
 <% end -%>
  Kernel:       <%= @kernelrelease %>
  Environment:  <%= @environment %>
-<% if has_variable?("raspberry_model") then -%>
+<% if has_variable?("raspberry_present") and @raspberry_present == "yes" then -%>
 
  Raspberry Pi Hardware
  ---------------------
