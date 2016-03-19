@@ -48,13 +48,18 @@ class maverick-baremetal::raspberry::lcd-spotpear-35 (
 	unless	    => "/bin/grep 'fbcon\\=map:' /boot/cmdline.txt",
     }
     
-    # TODO: Set console font
-    
-    # Turn off console blanking
-    # TODO: FIX
-    augeas { "spotpear35-conblank":
-        onlyif      => "get /files/etc/kbd/config/BLANK_TIME != 0",
-        changes     => "set /files/etc/kbd/config/BLANK_TIME 0",
+    # Set console font
+    file { "/etc/default/console-setup":
+	source      => 'puppet:///modules/maverick-baremetal/console-setup',
+	mode        => 644,
+        owner       => 'root',
+        group       => 'root',
     }
-
+ 
+    # Turn off console blanking
+    exec { "spotpear35-conblank":
+        command     => '/bin/sed /etc/kbd/config -i -r -e "s/^BLANK_TIME\\=30/BLANK_TIME=0/"',
+        unless      => "/bin/grep 'BLANK_TIME\\=0' /etc/kbd/config",
+    }
+    
 }
