@@ -23,7 +23,7 @@ class maverick-baremetal::raspberry::init (
     }
     
     if ($overclock) {
-        exec { "raspberry-overlock":
+        exec { "raspberry-overclock":
             command     => "/usr/bin/raspi-config nonint do_overclock ${overclock}; echo '${overclock}' >/etc/raspi-overclock",
             unless      => "/bin/grep '${overclock}' /etc/raspi-overclock"
         }
