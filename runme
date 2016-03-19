@@ -13,8 +13,8 @@ fi
 
 # Define usage function
 usage () {
-	echo "--env=[dev|production]         puppet environment, currently dev or production"
-	echo "--confirm                      this must be set to proceed, for safety"
+	echo "--env=[bootstrap|dev|production]         puppet environment, currently bootstrap, dev or production"
+	echo "--confirm                                this must be set to proceed, for safety"
 	echo
 	echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
 	echo
@@ -40,8 +40,8 @@ do
 done
 
 # If environment not set to dev or production, exit
-if [[ "$ENV" != "dev" && "$ENV" != "production" ]]; then 
-	echo "Error: --env not set to a recognised environment (dev or production)"
+if [[ "$ENV" != "dev" && "$ENV" != "production" && "$ENV" != "bootstrap" ]]; then 
+	echo "Error: --env not set to a recognised environment (bootstrap, dev or production)"
 	echo
 	usage
 fi
