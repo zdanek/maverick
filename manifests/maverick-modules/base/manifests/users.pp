@@ -8,15 +8,14 @@ class base::users {
       ensure           => present,
       comment          => 'Maverick user',
       gid              => '6789',
-      home             => '/home/mav',
+      home             => '/srv/maverick',
       password         => '$6$zY2iMr0A$PwyfxSMBZBlThmC2T1025vEnY.saig.ytFzHNkx.TjKs44Z4J8P0V0K89dGm2MYL5e1orrTrrizuPuprVRCfQ.',
       password_max_age => '99999',
       password_min_age => '0',
       shell            => '/bin/bash',
       uid              => '6789',
-    managehome	=> true,
     } ->
-    file { "/home/mav/.bashrc":
+    file { "/srv/maverick/.bashrc":
         content 	=> template("base/mav-bashrc.erb"),
         ensure		=> present,
         owner		=> "mav",
