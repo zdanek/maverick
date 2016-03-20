@@ -1,0 +1,12 @@
+// These are local config settings.  Because they can include sensitive information like usernames and passwords, this file
+//  is excluded in .gitignore from ever being committed back to git.
+{
+	// Set defaults for wifi.  If set, any wifi interface detected will be automatically activated with these settings.
+	"wifi_ssid": 		"",
+	"wifi_passtype": 	"wpa2",
+	"wifi_passphrase": 	"",
+
+	// Set defaults for git.  These don't need to be set but if they are will be used.
+	"git_username": 	"",
+	"git_email":		""
+}
