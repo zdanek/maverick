@@ -6,7 +6,6 @@ class base::packages {
         "telnet",
         "wget",
         "iotop",
-        "git",
         ]:
         ensure	=> installed
     }
