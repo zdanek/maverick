@@ -74,7 +74,7 @@ fi
 # If git is installed at this point, then force git to ignore any changes to localconf.json,
 #  which might contain sensitive information
 if hash git 2>/dev/null; then
-	if [[ $SUDO_USER != "" && $SUDO_USER != "root" ]]; then
+	if [[ $SUDO_USER != "" && $SUDO_USER != "root" && -e conf/localconf.json ]]; then
 		su $SUDO_USER -c "git update-index --assume-unchanged conf/localconf.json"
 	fi
 fi
@@ -82,7 +82,14 @@ fi
 # OK we're good to go!
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 echo "Environment: ${ENV}"
-puppet apply --confdir=conf --environment ${ENV} manifests
+if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
+	cwd=$(pwd)
+	cd /srv/maverick/software/maverick
+	puppet apply --confdir=conf --environment ${ENV} manifests
+	cd $cwd
+else
+	puppet apply --confdir=conf --environment ${ENV} manifests
+fi
 echo
 echo "Maverick finished, happy flying :)"
 echo

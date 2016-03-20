@@ -80,5 +80,9 @@ class base::maverick {
         group       => "root",
         content     => "PATH=\$PATH:/srv/maverick/software/maverick",
     }
+    exec { "sudoers-securepath":
+        command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick"#\'',
+        unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick'"
+    }
 
 }
