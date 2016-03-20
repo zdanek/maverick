@@ -53,6 +53,7 @@ class base::maverick {
     }
     git::config { 'push.default':
         value => "simple",
+        user => "mav"
     }
 
     # Pull maverick into it's final resting place
