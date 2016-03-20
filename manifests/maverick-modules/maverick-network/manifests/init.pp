@@ -1,6 +1,7 @@
 class maverick-network (
     $dnsclient = "disabled", 
     $ntpclient = "enabled",
+    $wireless = true,
     ) {
     
     class { "network": 
@@ -22,4 +23,17 @@ class maverick-network (
         "net.ipv4.tcp_rmem":							value => "10240 87380 12582912";
         "net.ipv4.tcp_wmem":							value => "10240 87380 12582912";
     }
+    
+    # If a wireless NIC is detected and defaults are set in localconf.json, configure it 
+    $wifi_ssid = hiera('wifi_ssid')
+    $wifi_passphrase = hiera('wifi_passphrase')
+    if $macaddress_wlan0 and $wifi_ssid and $wifi_passphrase {
+        file { "/etc/wpa_supplicant/wpa_supplicant.conf":
+            content => template("maverick-network/wpa_supplicant.conf.erb"),
+            mode    => 600,
+            owner   => "root",
+            group   => "root",
+        }
+    }
+    
 }
