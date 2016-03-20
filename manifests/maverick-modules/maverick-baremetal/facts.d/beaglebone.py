@@ -12,10 +12,9 @@ for line in f:
 	if re.search('BeagleBone Black', line):
 		data['present'] = 'yes'
 		data['model'] = 'BeagleBone Black'
-
-if not data['present'] == 'yes':
-	print "beagle_present=no"
-	sys.exit(1)
+	else:
+		print "beagle_present=no"
+		sys.exit(1)
 
 try:
 	lshw_xml = commands.getoutput('/usr/bin/lshw -xml')
