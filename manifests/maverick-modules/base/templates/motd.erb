@@ -27,8 +27,16 @@
  CPU Freq:      <%= @raspberry_cpufreq %> Mhz
  SD Card Size:  <%= @raspberry_sdsize %>M
 <% else -%>
- Processors:   <%= @processorcount %>
- Memory:       <%= @memorysize %>
+ Processors:    <%= @processorcount %>
+ Memory:        <%= @memorysize %>
+<% end -%>
+<%= if has_variable?("beagle_present") and @beagle_present == "yes" then -%>
+
+Beaglebone Hardware
+-------------------
+Model:          <%= @beagle_model %>
+Processors:     <%= @processorcount %>
+Memory:         <%= @memorysize %>
 <% end -%>
  [0m
  [1m[40m[31m--------------------------------------------------[0m

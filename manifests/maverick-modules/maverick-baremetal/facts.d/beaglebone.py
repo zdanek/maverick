@@ -16,6 +16,7 @@ for line in f:
 		print "beagle_present=no"
 		sys.exit(1)
 
+"""
 try:
 	lshw_xml = commands.getoutput('/usr/bin/lshw -xml')
 	lshw_dom = parseString(lshw_xml)
@@ -26,6 +27,7 @@ try:
 		#print '----'
 except:
 	pass
+"""
 
 # Obtain the SD card size from proc
 f = open('/proc/partitions', 'r')
