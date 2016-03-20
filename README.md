@@ -1,4 +1,4 @@
-# maverick
+# Maverick
 UAV Companion Computer automation
 
 This is a proof of concept project to automate the installation, configuration, setup and management of UAV companion computers using Configuration Management.  The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
