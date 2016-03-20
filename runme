@@ -71,6 +71,14 @@ if ! $puppetinstalled; then
 	exit 1
 fi
 
+# If git is installed at this point, then force git to ignore any changes to localconf.json,
+#  which might contain sensitive information
+if hash git 2>/dev/null; then
+	if [[ $SUDO_USER != "" && $SUDO_USER != "root" ]]; then
+		su $SUDO_USER -c "git update-index --assume-unchanged conf/localconf.json"
+	fi
+fi
+
 # OK we're good to go!
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 echo "Environment: ${ENV}"
