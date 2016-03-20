@@ -30,19 +30,19 @@ sudo apt-get update
 sudo apt-get install -y git
 git clone https://github.com/fnoop/maverick.git
 cd maverick
-sudo ./runme --env=bootstrap --confirm
+sudo ./maverick --env=bootstrap --confirm
 sudo reboot
 ```
 The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.  After the first reboot, the dev environment can be installed if required:
 ```
-sudo ./runme --env=dev --confirm
+sudo maverick --env=dev --confirm
 ```
 Or production environment (for safer flying):
 ```
-sudo ./runme --env=production --confirm
+sudo maverick --env=production --confirm
 ```
 To update to the latest Maverick:
 ```
-git pull origin
+TODO: Add maverick update command
 ```
 Then just call runme as normal.
