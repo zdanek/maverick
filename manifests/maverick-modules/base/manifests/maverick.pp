@@ -52,20 +52,26 @@ class base::maverick {
         user => "mav",
     }
 
+    # Pull maverick into it's final resting place
     file { "/srv/maverick/software/maverick":
         ensure 		=> directory,
         require		=> File["/srv/maverick/software"],
-	mode		=> 755,
-	owner		=> "mav",
-	group		=> "mav",
+    mode		=> 755,
+    owner		=> "mav",
+    group		=> "mav",
     } ->
     vcsrepo { "/srv/maverick/software/maverick":
         ensure		=> present,
         provider 	=> git,
         source		=> "https://github.com/fnoop/maverick.git",
         revision	=> "master",
-	owner		=> "mav",
-	group		=> "mav",
+    owner		=> "mav",
+    group		=> "mav",
+    } ->
+    exec { "gitfreeze-localconf":
+        cwd         => "/srv/maverick/software/maverick",
+        onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
+        command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
     }
 
 }
