@@ -52,4 +52,20 @@ class base::maverick {
         user => "mav",
     }
 
+    file { "/srv/maverick/software/maverick":
+        ensure 		=> directory,
+        require		=> File["/srv/maverick/software"],
+	mode		=> 755,
+	owner		=> "mav",
+	group		=> "mav",
+    } ->
+    vcsrepo { "/srv/maverick/software/maverick":
+        ensure		=> present,
+        provider 	=> git,
+        source		=> "https://github.com/fnoop/maverick.git",
+        revision	=> "master",
+	owner		=> "mav",
+	group		=> "mav",
+    }
+
 }
