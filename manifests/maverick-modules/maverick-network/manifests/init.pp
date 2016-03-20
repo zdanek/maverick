@@ -27,7 +27,7 @@ class maverick-network (
     # If a wireless NIC is detected and defaults are set in localconf.json, configure it 
     $wifi_ssid = hiera('wifi_ssid')
     $wifi_passphrase = hiera('wifi_passphrase')
-    if $macaddress_wlan0 and $wifi_ssid and $wifi_passphrase {
+    if $interfaces =~ /wlan/ and $wifi_ssid and $wifi_passphrase {
         file { "/etc/wpa_supplicant/wpa_supplicant.conf":
             content => template("maverick-network/wpa_supplicant.conf.erb"),
             mode    => 600,

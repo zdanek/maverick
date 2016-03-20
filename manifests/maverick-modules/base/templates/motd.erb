@@ -30,7 +30,7 @@
  Processors:    <%= @processorcount %>
  Memory:        <%= @memorysize %>
 <% end -%>
-<%= if has_variable?("beagle_present") and @beagle_present == "yes" then -%>
+<% if has_variable?("beagle_present") and @beagle_present == "yes" then -%>
 
 Beaglebone Hardware
 -------------------
