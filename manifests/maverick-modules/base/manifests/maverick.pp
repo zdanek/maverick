@@ -73,5 +73,12 @@ class base::maverick {
         onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
         command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
     }
+    file { "/etc/profile.d/maverick-path.sh":
+        ensure      => present,
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "PATH=\$PATH:/srv/maverick/software/maverick",
+    }
 
 }

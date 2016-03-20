@@ -1,9 +1,16 @@
 [main]
-confdir = conf
-vardir = var/lib/puppet
-environmentpath = manifests/environments
-strict_variables = true
-basemodulepath = maverick-modules:puppet-modules
-hiera_config = conf/hiera.yaml
-environment = stable
+confdir = /srv/maverick/software/maverick/conf
+vardir = /var/lib/puppet
+logdir = /var/log/puppet
+rundir = /var/run/puppet
+ssldir = $vardir/ssl
 pluginsync = true
+strict_variables = true
+basemodulepath = /srv/maverick/software/maverick/manifests/maverick-modules:/srv/maverick/software/maverick/manifests/puppet-modules
+hiera_config = $confdir/hiera.yaml
+environment = <%= @environment %>
+    
+[agent]
+classfile = $vardir/classes.txt
+localconfig = $vardir/localconfig
+

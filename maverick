@@ -6,7 +6,7 @@ echo '--------------------------------------------'
 
 # Check that we're root
 if [[ $EUID -ne 0 ]]; then
-    echo "Error: This must be run as root (sudo ./runme.sh)"
+    echo "Error: This must be run as root"
     echo
     exit 1
 fi
