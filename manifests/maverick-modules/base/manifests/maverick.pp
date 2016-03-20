@@ -51,6 +51,9 @@ class base::maverick {
         value => 'cache --timeout=3600',
         user => "mav",
     }
+    git::config { 'push.default':
+        value => "simple",
+    }
 
     # Pull maverick into it's final resting place
     file { "/srv/maverick/software/maverick":
