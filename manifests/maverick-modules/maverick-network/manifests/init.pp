@@ -7,6 +7,15 @@ class maverick-network (
     class { "network": 
         hostname => "${hostname}"
     }
+    network::interface { 'eth0':
+        enable_dhcp => true,
+    }
+    network::interface { "wlan0":
+        enable_dhcp => true,
+    }
+    network::interface { "wlan1":
+        enable_dhcp => true,
+    }
     
     if $ntpclient == "enabled" {
         include maverick-network::ntpclient

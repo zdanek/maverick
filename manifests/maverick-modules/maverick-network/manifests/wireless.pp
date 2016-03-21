@@ -5,7 +5,19 @@ class maverick-network::wireless (
     package { "wpasupplicant":
         ensure      => installed
     } ->
-    service { "wpa_supplicant":
+    #service { "wpa_supplicant":
+    #    ensure      => running,
+    #    enable      => true
+    #}
+    
+    service { "udhcpd":
+        ensure      => stopped,
+        enable      => false
+    } ->
+    package { "dhcpcd5":
+        ensure      => installed
+    }->
+    service { "dhcpcd":
         ensure      => running,
         enable      => true
     }
