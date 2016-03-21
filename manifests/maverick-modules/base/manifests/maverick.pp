@@ -36,41 +36,45 @@ class base::maverick {
     $git_username = hiera('git_username')
     if $git_username {
         git::config { 'user.name':
-            value => $git_username,
-            user => "mav",
+            value       => $git_username,
+            user        => "mav",
+            require     => File["/srv/maverick"]
         }
     } 
     $git_email = hiera('git_email')
     if $git_email {
         git::config { 'user.email':
-            value => $git_email,
-            user => "mav",
+            value       => $git_email,
+            user        => "mav",
+            require     => File["/srv/maverick"]
         }
     }
     git::config { 'credential.helper':
-        value => 'cache --timeout=3600',
-        user => "mav",
+        value       => 'cache --timeout=3600',
+        user        => "mav",
+        require     => File["/srv/maverick"]
     }
     git::config { 'push.default':
-        value => "simple",
-        user => "mav"
+        value       => "simple",
+        user        => "mav",
+        require     => File["/srv/maverick"]
     }
 
     # Pull maverick into it's final resting place
     file { "/srv/maverick/software/maverick":
         ensure 		=> directory,
         require		=> File["/srv/maverick/software"],
-    mode		=> 755,
-    owner		=> "mav",
-    group		=> "mav",
+        mode		=> 755,
+        owner		=> "mav",
+        group		=> "mav",
     } ->
     vcsrepo { "/srv/maverick/software/maverick":
         ensure		=> present,
         provider 	=> git,
         source		=> "https://github.com/fnoop/maverick.git",
         revision	=> "master",
-    owner		=> "mav",
-    group		=> "mav",
+        owner		=> "mav",
+        group		=> "mav",
     } ->
     exec { "gitfreeze-localconf":
         cwd         => "/srv/maverick/software/maverick",
