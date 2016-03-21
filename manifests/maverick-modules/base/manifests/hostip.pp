@@ -1,6 +1,11 @@
 class base::hostip {
+    # If we have debian loopaddress set, make sure it's set to current hostname
+    exec { "loophost":
+        unless      => "/bin/grep '127.0.1.1\s+${hostname}'",
+        command     => "/bin/sed /etc/hosts -i -r -e 's/127.0.1.1\\s+(.*)/127.0.1.1\\t${hostname}/'"
+    }
 
-    # First retrieve host/ip values from hiera
+    # Retrieve host/ip values from hiera
     $_fqdn = hiera('fqdn')
     $_primaryip = hiera("primaryip")
     $_hostname = hiera("hostname")
