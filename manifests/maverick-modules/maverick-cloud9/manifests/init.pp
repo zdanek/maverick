@@ -1,6 +1,7 @@
 class maverick-cloud9 (
     $enabled = true,
     $webport = "6789",
+    $basepath = "/srv/maverick",
     ) {
     file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
@@ -29,7 +30,7 @@ class maverick-cloud9 (
 	creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
         timeout		=> 0,
         user        	=> "mav",
-	environment 	=> ["HOME=/home/mav"],
+	environment 	=> ["HOME=/srv/maverick"],
     } ->
     file { "/etc/systemd/system/cloud9.service":
         content     => template("maverick-cloud9/cloud9.service.erb"),
