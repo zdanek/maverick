@@ -24,12 +24,18 @@ then
 fi
 
 SHORTHOST=$(hostname -s)
-ENVIRONMENT=<%= @environment %>
+if [ -e /srv/maverick/software/maverick/.environment ]; then
+  ENVIRONMENT=$(cat /srv/maverick/software/maverick/.environment)
+else
+  ENVIRONMENT=<%= @environment %>
+fi
 
 # set pc, the prompt color
 if [ "$ENVIRONMENT" = "dev" ]
 then
 	pc=$B_RED
+elif [ "$ENVIRONMENT" = "bootstrap" ]; then
+  pc=$B_BLUE
 else
 	pc=$B_GREEN
 fi
