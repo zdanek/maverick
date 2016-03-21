@@ -93,8 +93,8 @@ if hash git 2>/dev/null; then
 fi
 
 # OK we're good to go!
-echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 echo "Environment: ${ENV}"
+echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
 	cwd=$(pwd)
 	cd /srv/maverick/software/maverick

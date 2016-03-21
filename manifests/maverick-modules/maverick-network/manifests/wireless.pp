@@ -5,10 +5,10 @@ class maverick-network::wireless (
     package { "wpasupplicant":
         ensure      => installed
     } ->
-    #service { "wpa_supplicant":
-    #    ensure      => running,
-    #    enable      => true
-    #}
+    service { "wpa_supplicant":
+        ensure      => stopped,
+        enable      => false,
+    }
     
     service { "udhcpd":
         ensure      => stopped,
@@ -28,6 +28,24 @@ class maverick-network::wireless (
         target      => "/dev/null",
     }
     
+    # Define two wireless interfaces
+    network::interface { "wlan0":
+        enable_dhcp     => false,
+        auto            => false,
+        allow_hotplug   => true,
+        method          => "manual",
+        template        => "maverick-network/interface_fragment_wireless.erb",
+        manage_order    => 20,
+    }
+    network::interface { "wlan1":
+        enable_dhcp     => false,
+        auto            => false,
+        allow_hotplug   => true,
+        method          => 'manual',
+        template        => "maverick-network/interface_fragment_wireless.erb",
+        manage_order    => 21,
+    }
+
     # If a wireless NIC is detected and defaults are set in localconf.json, configure it 
     $wifi_ssid = hiera('wifi_ssid')
     $wifi_passphrase = hiera('wifi_passphrase')
