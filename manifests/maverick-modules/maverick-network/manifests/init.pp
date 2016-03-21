@@ -36,6 +36,8 @@ class maverick-network (
         "net.ipv4.tcp_wmem":							value => "10240 87380 12582912";
     }
     
-    class { "maverick-network::wireless": }
+    if $wireless {
+        class { "maverick-network::wireless": }
+    }
     
 }
