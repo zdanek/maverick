@@ -7,9 +7,9 @@ class maverick-network::wireless (
     }
     
     # Turn off predictable interface naming
-    file { "/dev/null":
+    file { "/etc/udev/rules.d/80-net-setup-link.rules":
         ensure      => link,
-        target      => "/etc/udev/rules.d/80-net-setup-link.rules",
+        target      => "/dev/null",
     }
     
     # If a wireless NIC is detected and defaults are set in localconf.json, configure it 
