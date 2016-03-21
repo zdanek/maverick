@@ -88,5 +88,14 @@ class base::maverick {
         command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick"#\'',
         unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick'"
     }
+    
+    # Add environment marker
+    file { "/srv/maverick/.environment":
+        ensure      => file,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 644,
+        content     => $environment,
+    }
 
 }

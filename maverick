@@ -39,6 +39,19 @@ do
 	esac
 done
 
+# Read environment marker if it exists
+if [ -e /srv/maverick/.environment ]; then
+	environment=$(cat /srv/maverick/.environment)
+	if [[ $environment && "$ENV" != "" ]]; then
+		echo "Environment marker set but is being ignored as --env is set"
+	elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "production" ]]; then
+		echo "Environment marker set and is being used to set maverick environment: ${environment}"
+		ENV=$environment
+	else
+		echo "Environment marker set but not recognised"
+	fi
+fi
+
 # If environment not set to dev or production, exit
 if [[ "$ENV" != "dev" && "$ENV" != "production" && "$ENV" != "bootstrap" ]]; then 
 	echo "Error: --env not set to a recognised environment (bootstrap, dev or production)"

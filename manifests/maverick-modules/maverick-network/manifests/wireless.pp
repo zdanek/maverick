@@ -4,6 +4,10 @@ class maverick-network::wireless (
     # Ensure wpasupplicant is installed
     package { "wpasupplicant":
         ensure      => installed
+    } ->
+    service { "wpa_supplicant":
+        ensure      => running,
+        enable      => true
     }
     
     # Turn off predictable interface naming
