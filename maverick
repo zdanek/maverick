@@ -110,13 +110,16 @@ fi
 # OK we're good to go!
 echo "Environment: ${ENV}"
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
-if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
+if [ -e ./conf/puppet.conf ]; then
+    puppet apply --confdir=conf --environment ${ENV} manifests
+elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     puppet apply --confdir=conf --environment ${ENV} manifests
     cd $cwd
 else
-    puppet apply --confdir=conf --environment ${ENV} manifests
+    echo "Error: Maverick software not found in current directory or expected location: /srv/maverick/software/maverick"
+    exit 1
 fi
 echo
 echo "Maverick finished, happy flying :)"
