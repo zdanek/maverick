@@ -13,8 +13,9 @@ fi
 
 # Define usage function
 usage () {
-	echo "--env=[bootstrap|dev|production]         puppet environment, currently bootstrap, dev or production"
-	echo "--confirm                                this must be set to proceed, for safety"
+	echo "--env=[bootstrap|dev|production]         Puppet environment, currently bootstrap, dev or production"
+	echo "--confirm                                This must be set to proceed, for safety"
+	echo "--self-update							   Update to latest maverick code, doesn't need --confirm"
 	echo
 	echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
 	echo
@@ -33,11 +34,25 @@ do
 		CONFIRM="true"
 		shift
 		;;
-		#*)
-		#usage
-		#;;
+		--self-update)
+		SELFUPDATE="true"
+		shift
+		;;
 	esac
 done
+
+# If self-update set, action and then exit
+if [ "$SELFUPDATE" == "true" ]; then
+	if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
+		su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+		echo "Maverick update completed"
+		echo
+	else
+		echo "Error: Maverick not found in expected location: /srv/maverick/software/maverick"
+		echo
+	fi
+	exit 0
+fi
 
 # Read environment marker if it exists
 if [ -e /srv/maverick/.environment ]; then
