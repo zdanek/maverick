@@ -19,7 +19,8 @@ class maverick-network::wireless (
     }->
     service { "dhcpcd":
         ensure      => running,
-        enable      => true
+        enable      => true,
+        require     => Class["Network"]
     }
     
     # Turn off predictable interface naming
