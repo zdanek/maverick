@@ -13,110 +13,110 @@ fi
 
 # Define usage function
 usage () {
-	echo "--env=[bootstrap|dev|production]         Puppet environment, currently bootstrap, dev or production"
-	echo "--confirm                                This must be set to proceed, for safety"
-	echo "--self-update							   Update to latest maverick code, doesn't need --confirm"
-	echo
-	echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
-	echo
-	exit 1
+    echo "--env=[bootstrap|dev|production]          Puppet environment, currently bootstrap, dev or production"
+    echo "--confirm                                 This must be set to proceed, for safety"
+    echo "--self-update                             Update to latest maverick code, doesn't need --confirm"
+    echo
+    echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
+    echo
+    exit 1
 }
 
 # Parse arguments
 for i in "$@"
 do
-	case $i in
-		--env=*)
-		ENV="${i#*=}"
-		shift
-		;;
-		--confirm)
-		CONFIRM="true"
-		shift
-		;;
-		--self-update)
-		SELFUPDATE="true"
-		shift
-		;;
-	esac
+    case $i in
+        --env=*)
+        ENV="${i#*=}"
+        shift
+        ;;
+        --confirm)
+        CONFIRM="true"
+        shift
+        ;;
+        --self-update)
+        SELFUPDATE="true"
+        shift
+        ;;
+    esac
 done
 
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
-	if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
-		su mav -c "cd /srv/maverick/software/maverick; git pull origin"
-		echo "Maverick update completed"
-		echo
-	else
-		echo "Error: Maverick not found in expected location: /srv/maverick/software/maverick"
-		echo
-	fi
-	exit 0
+    if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
+        su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+        echo "Maverick update completed"
+        echo
+    else
+        echo "Error: Maverick not found in expected location: /srv/maverick/software/maverick"
+        echo
+    fi
+    exit 0
 fi
 
 # Read environment marker if it exists
 if [ -e /srv/maverick/.environment ]; then
-	environment=$(cat /srv/maverick/.environment)
-	if [[ $environment && "$ENV" != "" ]]; then
-		echo "Environment marker set but is being ignored as --env is set"
-	elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "production" ]]; then
-		echo "Environment marker set and is being used to set maverick environment: ${environment}"
-		ENV=$environment
-	else
-		echo "Environment marker set but not recognised"
-	fi
+    environment=$(cat /srv/maverick/.environment)
+    if [[ $environment && "$ENV" != "" ]]; then
+        echo "Environment marker set but is being ignored as --env is set"
+    elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "production" ]]; then
+        echo "Environment marker set and is being used to set maverick environment: ${environment}"
+        ENV=$environment
+    else
+        echo "Environment marker set but not recognised"
+    fi
 fi
 
 # If environment not set to dev or production, exit
 if [[ "$ENV" != "dev" && "$ENV" != "production" && "$ENV" != "bootstrap" ]]; then 
-	echo "Error: --env not set to a recognised environment (bootstrap, dev or production)"
-	echo
-	usage
+    echo "Error: --env not set to a recognised environment (bootstrap, dev or production)"
+    echo
+    usage
 fi
 
 # If confirm not set, exit
 if [ "$CONFIRM" != "true" ]; then	
-	echo "Error: --confirm not set"
-	echo
-	usage
+    echo "Error: --confirm not set"
+    echo
+    usage
 fi
 
 # Check that puppet is installed
 if ! hash puppet 2>/dev/null; then
-	echo 'Puppet not installed, attempting to install..'
-	if hash apt-get 2>/dev/null; then
-		DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
-		if hash puppet; then
-			puppetinstalled=true
-		fi
-	fi
+    echo 'Puppet not installed, attempting to install..'
+    if hash apt-get 2>/dev/null; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
+        if hash puppet; then
+            puppetinstalled=true
+        fi
+    fi
 else
-	puppetinstalled=true
+    puppetinstalled=true
 fi
 if ! $puppetinstalled; then
-	echo 'Error: Puppet not installed and could not be installed'
-	echo
-	exit 1
+    echo 'Error: Puppet not installed and could not be installed'
+    echo
+    exit 1
 fi
 
 # If git is installed at this point, then force git to ignore any changes to localconf.json,
 #  which might contain sensitive information
 if hash git 2>/dev/null; then
-	if [[ $SUDO_USER != "" && $SUDO_USER != "root" && -e conf/localconf.json ]]; then
-		su $SUDO_USER -c "git update-index --assume-unchanged conf/localconf.json"
-	fi
+    if [[ $SUDO_USER != "" && $SUDO_USER != "root" && -e conf/localconf.json ]]; then
+        su $SUDO_USER -c "git update-index --assume-unchanged conf/localconf.json"
+    fi
 fi
 
 # OK we're good to go!
 echo "Environment: ${ENV}"
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
-	cwd=$(pwd)
-	cd /srv/maverick/software/maverick
-	puppet apply --confdir=conf --environment ${ENV} manifests
-	cd $cwd
+    cwd=$(pwd)
+    cd /srv/maverick/software/maverick
+    puppet apply --confdir=conf --environment ${ENV} manifests
+    cd $cwd
 else
-	puppet apply --confdir=conf --environment ${ENV} manifests
+    puppet apply --confdir=conf --environment ${ENV} manifests
 fi
 echo
 echo "Maverick finished, happy flying :)"
