@@ -1,6 +1,10 @@
 class maverick-network::wireless (
     ) {
     
+    service { "connmand":
+        ensure      => stopped,
+        enable      => false,
+    } ->
     package { ["connman", "cmst"]:
         ensure      => absent
     } ->
