@@ -8,5 +8,6 @@ class maverick-baremetal::beagle::init (
         group       => "root",
     }
 
+    class { "maverick-baremetal::beagle::services": }
     
 }
