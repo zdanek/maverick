@@ -6,6 +6,9 @@ class base::packages {
         "telnet",
         "wget",
         "iotop",
+        "python",
+        "python-dev",
+        "python-pip",
         ]:
         ensure	=> installed
     }
