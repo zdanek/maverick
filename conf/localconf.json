@@ -8,5 +8,8 @@
 
 	// Set defaults for git.  These don't need to be set but if they are will be used.
 	"git_username": 	"",
-	"git_email":		""
+	"git_email":		"",
+	
+	// Add classes here
+	"classes":		[ ]
 }
