@@ -1,4 +1,4 @@
-class maverick-baremetal::raspberry::lcd-spotpear-35 (
+class maverick-baremetal::raspberry::lcd-spotpear35 (
     ) {
     
     # This used to be very painful, now all of the necessary kernel support is in raspbian
