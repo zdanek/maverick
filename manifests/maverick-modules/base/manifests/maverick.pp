@@ -50,7 +50,7 @@ class base::maverick {
         }
     }
     git::config { 'credential.helper':
-        value       => 'cache --timeout=3600',
+        value       => 'cache --timeout=86400',
         user        => "mav",
         require     => File["/srv/maverick"]
     }
