@@ -62,14 +62,13 @@ class maverick-network::wireless (
     # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
     # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
     if ($connman == false) {
-        
+        warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs")
         file { "/etc/resolv.conf":
             ensure      => file,
             owner       => "root",
             group       => "root",
             mode        => 644,
         } ->
-        warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs") ->
         service { "connmand":
             ensure      => stopped,
             enable      => false,
