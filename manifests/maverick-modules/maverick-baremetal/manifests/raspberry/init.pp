@@ -1,6 +1,6 @@
 class maverick-baremetal::raspberry::init (
     $expand_root = true,
-    $gpumem = 256,
+    $gpumem = 128,
     $overclock = "None", # "None", "High", "Turbo"
     $devicetree = true,
     $spi = false,
