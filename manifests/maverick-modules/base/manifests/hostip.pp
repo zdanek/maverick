@@ -1,7 +1,7 @@
 class base::hostip {
     # If we have debian loopaddress set, make sure it's set to current hostname
     exec { "loophost":
-        unless      => "/bin/grep '127.0.1.1\\s+${hostname}' /etc/hosts",
+        unless      => "/bin/grep -E '127.0.1.1\\s+${hostname}' /etc/hosts",
         command     => "/bin/sed /etc/hosts -i -r -e 's/127.0.1.1\\s+(.*)/127.0.1.1\\t${hostname}/'"
     }
 

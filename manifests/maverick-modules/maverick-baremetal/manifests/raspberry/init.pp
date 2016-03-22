@@ -56,12 +56,12 @@ class maverick-baremetal::raspberry::init (
     if ($i2c == true) {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 0",
-            unless      => "/bin/grep '^dtparam=i2c_arm=on' /boot/config.txt"
+            unless      => "/bin/grep '^dtparam=i2c=on' /boot/config.txt"
         }
     } else {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 1",
-            unless      => "/bin/grep '^dtparam=i2c_arm=off' /boot/config.txt"
+            unless      => "/bin/grep '^dtparam=i2c=off' /boot/config.txt"
         }
     }
 
