@@ -19,7 +19,9 @@ But wait, there's more!  Maverick is designed to be cross platform.  Initially i
  - Mac OSX Desktop/Laptop GCS
  - Nvidia TX1 Jetson
  - Snickerdoodle FPGA
+
 https://github.com/fnoop/maverick/wiki/Supported-Systems
+
 It will detect the base hardware platform and apply default settings as necessary.  Further base and peripheral config is available by applying parameters to node files and by including new classes in node files (TODO: document).
 
 Raspberry Pi Installation
