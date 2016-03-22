@@ -1,6 +1,9 @@
 class maverick-network::wireless (
     ) {
     
+    package { ["connman", "cmst"]:
+        ensure      => absent
+    } ->
     # Ensure wpasupplicant is installed
     package { "wpasupplicant":
         ensure      => installed
@@ -8,15 +11,14 @@ class maverick-network::wireless (
     service { "wpa_supplicant":
         ensure      => stopped,
         enable      => false,
-    }
-    
+    } ->
     service { "udhcpd":
         ensure      => stopped,
         enable      => false
     } ->
     package { "dhcpcd5":
         ensure      => installed
-    }->
+    } ->
     service { "dhcpcd":
         ensure      => running,
         enable      => true,
