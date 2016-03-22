@@ -66,12 +66,6 @@ class base {
         class { "maverick-baremetal": }
     }
     
-    ### Setup security
-    # class { "maverick-security": }
-    
-    ### Setup networking
-    class { "maverick-network": }
-
     ### NOTE: Hiera will also include classes, depending on hierarchy.
     ### In particular, check hiera/defaults.json which includes classes that are run on every server,
     ###  and $environment/defaults.json, which contain default classes/values for that environment.
