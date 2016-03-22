@@ -69,7 +69,7 @@ class maverick-network::wireless (
             group       => "root",
             mode        => 644,
         } ->
-        warning { "Disabling connman connection manager: Please reset hardware and log back in if the connection hangs": } ->
+        warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs") ->
         service { "connmand":
             ensure      => stopped,
             enable      => false,
