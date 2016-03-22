@@ -67,7 +67,7 @@ class base {
     }
     
     ### Setup security
-    class { "maverick-security": }
+    # class { "maverick-security": }
     
     ### Setup networking
     class { "maverick-network": }
