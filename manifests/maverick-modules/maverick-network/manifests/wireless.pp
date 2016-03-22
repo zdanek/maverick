@@ -1,13 +1,6 @@
 class maverick-network::wireless (
     ) {
     
-    service { "connmand":
-        ensure      => stopped,
-        enable      => false,
-    } ->
-    package { ["connman", "cmst"]:
-        ensure      => absent
-    } ->
     # Ensure wpasupplicant is installed
     package { "wpasupplicant":
         ensure      => installed
@@ -65,4 +58,16 @@ class maverick-network::wireless (
         }
     }
     
+    # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
+    # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
+    service { "connmand":
+        ensure      => stopped,
+        enable      => false,
+        require     => [Service["dhcpcd"], File["/etc/wpa_supplicant/wpa_supplicant.conf"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
+    } ->
+    package { ["connman", "cmst"]:
+        ensure      => absent
+    } ->
+    
+
 }
