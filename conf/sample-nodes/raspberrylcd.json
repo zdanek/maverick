@@ -1,6 +1,6 @@
 {
 	"classes" : [
-		"maverick-baremetal::raspberry::lcd-spotpear-35"
+		"maverick-baremetal::raspberry::lcd-spotpear35"
 	],
 	
 	"hostname": "raspberrylcd",
