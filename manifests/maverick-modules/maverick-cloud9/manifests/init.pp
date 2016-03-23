@@ -43,10 +43,12 @@ class maverick-cloud9 (
         enable      => true
     }
     
-    maverick-security::firewall::firerule { "cloud9":
-        ports       => $webport,
-        ips         => hiera("all_ips"),
-        proto       => "tcp"
+    if defined(Class["maverick-security::firewall"]) {
+        maverick-security::firewall::firerule { "cloud9":
+            ports       => $webport,
+            ips         => hiera("all_ips"),
+            proto       => "tcp"
+        }
     }
     
 }
