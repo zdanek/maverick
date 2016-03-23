@@ -12,7 +12,7 @@ class base::services (
         ensure      => stopped,
         enable      => false
     } ->
-    package { ["cups", "cups-filters", "cups-filters-core-drivers", "printer-driver-*"]:
+    package { ["cups", "cups-filters", "cups-filters-core-drivers", "printer-driver-*", "cups-daemon"]:
         ensure      => purged,
     }
 
