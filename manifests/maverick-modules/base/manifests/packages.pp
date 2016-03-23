@@ -27,5 +27,10 @@ class base::packages {
         package { "fprintd": ensure => absent } ->
         package { "libfprint": ensure => absent } 
     }
+
+    # Remove large packages that come with raspbian as otherwise we don't have enough space to continue
+    package { "sonic-pi":
+	ensure		=> purged
+    }
     
 }
