@@ -43,7 +43,7 @@ class maverick-cloud9 (
         enable      => true
     }
     
-    if defined(Class["maverick-security::firewall"]) {
+    if defined(Class["::maverick-security"]) {
         maverick-security::firewall::firerule { "cloud9":
             ports       => $webport,
             ips         => hiera("all_ips"),
