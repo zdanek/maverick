@@ -39,13 +39,13 @@ class maverick-baremetal::raspberry::init (
     if ($devicetree == true) {
         exec { "raspberry-devicetree":
             command     => "/usr/bin/raspi-config nonint do_devicetree 0",
-            onlyif	    => "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#device_tree'",
+            onlyif	    => "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#.*device_tree'",
             require     => Package["raspi-config"],
         }
     } else {
         exec { "raspberry-devicetree":
             command     => "/usr/bin/raspi-config nonint do_devicetree 1",
-            unless      => "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#device_tree'",
+            unless      => "/bin/grep 'device_tree' /boot/config.txt |/bin/grep -v '#.*device_tree'",
             require     => Package["raspi-config"],
         }
     }
@@ -53,13 +53,13 @@ class maverick-baremetal::raspberry::init (
     if ($spi == true) {
         exec { "raspberry-spi":
             command     => "/usr/bin/raspi-config nonint do_spi 0",
-            unless      => "/bin/grep '^dtparam=spi=on' /boot/config.txt",
+            unless      => "/bin/grep '^dtparam=spi(_arm)=on' /boot/config.txt",
             require     => Package["raspi-config"],
         }
     } else {
         exec { "raspberry-spi":
             command     => "/usr/bin/raspi-config nonint do_spi 1",
-            unless      => "/bin/grep '^dtparam=spi=off' /boot/config.txt",
+            unless      => "/bin/grep '^dtparam=spi(_arm)=off' /boot/config.txt",
             require     => Package["raspi-config"],
         }
     }
@@ -67,13 +67,13 @@ class maverick-baremetal::raspberry::init (
     if ($i2c == true) {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 0",
-            unless      => "/bin/grep '^dtparam=i2c=on' /boot/config.txt",
+            unless      => "/bin/grep '^dtparam=i2c(_arm)=on' /boot/config.txt",
             require     => Package["raspi-config"],
         }
     } else {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 1",
-            unless      => "/bin/grep '^dtparam=i2c=off' /boot/config.txt",
+            unless      => "/bin/grep '^dtparam=i2c(_arm)=off' /boot/config.txt",
             require     => Package["raspi-config"],
         }
     }

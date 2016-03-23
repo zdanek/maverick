@@ -15,13 +15,14 @@ class maverick-security::firewall (
     class { ['maverick-security::firewall_pre', 'maverick-security::firewall_post']:
     }
    	
-    class { '::firewall':
+    class { '::firewall': 
+    	require		=> Package["cups-filters"] # ensure cups-filters is removed as it can stop iptables working
     }
    	
     ### Define some common rules across all servers
     include maverick-security::firewall_common
     
-    ### If set, then define a cron to update iptables from puppet once an hour
+    ### If set, then define a cron to update iptables from puppet once an hour.  This is useful for dyndns.
     if $cronupdate == true {
         cron::job { "puppet-firewall":
 	    	minute		=> "0",
