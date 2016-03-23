@@ -27,19 +27,19 @@ class base {
     ### Before we do anything, set our IP in /etc/hosts
     class { "base::hostip":
         stage   => "bootstrap",
-        require => Class["base::defaults", "maverick-puppet::client"],
+        require => Class["base::defaults", "base::packages", "maverick-puppet::client"],
     }
     
     ### Setup base system users
     class { "base::users":
         stage	=> "bootstrap",
-        require		=> Class["base::defaults"],
+        require		=> Class["base::defaults", "base::packages"],
     }
     
     ### Setup base maverick environment
     class { "base::maverick":
         stage   => "bootstrap",
-        require => Class["base::defaults"],
+        require => Class["base::defaults", "base::packages"],
     }
 
     ###################################
