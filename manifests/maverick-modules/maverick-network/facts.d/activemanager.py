@@ -3,7 +3,7 @@
 
 import os, re
 
-data = {'connmand': 'no', 'wpa_supplicant': 'no'}
+data = {'connmand': 'no', 'wpa_supplicant': 'no', 'networkmanager': 'no'}
 
 pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
 for pid in pids:
@@ -13,6 +13,8 @@ for pid in pids:
         	data['wpa_supplicant'] = 'yes'
         if re.search('connmand', pidcmd):
         	data['connmand'] = 'yes'
+        if re.search('NetworkManager', pidcmd):
+            data['networkmanager'] = 'yes'
     except IOError: # proc has already terminated
         continue
 
