@@ -121,6 +121,11 @@ else
     echo "Error: Maverick software not found in current directory or expected location: /srv/maverick/software/maverick"
     exit 1
 fi
+
+# Reload profile to update environment prompt
+. /etc/profile
+
+# Finish up
 echo
 echo "Maverick finished, happy flying :)"
 echo

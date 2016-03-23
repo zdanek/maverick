@@ -4,8 +4,8 @@
 :json:
   :datadir: conf/ 
 :hierarchy:
-  - defaults
-  - localconf
-  - "%{environment}/defaults"
   - "%{environment}/nodes/%{::hostname}"
+  - "%{environment}/defaults"
   - "sample-nodes/%{::hostname}"
+  - localconf
+  - defaults

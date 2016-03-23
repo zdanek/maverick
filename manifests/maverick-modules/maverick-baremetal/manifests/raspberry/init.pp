@@ -129,10 +129,11 @@ class maverick-baremetal::raspberry::init (
         require     => Package["raspi-config"],
     }
     
-    exec { "raspberry-bootenv":
-        command     => "/usr/bin/raspi-config nonint do_boot_behaviour_new B1",
-        unless      => "/bin/systemctl get-default |/bin/grep multi-user",
-        require     => Package["raspi-config"],
-    }
+    # This is disabled and handled by other classes such as maverick-desktop instead
+    #exec { "raspberry-bootenv":
+    #    command     => "/usr/bin/raspi-config nonint do_boot_behaviour_new B1",
+    #    unless      => "/bin/systemctl get-default |/bin/grep multi-user",
+    #    require     => Package["raspi-config"],
+    #}
     
 }

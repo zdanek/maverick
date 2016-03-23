@@ -8,14 +8,15 @@
 
 	// List of all internal IP addresses.  These IPs are used for default iptables and other access control,
 	//  so be careful what is put in here.
-	// These must be IPs, not CIDR ranges, for modules like denyhosts that can't handle ranges.
+	// These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
 	"all_ips": [
-		// "192.168.0.0/24",
-		// "192.168.1.0/24"
 	],
 
 	"classes" : [
-		"base"
-	]
+		"base",
+		"maverick-desktop"
+	],
+	
+	"maverick-desktop::enable": false
 
 }

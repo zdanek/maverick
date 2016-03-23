@@ -1,6 +1,8 @@
-// These are defaults for the dev environment.  
+// These are defaults for the dev environment.
 {
-	"classes" : [
+	"classes": [
 		"maverick-cloud9"
 	]
+	
+	// ,"maverick-desktop::enable": true // Uncomment to enable desktop
 }

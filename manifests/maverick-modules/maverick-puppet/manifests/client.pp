@@ -6,7 +6,7 @@ class maverick-puppet::client (
         package {["puppet", "facter", "hiera"]:
             ensure	=> installed
         }
-        if ($operatingsystem == "Debian") {
+        if ($operatingsystem == "Debian" or $operatingsystem == "Ubuntu") {
             package {["ruby-json", "augeas-tools", "augeas-lenses", "ruby-augeas"]:
                 ensure	=> installed
             }
