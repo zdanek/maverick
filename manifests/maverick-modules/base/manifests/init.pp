@@ -2,7 +2,7 @@ class base {
 
     # Define stages
     class { "base::stages": }
-    
+        
     ###################################
     # Bootstrap stage - these are executed before everything else
     ###################################
@@ -70,5 +70,5 @@ class base {
     ### NOTE: Hiera will also include classes, depending on hierarchy.
     ### In particular, check hiera/defaults.json which includes classes that are run on every server,
     ###  and $environment/defaults.json, which contain default classes/values for that environment.
-
+    
 }

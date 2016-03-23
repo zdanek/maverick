@@ -1,0 +1,6 @@
+// These are defaults for the bootstrap environment.  
+{
+	"classes" : [
+		"base::bootstrap"
+	]
+}

@@ -2,6 +2,7 @@ class base::defaults {
 
     Package {
         ensure 	=> "installed",
+        allow_virtual => false,
     }
     
     Exec	{ 
