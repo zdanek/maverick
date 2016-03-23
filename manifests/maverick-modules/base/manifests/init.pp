@@ -67,7 +67,7 @@ class base {
     }
     
     ## Network setup
-    class { "maverick-network": }
+    # class { "maverick-network": }
     
     ### NOTE: Hiera will also include classes, depending on hierarchy.
     ### In particular, check hiera/defaults.json which includes classes that are run on every server,
