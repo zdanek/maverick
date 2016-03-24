@@ -2,7 +2,7 @@ class maverick-network (
     $dnsclient = "disabled", 
     $ntpclient = "enabled",
     $wireless = true,
-    $netman = false,
+    $netman = undef,
     ) {
     
     class { "network": 
