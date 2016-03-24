@@ -17,6 +17,7 @@
 		"maverick-desktop"
 	],
 	
+	"base::users::mav_sudopass": false,
 	"maverick-desktop::enable": false
 
 }

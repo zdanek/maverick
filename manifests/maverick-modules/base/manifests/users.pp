@@ -36,7 +36,7 @@ class base::users (
         }
     } else {
         file { "/etc/sudoers.d/mav":
-            content 	=> "mav ALL=(ALL)",
+            content 	=> "mav ALL=(ALL) ALL",
             ensure		=> present,
             owner		=> "root",
             group		=> "root",
