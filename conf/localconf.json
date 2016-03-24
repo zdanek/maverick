@@ -11,5 +11,20 @@
 	"git_email":		"",
 	
 	// Add classes here
-	"classes":		[ ]
+	"classes":		[
+		// "maverick-security",
+		// "maverick-nework",
+		// "maverick-baremetal::raspberry::lcd-spotpear35"
+	],
+	// "maverick-desktop::enable": true,
+	// "maverick-network::netman": false,
+	// "maverick-cloud9::enabled": true,
+	// "maverick-cloud9::webport": 6789,
+	// "maverick-cloud9::basepath": "/srv",
+	// "maverick-baremetal::raspberry::gpumem": 256,
+	// "maverick-baremetal::raspberry::overclock": "High",
+	// "maverick-baremetal::raspberry::spi": true, # required for lcd screens
+	// "maverick-baremetal::raspberry::serialconsole": true,
+	
+	
 }
