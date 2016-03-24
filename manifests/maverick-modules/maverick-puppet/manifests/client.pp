@@ -13,11 +13,11 @@ class maverick-puppet::client (
         }
     }
 
-    service {["puppet", "puppetmaster"]:
+    service {["puppet"]:
         ensure		=> "stopped",
         enable		=> false,
         require     => Package["puppet"],
-    }->
+    }
     file { "/etc/puppet/puppet.conf":
         ensure      => file,
         content     => template("maverick-puppet/puppet-client.conf.erb"),
