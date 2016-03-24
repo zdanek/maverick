@@ -4,5 +4,5 @@
 		"maverick-cloud9"
 	]
 	
-	// ,"maverick-desktop::enable": true // Uncomment to enable desktop
+	// ,"maverick-desktop::enable": true // Uncomment to enable desktop for all dev nodes
 }
