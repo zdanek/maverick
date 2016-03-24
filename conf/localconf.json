@@ -21,10 +21,10 @@
 	// "maverick-cloud9::enabled": true,
 	// "maverick-cloud9::webport": 6789,
 	// "maverick-cloud9::basepath": "/srv",
-	// "maverick-baremetal::raspberry::gpumem": 256,
-	// "maverick-baremetal::raspberry::overclock": "High",
-	// "maverick-baremetal::raspberry::spi": true, // required for lcd screens
-	// "maverick-baremetal::raspberry::serialconsole": true,
+	// "maverick-baremetal::raspberry::init::gpumem": 256,
+	// "maverick-baremetal::raspberry::init::overclock": "High",
+	// "maverick-baremetal::raspberry::init::spi": true, // required for lcd screens
+	// "maverick-baremetal::raspberry::init::serialconsole": true,
 	
 	
 }
