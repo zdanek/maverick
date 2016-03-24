@@ -4,9 +4,9 @@ echo
 echo 'Maverick - UAV Companion Computer Automation'
 echo '--------------------------------------------'
 
-# Check that we're root
-if [[ $EUID -ne 0 ]]; then
-    echo "Error: This must be run as root"
+# Check that we're root or mav user
+if [[ $EUID -ne 0 && $USER != "mav" ]]; then
+    echo "Error: This must be run as root or mav user"
     echo
     exit 1
 fi
@@ -44,7 +44,11 @@ done
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
-        su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+        if [ $EUID -eq 0 ]; then
+            su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+        elif [ $USER == "mav" ]; then
+            cd /srv/maverick/software/maverick; git pull origin;
+        fi
         echo "Maverick update completed"
         echo
     else
@@ -85,7 +89,11 @@ fi
 if ! hash puppet 2>/dev/null; then
     echo 'Puppet not installed, attempting to install..'
     if hash apt-get 2>/dev/null; then
-        DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
+        if [ $EUID -eq 0 ]; then
+            DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
+        elif [ $USER == "mav" ]; then
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
+        fi
         if hash puppet; then
             puppetinstalled=true
         fi
@@ -99,10 +107,10 @@ if ! $puppetinstalled; then
     exit 1
 fi
 
-# If git is installed at this point, then force git to ignore any changes to localconf.json,
-#  which might contain sensitive information
+# If git is installed at this point, then force git to ignore any changes to localconf.json
+#  in the current directory, which might contain sensitive information
 if hash git 2>/dev/null; then
-    if [[ $SUDO_USER != "" && $SUDO_USER != "root" && -e conf/localconf.json ]]; then
+    if [[ $EUID -eq 0 && $SUDO_USER != "" && $SUDO_USER != "root" && -e conf/localconf.json ]]; then
         su $SUDO_USER -c "git update-index --assume-unchanged conf/localconf.json"
     fi
 fi
@@ -111,22 +119,35 @@ fi
 echo "Environment: ${ENV}"
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
 if [ -e ./conf/puppet.conf ]; then
-    puppet apply --confdir=conf --environment ${ENV} manifests
+    if [ $EUID -eq 0 ]; then
+        puppet apply --confdir=conf --environment ${ENV} manifests
+    elif [ $USER == "mav" ]; then
+        sudo puppet apply --confdir=conf --environment ${ENV} manifests
+    fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
-    puppet apply --confdir=conf --environment ${ENV} manifests
+    if [ $EUID -eq 0 ]; then
+        puppet apply --confdir=conf --environment ${ENV} manifests
+    elif [ $USER == "mav" ]; then
+        sudo puppet apply --confdir=conf --environment ${ENV} manifests
+    fi
     cd $cwd
 else
     echo "Error: Maverick software not found in current directory or expected location: /srv/maverick/software/maverick"
     exit 1
 fi
 
-# Reload profile to update environment prompt
-. /etc/profile
+# If bootstrap environment, print a reboot warning
+if [ $ENV == "bootstrap" ]; then
+    echo
+    echo "-------------------------"
+    echo "WARNING: If this is the first bootstrap run, please reboot NOW to activate system changes."
+    echo "If system is not rebooted after first bootstrap run, further runs may not work as expected."
+    echo "-------------------------"
+fi
 
 # Finish up
 echo
 echo "Maverick finished, happy flying :)"
 echo
-
