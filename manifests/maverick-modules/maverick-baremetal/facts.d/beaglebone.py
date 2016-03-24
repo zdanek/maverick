@@ -2,7 +2,13 @@
 # This fact extracts as much hardware information out of a beaglebone as possble
 
 import re, sys, subprocess, commands
+import os.path
 from xml.dom.minidom import parse, parseString
+
+# Check if model path available, if not exit
+if not os.path.isfile('/sys/firmware/devicetree/base/model'):
+	print "beagle_present=no"
+	sys.exit(1)
 
 # Define main data container
 data = {}
