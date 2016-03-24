@@ -32,5 +32,9 @@ class base::packages {
     package { "sonic-pi":
 	ensure		=> purged
     }
+    # Remove upstart as it breaks ubuntu which is now systemd
+    package { ["upstart", "unity-greeter"]:
+	ensure		=> purged
+    }
     
 }
