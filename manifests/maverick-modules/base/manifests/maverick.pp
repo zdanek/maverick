@@ -88,6 +88,13 @@ class base::maverick {
         group       => "root",
         content     => "PATH=\$PATH:/srv/maverick/software/maverick",
     }
+    file { "/etc/profile.d/maverick-call.sh":
+        ensure      => present,
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "maverick() { /srv/maverick/software/maverick/maverick \$1 \$2 \$3 \$4; . /etc/profile; }",
+    }
     exec { "sudoers-securepath":
         command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick"#\'',
         unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick'"
