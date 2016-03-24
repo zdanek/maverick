@@ -23,7 +23,7 @@
 	// "maverick-cloud9::basepath": "/srv",
 	// "maverick-baremetal::raspberry::gpumem": 256,
 	// "maverick-baremetal::raspberry::overclock": "High",
-	// "maverick-baremetal::raspberry::spi": true, # required for lcd screens
+	// "maverick-baremetal::raspberry::spi": true, // required for lcd screens
 	// "maverick-baremetal::raspberry::serialconsole": true,
 	
 	
