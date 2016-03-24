@@ -13,7 +13,7 @@
 	// Add classes here
 	"classes":		[
 		// "maverick-security",
-		// "maverick-nework",
+		// "maverick-network",
 		// "maverick-baremetal::raspberry::lcd-spotpear35"
 	],
 	// "maverick-desktop::enable": true,
