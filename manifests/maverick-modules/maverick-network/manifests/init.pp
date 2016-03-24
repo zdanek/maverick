@@ -2,7 +2,7 @@ class maverick-network (
     $dnsclient = "disabled", 
     $ntpclient = "enabled",
     $wireless = true,
-    $connman = false,
+    $netman = false,
     ) {
     
     class { "network": 
@@ -43,7 +43,7 @@ class maverick-network (
     
     # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
     # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
-    if $connman == false and $netman_connmand == true {
+    if $netman == false and $netman_connmand == true {
         warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs")
         file { "/etc/resolv.conf":
             ensure      => file,
@@ -65,5 +65,15 @@ class maverick-network (
             command         => "/sbin/reboot",
         }
     } 
+    
+    # Remove NetworkManager
+    if $netman == false and $netman_networkmanager == true {
+        warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs")
+        service { "NetworkManager":
+            ensure      => stopped,
+            enable      => false,
+            require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
+        }            
+    }
     
 }
