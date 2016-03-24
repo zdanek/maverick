@@ -10,12 +10,6 @@
 	"git_username": 	"",
 	"git_email":		"",
 	
-	// Add classes here
-	"classes":		[
-		// "maverick-security",
-		// "maverick-network",
-		// "maverick-baremetal::raspberry::lcd-spotpear35"
-	],
 	// "maverick-desktop::enable": true,
 	// "maverick-network::netman": false,
 	// "maverick-cloud9::enabled": true,
@@ -26,5 +20,11 @@
 	// "maverick-baremetal::raspberry::init::spi": true, // required for lcd screens
 	// "maverick-baremetal::raspberry::init::serialconsole": true,
 	
+	// Add classes here
+	"classes":		[
+		// "maverick-security",
+		// "maverick-network",
+		// "maverick-baremetal::raspberry::lcd-spotpear35"
+	]
 	
 }
