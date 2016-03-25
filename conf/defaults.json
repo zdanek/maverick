@@ -16,11 +16,11 @@
 	"classes" : [
 		"base",
 		"maverick-desktop",
-		"maverick-security",
+		"maverick-security"
 	],
 	
 	"base::users::mav_sudopass": false,
-	"maverick-desktop::enable": false
+	"maverick-desktop::enable": false,
 	"maverick-security::fail2ban": false,
 	"maverick-security::firewall": true
 
