@@ -24,13 +24,28 @@ class maverick-cloud9 (
         logoutput	=> true,
         creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
     } ->
+    file { "/srv/maverick/software/cloud9/scripts/install.sh":
+        ensure      => present,
+        source      => "puppet:///modules/maverick-cloud9/install.sh",
+        mode        => 755,
+        owner       => "mav",
+        group       => "mav",
+    } ->
+    exec { "install-preinstall-fix":
+        # This is a fix for compiling dependencies on arm platforms
+        creates     => "/srv/maverick/.c9/installed",
+        command     => "/srv/maverick/software/cloud9/scripts/install.sh",
+        timeout     => 0,
+        user        => "mav",
+        environment => ["HOME=/srv/maverick"],
+    }
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh",
-        cwd		=> "/srv/maverick/software/cloud9",
+        cwd		    => "/srv/maverick/software/cloud9",
         creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
         timeout		=> 0,
-        user        	=> "mav",
-        environment 	=> ["HOME=/srv/maverick"],
+        user        => "mav",
+        environment => ["HOME=/srv/maverick"],
     } ->
     file { "/etc/systemd/system/cloud9.service":
         content     => template("maverick-cloud9/cloud9.service.erb"),
