@@ -8,5 +8,8 @@ class base::defaults {
     Exec	{ 
         path		=> '/usr/bin:/usr/sbin:/bin:/sbin',
     }
+    
+    # Activate puppetlabs-stdlib at the first opportunity
+    class { "stdlib": }
 
 }

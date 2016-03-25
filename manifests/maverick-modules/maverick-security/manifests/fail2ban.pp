@@ -3,13 +3,10 @@ class maverick-security::fail2ban (
     ) {
 
     class { "::fail2ban":
-        ignoreip    => hiera("all_ips"),
-        destemail   => $alertemail,
-        bantime     => 1800,
-        maxretry    => 6
-    } ->
-    file { "/etc/fail2ban/jail.d/defaults-debian.conf":
-        ensure => absent
+        ignoreip            => hiera("all_ips"),
+        destemail           => $alertemail,
+        bantime             => 1800,
+        maxretry            => 6,
     }
     class { "::fail2ban::jail::ssh": }
 

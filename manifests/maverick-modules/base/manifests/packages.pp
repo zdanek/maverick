@@ -2,16 +2,19 @@ class base::packages {
 
     # These packages are installed by default for all installs.  
     # Be careful of what is put here, usually packages should be put in more specific manifests
-    package {[
+    ensure_packages([
         "telnet",
         "wget",
         "iotop",
         "python",
         "python-dev",
         "python-pip",
-        ]:
-        ensure	=> installed
-    }
+        "build-essential",
+        "xz-utils",
+        "unzip",
+        "wget",
+        "curl",
+    ])
     if ($operatingsystem == "Debian") {
         package {[
         ]:

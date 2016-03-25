@@ -15,4 +15,7 @@ class maverick-baremetal (
 		class { "maverick-baremetal::beagle::init": }
 	}
 	
+	if ($odroid_present == "yes") {
+		class { "maverick-baremetal::odroid::init": }
+	}
 }

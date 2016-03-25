@@ -48,15 +48,10 @@ For more details, see : https://tickets.puppetlabs.com/browse/PUP-3121
  * `ensure` parameter deprecated in fail2ban::jail since 1.2.0. Will be removed
      for 2.x.  Since the jail define uses puppetlabs-concat to define a
      fragment for each jail to be concatenated in `/etc/fail2ban/jail.local`,
-     we're purposefully avoiding to use the ensure parameter. This is because
+     we're purposfully avoiding to use the ensure parameter. This is because
      the 2.x branch of puppetlabs-concat has deprecated this parameter and
      issues warnings to users that are using it. Users of the fail2ban module
      should instead remove the resources for the jails that must be removed.
-
- * The directory `/etc/fail2ban/jail.d` is now getting purged by default. Users
-     who would like to preserve files in this directory that are not managed by
-     puppet should now set the `purge_jail_dot_d` parameter to the `fail2ban`
-     class to false.
 
 ## Parameters to fail2ban class ##
 
@@ -83,9 +78,6 @@ global default values. These values can be overridden by individual jails.
  * `action` Default action for jails. Default value is '%(action_)s', which is
    defined as '%(banaction)s[name=%(__name__)s, port="%(port)s",
    protocol="%(protocol)s]' in jail.conf.
- * `purge_jail_dot_d` Boolean value that decides whether
-   `/etc/fail2ban/jail.d/` is purged of files that are not managed by puppet.
-   Default value is true.
 
 ## Defining jails ##
 

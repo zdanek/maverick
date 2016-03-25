@@ -14,7 +14,8 @@
 
 	"classes" : [
 		"base",
-		"maverick-desktop"
+		"maverick-desktop",
+		"maverick-security",
 	],
 	
 	"base::users::mav_sudopass": false,
