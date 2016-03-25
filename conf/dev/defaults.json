@@ -1,8 +1,8 @@
 // These are defaults for the dev environment.
 {
 	"classes": [
+		"maverick-dronekit",
+		"maverick-dronekit::dev",
 		"maverick-cloud9"
 	]
-	
-	// ,"maverick-desktop::enable": true // Uncomment to enable desktop for all dev nodes
 }

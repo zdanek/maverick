@@ -4,11 +4,7 @@ class base::packages {
     # Be careful of what is put here, usually packages should be put in more specific manifests
     ensure_packages([
         "telnet",
-        "wget",
         "iotop",
-        "python",
-        "python-dev",
-        "python-pip",
         "build-essential",
         "xz-utils",
         "unzip",
@@ -33,11 +29,20 @@ class base::packages {
 
     # Remove large packages that come with raspbian as otherwise we don't have enough space to continue
     package { "sonic-pi":
-	ensure		=> purged
+	    ensure		=> purged
     }
     # Remove upstart as it breaks ubuntu which is now systemd
     package { ["upstart", "unity-greeter"]:
-	ensure		=> purged
+	    ensure		=> purged
+    }
+    
+    # Install python using python module
+    class { "python":
+        version    => 'system',
+        pip        => 'present',
+        dev        => 'present',
+        virtualenv => 'present',
+        gunicorn   => 'absent',
     }
     
 }
