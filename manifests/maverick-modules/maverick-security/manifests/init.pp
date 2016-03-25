@@ -1,6 +1,7 @@
 class maverick-security (
 	$selinux = "permissive",
 	$fail2ban = false,
+	$firewall = true,
 	) {
     
     ### Turn selinux on to at least permissive by default
@@ -10,10 +11,12 @@ class maverick-security (
 	    }
     }
     
-    ### Mandatory - start basic iptables rules.  More rules are set with each applicaton
-	class { "maverick-security::firewall": }
+    ### Configure firewall.  More rules are set with each applicaton
+	if $firewall {
+		class { "maverick-security::firewall": }
+	}
 
-	### Optional - Configure fail2ban for ssh
+	### Configure fail2ban for ssh
 	if $fail2ban {
 		class { "maverick-security::fail2ban": }
 	} else {
@@ -23,7 +26,7 @@ class maverick-security (
 		}
 	}
 
-	### Mandatory - Configure scanners like rkhunter and clamav
+	### Configure scanners like rkhunter and clamav
 	class { "maverick-security::scanners": }
 	
 	### Configure/enable ssh client, including various mandatory keys

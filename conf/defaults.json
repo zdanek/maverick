@@ -9,6 +9,7 @@
 	// List of all internal IP addresses.  These IPs are used for default iptables and other access control,
 	//  so be careful what is put in here.
 	// These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
+	// If all_ips is left blank, ALL IPs will be allowed for configured rules.
 	"all_ips": [
 	],
 
@@ -20,5 +21,7 @@
 	
 	"base::users::mav_sudopass": false,
 	"maverick-desktop::enable": false
+	"maverick-security::fail2ban": false,
+	"maverick-security::firewall": true
 
 }
