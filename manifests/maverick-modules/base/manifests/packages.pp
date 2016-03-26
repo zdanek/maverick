@@ -37,12 +37,14 @@ class base::packages {
 	#    ensure		=> purged
     #}
     # Kludgy workaround for broken puppet/upstart behaviour
-    file { "/sbin/status":
-        ensure      => present,
-        mode        => 755,
-        owner       => root,
-        group       => root,
-        source      => "puppet:///modules/base/ubuntu-sbin-status",
+    if $operatingsystem == "Ubuntu" {
+        file { "/sbin/status":
+            ensure      => present,
+            mode        => 755,
+            owner       => root,
+            group       => root,
+            source      => "puppet:///modules/base/ubuntu-sbin-status",
+        }
     }
     
     # Install python using python module
