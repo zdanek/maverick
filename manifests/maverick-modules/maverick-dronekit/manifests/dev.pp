@@ -1,8 +1,8 @@
 class maverick-dronekit::dev (
     $sitl = true,
     $sitl_fw_branch = "master",
-    # $sitl_fw_builds = ["ArduCopter", "ArduPlane", "APMrover2", "AntennaTracker"],
-    $sitl_fw_builds = ["ArduCopter", "ArduPlane"] # only build copter by default
+    $sitl_fw_builds = ["ArduCopter", "ArduPlane", "APMrover2", "AntennaTracker"],
+    #$sitl_fw_builds = ["ArduCopter"] # only build copter by default
 ) {
     
     # Install a virtual environment for dronekit dev
@@ -26,10 +26,16 @@ class maverick-dronekit::dev (
 
     # Define function to build ardupilot firmwares, this is used for iteration if $sitl == true
     define sitl_fw_build ($build = $title) {
+        $downvar = downcase($build)
+        $buildvar = "ardupilotfw_${downvar}"
+        $warningvar = getvar("${buildvar}")
+        if $warningvar == "no" {
+            warning("Arudpilot Firmware: ${build} will be compiled and can take a while, please be patient")
+        }
         exec { "sitl_fw_build_${build}":
             user        => "mav",
             timeout     => 0,
-            command     => "/usr/bin/make linux",
+            command     => "/usr/bin/make -j${::processorcount} linux",
             cwd         => "/srv/maverick/code/dronekit-dev/ardupilot/${build}",
             creates     => "/srv/maverick/code/dronekit-dev/ardupilot/${build}/${build}.elf",
         }
@@ -57,7 +63,6 @@ class maverick-dronekit::dev (
         ensure_packages(["make", "gawk", "g++", "arduino-core"])
         
         # Build specified firmwares iteratively
-        warning("Building ArduPilot firmwares, this can take a while..")
         sitl_fw_build { $sitl_fw_builds: }
         
     }

@@ -3,6 +3,9 @@ class maverick-cloud9 (
     $webport = "6789",
     $basepath = "/srv/maverick",
 ) {
+    if $cloud9_installed == "no" {
+        warning("Cloud9 will be compiled and can take a long time, please be patient..")
+    }
     file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
         require		=> File["/srv/maverick/software"],
@@ -17,12 +20,7 @@ class maverick-cloud9 (
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
-        notify		=> [ Exec["install-cloud9"], Exec["install-cloud9-warning"] ]
-    } ->
-    exec { "install-cloud9-warning":
-        command		=> "/bin/echo 'Warning: First run of cloud9 install can take a long time, be patient..'",
-        logoutput	=> true,
-        creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
+        notify		=> [ Exec["install-cloud9"] ]
     } ->
     file { "/srv/maverick/software/cloud9/scripts/install.sh":
         ensure      => present,
