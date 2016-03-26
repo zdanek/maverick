@@ -115,6 +115,14 @@ if hash git 2>/dev/null; then
     fi
 fi
 
+# Kludge to address #60: Remove upstart before we run puppet as it gets upset
+#  with broken upstart/init setup
+ubuntu=$(/bin/grep 'DISTRIB_DESCRIPTION\="Ubuntu 15.10"' /etc/lsb-release)
+if [ "$ubuntu" != "" ]; then
+	echo "Removing broken ubuntu upstart"
+	sudo dpkg --purge unity-greeter upstart >/dev/null 2>&1
+fi
+
 # OK we're good to go!
 echo "Environment: ${ENV}"
 echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'

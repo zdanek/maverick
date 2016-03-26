@@ -33,18 +33,8 @@ class base::packages {
     }
 
     # Remove upstart as it breaks ubuntu which is now systemd
-    #package { ["upstart", "unity-greeter"]:
-	#    ensure		=> purged
-    #}
-    # Kludgy workaround for broken puppet/upstart behaviour
-    if $operatingsystem == "Ubuntu" {
-        file { "/sbin/status":
-            ensure      => present,
-            mode        => 755,
-            owner       => root,
-            group       => root,
-            source      => "puppet:///modules/base/ubuntu-sbin-status",
-        }
+    package { ["upstart", "unity-greeter"]:
+	ensure		=> purged
     }
     
     # Install python using python module
