@@ -1,5 +1,8 @@
 class maverick-dronekit::dev (
     $sitl = true,
+    $sitl_fw_branch = "master",
+    # $sitl_fw_builds = ["ArduCopter", "ArduPlane", "APMrover2", "AntennaTracker"],
+    $sitl_fw_builds = ["ArduCopter", "ArduPlane"] # only build copter by default
 ) {
     
     # Install a virtual environment for dronekit dev
@@ -21,6 +24,16 @@ class maverick-dronekit::dev (
         timeout      => 0,
     }
 
+    # Define function to build ardupilot firmwares, this is used for iteration if $sitl == true
+    define sitl_fw_build ($build = $title) {
+        exec { "sitl_fw_build_${build}":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make linux",
+            cwd         => "/srv/maverick/code/dronekit-dev/ardupilot/${build}",
+            creates     => "/srv/maverick/code/dronekit-dev/ardupilot/${build}/${build}.elf",
+        }
+    }
     # Install dronekit-sitl into dronekit-dev
     if $sitl == true {
         python::pip { 'pip-dronekit-sitl':
@@ -30,19 +43,23 @@ class maverick-dronekit::dev (
             owner       => 'mav',
             timeout     => 0,
         }
+
+        # Pull ardupilot to build firmwares for sitl, as pre-built firmwares aren't available for ARM.
+        # For now just pull master, sort out releases/versions later
+        vcsrepo { "/srv/maverick/code/dronekit-dev/ardupilot":
+            ensure		=> present,
+            provider 	=> git,
+            source		=> "https://github.com/ArduPilot/ardupilot.git",
+            revision	=> "${sitl_fw_branch}",
+            owner		=> "mav",
+            group		=> "mav",
+        }
+        ensure_packages(["make", "gawk", "g++", "arduino-core"])
+        
+        # Build specified firmwares iteratively
+        warning("Building ArduPilot firmwares, this can take a while..")
+        sitl_fw_build { $sitl_fw_builds: }
+        
     }
-    
-    # Pull ardupilot into software to build firmwares for sitl
-    # For now just pull master, sort out releases/versions later
-    vcsrepo { "/srv/maverick/code/dronekit-dev/ardupilot":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/ArduPilot/ardupilot.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
-    }
-    ensure_packages(["make", "gawk", "g++", "arduino-core"])
-    
-    
+
 }

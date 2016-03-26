@@ -1,8 +1,18 @@
 // These are defaults for the dev environment.
 {
+	"maverick-dronekit::dev::sitl": true,
+	// "maverick-dronekit::dronekit_la_revision": "master",
+	// "maverick-dronekit::dev::sitl_fw_branch": "master",
+    // "maverick-dronekit::dev::sitl_fw_builds": ["ArduCopter", "ArduPlane", "APMrover2", "AntennaTracker"],
+    // "maverick-dronekit::dev::sitl_fw_builds": ["ArduCopter"], //only build copter fw
+	// "maverick-cloud9::enabled": true,
+    // "maverick-cloud9::webport": 6789,
+    // "maverick-cloud9::basepath": "/srv/maverick",
+
 	"classes": [
 		"maverick-dronekit",
 		"maverick-dronekit::dev",
 		"maverick-cloud9"
 	]
+	
 }
