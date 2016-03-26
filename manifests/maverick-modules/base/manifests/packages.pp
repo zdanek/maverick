@@ -31,9 +31,18 @@ class base::packages {
     package { "sonic-pi":
 	    ensure		=> purged
     }
+
     # Remove upstart as it breaks ubuntu which is now systemd
-    package { ["upstart", "unity-greeter"]:
-	    ensure		=> purged
+    #package { ["upstart", "unity-greeter"]:
+	#    ensure		=> purged
+    #}
+    # Kludgy workaround for broken puppet/upstart behaviour
+    file { "/sbin/status":
+        ensure      => present,
+        mode        => 755,
+        owner       => root,
+        group       => root,
+        source      => "puppet:///modules/base/ubuntu-sbin-status",
     }
     
     # Install python using python module
