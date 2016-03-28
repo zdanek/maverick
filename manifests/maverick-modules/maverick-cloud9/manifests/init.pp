@@ -24,7 +24,7 @@ class maverick-cloud9 (
     } ->
     file { "/srv/maverick/software/cloud9/scripts/install.sh":
         ensure      => present,
-        source      => "puppet:///modules/maverick-cloud9/install.sh",
+        content     => template("maverick-cloud9/install.sh.erb"),
         mode        => 755,
         owner       => "mav",
         group       => "mav",
