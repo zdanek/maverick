@@ -11,7 +11,7 @@ if not os.path.isfile('/sys/firmware/devicetree/base/model'):
 	sys.exit(1)
 
 # Define main data container
-data = {'emcbooted': 'no', 'sdcard_present': 'no'}
+data = {'emmcbooted': 'no', 'sdcard_present': 'no'}
 
 f = open('/sys/firmware/devicetree/base/model', 'r')
 for line in f:
@@ -44,6 +44,8 @@ for line in f:
     	data['emmcbooted'] = 'yes'
     if re.search("mmcblk1boot0", line):
     	data['emmcbooted'] = 'no'
+    	data['sdcard_present'] = 'yes'
+    	data['sdcard_size'] = data['rootdisksize']
     try:
     	if data['emmcbooted'] == 'yes' and re.search("mmcblk1$"):
     		data['sdcard_present'] = 'yes'
