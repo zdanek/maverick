@@ -30,7 +30,7 @@ class base::maverick {
         group   => "mav",
         mode    => 755
     }
-    file { "/srv/maverick/virtualenvs":
+    file { "/srv/maverick/.virtualenvs":
         ensure	=> directory,
         owner   => "mav",
         group   => "mav",
@@ -114,5 +114,5 @@ class base::maverick {
         mode        => 644,
         content     => $environment,
     }
-
+    
 }

@@ -1,5 +1,10 @@
 class base::packages {
 
+    # Remove large packages that come with raspbian as otherwise we don't have enough space to continue
+    package { "sonic-pi":
+	    ensure		=> purged
+    }
+
     # These packages are installed by default for all installs.  
     # Be careful of what is put here, usually packages should be put in more specific manifests
     ensure_packages([
@@ -11,12 +16,6 @@ class base::packages {
         "wget",
         "curl",
     ])
-    if ($operatingsystem == "Debian") {
-        package {[
-        ]:
-        ensure	=> installed
-        }
-    }
 
     # These packages should be removed from all installs.  
     # Usually these are included in the default OS build and are not necessary, or cause some conflict or unwanted behaviour
@@ -27,14 +26,15 @@ class base::packages {
         package { "libfprint": ensure => absent } 
     }
 
-    # Remove large packages that come with raspbian as otherwise we don't have enough space to continue
-    package { "sonic-pi":
+    # Remove upstart as it breaks ubuntu which is now systemd
+    # This is done in maverick shell script but make sure here
+    package { ["upstart", "unity-greeter"]:
 	    ensure		=> purged
     }
 
-    # Remove upstart as it breaks ubuntu which is now systemd
-    package { ["upstart", "unity-greeter"]:
-	ensure		=> purged
+    # Remove ModeManager which conflicts with APM/Pixhawk
+    package { "modemmanager":
+        ensure      => purged
     }
     
     # Install python using python module
@@ -44,6 +44,9 @@ class base::packages {
         dev        => 'present',
         virtualenv => 'present',
         gunicorn   => 'absent',
+    } ->
+    package { "virtualenvwrapper":
+        ensure      => present
     }
     
 }
