@@ -11,7 +11,7 @@ if not os.path.isfile('/sys/firmware/devicetree/base/model'):
 	sys.exit(1)
 
 # Define main data container
-data = {}
+data = {'emcbooted': 'no', 'sdcard_present': 'no'}
 
 f = open('/sys/firmware/devicetree/base/model', 'r')
 for line in f:
@@ -39,7 +39,18 @@ except:
 f = open('/proc/partitions', 'r')
 for line in f:
     if re.search("mmcblk0$", line):
-        data['disksize'] = int(line.split()[2]) / 1024
+        data['rootdisksize'] = int(line.split()[2]) / 1024
+    if re.search("mmcblk0boot0", line):
+    	data['emmcbooted'] = 'yes'
+    if re.search("mmcblk1boot0", line):
+    	data['emmcbooted'] = 'no'
+    try:
+    	if data['emmcbooted'] == 'yes' and re.search("mmcblk1$"):
+    		data['sdcard_present'] = 'yes'
+    		data['sdcard_size'] = int(line.split()[2]) / 1024
+    except:
+    	pass
+
 f.close()
 
 # Finally, print the data out in the format expected of a fact provider
