@@ -58,19 +58,11 @@ for line in f:
         data['sdcard_present'] = 'yes'
         data['sdcard_size'] = data['rootdisksize']
     try:
-<<<<<<< HEAD
         if data['emmcbooted'] == 'yes' and re.search("mmcblk1$", line):
             data['sdcard_present'] = 'yes'
             data['sdcard_size'] = int(line.split()[2]) / 1024
         if data['emmcbooted'] == 'no' and re.search("mmcblk1$", line):
             data['emmc_size'] = int(line.split()[2]) / 1024
-=======
-    	if data['emmcbooted'] == 'yes' and re.search("mmcblk1$", line):
-    		data['sdcard_present'] = 'yes'
-    		data['sdcard_size'] = int(line.split()[2]) / 1024
-    	if data['emmcbooted'] == 'no' and re.search("mmcblk1$", line):
-    		data['emmc_size'] = int(line.split()[2]) / 1024
->>>>>>> c86429fac946bae317c005ae7180aedd6a9d788a
     except:
         pass
 
