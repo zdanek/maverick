@@ -15,4 +15,11 @@ class maverick-baremetal::beagle::init (
         ensure      => purged
     }
     
+    if $beagle_rootdiskexpanded != "yes" {
+        warning("Root Filesystem is being expanded, please reboot ASAP to activate new partition table")
+        exec { "beagle_expand_rootfs":
+            command     => "/opt/scripts/tools/grow_partition.sh",
+        }
+    }
+    
 }
