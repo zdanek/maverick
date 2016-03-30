@@ -6,7 +6,8 @@ class maverick-network (
     ) {
     
     class { "network": 
-        hostname => "${hostname}"
+        hostname => "${hostname}",
+        config_file_notify => '',
     }
     network::interface { 'lo':
         enable_dhcp     => false,
@@ -15,10 +16,10 @@ class maverick-network (
         manage_order    => 0,
     }
     network::interface { 'eth0':
-        enable_dhcp     => false,
+        enable_dhcp     => true,
         manage_order    => 10,
-        auto            => false,
-        method          => manual,
+        auto            => true,
+        method          => "dhcp",
     }
     
     if $ntpclient == "enabled" {

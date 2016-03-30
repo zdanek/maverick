@@ -22,4 +22,10 @@ class base::services (
     #   enable      => true
     # }
         
+    # Define an exec to do systemctl daemon-reload that can be called through notify
+    # Make sure to name it something that won't clash elsewhere, and don't exec unless notified
+    exec { "maverick-systemctl-daemon-reload":
+        command         => "/bin/systemctl daemon-reload",
+        refreshonly     => true,
+    }
 }

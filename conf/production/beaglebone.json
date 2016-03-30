@@ -1,0 +1,16 @@
+{
+	"wifi_ssid": 		"BTHub4-5XZ3",
+	"wifi_passtype": 	"wpa2",
+	"wifi_passphrase": 	"0dc5ec0834c47b03c27cfbba4ee2850a224e6311bacd12ca7ae873a2583e20c6",
+
+	"git_username": 	"fnoop",
+	"git_email":		"fnoopdogg@gmail.com",
+	
+	"maverick-network::netman": false,
+
+	"classes":		[
+		"maverick-cloud9",
+		"maverick-network"
+	]
+	
+}

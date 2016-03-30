@@ -18,9 +18,25 @@ class maverick-network::wireless (
         ensure      => installed
     } ->
     service { "dhcpcd":
-        ensure      => running,
-        enable      => true,
+        ensure      => stopped,
+        enable      => false,
         require     => Class["Network"]
+    }
+    
+    # Ensure rfkill installed and add a boot script to unblock all wlan interfaces
+    package { "rfkill":
+        ensure      => installed
+    } ->
+    file { "/etc/systemd/system/rfkill-unblock.service":
+        ensure      => present,
+        source      => "puppet:///modules/maverick-network/rfkill-unblock.service",
+        mode        => 755,
+        owner       => "root",
+        group       => "root",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    } ->
+    service { "rfkill-unblock.service":
+        enable      => true,
     }
     
     # Turn off predictable interface naming
@@ -29,20 +45,21 @@ class maverick-network::wireless (
         target      => "/dev/null",
     }
     
+    
     # Define two wireless interfaces
     network::interface { "wlan0":
-        enable_dhcp     => false,
-        auto            => false,
+        enable_dhcp     => true,
+        auto            => true,
         allow_hotplug   => true,
-        method          => "manual",
+        method          => "dhcp",
         template        => "maverick-network/interface_fragment_wireless.erb",
         manage_order    => 20,
     }
     network::interface { "wlan1":
-        enable_dhcp     => false,
-        auto            => false,
+        enable_dhcp     => true,
+        auto            => true,
         allow_hotplug   => true,
-        method          => 'manual',
+        method          => 'dhcp',
         template        => "maverick-network/interface_fragment_wireless.erb",
         manage_order    => 21,
     }
