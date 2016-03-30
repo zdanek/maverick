@@ -2,8 +2,8 @@
 //  is excluded from ever being committed back to git.
 {
 	// Set passwords
-	"base::users::mav_password": "", // Set mav user encrypted password here (obtain from /etc/shadow)
-	"base::users::root_password": "", // Set root user encrypted password here (obtain from /etc/shadow)
+	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain from /etc/shadow)
+	// "base::users::root_password": "", // Set root user encrypted password here (obtain from /etc/shadow)
 	
 	// Set defaults for wifi.  If set, any wifi interface detected will be automatically activated with these settings.
 	"wifi_ssid": 		"",
@@ -23,6 +23,8 @@
 	// "maverick-network::wireless::wlan0_address": "192.168.1.51",
 	// "maverick-network::wireless::wlan0_netmask": "255.255.255.0",
 	// "maverick-network::wireless::wlan0_gateway": "192.168.1.254",
+	// "maverick-network::wireless::wlan0_ssid": "",
+	// "maverick-network::wireless::wlan0_psk": "", // must be encrypted psk created using 'wpa_passphrase myssid mypassphrase'.  Overrides wifi_psk above for specific interface
 
 	// "maverick-desktop::enable": true,
 
