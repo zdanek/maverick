@@ -78,26 +78,19 @@ class maverick-network (
         service { "connman.service":
             ensure      => undef,
             enable      => false,
-            #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
-            #notify      => Exec["connman-reboot"],
         }
-        #package { ["connman", "cmst"]:
-        #    ensure      => absent
-        #} ->
-        #exec { "connman-reboot":
-        #    refreshonly     => true,
-        #    command         => "/sbin/reboot",
-        #}
     } 
     
     # Remove NetworkManager
     if $netman == false and $netman_networkmanager == "yes" {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs")
         service { "NetworkManager":
-            ensure      => undef,
+            ensure      => stopped,
             enable      => false,
-            #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
-        }            
+        } ->
+        package { "network-manager":
+            ensure      => absent, # remove but don't purge, so it can be restored later
+        }
     }
     
 }
