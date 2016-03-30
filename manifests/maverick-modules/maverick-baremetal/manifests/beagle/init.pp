@@ -22,4 +22,16 @@ class maverick-baremetal::beagle::init (
         }
     }
     
+    # If network managed, configure usb networking
+    if defined(Class["::maverick-network"]) {
+        network::interface { "usb0":
+            enable_dhcp     => false,
+            manage_order    => 30,
+            auto            => true,
+            method          => "static",
+            ipaddress       => "192.168.7.2",
+            netmask         => "255.255.255.252",
+        }
+    }
+    
 }
