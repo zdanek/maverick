@@ -76,7 +76,7 @@ class maverick-network (
             mode        => 644,
         } ->
         service { "connmand":
-            #ensure      => stopped,
+            ensure      => undef,
             enable      => false,
             #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
             #notify      => Exec["connman-reboot"],
@@ -94,7 +94,7 @@ class maverick-network (
     if $netman == false and $netman_networkmanager == "yes" {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs")
         service { "NetworkManager":
-            # ensure      => stopped,
+            ensure      => undef,
             enable      => false,
             #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
         }            
