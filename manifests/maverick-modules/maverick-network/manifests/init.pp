@@ -67,7 +67,7 @@ class maverick-network (
     
     # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
     # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
-    if $netman == false and $netman_connmand == true {
+    if $netman == false and $netman_connmand == "yes" {
         warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs")
         file { "/etc/resolv.conf":
             ensure      => file,
@@ -78,7 +78,7 @@ class maverick-network (
         service { "connmand":
             #ensure      => stopped,
             enable      => false,
-            require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
+            #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
             #notify      => Exec["connman-reboot"],
         }
         #package { ["connman", "cmst"]:
@@ -91,12 +91,12 @@ class maverick-network (
     } 
     
     # Remove NetworkManager
-    if $netman == false and $netman_networkmanager == true {
+    if $netman == false and $netman_networkmanager == "yes" {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs")
         service { "NetworkManager":
             # ensure      => stopped,
             enable      => false,
-            require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
+            #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
         }            
     }
     

@@ -19,9 +19,5 @@ class maverick-baremetal::beagle::services {
         ensure      => stopped,
         enable      => false,
     }
-    service { "apache2":
-        ensure      => stopped,
-        enable      => false,
-    }
     
 }
