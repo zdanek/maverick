@@ -1,7 +1,16 @@
 class maverick-network::wireless (
-    $connman = false,
-    ) {
-    
+    $wlan0_name = "wlan0",
+    $wlan0_mode = "dhcp",
+    $wlan0_address = undef,
+    $wlan0_netmask = undef,
+    $wlan0_gateway = undef,
+    $wlan1_name = "wlan1",
+    $wlan1_mode = "dhcp",
+    $wlan1_address = undef,
+    $wlan1_netmask = undef,
+    $wlan1_gateway = undef,
+) {
+
     # Ensure wpasupplicant is installed
     package { "wpasupplicant":
         ensure      => installed
@@ -38,16 +47,9 @@ class maverick-network::wireless (
     service { "rfkill-unblock.service":
         enable      => true,
     }
-    
-    # Turn off predictable interface naming
-    file { "/etc/udev/rules.d/80-net-setup-link.rules":
-        ensure      => link,
-        target      => "/dev/null",
-    }
-    
-    
+
     # Define two wireless interfaces
-    network::interface { "wlan0":
+    network::interface { "$wlan0_name":
         enable_dhcp     => true,
         auto            => true,
         allow_hotplug   => true,
@@ -55,7 +57,7 @@ class maverick-network::wireless (
         template        => "maverick-network/interface_fragment_wireless.erb",
         manage_order    => 20,
     }
-    network::interface { "wlan1":
+    network::interface { "$wlan1_name":
         enable_dhcp     => true,
         auto            => true,
         allow_hotplug   => true,
@@ -64,7 +66,8 @@ class maverick-network::wireless (
         manage_order    => 21,
     }
 
-    # If a wireless NIC is detected and defaults are set in localconf.json, configure it 
+    # If wireless auth defaults are set in localconf.json, configure it 
+    # Retrieve wireless auth data from hiera
     $wifi_ssid = hiera('wifi_ssid')
     $wifi_passphrase = hiera('wifi_passphrase')
     if $wifi_ssid and $wifi_passphrase {

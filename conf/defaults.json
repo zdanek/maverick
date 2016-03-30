@@ -21,6 +21,20 @@
 	
 	"base::users::mav_sudopass": false,
 	"maverick-desktop::enable": false,
+	
+	// "maverick-network::dnsclient": "disabled",
+    // "maverick-network::ntpclient": "enabled",
+    // "maverick-network::ethernet": true,
+    // "maverick-network::wireless": true,
+    // "maverick-network::netman": false,
+    // "maverick-network::predictable": false,
+    // "maverick-network::eth0_name": "eth0",
+    // "maverick-network::eth0_mode": "dhcp",
+    // "maverick-network::wlan0_name": "wlan0",
+    // "maverick-network::wlan0_mode": "dhcp",
+    // "maverick-network::wlan1_name": "wlan1",
+    // "maverick-network::wlan1_mode": "dhcp",
+
 	"maverick-security::fail2ban": false,
 	"maverick-security::firewall": true
 

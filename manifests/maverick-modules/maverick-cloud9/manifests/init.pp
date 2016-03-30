@@ -6,6 +6,10 @@ class maverick-cloud9 (
     if $cloud9_installed == "no" {
         warning("Cloud9 will be compiled and can take a long time, please be patient..")
     }
+    
+    # Install system ncurses first, so cloud9 doesn't have to compile it
+    ensure_packages(["libncurses5", "libncurses5-dev"])
+    
     file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
         require		=> File["/srv/maverick/software"],

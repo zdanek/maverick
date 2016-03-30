@@ -1,10 +1,13 @@
 class maverick-network (
     $dnsclient = "disabled", 
     $ntpclient = "enabled",
+    $ethernet = true,
     $wireless = true,
-    $netman = undef,
+    $netman = false,
+    $predictable = false,
     ) {
     
+    # Base network setup
     class { "network": 
         hostname => "${hostname}",
         config_file_notify => '',
@@ -15,13 +18,7 @@ class maverick-network (
         method          => loopback,
         manage_order    => 0,
     }
-    network::interface { 'eth0':
-        enable_dhcp     => true,
-        manage_order    => 10,
-        auto            => true,
-        method          => "dhcp",
-    }
-    
+
     if $ntpclient == "enabled" {
         include maverick-network::ntpclient
     }
@@ -36,6 +33,18 @@ class maverick-network (
         "net.core.wmem_max": 							value => '12582912';
         "net.ipv4.tcp_rmem":							value => "10240 87380 12582912";
         "net.ipv4.tcp_wmem":							value => "10240 87380 12582912";
+    }
+    
+    # Turn off predictable interface naming
+    if $predictable == false {
+        file { "/etc/udev/rules.d/80-net-setup-link.rules":
+            ensure      => link,
+            target      => "/dev/null",
+        }
+    }
+    
+    if $ethernet {
+        class { "maverick-network::ethernet": }
     }
     
     if $wireless {
@@ -53,25 +62,25 @@ class maverick-network (
             mode        => 644,
         } ->
         service { "connmand":
-            ensure      => stopped,
+            #ensure      => stopped,
             enable      => false,
             require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
-            notify      => Exec["connman-reboot"],
-        } ->
-        package { ["connman", "cmst"]:
-            ensure      => absent
-        } ->
-        exec { "connman-reboot":
-            refreshonly     => true,
-            command         => "/sbin/reboot",
+            #notify      => Exec["connman-reboot"],
         }
+        #package { ["connman", "cmst"]:
+        #    ensure      => absent
+        #} ->
+        #exec { "connman-reboot":
+        #    refreshonly     => true,
+        #    command         => "/sbin/reboot",
+        #}
     } 
     
     # Remove NetworkManager
     if $netman == false and $netman_networkmanager == true {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs")
         service { "NetworkManager":
-            ensure      => stopped,
+            # ensure      => stopped,
             enable      => false,
             require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
         }            
