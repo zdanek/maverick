@@ -1,11 +1,13 @@
 // These are fall-back defaults.  They can/should be over-ridden higher up the hierarchy.
 {
+	// NB: Some defaults are set in localconf.json to protect potentially sensitive data
+
 	// Set blank defaults for host/ip values.  This is to prevent parsing errors
 	"hostname": "",
 	"fqdn": "",
 	"primaryip": "",
-	"hostaliases": [],
-
+	"hostaliases": "",
+	
 	// List of all internal IP addresses.  These IPs are used for default iptables and other access control,
 	//  so be careful what is put in here.
 	// These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
@@ -32,8 +34,12 @@
     // "maverick-network::eth0_mode": "dhcp",
     // "maverick-network::wlan0_name": "wlan0",
     // "maverick-network::wlan0_mode": "dhcp",
+    // "maverick-network::wlan0_ssid": false,
+    // "maverick-network::wlan0_psk": false,
     // "maverick-network::wlan1_name": "wlan1",
     // "maverick-network::wlan1_mode": "dhcp",
+    // "maverick-network::wlan1_ssid": false,
+    // "maverick-network::wlan1_psk": false,
 
 	"maverick-security::fail2ban": false,
 	"maverick-security::firewall": true

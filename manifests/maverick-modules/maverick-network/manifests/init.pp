@@ -6,6 +6,20 @@ class maverick-network (
     $netman = false,
     $predictable = false,
     ) {
+
+    # Make sure dhcp servers are turned off
+    service { "udhcpd":
+        ensure      => stopped,
+        enable      => false
+    } ->
+    package { "dhcpcd5":
+        ensure      => installed
+    } ->
+    service { "dhcpcd":
+        ensure      => stopped,
+        enable      => false,
+        require     => Class["Network"]
+    }
     
     # Base network setup
     class { "network": 
