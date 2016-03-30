@@ -15,14 +15,9 @@
 	"all_ips": [
 	],
 
-	"classes" : [
-		"base",
-		"maverick-desktop",
-		"maverick-security"
-	],
+	// "base::users::mav_sudopass": false,
 	
-	"base::users::mav_sudopass": false,
-	"maverick-desktop::enable": false,
+	// "maverick-desktop::enable": false,
 	
 	// "maverick-network::dnsclient": "disabled",
     // "maverick-network::ntpclient": "enabled",
@@ -41,7 +36,13 @@
     // "maverick-network::wlan1_ssid": false,
     // "maverick-network::wlan1_psk": false,
 
-	"maverick-security::fail2ban": false,
-	"maverick-security::firewall": true
+	// "maverick-security::fail2ban": false,
+	// "maverick-security::firewall": true,
 
+	"classes" : [
+		"base",
+		"maverick-desktop",
+		"maverick-security"
+	],
+	
 }
