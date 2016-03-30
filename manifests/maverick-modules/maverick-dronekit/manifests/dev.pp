@@ -103,7 +103,8 @@ class maverick-dronekit::dev (
             content     => template("maverick-dronekit/dev-sitl.service.erb"),
             owner       => "root",
             group       => "root",
-            mode        => 644
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         service { "dev-sitl":
             ensure      => running,
@@ -115,7 +116,8 @@ class maverick-dronekit::dev (
             content     => template("maverick-dronekit/dev-mavproxy.service.erb"),
             owner       => "root",
             group       => "root",
-            mode        => 644
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         service { "dev-mavproxy":
             ensure      => running,

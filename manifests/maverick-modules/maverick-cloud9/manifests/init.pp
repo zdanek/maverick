@@ -49,7 +49,8 @@ class maverick-cloud9 (
         content     => template("maverick-cloud9/cloud9.service.erb"),
         owner       => "root",
         group       => "root",
-        mode        => 644
+        mode        => 644,
+        notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     service { "cloud9":
         ensure      => running,
