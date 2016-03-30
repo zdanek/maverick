@@ -75,7 +75,7 @@ class maverick-network (
             group       => "root",
             mode        => 644,
         } ->
-        service { "connmand":
+        service { "connman.service":
             ensure      => undef,
             enable      => false,
             #require     => [Service["dhcpcd"], Network::Interface["eth0"], Network::Interface["wlan0"], Network::Interface["wlan1"]],
