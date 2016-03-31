@@ -1,4 +1,4 @@
-class maverick-dronekit::dev (
+class maverick-dronekit::sitl (
     $sitl = true,
     # $sitl_fw_branch = "Copter-3.3",
     $sitl_fw_branch = "master",
@@ -7,25 +7,25 @@ class maverick-dronekit::dev (
     $sitl_fw_run = "ArduCopter", # Which firmware will sitl run, must be part of $sitl_fw_builds
 ) {
     
-    # Install a virtual environment for dronekit dev
-    file { "/srv/maverick/code/dronekit-dev":
+    # Install a virtual environment for dronekit sitl
+    file { "/srv/maverick/code/dronekit-sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => 755,
     } ->
-    python::virtualenv { '/srv/maverick/code/dronekit-dev':
+    python::virtualenv { '/srv/maverick/code/dronekit-sitl':
         ensure       => present,
         version      => 'system',
         systempkgs   => false,
         distribute   => true,
-        venv_dir     => '/srv/maverick/.virtualenvs/dronekit-dev',
+        venv_dir     => '/srv/maverick/.virtualenvs/dronekit-sitl',
         owner        => 'mav',
         group        => 'mav',
-        cwd          => '/srv/maverick/code/dronekit-dev',
+        cwd          => '/srv/maverick/code/dronekit-sitl',
         timeout      => 0,
     } ->
-    vcsrepo { "/srv/maverick/code/dronekit-dev/dronekit-python":
+    vcsrepo { "/srv/maverick/code/dronekit-sitl/dronekit-python":
         ensure		=> present,
         provider 	=> git,
         source		=> "http://github.com/dronekit/dronekit-python.git",
@@ -40,28 +40,28 @@ class maverick-dronekit::dev (
         $buildvar = "ardupilotfw_${downvar}"
         $warningvar = getvar("${buildvar}")
         if $warningvar == "no" {
-            warning("Arudpilot Firmware: ${build} will be compiled and can take a while, please be patient")
+            warning("Arudpilot SITL Firmware: ${build} will be compiled and can take a while, please be patient")
         }
         exec { "sitl_fw_build_${build}":
             user        => "mav",
             timeout     => 0,
             command     => "/usr/bin/make -j${::processorcount} sitl",
-            cwd         => "/srv/maverick/code/dronekit-dev/ardupilot/${build}",
-            creates     => "/srv/maverick/code/dronekit-dev/ardupilot/${build}/${build}.elf",
+            cwd         => "/srv/maverick/code/dronekit-sitl/sitl-fw/${build}",
+            creates     => "/srv/maverick/code/dronekit-sitl/sitl-fw/${build}/${build}.elf",
         }
     }
-    # Install dronekit-sitl into dronekit-dev
+    # Install dronekit-sitl into dronekit-sitl
     if $sitl == true {
         python::pip { 'pip-dronekit-sitl':
             pkgname     => 'dronekit-sitl',
-            virtualenv  => '/srv/maverick/.virtualenvs/dronekit-dev',
+            virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
             ensure      => present,
             owner       => 'mav',
             timeout     => 0,
         }
         python::pip { 'pip-mavproxy-sitl':
             pkgname     => 'MAVProxy',
-            virtualenv  => '/srv/maverick/.virtualenvs/dronekit-dev',
+            virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
             ensure      => present,
             owner       => 'mav',
             timeout     => 0,
@@ -69,7 +69,7 @@ class maverick-dronekit::dev (
             
         # Pull ardupilot to build firmwares for sitl, as pre-built firmwares aren't available for ARM.
         # For now just pull master, sort out releases/versions later
-        vcsrepo { "/srv/maverick/code/dronekit-dev/ardupilot":
+        vcsrepo { "/srv/maverick/code/dronekit-sitl/sitl-fw":
             ensure		=> present,
             provider 	=> git,
             source		=> "https://github.com/ArduPilot/ardupilot.git",
@@ -90,10 +90,10 @@ class maverick-dronekit::dev (
             mode        => 755,
         }
         
-        # Punch some holes in the firewall for sitl
+        # Punch some holes in the firewall for sitl, protect 5770 which sitl-mavproxy uses
         if defined(Class["::maverick-security"]) {
             maverick-security::firewall::firerule { "dev-sitl":
-                ports       => [5770-5775],
+                ports       => [5771-5775],
                 ips         => hiera("all_ips"),
                 proto       => "tcp"
             }
@@ -112,21 +112,21 @@ class maverick-dronekit::dev (
             require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'] ],
         }
         
-        file { "/etc/systemd/system/dev-mavproxy.service":
-            content     => template("maverick-dronekit/dev-mavproxy.service.erb"),
+        file { "/etc/systemd/system/sitl-mavproxy.service":
+            content     => template("maverick-dronekit/sitl-mavproxy.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
-        service { "dev-mavproxy":
+        service { "sitl-mavproxy":
             ensure      => running,
             enable      => true,
             require     => [ Service["dev-sitl"] ],
         }
         # Punch some holes in the firewall for sitl
         if defined(Class["::maverick-security"]) {
-            maverick-security::firewall::firerule { "dev-mavproxy":
+            maverick-security::firewall::firerule { "sitl-mavproxy":
                 ports       => [14560-14565],
                 ips         => hiera("all_ips"),
                 proto       => "udp"
