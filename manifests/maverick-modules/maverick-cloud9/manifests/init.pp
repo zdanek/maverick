@@ -8,7 +8,7 @@ class maverick-cloud9 (
     }
     
     # Install system ncurses first, so cloud9 doesn't have to compile it
-    ensure_packages(["libncurses5", "libncurses5-dev"])
+    ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
     
     file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
