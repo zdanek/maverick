@@ -27,7 +27,8 @@ class maverick-dronekit (
         command     => "/usr/bin/make -j${::processorcount}",
         creates     => "/srv/maverick/software/dronekit-la/dronekit-la",
         user        => "mav",
-        cwd         => "/srv/maverick/software/dronekit-la"
+        cwd         => "/srv/maverick/software/dronekit-la",
+        timeout     => 0,
     }
     
     if $sitl {
