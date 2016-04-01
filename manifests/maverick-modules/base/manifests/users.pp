@@ -18,6 +18,7 @@ class base::users (
       password_min_age => '0',
       shell            => '/bin/bash',
       uid              => '6789',
+      groups           => ['dialout'],
     } ->
     file { "/srv/maverick/.bashrc":
         content 	=> template("base/mav-bashrc.erb"),

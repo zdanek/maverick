@@ -33,7 +33,7 @@ class maverick-network::wireless (
     file { "/etc/systemd/system/rfkill-unblock.service":
         ensure      => present,
         source      => "puppet:///modules/maverick-network/rfkill-unblock.service",
-        mode        => 755,
+        mode        => 644,
         owner       => "root",
         group       => "root",
         notify      => Exec["maverick-systemctl-daemon-reload"],

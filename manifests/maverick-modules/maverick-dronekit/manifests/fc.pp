@@ -1,5 +1,5 @@
 class maverick-dronekit::fc (
-    $fc_mavproxy_master = "/dev/ttyUSB0", # FlightController -> CompanionComputer connection
+    $fc_mavproxy_master = "/dev/ttyACM0", # FlightController -> CompanionComputer connection
 ) {
     
     # Install a virtual environment for dronekit fc
