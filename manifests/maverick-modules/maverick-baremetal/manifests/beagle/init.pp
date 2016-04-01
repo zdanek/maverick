@@ -1,4 +1,5 @@
 class maverick-baremetal::beagle::init (
+    $included_cloud9 = false,
     ) {
     
     file { "/etc/modprobe.d/can-blacklist.conf":
@@ -31,6 +32,19 @@ class maverick-baremetal::beagle::init (
             method          => "static",
             ipaddress       => "192.168.7.2",
             netmask         => "255.255.255.252",
+        }
+    }
+    
+    # If $included_cloud9 is false, remove the builtin cloud9 to save space and remove confusion
+    if $included_cloud9 == false {
+        package { "c9-core-installer":
+            ensure      => absent,
+        }
+        file { "/opt/cloud9":
+            ensure => absent,
+            recurse => true,
+            purge => true,
+            force => true,
         }
     }
     
