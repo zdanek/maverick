@@ -18,4 +18,10 @@ class maverick-baremetal::odroid::init {
 
     ensure_packages(["axel", "build-essential", "xz-utils", "whiptail", "unzip", "wget", "curl"])
         
+    # Supress irritating kernel messages
+    exec { "xu4-blacklist-mod":
+        command     => "/bin/echo 'blacklist ina231_sensor' >>/etc/modprobe.d/blacklist-odroid.conf",
+        unless      => "/bin/grep ina231_sensor /etc/modprobe.d/blacklist-odroid.conf",
+    }
+    
 }
