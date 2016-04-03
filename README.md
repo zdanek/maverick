@@ -13,6 +13,7 @@ Maverick is designed to be cross platform.  Initially it is being developed and 
  - Beaglebone Black (Debian and Ubuntu)
  - Raspberry Pi (2 Model B, A+, Raspbian and Ubuntu)
  - ODROID (XU3/XU4, Ubuntu)
+
 https://github.com/fnoop/maverick/wiki/Supported-Systems
 
 But it is eventually intended to support all of the following:
@@ -30,18 +31,18 @@ Initial Installation
 --------------------
 For debian based distributions:
 ```
-sudo apt-get update && sudo apt-get install git
+sudo apt-get update && sudo apt-get install -y git
 git clone https://github.com/fnoop/maverick.git; cd maverick
 sudo ./maverick --env=bootstrap --confirm
 sudo reboot
 ```
 The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
 
-After the first reboot, the required environment can then be configured:
+After the first reboot login as 'mav' user with the default user 'wingman', and then the required environment can then be configured:
 ```
 maverick --env=dev --confirm
 ```
-Or production environment (for safer flying):
+Or production environment (for safer flying and faster setup):
 ```
 maverick --env=production --confirm
 ```
