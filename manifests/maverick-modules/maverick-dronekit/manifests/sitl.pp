@@ -5,6 +5,7 @@ class maverick-dronekit::sitl (
     #$sitl_fw_builds = ["ArduCopter", "ArduPlane", "APMrover2", "AntennaTracker"],
     $sitl_fw_builds = ["ArduCopter"], # only build copter by default
     $sitl_fw_run = "ArduCopter", # Which firmware will sitl run, must be part of $sitl_fw_builds
+    $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
     # Install a virtual environment for dronekit sitl
@@ -28,7 +29,7 @@ class maverick-dronekit::sitl (
     vcsrepo { "/srv/maverick/code/dronekit-sitl/dronekit-python":
         ensure		=> present,
         provider 	=> git,
-        source		=> "http://github.com/dronekit/dronekit-python.git",
+        source		=> $sitl_dronekit_source,
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",

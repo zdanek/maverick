@@ -1,5 +1,6 @@
 class maverick-dronekit::fc (
     $fc_mavproxy_master = "/dev/ttyACM0", # FlightController -> CompanionComputer connection
+    $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
     # Install a virtual environment for dronekit fc
@@ -23,7 +24,7 @@ class maverick-dronekit::fc (
     vcsrepo { "/srv/maverick/code/dronekit-fc/dronekit-python":
         ensure		=> present,
         provider 	=> git,
-        source		=> "http://github.com/dronekit/dronekit-python.git",
+        source		=> $fc_dronekit_source,
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
