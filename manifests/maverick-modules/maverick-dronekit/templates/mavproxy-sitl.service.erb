@@ -5,7 +5,8 @@ Requires=network-online.target dev-sitl.service
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-sitl; source bin/activate; ./bin/mavproxy.py --master tcp:127.0.0.1:5770 --sitl 127.0.0.1:5501 --out=udpin:0.0.0.0:14560 --out=udpin:0.0.0.0:14561 --out=udp:127.0.0.1:14562 --out=udp:127.0.0.1:14563 --daemon --state-basedir=/srv/maverick/data/logs/mavproxy-sitl'
+Type=forking
+ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-sitl; source bin/activate; /usr/bin/screen -S mavproxy-sitl -d -m mavproxy.py --master tcp:127.0.0.1:5770 --sitl 127.0.0.1:5501 --out=udpin:0.0.0.0:14560 --out=udpin:0.0.0.0:14561 --out=udp:127.0.0.1:14562 --out=udp:127.0.0.1:14563 --state-basedir=/srv/maverick/data/logs/mavproxy-sitl --cmd="arm uncheck all;"'
 User=mav
 
 [Install]

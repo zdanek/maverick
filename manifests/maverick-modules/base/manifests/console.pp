@@ -14,4 +14,7 @@ class base::console {
         content 	=> template("base/colorprompt.sh.erb"),
     }
     
+    # Install screen that we use to access mavproxy and other consoles
+    ensure_packages(["screen"])
+    
 }
