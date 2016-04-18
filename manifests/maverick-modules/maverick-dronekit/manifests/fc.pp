@@ -39,6 +39,12 @@ class maverick-dronekit::fc (
         timeout     => 0,
     }
         
+    file { "/srv/maverick/data/logs/mavproxy-fc":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
     file { "/etc/systemd/system/fc-mavproxy.service":
         content     => template("maverick-dronekit/fc-mavproxy.service.erb"),
         owner       => "root",
@@ -51,7 +57,7 @@ class maverick-dronekit::fc (
         enable      => true,
         require       => Exec["maverick-systemctl-daemon-reload"]
     }
-    # Punch some holes in the firewall for sitl
+    # Punch some holes in the firewall for mavproxy
     if defined(Class["::maverick-security"]) {
         maverick-security::firewall::firerule { "fc-mavproxy":
             ports       => [14550-14555],

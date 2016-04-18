@@ -100,17 +100,23 @@ class maverick-dronekit::sitl (
             }
         }
         
+        file { "/srv/maverick/data/logs/mavproxy-sitl":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => 755,
+        } ->
         file { "/etc/systemd/system/dev-sitl.service":
             content     => template("maverick-dronekit/dev-sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["sitl-mavproxy"] ],
         } ->
         service { "dev-sitl":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'] ],
+            require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
         
         file { "/etc/systemd/system/sitl-mavproxy.service":
