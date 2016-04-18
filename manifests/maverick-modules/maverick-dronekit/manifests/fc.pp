@@ -1,5 +1,6 @@
 class maverick-dronekit::fc (
     $fc_mavproxy_master = undef, # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0"
+    $fc_mavproxy_baud = undef, # FlightController -> CompanionComputer connection baud rate, should be autodetected but can be specified, eg. 
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
