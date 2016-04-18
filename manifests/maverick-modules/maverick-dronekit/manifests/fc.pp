@@ -1,5 +1,5 @@
 class maverick-dronekit::fc (
-    $fc_mavproxy_master = "/dev/ttyACM0", # FlightController -> CompanionComputer connection
+    $fc_mavproxy_master = undef, # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0"
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
@@ -43,11 +43,12 @@ class maverick-dronekit::fc (
         owner       => "root",
         group       => "root",
         mode        => 644,
-        notify      => Exec["maverick-systemctl-daemon-reload"],
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["fc-mavproxy"] ]
     } ->
     service { "fc-mavproxy":
         ensure      => running,
         enable      => true,
+        require       => Exec["maverick-systemctl-daemon-reload"]
     }
     # Punch some holes in the firewall for sitl
     if defined(Class["::maverick-security"]) {
