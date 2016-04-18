@@ -1,6 +1,6 @@
 class maverick-dronekit::fc (
-    $fc_mavproxy_master = undef, # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0"
-    $fc_mavproxy_baud = undef, # FlightController -> CompanionComputer connection baud rate, should be autodetected but can be specified, eg. 
+    $mavproxy_fc_master = undef, # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0"
+    $mavproxy_fc_baud = undef, # FlightController -> CompanionComputer connection baud rate, should be autodetected but can be specified, eg. 
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
@@ -45,21 +45,21 @@ class maverick-dronekit::fc (
         group       => "mav",
         mode        => 755,
     } ->
-    file { "/etc/systemd/system/fc-mavproxy.service":
-        content     => template("maverick-dronekit/fc-mavproxy.service.erb"),
+    file { "/etc/systemd/system/mavproxy-fc.service":
+        content     => template("maverick-dronekit/mavproxy-fc.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => 644,
-        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["fc-mavproxy"] ]
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-fc"] ]
     } ->
-    service { "fc-mavproxy":
+    service { "mavproxy-fc":
         ensure      => running,
         enable      => true,
         require       => Exec["maverick-systemctl-daemon-reload"]
     }
     # Punch some holes in the firewall for mavproxy
     if defined(Class["::maverick-security"]) {
-        maverick-security::firewall::firerule { "fc-mavproxy":
+        maverick-security::firewall::firerule { "mavproxy-fc":
             ports       => [14550-14555],
             ips         => hiera("all_ips"),
             proto       => "udp"

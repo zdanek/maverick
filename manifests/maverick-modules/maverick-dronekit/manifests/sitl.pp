@@ -91,7 +91,7 @@ class maverick-dronekit::sitl (
             mode        => 755,
         }
         
-        # Punch some holes in the firewall for sitl, protect 5770 which sitl-mavproxy uses
+        # Punch some holes in the firewall for sitl, protect 5770 which mavproxy-sitl uses
         if defined(Class["::maverick-security"]) {
             maverick-security::firewall::firerule { "dev-sitl":
                 ports       => [5771-5775],
@@ -111,7 +111,7 @@ class maverick-dronekit::sitl (
             owner       => "root",
             group       => "root",
             mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["sitl-mavproxy"] ],
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ],
         } ->
         service { "dev-sitl":
             ensure      => running,
@@ -119,21 +119,21 @@ class maverick-dronekit::sitl (
             require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
         
-        file { "/etc/systemd/system/sitl-mavproxy.service":
-            content     => template("maverick-dronekit/sitl-mavproxy.service.erb"),
+        file { "/etc/systemd/system/mavproxy-sitl.service":
+            content     => template("maverick-dronekit/mavproxy-sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
-        service { "sitl-mavproxy":
+        service { "mavproxy-sitl":
             ensure      => running,
             enable      => true,
             require     => [ Service["dev-sitl"] ],
         }
         # Punch some holes in the firewall for sitl
         if defined(Class["::maverick-security"]) {
-            maverick-security::firewall::firerule { "sitl-mavproxy":
+            maverick-security::firewall::firerule { "mavproxy-sitl":
                 ports       => [14560-14565],
                 ips         => hiera("all_ips"),
                 proto       => "udp"

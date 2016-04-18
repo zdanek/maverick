@@ -1,0 +1,27 @@
+class maverick-telemetry::teensy (
+    $teensy_loader_cli_revision = "master",
+    $teensy_hwversion = "mkl26z64", # teensy3.[1,2]: mk20dx256, teensy3.0: mk20dx128, teensylc: mkl26z64
+) {
+    
+    ensure_packages(["libusb-dev"])
+    # Install teensy_loader_cli
+    vcsrepo { "/srv/maverick/software/teensy_loader_cli":
+        ensure		=> present,
+        provider 	=> git,
+        source		=> "https://github.com/PaulStoffregen/teensy_loader_cli.git",
+        revision	=> "${teensy_loader_cli_revision}",
+        owner		=> "mav",
+        group		=> "mav",
+        submodules  => false
+    } ->
+    # Compile teensy_loader_cli
+    exec { "compile-teensy_loader_cli":
+        command     => "/usr/bin/make -j${::processorcount}",
+        creates     => "/srv/maverick/software/teensy_loader_cli/teensy_loader_cli",
+        user        => "mav",
+        cwd         => "/srv/maverick/software/teensy_loader_cli",
+        timeout     => 0,
+        require     => Package["libusb-dev"],
+    }
+    
+}
