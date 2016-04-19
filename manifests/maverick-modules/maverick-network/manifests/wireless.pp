@@ -1,4 +1,5 @@
 class maverick-network::wireless (
+    $type = "infrastructure", # 'infrastructure' for normal wifi, 'ap' to act as an Access Point, 'broadcast' for wifibroadcast
     $wlan0_name = "wlan0",
     $wlan0_mode = "dhcp",
     $wlan0_address = undef,
