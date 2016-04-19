@@ -13,14 +13,9 @@ class maverick-network (
         enable      => false
     } ->
     package { "dhcpcd5":
-        ensure      => installed
-    } ->
-    service { "dhcpcd":
-        ensure      => stopped,
-        enable      => false,
-        require     => Class["Network"]
+        ensure      => absent,
     }
-    
+
     # Base network setup
     class { "network": 
         hostname => "${hostname}",
