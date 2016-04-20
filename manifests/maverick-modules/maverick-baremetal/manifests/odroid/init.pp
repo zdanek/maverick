@@ -16,12 +16,18 @@ class maverick-baremetal::odroid::init {
         group		=> "mav",
     }
 
-    ensure_packages(["axel", "build-essential", "xz-utils", "whiptail", "unzip", "wget", "curl"])
+    ensure_packages(["axel", "whiptail"])
         
     # Supress irritating kernel messages
     exec { "xu4-blacklist-mod":
         command     => "/bin/echo 'blacklist ina231_sensor' >>/etc/modprobe.d/blacklist-odroid.conf",
         unless      => "/bin/grep ina231_sensor /etc/modprobe.d/blacklist-odroid.conf",
     }
+    
+    # Ensure Mali GL stuff is installed
+    package { "mali-x11":
+        ensure      => absent
+    }
+    ensure_packages(["mali-fbdev"])
     
 }
