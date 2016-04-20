@@ -8,6 +8,7 @@ class maverick-baremetal::raspberry::init (
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
     $camera = true,
     $xgl = false,
+    $v4l2 = true,
     ) {
 
     package { "raspi-config":
@@ -135,5 +136,12 @@ class maverick-baremetal::raspberry::init (
     #    unless      => "/bin/systemctl get-default |/bin/grep multi-user",
     #    require     => Package["raspi-config"],
     #}
+    
+    if $v4l2 == true {
+        exec { "raspberry-v4l2-kernelmodule":
+            command     => "/bin/echo 'bcm2835_v4l2 gst_v4l2src_is_broken=1' >>/etc/modules",
+            unless      => "/bin/grep 'bcm2835_v4l2' /etc/modules",
+        }
+    }
     
 }
