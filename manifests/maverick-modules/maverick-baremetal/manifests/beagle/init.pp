@@ -46,6 +46,18 @@ class maverick-baremetal::beagle::init (
             purge => true,
             force => true,
         }
+        file { "/root/.c9":
+            ensure => absent,
+            recurse => true,
+            purge => true,
+            force => true,
+        }
+        file { "/var/lib/cloud9":
+            ensure => absent,
+            recurse => true,
+            purge => true,
+            force => true,
+        }
     }
     
 }
