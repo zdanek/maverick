@@ -27,7 +27,9 @@ class maverick-baremetal::odroid::init {
     # Ensure Mali GL stuff is installed
     package { "mali-x11":
         ensure      => absent
+    } ->
+    package { "mali-fbdev":
+        ensure      => present
     }
-    ensure_packages(["mali-fbdev"])
     
 }
