@@ -54,6 +54,13 @@ class maverick-dronekit::sitl (
     # Install dronekit-sitl into dronekit-sitl
     if $sitl == true {
         python::pip { 'pip-dronekit-sitl':
+            pkgname     => 'dronekit',
+            virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+            ensure      => present,
+            owner       => 'mav',
+            timeout     => 0,
+        }
+        python::pip { 'pip-dronekit-sitl-sitl':
             pkgname     => 'dronekit-sitl',
             virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
             ensure      => present,
