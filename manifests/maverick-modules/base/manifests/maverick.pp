@@ -93,13 +93,6 @@ class base::maverick {
         onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
         command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
     }
-    file { "/etc/profile.d/maverick-path.sh":
-        ensure      => present,
-        mode        => 644,
-        owner       => "root",
-        group       => "root",
-        content     => "PATH=\$PATH:/srv/maverick/software/maverick",
-    }
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,
         mode        => 644,
@@ -119,6 +112,16 @@ class base::maverick {
         group       => "mav",
         mode        => 644,
         content     => $environment,
+    }
+
+    # Start a concat file for maverick paths
+    concat { "/etc/profile.d/maverick-path.sh":
+        ensure      => present,
+    }
+    concat::fragment { "maverickpath-base":
+        target      => "/etc/profile.d/maverick-path.sh",
+        order       => 1,
+        content     => "PATH=\$PATH:/srv/maverick/software/maverick",
     }
     
 }
