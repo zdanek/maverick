@@ -1,5 +1,6 @@
-class maverick-fpv (
+class maverick-vision::fpv::init (
     $type = "infrastructure", # 'infrastructure' for normal wifi, 'ap' to act as an Access Point, 'broadcast' for wifibroadcast, MUST match maverick-network::wireless::type
+    $mjpg_streamer = true,
 ) {
     
     # Setup standard packages for all platforms
@@ -22,6 +23,10 @@ class maverick-fpv (
         class { "maverick-fpv::ap": }
     } elsif $type == "broadcast" {
         class { "maverick-fpv::broadcast": }
+    }
+    
+    if $mjpg_streamer == true  {
+        class { "maverick-vision::fpv::mjpg-streamer": }
     }
     
 }
