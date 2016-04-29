@@ -16,7 +16,8 @@ class base::packages {
         "wget",
         "curl",
         "ncurses-bin",
-        "bsdmainutils"
+        "bsdmainutils",
+        "v4l-utils",
     ])
 
     # These packages should be removed from all installs.  

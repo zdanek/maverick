@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# This fact extracts as much hardware information out of an odroid as possble
+# This fact extracts as much hardware information out of an odroid as possible
 
 import re, sys, subprocess
 

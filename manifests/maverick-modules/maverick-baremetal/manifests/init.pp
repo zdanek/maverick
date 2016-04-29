@@ -2,7 +2,7 @@ class maverick-baremetal (
     $sensors = false
 ) {
 	
-	### Setup hardware sensors (lmsensors)
+	# Setup hardware sensors (lmsensors)
 	if ($sensors) {
     	include maverick-baremetal::sensors
 	}
@@ -18,4 +18,10 @@ class maverick-baremetal (
 	if ($odroid_present == "yes") {
 		class { "maverick-baremetal::odroid::init": }
 	}
+	
+	# Setup ocam software
+	if ($camera_ocam == "yes") {
+		class { "maverick-baremetal::peripheral::ocam": }
+	}
+	
 }
