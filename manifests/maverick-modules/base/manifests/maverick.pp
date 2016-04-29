@@ -98,11 +98,11 @@ class base::maverick {
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "maverick() { /srv/maverick/software/maverick/maverick \$1 \$2 \$3 \$4; . /etc/profile; }",
+        content     => "maverick() { /srv/maverick/software/maverick/bin/maverick \$1 \$2 \$3 \$4; . /etc/profile; }",
     }
     exec { "sudoers-securepath":
-        command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick"#\'',
-        unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick'"
+        command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick/bin"#\'',
+        unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick/bin'"
     }
     
     # Add environment marker
@@ -121,7 +121,7 @@ class base::maverick {
     concat::fragment { "maverickpath-base":
         target      => "/etc/profile.d/maverick-path.sh",
         order       => 1,
-        content     => "PATH=\$PATH:/srv/maverick/software/maverick",
+        content     => "PATH=\$PATH:/srv/maverick/software/maverick/bin",
     }
     
 }

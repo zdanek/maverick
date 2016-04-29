@@ -94,7 +94,6 @@ if [ "$STATUS" == "true" ]; then
         (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL Runner" $?)
         (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
     fi
-    echo
     echo -e $statusout | column -c 2 -s : -t
     echo
     exit 0
@@ -168,7 +167,7 @@ fi
 
 # OK we're good to go!
 echo "Environment: ${ENV}"
-echo 'Proceeding to apply Puppet manifests - please be patient, this can take a while..'
+echo 'Proceeding to update system configuration - please be patient, this can take a while..'
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
         puppet apply --confdir=conf --environment ${ENV} manifests

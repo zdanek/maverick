@@ -34,7 +34,12 @@ class maverick-baremetal::odroid::init (
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/cpu-control":
+        ensure      => link,
+        target      => "/srv/maverick/software/odroid-cpu-control/odroid-cpu-control",
     }
+    
     # Change default governor at boot
     #  .. first reset all governors except what we want
     exec { "odroid-boot-governor-others":
