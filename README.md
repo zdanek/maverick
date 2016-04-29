@@ -33,18 +33,18 @@ For debian based distributions:
 ```
 sudo apt-get update && sudo apt-get install -y git
 git clone https://github.com/fnoop/maverick.git; cd maverick
-sudo ./maverick --env=bootstrap --confirm
+sudo ./maverick --env=bootstrap --configure
 sudo reboot
 ```
 The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
 
 After the first reboot login as 'mav' user with the default password 'wingman', and then the required environment can then be configured:
 ```
-maverick --env=dev --confirm
+maverick --env=dev --configure
 ```
 Or production environment (for safer flying and faster setup):
 ```
-maverick --env=production --confirm
+maverick --env=production --configure
 ```
 To update to the latest Maverick:
 ```
@@ -52,6 +52,9 @@ maverick --self-update
 ```
 Then call maverick with just --confirm flag to update the current environment:
 ```
-maverick --confirm
+maverick --configure
 ```
-
+To see the current status of Maverick services:
+```
+maverick --status
+```
