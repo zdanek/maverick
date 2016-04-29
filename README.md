@@ -38,7 +38,7 @@ sudo reboot
 ```
 The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
 
-After the first reboot login as 'mav' user with the default user 'wingman', and then the required environment can then be configured:
+After the first reboot login as 'mav' user with the default password 'wingman', and then the required environment can then be configured:
 ```
 maverick --env=dev --confirm
 ```

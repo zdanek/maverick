@@ -13,14 +13,19 @@ fi
 
 # Define usage function
 usage () {
-    echo "--env=[bootstrap|dev|production]          Puppet environment, currently bootstrap, dev or production"
-    echo "--confirm                                 This must be set to proceed, for safety"
+    echo "--configure                               Configure system - BEWARE this may do major changes to your existing system"
+    echo "--env=[bootstrap|dev|production]          Environment to configure, currently bootstrap, dev or production"
+    echo "--status                                  Show current running status"
     echo "--self-update                             Update to latest maverick code, doesn't need --confirm"
     echo
     echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
     echo
     exit 1
 }
+
+if [[ $# -eq 0 ]] ; then
+    usage
+fi
 
 # Parse arguments
 for i in "$@"
@@ -30,13 +35,23 @@ do
         ENV="${i#*=}"
         shift
         ;;
-        --confirm)
-        CONFIRM="true"
+        --configure)
+        CONFIGURE="true"
+        shift
+        ;;
+        --status)
+        STATUS="true"
         shift
         ;;
         --self-update)
         SELFUPDATE="true"
         shift
+        ;;
+        *)
+        echo
+        echo "Error: argument not recognised"
+        echo
+        usage
         ;;
     esac
 done
@@ -55,6 +70,33 @@ if [ "$SELFUPDATE" == "true" ]; then
         echo "Error: Maverick not found in expected location: /srv/maverick/software/maverick"
         echo
     fi
+    exit 0
+fi
+
+# If status set, action and then exit
+if [ "$STATUS" == "true" ]; then
+    status () {
+        red=$(tput setaf 1)
+        green=$(tput setaf 2)
+        reset=$(tput sgr0)
+        if [ $2 -eq 0 ]; then
+            echo "$1: ${green}Running${reset}\n"
+        else
+            echo "$1: ${red}Stopped${reset}\n"
+        fi
+    }
+    if [ -e /srv/maverick/.environment ]; then
+        environment=$(cat /srv/maverick/.environment)
+    fi
+    (systemctl status mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
+    if [ "$environment" == "dev" ]; then
+        (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
+        (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL Runner" $?)
+        (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
+    fi
+    echo
+    echo -e $statusout | column -c 2 -s : -t
+    echo
     exit 0
 fi
 
@@ -78,9 +120,9 @@ if [[ "$ENV" != "dev" && "$ENV" != "production" && "$ENV" != "bootstrap" ]]; the
     usage
 fi
 
-# If confirm not set, exit
-if [ "$CONFIRM" != "true" ]; then	
-    echo "Error: --confirm not set"
+# If configure not set, exit
+if [ "$CONFIGURE" != "true" ]; then	
+    echo "Error: --configure not set"
     echo
     usage
 fi

@@ -15,6 +15,8 @@ class base::packages {
         "unzip",
         "wget",
         "curl",
+        "ncurses-bin",
+        "bsdmainutils"
     ])
 
     # These packages should be removed from all installs.  
