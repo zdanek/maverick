@@ -26,6 +26,9 @@ class maverick-dronekit::sitl (
         cwd          => '/srv/maverick/code/dronekit-sitl',
         timeout      => 0,
     } ->
+    file { "/srv/maverick/.virtualenvs/dronekit-sitl/lib/python2.7/no-global-site-packages.txt":
+        ensure  => absent
+    } ->
     vcsrepo { "/srv/maverick/code/dronekit-sitl/dronekit-python":
         ensure		=> present,
         provider 	=> git,

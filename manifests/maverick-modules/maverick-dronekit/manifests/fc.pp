@@ -22,6 +22,9 @@ class maverick-dronekit::fc (
         cwd          => '/srv/maverick/code/dronekit-fc',
         timeout      => 0,
     } ->
+    file { "/srv/maverick/.virtualenvs/dronekit-fc/lib/python2.7/no-global-site-packages.txt":
+        ensure  => absent
+    } ->
     vcsrepo { "/srv/maverick/code/dronekit-fc/dronekit-python":
         ensure		=> present,
         provider 	=> git,
