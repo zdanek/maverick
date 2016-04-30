@@ -79,13 +79,29 @@ class maverick-network (
     # Remove NetworkManager
     if $netman == false and $netman_networkmanager == "yes" {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
-        service { "NetworkManager":
+        service { "NetworkManager.service":
             ensure      => stopped,
             enable      => false,
+        } ->
+        service { "NetworkManager-wait-online":
+            ensure      => stopped,
+            enable      => false
         } ->
         package { "network-manager":
             ensure      => absent, # remove but don't purge, so it can be restored later
         }
+    }
+    
+    # Hack ifup-wait-all-auto.service to have a shorter timeout period as this hangs the boot process until all interfaces are up.  We don't want this.
+    exec { "hack-ifup-wait":
+        command     => '/bin/sed /lib/systemd/system/ifup-wait-all-auto.service -i -r -e "s/^TimeoutStartSec\\=.*/TimeoutStartSec=5/"',
+        unless      => "/bin/grep 'TimeoutStartSec\\=5' /lib/systemd/system/ifup-wait-all-auto.service",
+    }
+    
+    # Reduce dhcp timeout
+    exec { "dhcp-reduce-timeout":
+        command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5/"',
+        unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
     }
     
 }

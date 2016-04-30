@@ -26,5 +26,5 @@ class maverick-network::ethernet (
             hwaddr          => $eth0_macaddress,
         }
     }
-    
+
 }

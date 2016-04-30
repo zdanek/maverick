@@ -1,6 +1,6 @@
 class maverick-dronekit::fc (
-    $mavproxy_fc_master = "/dev/ttyAMA0", # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0"
-    $mavproxy_fc_baud = 57600, # FlightController -> CompanionComputer connection baud rate, should be autodetected but can be specified, eg. 
+    $mavproxy_fc_master = "/dev/ttyAMA0", # FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0".  /dev/ttySAC0 for odroid xu3/xu4.
+    $mavproxy_fc_baud = 115200, # FlightController -> CompanionComputer connection baud rate, should be autodetected but can be specified, eg. 
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
 ) {
     
