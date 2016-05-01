@@ -96,6 +96,7 @@ class maverick-network (
     exec { "hack-ifup-wait":
         command     => '/bin/sed /lib/systemd/system/ifup-wait-all-auto.service -i -r -e "s/^TimeoutStartSec\\=.*/TimeoutStartSec=5/"',
         unless      => "/bin/grep 'TimeoutStartSec\\=5' /lib/systemd/system/ifup-wait-all-auto.service",
+        onlyif      => "/bin/ls /lib/systemd/system/ifup-wait-all-auto.service",
     }
     
     # Reduce dhcp timeout
