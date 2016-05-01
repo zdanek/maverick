@@ -100,6 +100,12 @@ class maverick-network (
     }
     
     # Reduce dhcp timeout
+    # First, if we don't have an unhashed timeout line, unhash one
+    exec { "dhcp-reduce-timeout-unhash":
+        command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^#timeout/timeout/"',
+        unless      => "/bin/grep -e '^timeout' /etc/dhcp/dhclient.conf",
+    } ->
+    # Change the timeout value if necessary
     exec { "dhcp-reduce-timeout":
         command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5/"',
         unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
