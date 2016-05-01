@@ -140,18 +140,25 @@ class maverick-baremetal::raspberry::init (
     
     if $v4l2 == true {
         exec { "raspberry-v4l2-kernelmodule":
-            command     => "/bin/echo 'bcm2835_v4l2 gst_v4l2src_is_broken=1' >>/etc/modules",
-            unless      => "/bin/grep 'bcm2835_v4l2' /etc/modules",
+            command     => "/bin/echo 'bcm2835-v4l2' >>/etc/modules",
+            unless      => "/bin/grep '^bcm2835-v4l2' /etc/modules",
+        }
+        file { "/etc/modprobe.d/raspicam.conf":
+            content     => "options bcm2835_v4l2 gst_v4l2src_is_broken=1"
         }
     }
     
     if ($overpower_usb == true) {
-        exec { "overpower_usb":
+        exec { "overpower_usb_true_add":
+            command     => "/bin/echo 'max_usb_current=1' >>/boot/config.txt",
+            unless      => "/bin/grep -e '^max_usb_current' /boot/config.txt",
+        } ->
+        exec { "overpower_usb_true":
             command     => "/bin/sed /boot/config.txt -i -r -e 's/^max_usb_current=.*/max_usb_current=1/'",
             unless      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
         }
     } else {
-        exec { "overpower_usb":
+        exec { "overpower_usb_false":
             command     => "/bin/sed /boot/config.txt -i -r -e 's/^max_usb_current=1/#max_usb_current=1/'",
             onlyif      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
         }
