@@ -76,4 +76,25 @@ class maverick-baremetal::odroid::init (
         ensure      => present
     }
     
+    # Add odroid-wiringpi from hardkernel github
+    file { "/srv/maverick/software/odroid-wiringpi":
+        ensure 		=> directory,
+        require		=> File["/srv/maverick/software"],
+        mode		=> 755,
+        owner		=> "mav",
+        group		=> "mav",
+    } ->
+    vcsrepo { "/srv/maverick/software/odroid-wiringpi":
+        ensure		=> present,
+        provider 	=> git,
+        source		=> "https://github.com/hardkernel/wiringPi.git",
+        revision	=> "master",
+        owner		=> "mav",
+        group		=> "mav",
+    } ->
+    exec { "compile-wiringpi":
+        command     => "",
+        creates     => "/software/maverick/software/odroid-wiringpi/"
+    }
+    
 }
