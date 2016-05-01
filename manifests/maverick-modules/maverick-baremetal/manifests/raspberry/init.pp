@@ -9,6 +9,7 @@ class maverick-baremetal::raspberry::init (
     $camera = true,
     $xgl = false,
     $v4l2 = true,
+    $overpower_usb = false,
     ) {
 
     package { "raspi-config":
@@ -144,4 +145,15 @@ class maverick-baremetal::raspberry::init (
         }
     }
     
+    if ($overpower_usb == true) {
+        exec { "overpower_usb":
+            command     => "/bin/sed /boot/config.txt -i -r -e 's/^max_usb_current=.*/max_usb_current=1/'",
+            unless      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
+        }
+    } else {
+        exec { "overpower_usb":
+            command     => "/bin/sed /boot/config.txt -i -r -e 's/^max_usb_current=1/#max_usb_current=1/'",
+            onlyif      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
+        }
+    }
 }
