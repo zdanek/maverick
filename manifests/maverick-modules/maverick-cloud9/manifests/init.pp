@@ -69,4 +69,10 @@ class maverick-cloud9 (
         }
     }
     
+    exec { "change-cloud9-theme":
+        command     => "/bin/sed /srv/maverick/.c9/user.settings -i -r -e 's/\"@theme\": \".*\"/\"@theme\": \"ace\\/theme\\/cloud9_day\"/'",
+        unless      => "/bin/grep '@theme' /srv/maverick/.c9/user.settings | /bin/grep 'ace/theme/cloud9_day'",
+        onlyif      => "/bin/ls /srv/maverick/.c9/user.settings",
+    }
+    
 }
