@@ -4,7 +4,7 @@
 import os, re, sys, subprocess, glob
 
 # Define main data container
-data = {"ocam": "no", "raspicam": "no"}
+data = {"ocam": "no", "picam": "no"}
 
 os.chdir("/dev")
 devices = []
@@ -24,12 +24,12 @@ for device in devices:
         (key,val) = r.groups(0)[0],r.groups(0)[1]
         if re.search("Driver name", key): 
             data[device+'_driver'] = val
+            if re.search("bm2835 mmal", val):
+                data['picam'] = 'yes'
         elif re.search("Card type", key): 
             data[device+'_type'] = val
             if re.search('oCam', val):
                 data['ocam'] = "yes"
-            elif re.search('raspberry', val):
-                data['raspicam'] = "yes"
 
 # Finally, print the data out in the format expected of a fact provider
 if data:

@@ -24,4 +24,9 @@ class maverick-baremetal (
 		class { "maverick-baremetal::peripheral::ocam": }
 	}
 	
+	# Setup raspberry pi camera software
+	if ($camera_picam == "yes") {
+		class { "maverick-baremetal::peripheral::picam": }
+	}
+	
 }
