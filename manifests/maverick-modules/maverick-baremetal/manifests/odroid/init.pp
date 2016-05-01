@@ -2,6 +2,8 @@ class maverick-baremetal::odroid::init (
     $governor_atboot = "ondemand"
 ) {
 
+    ensure_packages(["axel", "whiptail"])
+
     # Add odroid-utility repo from git, contains useful scripts
     file { "/srv/maverick/software/odroid-utility":
         ensure 		=> directory,
@@ -60,8 +62,6 @@ class maverick-baremetal::odroid::init (
         content     => "PATH=\$PATH:/srv/maverick/software/odroid-cpu-control",
     }
 
-    ensure_packages(["axel", "whiptail"])
-        
     # Supress irritating kernel messages
     exec { "xu4-blacklist-mod":
         command     => "/bin/echo 'blacklist ina231_sensor' >>/etc/modprobe.d/blacklist-odroid.conf",

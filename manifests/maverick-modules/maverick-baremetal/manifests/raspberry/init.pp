@@ -12,10 +12,8 @@ class maverick-baremetal::raspberry::init (
     $overpower_usb = false,
     ) {
 
-    package { "raspi-config":
-    ensure		=> installed,
-    }
-        
+    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "wiringpi"])
+
     if ($expand_root) {
         exec { "raspberry-expandroot":
             command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
