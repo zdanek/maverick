@@ -1,6 +1,6 @@
 class maverick-vision::fpv::mjpg-streamer {
     
-    ensure_packages(["cmake", "libjpeg-turbo8-dev"])
+    ensure_packages(["cmake", "libjpeg8-dev"])
     
     # Add ocam_viewer repo from git
     file { "/srv/maverick/software/mjpg-streamer":
@@ -21,7 +21,7 @@ class maverick-vision::fpv::mjpg-streamer {
     exec { "mjpg-streamer-compile":
         user        => "mav",
         timeout     => 0,
-        require     => Package["cmake", "libjpeg-turbo8-dev"],
+        require     => Package["cmake", "libjpeg8-dev"],
         command     => "/usr/bin/make -j${::processorcount}",
         cwd         => "/srv/maverick/software/mjpg-streamer/mjpg-streamer-experimental",
         creates     => "/srv/maverick/software/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer",
