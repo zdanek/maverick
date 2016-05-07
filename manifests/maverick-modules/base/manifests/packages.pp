@@ -48,7 +48,7 @@ class base::packages {
         virtualenv => 'present',
         gunicorn   => 'absent',
     } ->
-    package { ["python-setuptools", "virtualenvwrapper", "python-numpy"]:
+    package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python-daemon"]:
         ensure      => present
     }
     
