@@ -1,0 +1,81 @@
+#!/usr/bin/python
+
+import sys, os, time, thread
+import gi
+gi.require_version('Gst', '1.0')
+from gi.repository import GObject,GLib,Gst
+
+class FPV_Video(object):
+    
+        def __init__(self):
+            self.streamer = Gst.Pipeline.new()
+
+            source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
+            source.set_property("device", "/dev/video0")
+            self.streamer.add(source)
+
+            caps = Gst.caps_from_string("video/x-raw,width=1280,height=720,framerate=49/1")
+            queue = Gst.ElementFactory.make("queue", "queue")
+            self.streamer.add(queue)
+            source.link_filtered(queue, caps)
+            #print caps.get_current_caps()
+
+            vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
+            self.streamer.add(vconvert)
+            queue.link(vconvert)
+
+            h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
+            self.streamer.add(h264enc)
+            vconvert.link(h264enc)
+
+            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
+            h264pay.set_property("config-interval", 1)
+            h264pay.set_property("pt", 96)
+            self.streamer.add(h264pay)
+            h264enc.link(h264pay)
+
+            sink = Gst.ElementFactory.make("udpsink", "udpsink")
+            sink.set_property("host", "192.168.1.76")
+            sink.set_property("port", 5000)
+            sink.set_property("sync", False)
+            self.streamer.add(sink)
+            h264pay.link(sink)
+            
+            bus = self.streamer.get_bus()
+            bus.add_signal_watch()
+            bus.connect("message", self.on_message)
+            
+        def on_message(self, bus, message):
+            t = message.type
+            if t == Gst.MessageType.EOS:
+                self.streamer.set_state(Gst.State.NULL)
+                self.playmode = False
+            elif t == Gst.MessageType.ERROR:
+                self.streamer.set_state(Gst.State.NULL)
+                err, debug = message.parse_error()
+                print "Error: %s" % err, debug
+                self.playmode = False
+            
+        def start(self):
+            self.streamer.set_state(Gst.State.PLAYING)
+            self.playmode = True
+        
+        def stop(self):
+            self.streamer.set_state(Gst.State.NULL)
+            self.playmode = False
+            
+
+GObject.threads_init()
+Gst.init(None)
+fpv = FPV_Video()
+
+print "Starting fpv"
+thread.start_new_thread(fpv.start, ())
+
+t_end = time.time() + 10
+while time.time() < t_end: 
+    print time.time(), t_end, fpv.playmode
+    pass
+
+print "Stopping fpv"
+fpv.stop
