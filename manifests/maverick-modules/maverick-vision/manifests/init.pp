@@ -1,5 +1,7 @@
 class maverick-vision (
     $mjpg_streamer = false,
+    $fpv = true,
+    $cv = true,
 ) {
     
     # Setup standard packages for all platforms
@@ -9,6 +11,14 @@ class maverick-vision (
 
     if $mjpg_streamer == true  {
         class { "maverick-vision::fpv::mjpg-streamer": }
+    }
+    
+    if $fpv == true {
+        class { "maverick-vision::fpv::init": }
+    }
+    
+    if $cv == true {
+        class { "maverick-vision::cv::init": }
     }
     
 }

@@ -18,6 +18,8 @@ class base::packages {
         "ncurses-bin",
         "bsdmainutils",
         "v4l-utils",
+        "cmake",
+        "pkg-config"
     ])
 
     # These packages should be removed from all installs.  
