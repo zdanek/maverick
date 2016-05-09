@@ -14,6 +14,12 @@ class maverick-vision::cv::init (
     ensure_packages(["libgstreamer-plugins-base1.0-dev"])
     
     # Pull opencv and opencv_contrib from git
+    file { "/srv/maverick/software/opencv":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
     vcsrepo { "/srv/maverick/software/opencv":
         ensure		=> present,
         provider 	=> git,
@@ -51,7 +57,7 @@ class maverick-vision::cv::init (
         timeout     => 0,
         command     => "/usr/bin/make -j${::processorcount} >/var/tmp/opencv.build.out 2>&1",
         cwd         => "/srv/maverick/software/opencv/build",
-        creates     => "/srv/maverick/software/opencv/build/opencv",
+        creates     => "/srv/maverick/software/opencv/build/lib/cv2.so",
     }
     
 }
