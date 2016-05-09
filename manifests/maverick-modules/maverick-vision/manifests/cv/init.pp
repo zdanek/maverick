@@ -58,6 +58,13 @@ class maverick-vision::cv::init (
         command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/opencv.build.out 2>&1",
         cwd         => "/srv/maverick/software/opencv/build",
         creates     => "/srv/maverick/software/opencv/build/lib/cv2.so",
+    } ->
+    exec { "opencv-install":
+        user        => "mav",
+        timeout     => 0,
+        command     => "/usr/bin/make install >/srv/maverick/data/logs/build/opencv.install.out 2>&1",
+        cwd         => "/srv/maverick/software/opencv/build",
+        creates     => "/usr/local/lib/libopencv_core.so.3.1.0",
     }
     
 }
