@@ -11,6 +11,7 @@ class maverick-vision::cv::init (
     ensure_packages(["libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev"])
     ensure_packages(["libatlas-base-dev", "gfortran"])
     ensure_packages(["python2.7-dev", "python3-dev"])
+    ensure_packages(["libgtk2.0-dev"])
     ensure_packages(["libgstreamer-plugins-base1.0-dev"])
     
     # Pull opencv and opencv_contrib from git
