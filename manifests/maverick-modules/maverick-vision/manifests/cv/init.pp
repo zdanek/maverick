@@ -48,14 +48,14 @@ class maverick-vision::cv::init (
         user        => "mav",
         timeout     => 0,
         #command     => "/usr/bin/cmake -j${::processorcount} -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/software/opencv_contrib/modules -D BUILD_EXAMPLES=ON .. >/var/tmp/opencv.cmake.out 2>&1",
-        command     => "/usr/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/software/opencv_contrib/modules -D BUILD_EXAMPLES=ON .. >/var/tmp/opencv.cmake.out 2>&1",
+        command     => "/usr/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/software/opencv_contrib/modules -D BUILD_EXAMPLES=ON .. >/srv/maverick/data/logs/build/opencv.cmake.out 2>&1",
         cwd         => "/srv/maverick/software/opencv/build",
         creates     => "/srv/maverick/software/opencv/build/Makefile",
     } ->
     exec { "opencv-build":
         user        => "mav",
         timeout     => 0,
-        command     => "/usr/bin/make -j${::processorcount} >/var/tmp/opencv.build.out 2>&1",
+        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/opencv.build.out 2>&1",
         cwd         => "/srv/maverick/software/opencv/build",
         creates     => "/srv/maverick/software/opencv/build/lib/cv2.so",
     }
