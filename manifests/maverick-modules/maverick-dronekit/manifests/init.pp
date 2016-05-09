@@ -38,5 +38,32 @@ class maverick-dronekit (
     if $fc {
         class { "maverick-dronekit::fc": }
     }
-
+    
+    file { "/srv/maverick/code/dronekit-apps":
+        ensure      => "directory",
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    }
+    
+    # Install rmackay9 red balloon finder
+    vcsrepo { "/srv/maverick/code/dronekit-apps/red-balloon-finder":
+        ensure		=> present,
+        provider 	=> git,
+        source		=> "https://github.com/rmackay9/ardupilot-balloon-finder.git",
+        revision	=> "master",
+        owner		=> "mav",
+        group		=> "mav",
+    }
+    # Install djnugent precision landing
+    vcsrepo { "/srv/maverick/code/dronekit-apps/precision-landing":
+        ensure		=> present,
+        provider 	=> git,
+        source		=> "https://github.com/djnugent/Precland.git",
+        revision	=> "master",
+        owner		=> "mav",
+        group		=> "mav",
+    }
+    
+    
 }
