@@ -1,7 +1,7 @@
 class maverick-vision (
     $mjpg_streamer = false,
     $fpv = true,
-    $cv = true,
+    $cv = false,
 ) {
     
     # Setup standard packages for all platforms
