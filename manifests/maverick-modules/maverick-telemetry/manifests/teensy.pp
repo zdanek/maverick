@@ -16,7 +16,7 @@ class maverick-telemetry::teensy (
     } ->
     # Compile teensy_loader_cli
     exec { "compile-teensy_loader_cli":
-        command     => "/usr/bin/make -j${::processorcount}",
+        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/teensy-load-cli.build.log 2>&1",
         creates     => "/srv/maverick/software/teensy_loader_cli/teensy_loader_cli",
         user        => "mav",
         cwd         => "/srv/maverick/software/teensy_loader_cli",

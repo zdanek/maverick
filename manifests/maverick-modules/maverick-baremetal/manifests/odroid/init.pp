@@ -93,7 +93,7 @@ class maverick-baremetal::odroid::init (
         group		=> "mav",
     } ->
     exec { "compile-wiringpi":
-        command     => "/srv/maverick/software/odroid-wiringpi/build",
+        command     => "/srv/maverick/software/odroid-wiringpi/build >/srv/maverick/data/logs/build/odroid-wiringpi.build.log 2>&1",
         cwd         => "/srv/maverick/software/odroid-wiringpi",
         creates     => "/srv/maverick/software/odroid-wiringpi/wiringPi/libwiringPi.so.2.0",
     }

@@ -24,7 +24,7 @@ class maverick-dronekit (
     } ->
     # Compile dronekit-la
     exec { "compile-dronekit-la":
-        command     => "/usr/bin/make -j${::processorcount}",
+        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/dronekit-la.build.log 2>&1",
         creates     => "/srv/maverick/software/dronekit-la/dronekit-la",
         user        => "mav",
         cwd         => "/srv/maverick/software/dronekit-la",

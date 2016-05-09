@@ -36,13 +36,13 @@ class maverick-cloud9 (
     exec { "install-preinstall-fix":
         # This is a fix for compiling dependencies on arm platforms
         creates     => "/srv/maverick/.c9/installed",
-        command     => "/srv/maverick/software/cloud9/scripts/install.sh",
+        command     => "/srv/maverick/software/cloud9/scripts/install.sh >/srv/maverick/data/logs/build/cloud9-deps.build.log 2>&1",
         timeout     => 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
     }
     exec { "install-cloud9":
-        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh",
+        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/data/logs/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
         creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
         timeout		=> 0,

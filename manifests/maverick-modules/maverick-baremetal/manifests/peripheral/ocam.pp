@@ -21,7 +21,7 @@ class maverick-baremetal::peripheral::ocam (
     exec { "ocam-viewer-compile":
         user        => "mav",
         timeout     => 0,
-        command     => "/usr/bin/qmake && /usr/bin/make -j${::processorcount} release",
+        command     => "/usr/bin/qmake && /usr/bin/make -j${::processorcount} release >/srv/maverick/data/logs/build/ocam-viewer.build.log 2>&1",
         cwd         => "/srv/maverick/software/odroid-ocam/oCam_viewer",
         creates     => "/srv/maverick/software/odroid-ocam/oCam_viewer/oCam-viewer",
     } ->
