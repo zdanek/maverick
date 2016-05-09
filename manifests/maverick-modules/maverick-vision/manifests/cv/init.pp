@@ -61,7 +61,7 @@ class maverick-vision::cv::init (
         creates     => "/srv/maverick/software/opencv/build/lib/cv2.so",
     } ->
     exec { "opencv-install":
-        user        => "mav",
+        user        => "root",
         timeout     => 0,
         command     => "/usr/bin/make install >/srv/maverick/data/logs/build/opencv.install.out 2>&1",
         cwd         => "/srv/maverick/software/opencv/build",
