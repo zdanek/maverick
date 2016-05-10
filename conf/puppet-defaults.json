@@ -1,0 +1,5 @@
+// These are defaults/configs for puppet modules (modules from puppet forge). 
+{
+    "dnsmasq::exported": false,
+    "dnsmasq::purge": false
+}
