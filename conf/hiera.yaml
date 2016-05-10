@@ -8,4 +8,5 @@
   - "%{environment}/defaults"
   - "sample-nodes/%{::hostname}"
   - localconf
-  - defaults
+  - maverick-defaults
+  - puppet-defaults

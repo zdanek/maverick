@@ -5,15 +5,19 @@ class maverick-network (
     $wireless = true,
     $netman = false,
     $predictable = false,
+    $dhcpcd = false,
+    $dnsmasq = false,
     ) {
 
-    # Make sure dhcp servers are turned off
-    service { "udhcpd":
-        ensure      => stopped,
-        enable      => false
-    } ->
-    package { "dhcpcd5":
-        ensure      => absent,
+    if $dhcpcd == false {
+        # Make sure dhcp client daemons are turned off, for now we depend on dhclient/wpa_supplicant
+        service { "udhcpd":
+            ensure      => stopped,
+            enable      => false
+        } ->
+        package { "dhcpcd5":
+            ensure      => absent,
+        }
     }
 
     # Base network setup
@@ -45,6 +49,7 @@ class maverick-network (
     }
     
     # Turn off predictable interface naming
+    # NB: This is temporary-ish probably, eventually we almost certainly want predictable naming
     if $predictable == false {
         file { "/etc/udev/rules.d/80-net-setup-link.rules":
             ensure      => link,
@@ -109,6 +114,10 @@ class maverick-network (
     exec { "dhcp-reduce-timeout":
         command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5/"',
         unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
+    }
+
+    if dnsmasq == true {
+        class { "maverick-network::dnsmasq": }
     }
     
 }
