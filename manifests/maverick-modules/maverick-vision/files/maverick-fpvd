@@ -1,41 +1,53 @@
 #!/usr/bin/python
 
 import sys, os, time, thread, gi
+from importlib import import_module
 gi.require_version('Gst', '1.0')
 from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
 Gst.init(None)
-import picamera
-import picamera.array
 
+### Streamer Class to build up Gstreamer pipeline from in to out
 class Streamer(object):
         def __init__(self,width,height,framerate,format,input,source,output,dest):
             self.size = 0
             self.playing = False
             self.paused = False
             
+            # Start with creating a pipeline from source element
             if input == "appsrc":
                 self.input_appsrc(source)
             elif input == "v4l2":
                 self.input_v4l2(source)
             
+            # Next deal with each format separately and interpret the stream and encoding method to the pipeline
             if format == "h264":
                 self.capstring = 'video/x-h264,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_h264()
+            elif format == "x264":
+                self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
+                self.stream_mjpeg()
+                self.encode_x264()
+            elif format == "mjpg":
+                self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
+                self.stream_mjpg()
+                self.encode_x264()
             elif format == "mjpeg":
                 self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_mjpeg()
                 self.encode_h264()
-                
+            
+            # Finally connect the requested output to the end of the pipeline
             if output == "file":
                 self.output_file(dest)
             elif output == "udp":
                 self.output_udp(dest)
             
             self.bus()
-            self.start()
+            self.start() # need to self start the object for PiCamera method
             
 
+        ### Input methods
         def input_appsrc(self, source):
             print "Attaching input 'appsrc'"
             self.streamer = Gst.Pipeline.new()
@@ -49,12 +61,76 @@ class Streamer(object):
             if not source:
                 source = "/dev/video"
             self.streamer = Gst.Pipeline.new()
-            source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
-            source.set_property("device", source)
-            caps = Gst.Caps.from_string(self.capstring)
-            self.source.set_property("caps",caps)
+            self.source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
+            self.streamer.add(self.source)
+            self.source.set_property("device", source)
 
 
+        ### Stream methods
+        def stream_h264(self):
+            print "Attaching stream 'h264'"
+            capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
+            capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
+            self.streamer.add(capsfilter)
+            self.source.link(capsfilter)
+            parse = Gst.ElementFactory.make("h264parse", "h264parse")
+            self.streamer.add(parse)
+            capsfilter.link(parse)
+            self.source_attach = parse
+            self.encode_attach = parse # fake encode_attach as we don't need to encode, we already have encoded stream
+
+            
+        def stream_mjpeg(self):
+            print "Attaching stream 'mjpeg'"
+            capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
+            capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
+            self.streamer.add(capsfilter)
+            self.source.link(capsfilter)
+            parse = Gst.ElementFactory.make("jpegparse", "jpegparse")
+            self.streamer.add(parse)
+            capsfilter.link(parse)
+            dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
+            self.streamer.add(dec)
+            parse.link(dec)
+            queue = Gst.ElementFactory.make("queue", "queue")
+            self.streamer.add(queue)
+            dec.link(queue)
+            vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
+            self.streamer.add(vconvert)
+            queue.link(vconvert)
+            self.source_attach = vconvert
+
+
+        ### Encoding methods
+        def encode_h264(self):
+            print "Attaching encoding 'h264'"
+            h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
+            self.streamer.add(h264enc)
+            self.source_attach.link(h264enc)
+            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
+            h264pay.set_property("config-interval", 1)
+            h264pay.set_property("pt", 96)
+            self.streamer.add(h264pay)
+            h264enc.link(h264pay)
+            self.encode_attach = h264pay
+
+
+        def encode_x264(self):
+            print "Attaching encoding 'x264'"
+            x264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
+            x264enc.set_property('speed-preset', 1)
+            x264enc.set_property('tune', 0x00000004)
+            self.streamer.add(x264enc)
+            self.source_attach.link(x264enc)
+            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
+            h264pay.set_property("config-interval", 1)
+            h264pay.set_property("pt", 96)
+            self.streamer.add(h264pay)
+            x264enc.link(h264pay)
+            self.encode_attach = h264pay
+
+
+        ### Output methods
         def output_file(self, dest):
             print "Attaching output 'file'"
             mux = Gst.ElementFactory.make("mpegtsmux", "mux")
@@ -72,63 +148,15 @@ class Streamer(object):
                 print "UDP destination must be set"
                 return
             print "Attaching output 'udp'"
-            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
-            h264pay.set_property("config-interval", 1)
-            h264pay.set_property("pt", 96)
-            self.streamer.add(h264pay)
-            self.encode_attach.link(h264pay)
-            
             sink = Gst.ElementFactory.make("udpsink", "udpsink")
             sink.set_property("host", dest)
             sink.set_property("port", 5000)
             sink.set_property("sync", False)
             self.streamer.add(sink)
-            h264pay.link(sink)
+            self.encode_attach.link(sink)
 
         
-        def bus(self):
-            bus = self.streamer.get_bus()
-            bus.add_signal_watch()
-            bus.connect("message", self.on_message)
-            
-            
-        def stream_h264(self):
-            print "Attaching stream 'h264'"
-            caps = Gst.Caps.from_string(self.capstring)
-            self.source.set_property("caps",caps)
-            parse = Gst.ElementFactory.make("h264parse", "h264parse")
-            self.streamer.add(parse)
-            self.source.link(parse)
-            self.source_attach = parse
-            self.encode_attach = parse # fake encode_attach as we don't need to encode, we already have encoded stream
-
-            
-        def stream_mjpeg(self):
-            print "Attaching stream 'mjpeg'"
-            caps = Gst.Caps.from_string(self.capstring)
-            self.source.set_property("caps",caps)
-            parse = Gst.ElementFactory.make("jpegparse", "jpegparse")
-            self.streamer.add(parse)
-            self.source.link(parse)
-            dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
-            self.streamer.add(dec)
-            parse.link(dec)
-            queue = Gst.ElementFactory.make("queue", "queue")
-            self.streamer.add(queue)
-            dec.link(queue)
-            vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-            self.streamer.add(vconvert)
-            queue.link(vconvert)
-            self.source_attach = vconvert
-
-
-        def encode_h264(self):
-            print "Attaching encoding 'h264'"
-            h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
-            self.streamer.add(h264enc)
-            self.source_attach.link(h264enc)
-            self.encode_attach = h264enc
-
+        ### Misc methods (glib introspection)
         def on_message(self, bus, message):
             t = message.type
             if t == Gst.MessageType.EOS:
@@ -139,25 +167,39 @@ class Streamer(object):
                 err, debug = message.parse_error()
                 print "Error: %s" % err, debug
                 self.playing = False
+
             
+        def bus(self):
+            bus = self.streamer.get_bus()
+            bus.add_signal_watch()
+            bus.connect("message", self.on_message)
+
+
+        ### Action methods
         def start(self):
             self.streamer.set_state(Gst.State.PLAYING)
             self.playing = True
+
 
         def write(self,s):
             gstbuff = Gst.Buffer.new_wrapped(s)
             ret = self.source.emit("push-buffer",gstbuff)
 
+
         def stop(self):
             self.streamer.set_state(Gst.State.READY)
             self.playing = False
 
+
         def flush(self):
             self.stop()
 
-
+            
+### RaspberryCam Class, a clever way of using the Streamer class but proprietary to raspberry so will probably deprecate in favour of generic v4l2 method
 class RaspberryCam(object):
     def __init__(self):
+        picamera = import_module('picamera')
+        picamera.array = import_module('picamera.array')
         self.resolution = (1280,720)
         self.width = 1280
         self.height = 720
@@ -190,20 +232,29 @@ class RaspberryCam(object):
 
 
 print "Starting fpv"
-#thread.start_new_thread(fpvstream.start, ())
-cam = RaspberryCam()
-cam.start()
-print "camera started, proceeding to record()"
-cam.record(15)
-cam.stop()
-cam.close()
-    
-"""
-t_end = time.time() + 10
+
+#stream = Streamer(1280,720,30,'x264','v4l2','/dev/video0','udp','192.168.1.65') # oCam software codec, optimal settings so far
+stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','udp','192.168.1.65') # Raspberry hardware codec, optimal settings so far
+#stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts')
+thread.start_new_thread(stream.start, ())
+
+t_end = time.time() + 60
 while time.time() < t_end: 
-    print time.time(), t_end, fpvstream.playing
     pass
-"""
 
 print "Stopped fpv"
 
+
+
+## this works for ocam
+# gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! jpegparse ! jpegdec ! queue ! videoconvert ! x264enc ! mpegtsmux ! filesink location='/var/tmp/test.ts'
+# gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! filesink location='/var/tmp/test.ts'
+
+"""
+# Deprecated RaspberryCam method
+cam = RaspberryCam()
+cam.start()
+cam.record(15)
+cam.stop()
+cam.close()
+"""

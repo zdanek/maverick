@@ -20,5 +20,4 @@ class maverick-vision::fpv::init (
         class { "maverick-fpv::broadcast": }
     }
     
-    
 }
