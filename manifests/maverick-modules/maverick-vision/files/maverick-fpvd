@@ -1,33 +1,66 @@
 #!/usr/bin/python
 
-import sys, os, time, thread
-import gi
+import sys, os, time, thread, gi
 gi.require_version('Gst', '1.0')
 from gi.repository import GObject,GLib,Gst
+GObject.threads_init()
+Gst.init(None)
+import picamera
+import picamera.array
 
-class FPV_Video(object):
-    
-        def __init__(self):
+class Streamer(object):
+        def __init__(self,width,height,framerate,vformat,output,dest):
+            self.size = 0
+            self.playing = False
+            self.paused = False
+            
+            if vformat == "h264":
+                self.capstring = 'video/x-h264,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
+                self.stream_h264()
+            elif vformat == "mjpeg":
+                self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
+                self.stream_mjpeg()
+
+            if output == "file":
+                self.output_file(dest)
+            elif output == "udp":
+                self.output_udp(dest)
+            
+            self.bus()
+            self.start()
+            
+            """
             self.streamer = Gst.Pipeline.new()
-
-            source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
-            source.set_property("device", "/dev/video0")
-            self.streamer.add(source)
-
-            caps = Gst.caps_from_string("video/x-raw,width=1280,height=720,framerate=49/1")
+            #source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
+            #source.set_property("device", "/dev/video0")
+            self.source = Gst.ElementFactory.make("appsrc", "source")
+            self.streamer.add(self.source)
+            self.source.set_property("is-live",True)
+            caps = Gst.Caps.from_string(self.capstring)
+            self.source.set_property("caps",caps)
             queue = Gst.ElementFactory.make("queue", "queue")
             self.streamer.add(queue)
-            source.link_filtered(queue, caps)
-            #print caps.get_current_caps()
+            self.source.link_filtered(queue, caps)
 
             vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
             self.streamer.add(vconvert)
             queue.link(vconvert)
+            #self.source.link(vconvert)
 
             h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
             self.streamer.add(h264enc)
             vconvert.link(h264enc)
 
+            mux = Gst.ElementFactory.make("mpegtsmux", "mux")
+            self.streamer.add(mux)
+            #h264enc.link(mux)
+            self.source.link(mux)
+            
+            filesink = Gst.ElementFactory.make("filesink", "sink")
+            filesink.set_property("location","custom.ts")
+            self.streamer.add(filesink)
+            mux.link(filesink)
+            
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
@@ -35,47 +68,141 @@ class FPV_Video(object):
             h264enc.link(h264pay)
 
             sink = Gst.ElementFactory.make("udpsink", "udpsink")
-            sink.set_property("host", "192.168.1.76")
+            sink.set_property("host", "192.168.1.73")
             sink.set_property("port", 5000)
             sink.set_property("sync", False)
             self.streamer.add(sink)
             h264pay.link(sink)
+            """
+
+
+        def output_file(self, dest):
+            mux = Gst.ElementFactory.make("mpegtsmux", "mux")
+            self.streamer.add(mux)
+            self.source_attach.link(mux)
             
+            filesink = Gst.ElementFactory.make("filesink", "sink")
+            filesink.set_property("location", dest)
+            self.streamer.add(filesink)
+            mux.link(filesink)
+
+        
+        def output_udp(self, dest):
+            pass
+        
+        
+        def bus(self):
             bus = self.streamer.get_bus()
             bus.add_signal_watch()
             bus.connect("message", self.on_message)
             
+            
+        def stream_h264(self):
+            CLI = [
+              'appsrc name="source" ! ',
+              'h264parse ! video/x-h264,stream-format=avc ! ',
+              'h264parse ! video/x-h264,stream-format=byte-stream ! ',
+              'h264parse name="source_attach"'
+            ]
+            gcmd = "".join(CLI)
+            self.streamer = Gst.parse_launch(gcmd)
+            self.source = self.streamer.get_by_name("source")
+            self.source.set_property("is-live",True)
+            self.gstcaps = Gst.Caps.from_string(self.capstring)
+            self.source.set_property("caps",self.gstcaps)
+            self.source_attach = self.streamer.get_by_name("source_attach")
+            
+            
+        def stream_mjpeg(self):
+            CLI = [
+              'appsrc name="source" ! ',
+              'jpegparse ! jpegdec ! ',
+              'queue ! omxh264enc name="source_attach"',
+            ]
+            gcmd = "".join(CLI)
+            self.streamer = Gst.parse_launch(gcmd)
+            self.source = self.streamer.get_by_name("source")
+            self.source.set_property("is-live",True)
+            self.gstcaps = Gst.Caps.from_string(self.capstring)
+            self.source.set_property("caps",self.gstcaps)
+            self.source_attach = self.streamer.get_by_name("source_attach")
+            
+
         def on_message(self, bus, message):
             t = message.type
             if t == Gst.MessageType.EOS:
                 self.streamer.set_state(Gst.State.NULL)
-                self.playmode = False
+                self.playing = False
             elif t == Gst.MessageType.ERROR:
                 self.streamer.set_state(Gst.State.NULL)
                 err, debug = message.parse_error()
                 print "Error: %s" % err, debug
-                self.playmode = False
+                self.playing = False
             
         def start(self):
             self.streamer.set_state(Gst.State.PLAYING)
-            self.playmode = True
-        
-        def stop(self):
-            self.streamer.set_state(Gst.State.NULL)
-            self.playmode = False
-            
+            self.playing = True
 
-GObject.threads_init()
-Gst.init(None)
-fpv = FPV_Video()
+        def write(self,s):
+            gstbuff = Gst.Buffer.new_wrapped(s)
+            ret = self.source.emit("push-buffer",gstbuff)
+
+        def stop(self):
+            self.streamer.set_state(Gst.State.READY)
+            self.playing = False
+
+        def flush(self):
+            self.stop()
+
+
+class RaspberryCam(object):
+    def __init__(self):
+        self.resolution = (1280,720)
+        self.width = 1280
+        self.height = 720
+        self.bitrate = 5000000
+        self.vformat = "h264" # mjpeg or h264
+        self.framerate = 30
+        self.rotation = 180
+        
+        self.output = "file"
+        self.dest = "test.ts"
+        
+        self.camera = picamera.PiCamera()
+        self.camera.resolution = self.resolution
+        self.camera.framerate = self.framerate
+
+    def start(self):
+        self.camera.start_recording(Streamer(self.width,self.height,self.framerate,self.vformat,self.output,self.dest),format=self.vformat,bitrate=self.bitrate)
+        print "RaspberryCam.start completed"
+
+    def record(self,duration):
+        self.camera.wait_recording(duration)
+
+    def stop(self):
+        self.camera.stop_recording()
+        print "RaspberryCam.stop completed"
+
+    def close(self):
+        self.camera.close()
+
+#fpvstream = Streamer(width=1280,height=720,framerate=30,format="raw")
 
 print "Starting fpv"
-thread.start_new_thread(fpv.start, ())
-
+#thread.start_new_thread(fpvstream.start, ())
+cam = RaspberryCam()
+cam.start()
+print "camera started, proceeding to record()"
+cam.record(5)
+cam.stop()
+cam.close()
+    
+"""
 t_end = time.time() + 10
 while time.time() < t_end: 
-    print time.time(), t_end, fpv.playmode
+    print time.time(), t_end, fpvstream.playing
     pass
+"""
 
-print "Stopping fpv"
-fpv.stop
+print "Stopped fpv"
+
