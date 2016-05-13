@@ -24,14 +24,6 @@ class Streamer(object):
             if format == "h264":
                 self.capstring = 'video/x-h264,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_h264()
-            elif format == "x264":
-                self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
-                self.stream_mjpeg()
-                self.encode_x264()
-            elif format == "mjpg":
-                self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
-                self.stream_mjpg()
-                self.encode_x264()
             elif format == "mjpeg":
                 self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_mjpeg()
@@ -76,8 +68,13 @@ class Streamer(object):
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
             self.streamer.add(parse)
             capsfilter.link(parse)
-            self.source_attach = parse
-            self.encode_attach = parse # fake encode_attach as we don't need to encode, we already have encoded stream
+            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
+            h264pay.set_property("config-interval", 1)
+            h264pay.set_property("pt", 96)
+            self.streamer.add(h264pay)
+            parse.link(h264pay)
+            self.source_attach = h264pay
+            self.encode_attach = self.source_attach # fake encode_attach as we don't need to encode, we already have encoded stream
 
             
         def stream_mjpeg(self):
@@ -104,29 +101,21 @@ class Streamer(object):
         ### Encoding methods
         def encode_h264(self):
             print "Attaching encoding 'h264'"
-            h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
-            self.streamer.add(h264enc)
-            self.source_attach.link(h264enc)
+            if Gst.ElementFactory.find("omxh264enc"):
+                print "Raspberry hardware encoder detected, using omxh264enc as h264 encoder"
+                self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
+            else:
+                print "No hardware encoder detected, using software x264 encoder"
+                self.h264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
+                self.h264enc.set_property('speed-preset', 1)
+                self.h264enc.set_property('tune', 0x00000004)
+            self.streamer.add(self.h264enc)
+            self.source_attach.link(self.h264enc)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
             self.streamer.add(h264pay)
-            h264enc.link(h264pay)
-            self.encode_attach = h264pay
-
-
-        def encode_x264(self):
-            print "Attaching encoding 'x264'"
-            x264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
-            x264enc.set_property('speed-preset', 1)
-            x264enc.set_property('tune', 0x00000004)
-            self.streamer.add(x264enc)
-            self.source_attach.link(x264enc)
-            h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
-            h264pay.set_property("config-interval", 1)
-            h264pay.set_property("pt", 96)
-            self.streamer.add(h264pay)
-            x264enc.link(h264pay)
+            self.h264enc.link(h264pay)
             self.encode_attach = h264pay
 
 
@@ -233,8 +222,7 @@ class RaspberryCam(object):
 
 print "Starting fpv"
 
-#stream = Streamer(1280,720,30,'x264','v4l2','/dev/video0','udp','192.168.1.65') # oCam software codec, optimal settings so far
-stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','udp','192.168.1.65') # Raspberry hardware codec, optimal settings so far
+stream = Streamer(1280,720,30,'mjpeg','v4l2','/dev/video0','udp','192.168.1.65') # Works with both raspberry and ocam
 #stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts')
 thread.start_new_thread(stream.start, ())
 
@@ -249,7 +237,9 @@ print "Stopped fpv"
 ## this works for ocam
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! jpegparse ! jpegdec ! queue ! videoconvert ! x264enc ! mpegtsmux ! filesink location='/var/tmp/test.ts'
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! filesink location='/var/tmp/test.ts'
-
+## raspicam
+# gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=640,height=480,framerate=30/1' ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000
+# gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-raw,width=1280,height=720,framerate=30/1' ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000 sync=false
 """
 # Deprecated RaspberryCam method
 cam = RaspberryCam()
