@@ -116,7 +116,7 @@ class maverick-network (
         unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
     }
 
-    if dnsmasq == true {
+    if $dnsmasq == true {
         class { "maverick-network::dnsmasq": }
     }
     
