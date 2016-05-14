@@ -10,6 +10,10 @@ class maverick-vision::fpv::mjpg-streamer {
         owner		=> "mav",
         group		=> "mav",
     } ->
+    exec { "check_vcsrepo_mjpg-streamer":
+        command     => '/bin/true',
+        onlyif      => '/usr/bin/test -e /srv/maverick/software/mjpg-streamer/.git/HEAD'
+    } ->
     vcsrepo { "/srv/maverick/software/mjpg-streamer":
         ensure		=> present,
         provider 	=> git,
@@ -17,6 +21,7 @@ class maverick-vision::fpv::mjpg-streamer {
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
+        require     => Exec["check_vcsrepo_mjpg-streamer"]
     } ->
     exec { "mjpg-streamer-compile":
         user        => "mav",

@@ -21,6 +21,10 @@ class maverick-vision::cv::init (
         group       => "mav",
         mode        => 755,
     } ->
+    exec { "check_vcsrepo_opencv":
+        command     => '/bin/true',
+        onlyif      => '/usr/bin/test -e /srv/maverick/software/opencv/.git/HEAD'
+    } ->
     vcsrepo { "/srv/maverick/software/opencv":
         ensure		=> present,
         provider 	=> git,
@@ -28,6 +32,11 @@ class maverick-vision::cv::init (
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
+        require     => Exec["check_vcsrepo_opencv"]
+    } ->
+    exec { "check_vcsrepo_opencv_contrib":
+        command     => '/bin/true',
+        onlyif      => '/usr/bin/test -e /srv/maverick/software/opencv_contrib/.git/HEAD'
     } ->
     vcsrepo { "/srv/maverick/software/opencv_contrib":
         ensure		=> present,
@@ -36,6 +45,7 @@ class maverick-vision::cv::init (
         revision	=> "master",
         owner		=> "mav",
         group		=> "mav",
+        require     => Exec["check_vcsrepo_opencv_contrib"]
     } ->
     # Create build directory
     file { "/srv/maverick/software/opencv/build":
