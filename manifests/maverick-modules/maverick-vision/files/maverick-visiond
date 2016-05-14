@@ -1,7 +1,11 @@
 #!/usr/bin/python
 
-import sys, os, time, thread, gi
+import sys, os, time, logging
+import gi
 from importlib import import_module
+import lockfile, signal, grp
+from daemon import runner
+
 gi.require_version('Gst', '1.0')
 from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
@@ -41,7 +45,7 @@ class Streamer(object):
 
         ### Input methods
         def input_appsrc(self, source):
-            print "Attaching input 'appsrc'"
+            logger.info("Attaching input 'appsrc'")
             self.streamer = Gst.Pipeline.new()
             self.source = Gst.ElementFactory.make("appsrc", "source")
             self.streamer.add(self.source)
@@ -49,7 +53,7 @@ class Streamer(object):
         
         
         def input_v4l2(self, source):
-            print "Attaching input 'v4l2'"
+            logger.info("Attaching input 'v4l2'")
             if not source:
                 source = "/dev/video"
             self.streamer = Gst.Pipeline.new()
@@ -60,7 +64,7 @@ class Streamer(object):
 
         ### Stream methods
         def stream_h264(self):
-            print "Attaching stream 'h264'"
+            logger.info("Attaching stream 'h264'")
             capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
             self.streamer.add(capsfilter)
@@ -78,7 +82,7 @@ class Streamer(object):
 
             
         def stream_mjpeg(self):
-            print "Attaching stream 'mjpeg'"
+            logger.info("Attaching stream 'mjpeg'")
             capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
             self.streamer.add(capsfilter)
@@ -100,12 +104,12 @@ class Streamer(object):
 
         ### Encoding methods
         def encode_h264(self):
-            print "Attaching encoding 'h264'"
+            logger.info("Attaching encoding 'h264'")
             if Gst.ElementFactory.find("omxh264enc"):
-                print "Raspberry hardware encoder detected, using omxh264enc as h264 encoder"
+                logger.info("Raspberry hardware encoder detected, using omxh264enc as h264 encoder")
                 self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
             else:
-                print "No hardware encoder detected, using software x264 encoder"
+                logger.info("No hardware encoder detected, using software x264 encoder")
                 self.h264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
                 self.h264enc.set_property('speed-preset', 1)
                 self.h264enc.set_property('tune', 0x00000004)
@@ -124,7 +128,7 @@ class Streamer(object):
 
         ### Output methods
         def output_file(self, dest):
-            print "Attaching output 'file'"
+            logger.info("Attaching output 'file'")
             mux = Gst.ElementFactory.make("mpegtsmux", "mux")
             self.streamer.add(mux)
             self.encode_attach.link(mux)
@@ -137,9 +141,9 @@ class Streamer(object):
         
         def output_udp(self, dest):
             if not dest:
-                print "UDP destination must be set"
+                logger.warn("UDP destination must be set")
                 return
-            print "Attaching output 'udp'"
+            logger.info("Attaching output 'udp'")
             sink = Gst.ElementFactory.make("udpsink", "udpsink")
             sink.set_property("host", dest)
             sink.set_property("port", 5000)
@@ -175,7 +179,7 @@ class Streamer(object):
 
         def write(self,s):
             gstbuff = Gst.Buffer.new_wrapped(s)
-            ret = self.source.emit("push-buffer",gstbuff)
+            self.source.emit("push-buffer",gstbuff)
 
 
         def stop(self):
@@ -223,20 +227,45 @@ class RaspberryCam(object):
         self.camera.close()
 
 
-print "Starting fpv"
+### Main App Class (initial concept)
+class App():
+    def __init__(self):
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/srv/maverick/data/logs/maverick-visiond.log'
+        self.stderr_path = '/srv/maverick/data/logs/maverick-visiond.log'
+        self.pidfile_path = '/srv/maverick/data/run/maverick-visiond.pid'
+        self.pidfile_timeout = 5
+        
+    def run(self):
+        logger.info("Starting maverick-visiond")
+        #stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts')
+        stream = Streamer(1280,720,30,'mjpeg','v4l2','/dev/video0','udp','192.168.1.65') # Works with both raspberry and ocam
+        stream.start()
+        while True:
+            logger.debug("Loop sleep")
+            time.sleep(5)
 
-stream = Streamer(1280,720,30,'mjpeg','v4l2','/dev/video0','udp','192.168.1.65') # Works with both raspberry and ocam
-#stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts')
-thread.start_new_thread(stream.start, ())
+print "Starting maverick-visiond daemon"
 
-t_end = time.time() + 60
-while time.time() < t_end: 
-    pass
+app = App()
 
+logger = logging.getLogger("DaemonLog")
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler = logging.FileHandler("/srv/maverick/data/logs/maverick-visiond.log")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+daemon_runner = runner.DaemonRunner(app)
+daemon_runner.daemon_context.files_preserve=[handler.stream]
+daemon_runner.do_action()
+
+logger.info("Stopping maverick-visiond")
 print "Stopped fpv"
 
 
-
+""" 
+Ignore below, there be dragons
 ## this works for ocam
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! jpegparse ! jpegdec ! queue ! videoconvert ! x264enc ! mpegtsmux ! filesink location='/var/tmp/test.ts'
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! filesink location='/var/tmp/test.ts'
@@ -248,7 +277,6 @@ print "Stopped fpv"
 # gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-raw,width=640,height=480,framerate=30/1' ! omxh264enc ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000 sync=false
 # gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-raw,width=1280,height=720,framerate=30/1' ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000 sync=false
 # gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! jpegparse ! jpegdec ! queue ! videoconvert ! x264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000 sync=false
-"""
 # Deprecated RaspberryCam method
 cam = RaspberryCam()
 cam.start()

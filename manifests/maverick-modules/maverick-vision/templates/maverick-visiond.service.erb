@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick Vision Daemon
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/maverick-visiond start
+ExecStop=/srv/maverick/software/maverick/bin/maverick-visiond stop
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+
