@@ -25,13 +25,9 @@ class maverick-dronekit::fc (
     file { "/srv/maverick/.virtualenvs/dronekit-fc/lib/python2.7/no-global-site-packages.txt":
         ensure  => absent
     } ->
-    vcsrepo { "/srv/maverick/code/dronekit-fc/dronekit-python":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> $fc_dronekit_source,
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-fc-dronekit-python":
+        gitsource   => $fc_dronekit_source,
+        dest        => "/srv/maverick/code/dronekit-fc/dronekit-python",
     }
     
     python::pip { 'pip-mavproxy-fc':

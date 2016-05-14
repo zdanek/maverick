@@ -12,13 +12,9 @@ class maverick-baremetal::odroid::init (
         owner		=> "mav",
         group		=> "mav",
     } ->
-    vcsrepo { "/srv/maverick/software/odroid-utility":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/mdrjr/odroid-utility.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-odroid-utility":
+        gitsource   => "https://github.com/mdrjr/odroid-utility.git",
+        dest        => "/srv/maverick/software/odroid-utility",
     }
     
     # Add odroid-cpu-control from git, very useful
@@ -29,13 +25,9 @@ class maverick-baremetal::odroid::init (
         owner		=> "mav",
         group		=> "mav",
     } ->
-    vcsrepo { "/srv/maverick/software/odroid-cpu-control":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/mad-ady/odroid-cpu-control.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-odroid-cpu-control":
+        gitsource   => "https://github.com/mad-ady/odroid-cpu-control.git",
+        dest        => "/srv/maverick/software/odroid-cpu-control",
     } ->
     file { "/srv/maverick/software/maverick/bin/cpu-control":
         ensure      => link,
@@ -84,13 +76,9 @@ class maverick-baremetal::odroid::init (
         owner		=> "mav",
         group		=> "mav",
     } ->
-    vcsrepo { "/srv/maverick/software/odroid-wiringpi":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/hardkernel/wiringPi.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-odroid-wiringpi":
+        gitsource   => "https://github.com/hardkernel/wiringPi.git",
+        dest        => "/srv/maverick/software/odroid-wiringpi",
     } ->
     exec { "compile-wiringpi":
         command     => "/srv/maverick/software/odroid-wiringpi/build >/srv/maverick/data/logs/build/odroid-wiringpi.build.log 2>&1",

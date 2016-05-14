@@ -86,13 +86,10 @@ class base::maverick {
         owner		=> "mav",
         group		=> "mav",
     } ->
-    vcsrepo { "/srv/maverick/software/maverick":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/fnoop/maverick.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-maverick":
+        gitsource   => "https://github.com/fnoop/maverick.git",
+        dest        => "/srv/maverick/software/maverick",
+        require     => File["/srv/maverick/software/maverick"]
     } ->
     exec { "gitfreeze-localconf":
         cwd         => "/srv/maverick/software/maverick",

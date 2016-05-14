@@ -5,6 +5,25 @@ define speak ($message = "", $level = "") {
         loglevel    => $level,
     }
 }
+
+# oncevcsrepo is a wrapper to only call vcsrepo if a clone doesn't exist at all locally.
+# Otherwise, vcsrepo gets called for each define each puppet run, which can take a long time (and require internet access)
+define oncevcsrepo ($gitsource, $dest, $revision = "master", $owner = "mav", $group = "mav", $submodules = true) {
+    # This depends on gitfiles fact, declared in maverick-modules/base/facts.d/gitrepos.py
+    $gitrepos = split($gitrepos, ',')
+    if ! ("${dest}/.git/HEAD" in $gitrepos) {
+        warning("oncevcsrepo: ${dest} git repo doesn't seem to exist locally, cloning")
+        vcsrepo { "${dest}":
+            ensure		=> present,
+            provider 	=> git,
+            source		=> "${gitsource}",
+            revision	=> "${revision}",
+            owner		=> "${owner}",
+            group		=> "${group}",
+            submodules  => $submodules,
+        }
+    }
+}
 ### End of defines
 
 node default {

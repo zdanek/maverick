@@ -29,15 +29,6 @@ class base::hostip {
             ip              => $_primaryip,
             host_aliases    => $_host_aliases,
         }
-
-    if ($operatingsystem == "CentOS") or ($operatingsystem == "RedHat") or ($operatingsystem == "Fedora") {        
-            augeas {"network-hostname":
-                 changes => [
-                     "set /files/etc/sysconfig/network/HOSTNAME $_fqdn",
-               ],
-            } 
-    }
-    
     }
 
 }

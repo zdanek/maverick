@@ -10,14 +10,10 @@ class maverick-baremetal::peripheral::ocam (
         owner		=> "mav",
         group		=> "mav",
     } ->
-    vcsrepo { "/srv/maverick/software/odroid-ocam":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/withrobot/oCam.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
+    oncevcsrepo { "git-odroid-ocam":
+        gitsource   => "https://github.com/withrobot/oCam.git",
+        dest        => "/srv/maverick/software/odroid-ocam",
+    }
     exec { "ocam-viewer-compile":
         user        => "mav",
         timeout     => 0,

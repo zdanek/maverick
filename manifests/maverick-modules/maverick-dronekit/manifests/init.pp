@@ -13,15 +13,12 @@ class maverick-dronekit (
     }
     
     # Install dronekit-la (log analyzer)
-    vcsrepo { "/srv/maverick/software/dronekit-la":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/dronekit/dronekit-la.git",
+    oncevcsrepo { "git-dronekit-la":
+        gitsource   => "https://github.com/dronekit/dronekit-la.git",
+        dest        => "/srv/maverick/software/dronekit-la",
         revision	=> "${dronekit_la_revision}",
-        owner		=> "mav",
-        group		=> "mav",
-        submodules  => false
-    } ->
+        submodules  => false,
+    }
     # Compile dronekit-la
     exec { "compile-dronekit-la":
         command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/dronekit-la.build.log 2>&1",
@@ -47,23 +44,15 @@ class maverick-dronekit (
     }
     
     # Install rmackay9 red balloon finder
-    vcsrepo { "/srv/maverick/code/dronekit-apps/red-balloon-finder":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/rmackay9/ardupilot-balloon-finder.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-red-balloon-finder":
+        gitsource   => "https://github.com/rmackay9/ardupilot-balloon-finder.git",
+        dest        => "/srv/maverick/code/dronekit-apps/red-balloon-finder",
     }
     # Install djnugent precision landing
-    vcsrepo { "/srv/maverick/code/dronekit-apps/precision-landing":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/djnugent/Precland.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-precision-landing":
+        gitsource   => "https://github.com/djnugent/Precland.git",
+        dest        => "/srv/maverick/code/dronekit-apps/precision-landing",
     }
-    
+
     
 }

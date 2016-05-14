@@ -9,22 +9,19 @@ class maverick-cloud9 (
     
     # Install system ncurses first, so cloud9 doesn't have to compile it
     ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
-    
+
     file { "/srv/maverick/software/cloud9":
         ensure 		=> directory,
         require		=> File["/srv/maverick/software"],
         mode		=> 755,
         owner		=> "mav",
         group		=> "mav",
-    } ->
-    vcsrepo { "/srv/maverick/software/cloud9":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/c9/core.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
-        notify		=> [ Exec["install-cloud9"] ]
+    }
+    oncevcsrepo { "git-cloud9":
+        gitsource   => "https://github.com/c9/core.git",
+        dest        => "/srv/maverick/software/cloud9",
+        notify		=> Exec["install-cloud9"],
+        require     => File["/srv/maverick/software/cloud9"]
     } ->
     file { "/srv/maverick/software/cloud9/scripts/install.sh":
         ensure      => present,
@@ -32,6 +29,7 @@ class maverick-cloud9 (
         mode        => 755,
         owner       => "mav",
         group       => "mav",
+        require     => Oncevcsrepo["git-cloud9"]
     } ->
     exec { "install-preinstall-fix":
         # This is a fix for compiling dependencies on arm platforms

@@ -29,15 +29,11 @@ class maverick-dronekit::sitl (
     file { "/srv/maverick/.virtualenvs/dronekit-sitl/lib/python2.7/no-global-site-packages.txt":
         ensure  => absent
     } ->
-    vcsrepo { "/srv/maverick/code/dronekit-sitl/dronekit-python":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> $sitl_dronekit_source,
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
+    oncevcsrepo { "git-sitl-dronekit-python":
+        gitsource   => $sitl_dronekit_source,
+        dest        => "/srv/maverick/code/dronekit-sitl/dronekit-python",
     }
-
+    
     # Define function to build ardupilot firmwares, this is used for iteration if $sitl == true
     define sitl_fw_build ($build = $title) {
         $downvar = downcase($build)
@@ -80,13 +76,10 @@ class maverick-dronekit::sitl (
             
         # Pull ardupilot to build firmwares for sitl, as pre-built firmwares aren't available for ARM.
         # For now just pull master, sort out releases/versions later
-        vcsrepo { "/srv/maverick/code/dronekit-sitl/sitl-fw":
-            ensure		=> present,
-            provider 	=> git,
-            source		=> "https://github.com/ArduPilot/ardupilot.git",
+        oncevcsrepo { "git-sitl-fw":
+            gitsource   => "https://github.com/ArduPilot/ardupilot.git",
+            dest        => "/srv/maverick/code/dronekit-sitl/sitl-fw",
             revision	=> "${sitl_fw_branch}",
-            owner		=> "mav",
-            group		=> "mav",
         }
         ensure_packages(["make", "gawk", "g++", "arduino-core"])
         
