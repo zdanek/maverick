@@ -2,14 +2,7 @@ class maverick-vision::fpv::mjpg-streamer {
     
     ensure_packages(["cmake", "libjpeg-dev"])
     
-    # Add ocam_viewer repo from git
-    file { "/srv/maverick/software/mjpg-streamer":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
+    # Add mjpg-streamer repo from git
     oncevcsrepo { "git-mjpg-streamer":
         gitsource   => "https://github.com/jacksonliam/mjpg-streamer.git",
         dest        => "/srv/maverick/software/mjpg-streamer",

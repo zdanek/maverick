@@ -15,12 +15,6 @@ class maverick-vision::cv::init (
     ensure_packages(["libgstreamer-plugins-base1.0-dev"])
     
     # Pull opencv and opencv_contrib from git
-    file { "/srv/maverick/software/opencv":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => 755,
-    } ->
     oncevcsrepo { "git-opencv":
         gitsource   => "https://github.com/Itseez/opencv.git",
         dest        => "/srv/maverick/software/opencv",

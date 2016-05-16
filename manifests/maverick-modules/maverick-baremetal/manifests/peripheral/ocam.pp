@@ -3,13 +3,6 @@ class maverick-baremetal::peripheral::ocam (
     
     # Add ocam software from git
     ensure_packages(["qt4-default", "libv4l-dev", "libudev-dev"])
-    file { "/srv/maverick/software/odroid-ocam":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
     oncevcsrepo { "git-odroid-ocam":
         gitsource   => "https://github.com/withrobot/oCam.git",
         dest        => "/srv/maverick/software/odroid-ocam",

@@ -5,26 +5,12 @@ class maverick-baremetal::odroid::init (
     ensure_packages(["axel", "whiptail"])
 
     # Add odroid-utility repo from git, contains useful scripts
-    file { "/srv/maverick/software/odroid-utility":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
     oncevcsrepo { "git-odroid-utility":
         gitsource   => "https://github.com/mdrjr/odroid-utility.git",
         dest        => "/srv/maverick/software/odroid-utility",
     }
     
     # Add odroid-cpu-control from git, very useful
-    file { "/srv/maverick/software/odroid-cpu-control":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
     oncevcsrepo { "git-odroid-cpu-control":
         gitsource   => "https://github.com/mad-ady/odroid-cpu-control.git",
         dest        => "/srv/maverick/software/odroid-cpu-control",
@@ -69,13 +55,6 @@ class maverick-baremetal::odroid::init (
     }
     
     # Add odroid-wiringpi from hardkernel github
-    file { "/srv/maverick/software/odroid-wiringpi":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
     oncevcsrepo { "git-odroid-wiringpi":
         gitsource   => "https://github.com/hardkernel/wiringPi.git",
         dest        => "/srv/maverick/software/odroid-wiringpi",

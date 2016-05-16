@@ -10,13 +10,6 @@ class maverick-cloud9 (
     # Install system ncurses first, so cloud9 doesn't have to compile it
     ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
 
-    file { "/srv/maverick/software/cloud9":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    }
     oncevcsrepo { "git-cloud9":
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",

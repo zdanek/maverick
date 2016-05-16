@@ -13,6 +13,12 @@ define oncevcsrepo ($gitsource, $dest, $revision = "master", $owner = "mav", $gr
     $gitrepos = split($gitrepos, ',')
     if ! ("${dest}/.git/HEAD" in $gitrepos) {
         warning("oncevcsrepo: ${dest} git repo doesn't seem to exist locally, cloning")
+        file { "${dest}":
+            ensure      => directory,
+            owner       => "${owner}",
+            group       => "${group}",
+            mode        => 755,
+        } ->
         vcsrepo { "${dest}":
             ensure		=> present,
             provider 	=> git,
