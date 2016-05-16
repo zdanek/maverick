@@ -27,6 +27,7 @@ define oncevcsrepo ($gitsource, $dest, $revision = "master", $owner = "mav", $gr
             owner		=> "${owner}",
             group		=> "${group}",
             submodules  => $submodules,
+            require     => File["${dest}"]
         }
     }
 }
