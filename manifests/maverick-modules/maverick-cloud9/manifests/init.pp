@@ -14,7 +14,6 @@ class maverick-cloud9 (
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",
         notify		=> Exec["install-cloud9"],
-        require     => File["/srv/maverick/software/cloud9"]
     } ->
     file { "/srv/maverick/software/cloud9/scripts/install.sh":
         ensure      => present,
