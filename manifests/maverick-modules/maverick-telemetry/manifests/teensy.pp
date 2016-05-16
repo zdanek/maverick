@@ -5,13 +5,10 @@ class maverick-telemetry::teensy (
     
     ensure_packages(["libusb-dev"])
     # Install teensy_loader_cli
-    vcsrepo { "/srv/maverick/software/teensy_loader_cli":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/PaulStoffregen/teensy_loader_cli.git",
+    oncevcsrepo { "git-teensy_loader_cli":
+        gitsource   => "https://github.com/PaulStoffregen/teensy_loader_cli.git",
+        dest        => "/srv/maverick/software/teensy_loader_cli",
         revision	=> "${teensy_loader_cli_revision}",
-        owner		=> "mav",
-        group		=> "mav",
         submodules  => false
     } ->
     # Compile teensy_loader_cli

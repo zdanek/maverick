@@ -21,32 +21,14 @@ class maverick-vision::cv::init (
         group       => "mav",
         mode        => 755,
     } ->
-    exec { "check_vcsrepo_opencv":
-        command     => '/bin/true',
-        onlyif      => '/usr/bin/test -e /srv/maverick/software/opencv/.git/HEAD'
+    oncevcsrepo { "git-opencv":
+        gitsource   => "https://github.com/Itseez/opencv.git",
+        dest        => "/srv/maverick/software/opencv",
     } ->
-    vcsrepo { "/srv/maverick/software/opencv":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/Itseez/opencv.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
-        require     => Exec["check_vcsrepo_opencv"]
-    } ->
-    exec { "check_vcsrepo_opencv_contrib":
-        command     => '/bin/true',
-        onlyif      => '/usr/bin/test -e /srv/maverick/software/opencv_contrib/.git/HEAD'
-    } ->
-    vcsrepo { "/srv/maverick/software/opencv_contrib":
-        ensure		=> present,
-        provider 	=> git,
-        source		=> "https://github.com/Itseez/opencv_contrib.git",
-        revision	=> "master",
-        owner		=> "mav",
-        group		=> "mav",
-        require     => Exec["check_vcsrepo_opencv_contrib"]
-    } ->
+    oncevcsrepo { "git-opencv_contrib":
+        gitsource   => "https://github.com/Itseez/opencv_contrib.git",
+        dest        => "/srv/maverick/software/opencv_contrib",
+    }
     # Create build directory
     file { "/srv/maverick/software/opencv/build":
         ensure      => directory,
