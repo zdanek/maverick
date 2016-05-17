@@ -270,7 +270,7 @@ Ignore below, there be dragons
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! jpegparse ! jpegdec ! queue ! videoconvert ! x264enc ! mpegtsmux ! filesink location='/var/tmp/test.ts'
 # gst-launch-1.0 -vvv v4l2src ! 'image/jpeg,width=1280,height=720,framerate=30/1' ! filesink location='/var/tmp/test.ts'
 ## raspicam
-# gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=640,height=480,framerate=30/1' ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000
+# gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=640,height=480,framerate=30/1' ! rtph264pay config-interval=1 pt=96 ! fakesink # udpsink host=192.168.1.65 port=5000
 # GST_DEBUG=udpsink:7 gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=640,height=480,framerate=30/1' ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.65 port=5000
 # GST_DEBUG=v4l2src:7 gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=640,height=480,framerate=30/1' ! rtph264pay config-interval=1 pt=96 ! tcpserversink port=5000
 # gst-launch-1.0 -vvv v4l2src device=/dev/video0 ! 'video/x-h264,width=1920,height=1080,framerate=30/1' ! mpegtsmux ! filesink location='/var/tmp/test.mpg' # works

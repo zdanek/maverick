@@ -12,7 +12,6 @@ class maverick-vision::cv::init (
     ensure_packages(["libatlas-base-dev", "gfortran"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
-    ensure_packages(["libgstreamer-plugins-base1.0-dev"])
     
     # Pull opencv and opencv_contrib from git
     oncevcsrepo { "git-opencv":
@@ -37,7 +36,7 @@ class maverick-vision::cv::init (
         command     => "/usr/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/software/opencv_contrib/modules -D BUILD_EXAMPLES=ON .. >/srv/maverick/data/logs/build/opencv.cmake.out 2>&1",
         cwd         => "/srv/maverick/build/opencv/build",
         creates     => "/srv/maverick/build/opencv/build/Makefile",
-        require     => Package["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "libgstreamer-plugins-base1.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] # ensure we have all the dependencies satisfied
+        require     => Package["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] # ensure we have all the dependencies satisfied
     } ->
     exec { "opencv-build":
         user        => "mav",
