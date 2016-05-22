@@ -49,7 +49,11 @@ class Streamer(object):
             self.streamer = Gst.Pipeline.new()
             self.source = Gst.ElementFactory.make("appsrc", "source")
             self.streamer.add(self.source)
+            # Set appsrc stream to live
             self.source.set_property("is-live",True)
+            # Let appsrc set the timestamp so we don't have to do it
+            self.source.set_property("do-timestamp",True)
+            self.source.set_property("min-latency ",0)
         
         
         def input_v4l2(self, source):

@@ -46,6 +46,9 @@ class base {
     # End Bootstrap stage
     ###################################
 
+    ### Include useful functions
+    class { "base::functions": }
+        
     ### Setup console visual configuration
     class { "base::console": }
 
