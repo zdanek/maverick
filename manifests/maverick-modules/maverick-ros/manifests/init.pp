@@ -72,11 +72,34 @@ class maverick-ros (
             creates         => "/srv/maverick/software/ros/lib/rosbag/topic_renamer.py",
             timeout         => 0,
             require         => File["/srv/maverick/software/ros"]
-        } ->
-        exec { "ros_bashrc":
-            command         => "/bin/echo 'source ~/software/ros/setup.bash' >> /srv/maverick/.bashrc",
-            unless          => "/bin/grep 'ros/setup.bash' ~/.bashrc",
-            user            => "mav",
         }
+        
+        # Add opencv to the existing workspace through vision_opencv package, this also installs std_msgs package as dependency
+        ensure_packages(["libpoco-dev", "libyaml-cpp-dev "])
+        exec { "ws_add_opencv":
+            command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro jade --deps --wet-only --tar >jade-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src jade-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
+            cwd             => "/srv/maverick/build/ros_catkin_ws",
+            user            => "mav",
+            creates         => "/srv/maverick/build/ros_catkin_ws/src/vision_opencv",
+            require         => Package["libpoco-dev"]
+        } ->
+        exec { "catkin_make_vision_opencv":
+            command         => "/srv/maverick/build/ros_catkin_ws/src/catkin/bin/catkin_make_isolated --install --install-space /srv/maverick/software/ros -DCMAKE_BUILD_TYPE=Release -j${::processorcount}",
+            cwd             => "/srv/maverick/build/ros_catkin_ws",
+            user            => "mav",
+            creates         => "/srv/maverick/software/ros/share/opencv_apps/nodelet_plugins.xml",
+            timeout         => 0,
+            require         => File["/srv/maverick/software/ros"]
+        }
+
     }   
+
+    file { "/etc/profile.d/ros-env.sh":
+        ensure      => present,
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "source ~/software/ros/setup.bash",
+    }
+    
 }
