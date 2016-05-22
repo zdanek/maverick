@@ -93,6 +93,7 @@ if [ "$STATUS" == "true" ]; then
         (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
         (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL Runner" $?)
         (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
+        (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     fi
     echo -e $statusout | column -c 2 -s : -t
     echo
