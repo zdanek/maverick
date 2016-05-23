@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-import sys, os, time, logging
+import sys, os, time, logging, errno, re
+import v4l2
+from fcntl import ioctl
 import gi
 from importlib import import_module
 import lockfile, signal, grp
@@ -74,13 +76,19 @@ class Streamer(object):
             self.streamer.add(capsfilter)
             self.source.link(capsfilter)
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
-            self.streamer.add(parse)
-            capsfilter.link(parse)
+            if parse:
+                self.streamer.add(parse)
+                capsfilter.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
             self.streamer.add(h264pay)
-            parse.link(h264pay)
+            if parse:
+                logger.debug('Attaching h264parse:'+str(parse))
+                parse.link(h264pay)
+            else:
+                logger.debug('Attaching h264pay direct to capsfilter')
+                capsfilter.link(h264pay)
             self.source_attach = h264pay
             self.encode_attach = self.source_attach # fake encode_attach as we don't need to encode, we already have encoded stream
 
@@ -179,6 +187,7 @@ class Streamer(object):
         def start(self):
             self.streamer.set_state(Gst.State.PLAYING)
             self.playing = True
+            logger.info('Starting camera stream')
 
 
         def write(self,s):
@@ -189,6 +198,7 @@ class Streamer(object):
         def stop(self):
             self.streamer.set_state(Gst.State.READY)
             self.playing = False
+            logger.info('Stopping camera stream')
 
 
         def flush(self):
@@ -239,23 +249,94 @@ class App():
         self.stderr_path = '/srv/maverick/data/logs/maverick-visiond.log'
         self.pidfile_path = '/srv/maverick/data/run/maverick-visiond.pid'
         self.pidfile_timeout = 5
-        
+
     def run(self):
         logger.info("Starting maverick-visiond")
-        #stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts')
-        #stream = Streamer(1280,720,30,'mjpeg','v4l2','/dev/video0','udp','192.168.1.65') # Works with both raspberry and ocam
-        stream = Streamer(1280,720,30,'mjpeg','appsrc','/dev/video0','udp','192.168.1.65') # Works with both raspberry and ocam
-        stream.start()
+
+        # Check the camera has a valid input
+        self.vd = open('/dev/video0', 'rw') 
+        if not self.check_input():
+            logger.critical('Selected camera not valid')
+            sys.exit(1)
+
+        # Log info
+        self.camera_info()
+        
+        # Autodetect if we have h264 available from the camera, if so setup a passthrough pipeline.
+        if self.check_h264():
+            logger.info('Camera h264 stream available, using h264 passthrough')
+            stream = Streamer(1280,720,30,'h264','v4l2','/dev/video0','udp','192.168.1.76')
+        # Otherwise, setup an mjpg->h264 encoder pipeline.
+        else:
+            logger.info('Camera h264 stream not available, using mjpeg -> h264 encoder')
+            stream = Streamer(1280,720,30,'mjpeg','v4l2','/dev/video0','udp','192.168.1.76') # Works with both raspberry and ocam
+
         while True:
-            logger.debug("Loop sleep")
             time.sleep(5)
 
+    def camera_info(self):
+        # Log capability info
+        cp = v4l2.v4l2_capability() 
+        ioctl(self.vd, v4l2.VIDIOC_QUERYCAP, cp) 
+        logger.debug("driver:"+cp.driver)
+        logger.debug("card:"+cp.card)
+        
+        # Log controls available
+        queryctrl = v4l2.v4l2_queryctrl(v4l2.V4L2_CID_BASE)
+        while queryctrl.id < v4l2.V4L2_CID_LASTP1:
+            try:
+                ioctl(self.vd, v4l2.VIDIOC_QUERYCTRL, queryctrl)
+            except IOError, e:
+                # this predefined control is not supported by this device
+                assert e.errno == errno.EINVAL
+                queryctrl.id += 1
+                continue
+            logger.debug("Camera control: "+queryctrl.name)
+            queryctrl = v4l2.v4l2_queryctrl(queryctrl.id + 1)
+        queryctrl.id = v4l2.V4L2_CID_PRIVATE_BASE
+        while True:
+            try:
+                ioctl(self.vd, v4l2.VIDIOC_QUERYCTRL, queryctrl)
+            except IOError, e:
+                # no more custom controls available on this device
+                assert e.errno == errno.EINVAL
+                break
+            logger.debug("Camera control: "+queryctrl.name)
+            queryctrl = v4l2.v4l2_queryctrl(queryctrl.id + 1)
+
+    
+    def check_input(self):
+        input = v4l2.v4l2_input(0)
+        try:
+            ioctl(self.vd, v4l2.VIDIOC_ENUMINPUT, input)
+            logger.debug('Camera input: '+input.name+':'+str(input.type))
+            if input.type != 2:
+                return False # If input type is not camera (2) then return false
+            return True
+        except:
+            return False
+
+    def check_h264(self):
+        capture = v4l2.v4l2_fmtdesc()
+        capture.index = 0
+        capture.type = v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE
+        h264 = False
+        try:
+            while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
+                logger.debug("Camera format: "+capture.description)
+                capture.index += 1
+                if re.search('H.264', capture.description):
+                    h264 = True
+        except:
+            pass
+        return h264
+        
 print "Starting maverick-visiond daemon"
 
 app = App()
 
 logger = logging.getLogger("DaemonLog")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler = logging.FileHandler("/srv/maverick/data/logs/maverick-visiond.log")
 handler.setFormatter(formatter)
@@ -288,4 +369,9 @@ cam.start()
 cam.record(15)
 cam.stop()
 cam.close()
+
+#stream = Streamer(1280,720,49,'h264','v4l2','/dev/video0','file','/var/tmp/test.ts') # test, to file
+#stream = Streamer(1280,720,30,'mjpeg','appsrc','/dev/video0','udp','192.168.1.65') # appsrc, for future opencv pipelines
+#stream.start()
+
 """
