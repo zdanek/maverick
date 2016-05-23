@@ -9,6 +9,12 @@ class maverick-vision (
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
     ensure_packages(["x264"])
 
+    # Add v4l2 python bindings
+    python::pip { 'pip-v4l2':
+        pkgname     => 'v4l2',
+        ensure      => present,
+    }
+    
     # Install gstreamer
     if $gstreamer_installtype == "native" {
         ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-good", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0"])
