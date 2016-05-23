@@ -100,11 +100,15 @@ class Streamer(object):
             self.streamer.add(capsfilter)
             self.source.link(capsfilter)
             parse = Gst.ElementFactory.make("jpegparse", "jpegparse")
-            self.streamer.add(parse)
-            capsfilter.link(parse)
+            if parse:
+                self.streamer.add(parse)
+                capsfilter.link(parse)
             dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
             self.streamer.add(dec)
-            parse.link(dec)
+            if parse:
+                parse.link(dec)
+            else:
+                capsfilter.link(dec)
             queue = Gst.ElementFactory.make("queue", "queue")
             self.streamer.add(queue)
             dec.link(queue)
