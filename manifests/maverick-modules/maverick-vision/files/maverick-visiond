@@ -84,7 +84,7 @@ class Streamer(object):
             h264pay.set_property("pt", 96)
             self.streamer.add(h264pay)
             if parse:
-                logger.debug('Attaching h264parse:'+str(parse))
+                logger.debug('Attaching h264pay to h264parse')
                 parse.link(h264pay)
             else:
                 logger.debug('Attaching h264pay direct to capsfilter')
@@ -128,13 +128,19 @@ class Streamer(object):
             self.streamer.add(self.h264enc)
             self.source_attach.link(self.h264enc)
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
-            self.streamer.add(parse)
-            self.h264enc.link(parse)
+            if parse:
+                self.streamer.add(parse)
+                self.h264enc.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
             self.streamer.add(h264pay)
-            parse.link(h264pay)
+            if parse:
+                logger.debug('Attaching h264pay to h264parse')               
+                parse.link(h264pay)
+            else:
+                logger.debug('Attaching h264pay direct to h264 encoder')
+                self.h264enc.link(h264pay)
             self.encode_attach = h264pay
 
 
