@@ -1,5 +1,5 @@
 class maverick-ros (
-    $ros_installtype = "native"
+    $ros_installtype = "source"
 ) {
 
     file { "/srv/maverick/software/ros":
@@ -75,7 +75,7 @@ class maverick-ros (
         }
         
         # Add opencv to the existing workspace through vision_opencv package, this also installs std_msgs package as dependency
-        ensure_packages(["libpoco-dev", "libyaml-cpp-dev "])
+        ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
         exec { "ws_add_opencv":
             command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro jade --deps --wet-only --tar >jade-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src jade-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
             cwd             => "/srv/maverick/build/ros_catkin_ws",
@@ -92,6 +92,23 @@ class maverick-ros (
             require         => File["/srv/maverick/software/ros"]
         }
 
+        # Add mavros to the existing workspace, this also installs mavlink package as dependency
+        exec { "ws_add_mavros":
+            command         => "/usr/bin/rosinstall_generator mavros --rosdistro jade --deps --wet-only --tar >jade-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro jade --deps --wet-only --tar >>jade-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro jade --deps --wet-only --tar >>jade-mavros-wet.rosinstall && /usr/bin/wstool merge -t src jade-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+            cwd             => "/srv/maverick/build/ros_catkin_ws",
+            user            => "mav",
+            creates         => "/srv/maverick/build/ros_catkin_ws/src/mavros",
+        }
+        exec { "catkin_make_mavros":
+            # Note must only use -j1 otherwise we get compiler errors
+            command         => "/srv/maverick/build/ros_catkin_ws/src/catkin/bin/catkin_make_isolated --install --install-space /srv/maverick/software/ros -DCMAKE_BUILD_TYPE=Release -j1",
+            cwd             => "/srv/maverick/build/ros_catkin_ws",
+            user            => "mav",
+            creates         => "/srv/maverick/software/ros/lib/libmavros.so",
+            timeout         => 0,
+            require         => File["/srv/maverick/software/ros"]
+        }
+        
     }   
 
     file { "/etc/profile.d/ros-env.sh":
