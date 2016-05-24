@@ -9,7 +9,7 @@ import lockfile, signal, grp
 from daemon import runner
 
 gi.require_version('Gst', '1.0')
-from gi.repository import GObject,GLib,Gst
+from gi.repository import GObject,GLib,Gst,GstRtspServer
 GObject.threads_init()
 Gst.init(None)
 
@@ -40,7 +40,11 @@ class Streamer(object):
                 self.output_file(dest)
             elif output == "udp":
                 self.output_udp(dest)
-            
+            elif output == "dynudp":
+                self.output_dynudp()
+            elif output == "rtsp":
+                self.output_rtsp()
+                
             self.bus()
             self.start() # need to self start the object for PiCamera method
             
@@ -48,9 +52,9 @@ class Streamer(object):
         ### Input methods
         def input_appsrc(self):
             logger.info("Attaching input 'appsrc'")
-            self.streamer = Gst.Pipeline.new()
+            self.pipeline = Gst.Pipeline.new()
             self.source = Gst.ElementFactory.make("appsrc", "source")
-            self.streamer.add(self.source)
+            self.pipeline.add(self.source)
             # Set appsrc stream to live
             self.source.set_property("is-live",True)
             # Let appsrc set the timestamp so we don't have to do it
@@ -62,9 +66,9 @@ class Streamer(object):
             logger.info("Attaching input 'v4l2'")
             if not source:
                 source = "/dev/video"
-            self.streamer = Gst.Pipeline.new()
+            self.pipeline = Gst.Pipeline.new()
             self.source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
-            self.streamer.add(self.source)
+            self.pipeline.add(self.source)
             self.source.set_property("device", source)
 
 
@@ -73,16 +77,17 @@ class Streamer(object):
             logger.info("Attaching stream 'h264'")
             capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
-            self.streamer.add(capsfilter)
+            self.pipeline.add(capsfilter)
             self.source.link(capsfilter)
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
             if parse:
-                self.streamer.add(parse)
+                self.pipeline.add(parse)
                 capsfilter.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
-            self.streamer.add(h264pay)
+            h264pay.set_property("name", "pay0") # Set pay%d for rtsp stream pickup
+            self.pipeline.add(h264pay)
             if parse:
                 logger.debug('Attaching h264pay to h264parse')
                 parse.link(h264pay)
@@ -97,23 +102,23 @@ class Streamer(object):
             logger.info("Attaching stream 'mjpeg'")
             capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
-            self.streamer.add(capsfilter)
+            self.pipeline.add(capsfilter)
             self.source.link(capsfilter)
             parse = Gst.ElementFactory.make("jpegparse", "jpegparse")
             if parse:
-                self.streamer.add(parse)
+                self.pipeline.add(parse)
                 capsfilter.link(parse)
             dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
-            self.streamer.add(dec)
+            self.pipeline.add(dec)
             if parse:
                 parse.link(dec)
             else:
                 capsfilter.link(dec)
             queue = Gst.ElementFactory.make("queue", "queue")
-            self.streamer.add(queue)
+            self.pipeline.add(queue)
             dec.link(queue)
             vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-            self.streamer.add(vconvert)
+            self.pipeline.add(vconvert)
             queue.link(vconvert)
             self.source_attach = vconvert
 
@@ -129,16 +134,17 @@ class Streamer(object):
                 self.h264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
                 self.h264enc.set_property('speed-preset', 1)
                 self.h264enc.set_property('tune', 0x00000004)
-            self.streamer.add(self.h264enc)
+            self.pipeline.add(self.h264enc)
             self.source_attach.link(self.h264enc)
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
             if parse:
-                self.streamer.add(parse)
+                self.pipeline.add(parse)
                 self.h264enc.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
             h264pay.set_property("config-interval", 1)
             h264pay.set_property("pt", 96)
-            self.streamer.add(h264pay)
+            h264pay.set_property("name", "pay0") # Set pay%d for rtsp stream pickup
+            self.pipeline.add(h264pay)
             if parse:
                 logger.debug('Attaching h264pay to h264parse')               
                 parse.link(h264pay)
@@ -152,12 +158,12 @@ class Streamer(object):
         def output_file(self, dest):
             logger.info("Attaching output 'file'")
             mux = Gst.ElementFactory.make("mpegtsmux", "mux")
-            self.streamer.add(mux)
+            self.pipeline.add(mux)
             self.encode_attach.link(mux)
             
             sink = Gst.ElementFactory.make("filesink", "sink")
             sink.set_property("location", dest)
-            self.streamer.add(sink)
+            self.pipeline.add(sink)
             mux.link(sink)
 
         
@@ -170,32 +176,65 @@ class Streamer(object):
             sink.set_property("host", dest)
             sink.set_property("port", 5000)
             sink.set_property("sync", False)
-            self.streamer.add(sink)
+            self.pipeline.add(sink)
             self.encode_attach.link(sink)
 
         
+        def output_dynudp(self):
+            logger.info("Attaching output 'dynudp'")
+            sink = Gst.ElementFactory.make("dynudpsink", "dynudpsink")
+            sink.set_property("sync", False)
+            sink.set_property("bind-address", "0.0.0.0")
+            sink.set_property("bind-port", 5554)
+            self.pipeline.add(sink)
+            self.encode_attach.link(sink)
+
+
+        def output_rtsp(self):
+            ### THIS DOES NOT WORK YET ###
+            logger.info("Attaching output 'rtsp'")
+            server = GstRtspServer.RTSPServer()
+            server.set_service('5554')
+            server.set_address('0.0.0.0')
+
+            #factory = GstRtspServer.RTSPMediaFactory()
+            #factory.set_launch("( rpicamsrc name=src bitrate=0 quantisation-parameter=24 intra-refresh-type=cyclic metering-mode=matrix annotation-mode=13 preview=false  ! video/x-h264,profile=high,width=640,height=480,framerate=30/1 ! h264parse ! rtph264pay pt=96 name=pay0 )")
+            #factory.set_shared(True)
+            #factory.connect("media-configure", on_media_configure)
+
+            media = GstRtspServer.RTSPMedia()
+            media.take_pipeline(self.pipeline) # Attach the constructed pipeline to the new instance
+            media.create_stream(media, )
+            media.prepare()
+            logger.debug("rtsp status:" + str(media.get_status()))
+
+            #server.get_mount_points().add_factory("/stream", media)
+            server.attach(None)
+            logger.info("RTSP stream running at rtsp://<hostname>:5554/stream")
+    
+
         ### Misc methods (glib introspection)
         def on_message(self, bus, message):
             t = message.type
             if t == Gst.MessageType.EOS:
-                self.streamer.set_state(Gst.State.NULL)
+                self.pipeline.set_state(Gst.State.NULL)
                 self.playing = False
             elif t == Gst.MessageType.ERROR:
-                self.streamer.set_state(Gst.State.NULL)
+                self.pipeline.set_state(Gst.State.NULL)
                 err, debug = message.parse_error()
                 print "Error: %s" % err, debug
                 self.playing = False
 
             
         def bus(self):
-            bus = self.streamer.get_bus()
+            bus = self.pipeline.get_bus()
             bus.add_signal_watch()
             bus.connect("message", self.on_message)
 
 
         ### Action methods
         def start(self):
-            self.streamer.set_state(Gst.State.PLAYING)
+            self.pipeline.set_state(Gst.State.PLAYING)
             self.playing = True
             logger.info('Starting camera stream')
 
@@ -206,7 +245,7 @@ class Streamer(object):
 
 
         def stop(self):
-            self.streamer.set_state(Gst.State.READY)
+            self.pipeline.set_state(Gst.State.READY)
             self.playing = False
             logger.info('Stopping camera stream')
 
@@ -343,21 +382,24 @@ class App():
         
 print "Starting maverick-visiond daemon"
 
-app = App()
+if __name__ == "__main__":
 
-logger = logging.getLogger("DaemonLog")
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-handler = logging.FileHandler("/srv/maverick/data/logs/maverick-visiond.log")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
-daemon_runner = runner.DaemonRunner(app)
-daemon_runner.daemon_context.files_preserve=[handler.stream]
-daemon_runner.do_action()
-
-logger.info("Stopping maverick-visiond")
-print "Stopped fpv"
+    # Setup logging
+    logger = logging.getLogger("DaemonLog")
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    handler = logging.FileHandler("/srv/maverick/data/logs/maverick-visiond.log")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    
+    # Create app instance and daemonize
+    app = App()
+    daemon_runner = runner.DaemonRunner(app)
+    daemon_runner.daemon_context.files_preserve=[handler.stream]
+    daemon_runner.do_action()
+    
+    logger.info("Stopping maverick-visiond")
+    print "Stopped fpv"
 
 
 """ 
