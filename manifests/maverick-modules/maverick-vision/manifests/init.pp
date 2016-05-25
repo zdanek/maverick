@@ -164,6 +164,13 @@ class maverick-vision (
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-vision/files/maverick-visiond",
     }
+    file { "/srv/maverick/data/config/maverick-visiond.conf":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        replace     => false, # initialize but don't overwrite in the future
+        source      => "puppet:///modules/maverick-vision/maverick-visiond.conf",
+    }
     
     # Add visiond as a service
     file { "/etc/systemd/system/maverick-visiond.service":
