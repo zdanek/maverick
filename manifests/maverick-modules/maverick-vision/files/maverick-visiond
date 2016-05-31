@@ -9,7 +9,8 @@ import lockfile, signal, grp
 from daemon import runner
 
 gi.require_version('Gst', '1.0')
-from gi.repository import GObject,GLib,Gst,GstRtspServer
+#from gi.repository import GObject,GLib,Gst,GstRtspServer
+from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
 Gst.init(None)
 
