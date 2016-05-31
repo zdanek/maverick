@@ -17,13 +17,13 @@ class maverick-vision (
     
     # Install gstreamer
     if $gstreamer_installtype == "native" {
-        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-good", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "libgstrtspserver-1.0-0", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "gir1.2-gst-rtsp-server-1.0"])
+        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-good", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "libgstrtspserver-1.0-0", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "gir1.2-gst-rtsp-server-1.0"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
     	}
 	} elsif $gstreamer_installtype == "source" {
         # If installing from source, remove packages
-        package { ["libgstreamer1.0-0"]:
+        package { ["libgstreamer1.0-0", "libgstreamer1.0-dev"]:
             ensure      => purged
         }
         ensure_packages(["libglib2.0-dev", "autoconf", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "libx264-dev", "gobject-introspection", "libgirepository1.0-dev"])
@@ -145,6 +145,14 @@ class maverick-vision (
             group       => "root",
             content     => "export GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0:/usr/lib/girepository-1.0",
         }
+        file { "/etc/systemd/system/maverick-visiond.service.d":
+            ensure      => directory
+        } ->
+        file { "/etc/systemd/system/maverick-visiond.service.d/typelib-path.conf":
+            ensure      => present,
+            mode        => 644,
+            content     => "[Service]\nEnvironment=\"GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0:/usr/lib/girepository-1.0\""
+        }
     }
 
     if $mjpg_streamer == true  {
@@ -182,7 +190,7 @@ class maverick-vision (
     } ->
     service { "maverick-visiond":
         ensure      => running,
-        enable      => true
+        enable      => true,
     }
     
     # Punch some holes in the firewall for rtsp
