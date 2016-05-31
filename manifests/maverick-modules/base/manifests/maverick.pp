@@ -142,7 +142,7 @@ class base::maverick {
     concat::fragment { "maverickpath-base":
         target      => "/etc/profile.d/maverick-path.sh",
         order       => 1,
-        content     => "PATH=\$PATH:/srv/maverick/software/maverick/bin",
+        content     => "export PATH=\$PATH:/srv/maverick/software/maverick/bin",
     }
     
 }

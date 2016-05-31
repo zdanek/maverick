@@ -349,7 +349,7 @@ class App():
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
                 logger.debug("Camera format: "+capture.description)
                 capture.index += 1
-                if re.search('H.264', capture.description):
+                if re.search('H264', capture.description):
                     h264 = True
         except:
             pass

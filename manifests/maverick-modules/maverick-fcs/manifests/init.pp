@@ -18,7 +18,7 @@ class maverick-fcs (
         creates     => "/srv/maverick/software/kivy/kivy/properties.so",
         require     => [ Package["cython"], Oncevcsrepo["git-kivy"], Package["libgstreamer1.0-dev"] ] # ensure we have all the dependencies satisfied
     }
-    file { "/etc/profile.d/kivy-path":
+    file { "/etc/profile.d/kivy-path.sh":
         ensure      => present,
         content     => "export PYTHONPATH=/srv/maverick/software/kivy:\$PYTHONPATH",
     }

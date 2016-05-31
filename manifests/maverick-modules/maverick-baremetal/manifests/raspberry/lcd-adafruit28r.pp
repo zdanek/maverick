@@ -48,4 +48,7 @@ class maverick-baremetal::raspberry::lcd-adafruit28r (
         unless      => "/bin/grep 'BLANK_TIME\\=0' /etc/kbd/config",
     }
     
+    # Install fbcp (framebuffer copying) to output GPU accelerated graphics to TFT screen
+    class { "maverick-baremetal::fbcp": }
+    
 }

@@ -12,7 +12,7 @@ class maverick-baremetal::raspberry::init (
     $overpower_usb = false,
     ) {
 
-    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "wiringpi"])
+    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "wiringpi", "raspi-gpio"])
 
     if ($expand_root) {
         exec { "raspberry-expandroot":
