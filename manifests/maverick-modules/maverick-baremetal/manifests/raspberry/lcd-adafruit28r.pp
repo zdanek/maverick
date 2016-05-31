@@ -1,6 +1,19 @@
 class maverick-baremetal::raspberry::lcd-adafruit28r (
     ) {
     
+    # Add module for touchscreen overlay to boot
+    exec { "adafruit28r-stmpmod":
+        command     => '/bin/echo "stmpe_ts" >>/etc/modules',
+        unless      => '/bin/grep -e "^stmpe_ts" /etc/modules',
+    }
+    
+    # Add udev rule for touchscreen
+    file { "/etc/udev/rules.d/95-stmpe.rules":
+        content     => 'SUBSYSTEM=="INPUT", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen"',
+        owner       => "root",
+        mode        => 644
+    }
+    
     # Setup the pitft28-resistive overlay which seems to magically take care of everything for us
     exec { "adafruit28r-editoverlay":
         command     => '/bin/sed /boot/config.txt -i -r -e "s/^(dtoverlay\=pitft28-resistive)(=[^,]*)?/\dtoverlay=pitft28-resistive,speed=32000000,rotate=90/"',
