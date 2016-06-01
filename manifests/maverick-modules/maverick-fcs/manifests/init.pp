@@ -1,9 +1,7 @@
 class maverick-fcs (
-
 ) {
     # FCS (Flying Control Station) is the concept of an onboard GCS.  It will have multiple interfaces, initially touchscreen and web.
 
-    #ensure_packages(["fbi", "python-pygame", "evtest", "tslib", "libts-bin"])    
     ensure_packages(["cython", "libsdl2-dev", "libsdl2-image-dev", "libsdl2-mixer-dev", "libsdl2-ttf-dev", "pkg-config", "libgl1-mesa-dev", "libgles2-mesa-dev"])
     
     oncevcsrepo { "git-kivy":

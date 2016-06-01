@@ -49,6 +49,12 @@ class maverick-baremetal::raspberry::lcd-adafruit28r (
     }
     
     # Install fbcp (framebuffer copying) to output GPU accelerated graphics to TFT screen
-    class { "maverick-baremetal::fbcp": }
+    class { "maverick-baremetal::raspberry::fbcp": }
+        
+    # Alter console hdmi resolution to match the LCD, so framebuffer copy doesn't have to scale
+    class { "maverick-baremetal::raspberry::console":
+        width       => 320,
+        height      => 240,
+    }
     
 }
