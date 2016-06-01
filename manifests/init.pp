@@ -31,6 +31,23 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
         }
     }
 }
+
+# Ensure a correct value exists for a field in a specified file
+define confval ($file, $field, $value) {
+    if $file and $field and $value {
+        # Firstly, if the value doesn't exist, add it
+        exec { "confval-add-${file}-${field}":
+            command     => "/bin/echo '${field}=${value}' >> ${file}",
+            unless      => "/bin/grep -e '^${field}=${value}' ${file}"
+        }
+        # Otherwise, update if necessary
+        exec { "confval-update-${file}-${field}":
+            command     => "/bin/sed ${file} -i -r -e 's/${field}=.*/${field}=${value}/'",
+            onlyif      => "/bin/grep -e '^${field}' ${file} | /bin/grep -v '${field}=${value}'"
+        }
+    }
+}
+
 ### End of defines
 
 node default {
