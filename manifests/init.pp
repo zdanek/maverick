@@ -38,7 +38,7 @@ define confval ($file, $field, $value) {
         # Firstly, if the value doesn't exist, add it
         exec { "confval-add-${file}-${field}":
             command     => "/bin/echo '${field}=${value}' >> ${file}",
-            unless      => "/bin/grep -e '^${field}=${value}' ${file}"
+            unless      => "/bin/grep -e '^${field}=' ${file}"
         }
         # Otherwise, update if necessary
         exec { "confval-update-${file}-${field}":
