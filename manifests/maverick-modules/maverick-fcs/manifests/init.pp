@@ -1,9 +1,34 @@
 class maverick-fcs (
 ) {
     # FCS (Flying Control Station) is the concept of an onboard GCS.  It will have multiple interfaces, initially touchscreen and web.
+    # The central process (maverickd) is a RESTful API that all the interfaces talk to
 
     ensure_packages(["cython", "libsdl2-dev", "libsdl2-image-dev", "libsdl2-mixer-dev", "libsdl2-ttf-dev", "pkg-config", "libgl1-mesa-dev", "libgles2-mesa-dev"])
-    
+
+    ### Install flask microframework that maverickd is constructed from
+    # Install a python virtualenv for maverickd
+    python::virtualenv { '/srv/maverick/software/maverick-fcs':
+        ensure       => present,
+        version      => 'system',
+        systempkgs   => false,
+        distribute   => true,
+        venv_dir     => '/srv/maverick/.virtualenvs/maverick-fcs',
+        owner        => 'mav',
+        group        => 'mav',
+        cwd          => '/srv/maverick/software/maverick-fcs',
+        timeout      => 0,
+    } ->
+    file { "/srv/maverick/.virtualenvs/maverick-fcs/lib/python2.7/no-global-site-packages.txt":
+        ensure  => absent
+    }
+
+    # Install maverick-fcs from git
+    oncevcsrepo { "github-maverick-fcs":
+        gitsource   => "https://github.com/fnoop/maverick-fcs",
+        dest        => "/srv/maverick/software/maverick-fcs",
+    }
+
+    ### Install Kivy    
     oncevcsrepo { "git-kivy":
         gitsource   => "https://github.com/kivy/kivy",
         dest        => "/srv/maverick/software/kivy",
