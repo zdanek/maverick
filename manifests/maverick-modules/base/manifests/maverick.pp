@@ -1,5 +1,7 @@
 class base::maverick {
    
+   # Note: The mav user is setup in base::users
+   
     file { "/srv":
         ensure  => directory,
         owner   => "mav",
