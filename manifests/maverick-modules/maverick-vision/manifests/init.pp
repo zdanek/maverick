@@ -45,6 +45,10 @@ class maverick-vision (
             gitsource   => "https://anongit.freedesktop.org/git/gstreamer/gst-plugins-good.git/",
             dest        => "/srv/maverick/build/gstreamer/gst-plugins-good",
         }
+        oncevcsrepo { "git-gstreamer_plugins_bad":
+            gitsource   => "https://anongit.freedesktop.org/git/gstreamer/gst-plugins-bad.git/",
+            dest        => "/srv/maverick/build/gstreamer/gst-plugins-bad",
+        }
         oncevcsrepo { "git-gstreamer_plugins_ugly":
             gitsource   => "https://anongit.freedesktop.org/git/gstreamer/gst-plugins-ugly.git/",
             dest        => "/srv/maverick/build/gstreamer/gst-plugins-ugly",
@@ -89,6 +93,14 @@ class maverick-vision (
             cwd         => "/srv/maverick/build/gstreamer/gst-plugins-good",
             creates     => "/usr/local/lib/gstreamer-1.0/libgstjpeg.so",
             require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
+        } ->
+        exec { "gstreamer_gst_plugins_bad":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/srv/maverick/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_plugins_bad.build.out 2>&1",
+            cwd         => "/srv/maverick/build/gstreamer/gst-plugins-bad",
+            creates     => "/usr/local/lib/libgstgl-1.0.so",
+            require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
         } ->
         exec { "gstreamer_gst_plugins_ugly":
             user        => "mav",
