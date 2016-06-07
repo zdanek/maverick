@@ -30,11 +30,11 @@ class maverick-baremetal::raspberry::lcd-spotpear35 (
 
     # Setup the piscreen overlay which seems to magically take care of everything for us
     exec { "spotpear35-editoverlay":
-        command     => '/bin/sed /boot/config.txt -i -r -e "s/^(dtoverlay\=piscreen)(=[^,]*)?/\dtoverlay=piscreen,speed=16000000,rotate=90/"',
-        onlyif      => "/bin/grep 'dtoverlay\\=piscreen' /boot/config.txt |/bin/grep -v 'speed=16000000,rotate=90'"
+        command     => '/bin/sed /boot/config.txt -i -r -e "s/^(dtoverlay\=piscreen)(=[^,]*)?/\dtoverlay=piscreen,speed=16000000,rotate=270/"',
+        onlyif      => "/bin/grep 'dtoverlay\\=piscreen' /boot/config.txt |/bin/grep -v 'speed=16000000,rotate=270"
     }
     exec { "spotpear35-addoverlay":
-        command     => "/bin/echo 'dtoverlay=piscreen,speed=16000000,rotate=90' >>/boot/config.txt",
+        command     => "/bin/echo 'dtoverlay=piscreen,speed=16000000,rotate=270' >>/boot/config.txt",
         unless      => "/bin/grep 'dtoverlay\\=piscreen' /boot/config.txt"
     }
     
@@ -67,8 +67,8 @@ class maverick-baremetal::raspberry::lcd-spotpear35 (
         
     # Alter console hdmi resolution to match the LCD, so framebuffer copy doesn't have to scale
     class { "maverick-baremetal::raspberry::console":
-        width       => 320,
-        height      => 480,
+        width       => 480,
+        height      => 320,
     }
     
 
