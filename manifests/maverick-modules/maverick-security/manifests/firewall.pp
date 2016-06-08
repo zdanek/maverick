@@ -15,9 +15,15 @@ class maverick-security::firewall (
     class { ['maverick-security::firewall_pre', 'maverick-security::firewall_post']:
     }
    	
-    class { '::firewall': 
+    class { '::firewall':
+    	ensure		=> running,
     	require		=> Package["cups-filters"] # ensure cups-filters is removed as it can stop iptables working
     }
+    
+#    service { "netfilter-persistent":
+#    	ensure		=> running,
+#    	enable		=> true,
+#    }
    	
     ### Define some common rules across all servers
     include maverick-security::firewall_common
