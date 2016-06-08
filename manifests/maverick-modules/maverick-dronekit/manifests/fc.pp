@@ -43,6 +43,21 @@ class maverick-dronekit::fc (
         owner       => "mav",
         group       => "mav",
         mode        => 755,
+    }
+    
+    file { "/srv/maverick/data/config/mavproxy-fc.conf":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        replace     => false, # initialize but don't overwrite in the future
+        source      => "puppet:///modules/maverick-dronekit/mavproxy-fc.conf",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/mavproxy-fc.sh":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+        source      => "puppet:///modules/maverick-dronekit/mavproxy-fc.sh",
     } ->
     file { "/etc/systemd/system/mavproxy-fc.service":
         content     => template("maverick-dronekit/mavproxy-fc.service.erb"),
@@ -56,6 +71,7 @@ class maverick-dronekit::fc (
         enable      => true,
         require       => Exec["maverick-systemctl-daemon-reload"]
     }
+    
     # Punch some holes in the firewall for mavproxy
     if defined(Class["::maverick-security"]) {
         maverick-security::firewall::firerule { "mavproxy-fc":

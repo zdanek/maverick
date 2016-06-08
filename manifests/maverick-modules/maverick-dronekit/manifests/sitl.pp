@@ -50,6 +50,7 @@ class maverick-dronekit::sitl (
             creates     => "/srv/maverick/code/dronekit-sitl/sitl-fw/${build}/${build}.elf",
         }
     }
+    
     # Install dronekit-sitl into dronekit-sitl
     if $sitl == true {
         python::pip { 'pip-dronekit-sitl':
@@ -109,31 +110,39 @@ class maverick-dronekit::sitl (
             group       => "mav",
             mode        => 755,
         } ->
-        file { "/etc/systemd/system/dev-sitl.service":
-            content     => template("maverick-dronekit/dev-sitl.service.erb"),
+
+        file { "/srv/maverick/data/config/mavproxy-sitl.conf":
+            ensure      => present,
+            owner       => "mav",
+            group       => "mav",
+            replace     => false, # initialize but don't overwrite in the future
+            source      => "puppet:///modules/maverick-dronekit/mavproxy-sitl.conf",
+        } ->
+        file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
+            ensure      => present,
+            owner       => "mav",
+            group       => "mav",
+            mode        => 755,
+            source      => "puppet:///modules/maverick-dronekit/mavproxy-sitl.sh",
+        } ->
+        file { "/etc/systemd/system/mavproxy-sitl.service":
+            content     => template("maverick-dronekit/mavproxy-sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ],
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
         } ->
         service { "dev-sitl":
             ensure      => running,
             enable      => true,
             require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
-        
-        file { "/etc/systemd/system/mavproxy-sitl.service":
-            content     => template("maverick-dronekit/mavproxy-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
         service { "mavproxy-sitl":
             ensure      => running,
             enable      => true,
-            require     => [ Service["dev-sitl"] ],
+            require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
         }
+
         # Punch some holes in the firewall for sitl
         if defined(Class["::maverick-security"]) {
             maverick-security::firewall::firerule { "mavproxy-sitl":

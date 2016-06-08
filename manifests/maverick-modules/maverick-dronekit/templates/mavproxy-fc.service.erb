@@ -6,9 +6,10 @@ Requires=network-online.target
 [Service]
 TimeoutStartSec=0
 Type=forking
-ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-fc; source bin/activate; /usr/bin/screen -S mavproxy-fc -d -m mavproxy.py <% if @mavproxy_fc_master %>--master <%= @mavproxy_fc_master %><% end %><% if @mavproxy_fc_baud %> --baud <%= @mavproxy_fc_baud %><% end %> --out=udpin:0.0.0.0:14550 --out=udpin:0.0.0.0:14551 --out=udp:127.0.0.1:14552 --out=udp:127.0.0.1:14553 --state-basedir=/srv/maverick/data/logs/mavproxy-fc'
+# ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-fc; source bin/activate; /usr/bin/screen -S mavproxy-fc -d -m mavproxy.py <% if @mavproxy_fc_master %>--master <%= @mavproxy_fc_master %><% end %><% if @mavproxy_fc_baud %> --baud <%= @mavproxy_fc_baud %><% end %> --out=udpin:0.0.0.0:14550 --out=udpin:0.0.0.0:14551 --out=udp:127.0.0.1:14552 --out=udp:127.0.0.1:14553 --state-basedir=/srv/maverick/data/logs/mavproxy-fc'
+EnvironmentFile=/srv/maverick/data/config/mavproxy-fc.conf
+ExecStart=/srv/maverick/software/maverick/bin/mavproxy-fc.sh
 User=mav
 
 [Install]
 WantedBy=multi-user.target
-
