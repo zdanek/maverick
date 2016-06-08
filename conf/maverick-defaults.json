@@ -45,7 +45,6 @@
     // "maverick-dronekit::sitl::sitl_fw_run": "ArduCopter", # Which firmware will sitl run, must be part of $sitl_fw_builds
 	// "maverick-dronekit::sitl::sitl_dronekit_source": "https://github.com/mygit/dronekit-python",
 	// "maverick-dronekit::fc::fc_dronekit_source": "https://github.com/mygit/dronekit-python",
-	// "maverick-dronekit::fc::fc_mavproxy_master": "/dev/ttyACM0"
 
 	"classes" : [
 		"base",
