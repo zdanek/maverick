@@ -32,6 +32,7 @@ class Raspberry(object):
             '900092': ['Q4 2015', 'Zero', '1.2', 512, '(Mfg by Sony)'],
             'a02082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony)']
         }
+        count = 0
         f = open('/proc/cpuinfo', 'r')
         for line in f:
             r = re.search('^(.*)\s+:\s+(.*)', line)
@@ -39,6 +40,8 @@ class Raspberry(object):
             (key,val) = r.groups(0)[0],r.groups(0)[1]
             if key == "Hardware": 
                 self.data['cpu'] = val
+            elif key == "processor":
+                count += 1
             elif key == "Revision": 
                 # If revision is prefixed with 1000 it means the board has been overvolted
                 if re.match('1000', val):
@@ -62,24 +65,28 @@ class Raspberry(object):
             elif key == "Serial\t": 
                 self.data['serial'] = val
         f.close()
-
+        self.data['cpucores'] = count
+        
     def gpudata(self):
-        # Interrogate the raspberry gpu for more info
-        self.data['memcpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem arm"]).split("=")[1].rstrip()[:-1]
-        self.data['memgpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem gpu"]).split("=")[1].rstrip()[:-1]
-        self.data['mpg2codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled MPG2"]).split("=")[1].rstrip()
-        self.data['vc1codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled WVC1"]).split("=")[1].rstrip()
-        self.data['cpufreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config arm_freq"]).split("=")[1].rstrip()
-        self.data['ramfreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config sdram_freq"]).split("=")[1].rstrip()
-        self.data['l2cache'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config disable_l2cache"]).split("=")[1].rstrip()
-        fwdata = subprocess.check_output(["/opt/vc/bin/vcgencmd", "version"])
-        fwdated = False
-        for dat in fwdata.split("\n"):
-            if not fwdated:
-                self.data['fwdate'] = dat
-                fwdated = True
-            if re.match('version', dat):
-                self.data['fwversion'] = dat.split('version ')[1]
+        try:
+            # Interrogate the raspberry gpu for more info
+            self.data['memcpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem arm"]).split("=")[1].rstrip()[:-1]
+            self.data['memgpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem gpu"]).split("=")[1].rstrip()[:-1]
+            self.data['mpg2codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled MPG2"]).split("=")[1].rstrip()
+            self.data['vc1codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled WVC1"]).split("=")[1].rstrip()
+            self.data['cpufreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config arm_freq"]).split("=")[1].rstrip()
+            self.data['ramfreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config sdram_freq"]).split("=")[1].rstrip()
+            self.data['l2cache'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config disable_l2cache"]).split("=")[1].rstrip()
+            fwdata = subprocess.check_output(["/opt/vc/bin/vcgencmd", "version"])
+            fwdated = False
+            for dat in fwdata.split("\n"):
+                if not fwdated:
+                    self.data['fwdate'] = dat
+                    fwdated = True
+                if re.match('version', dat):
+                    self.data['fwversion'] = dat.split('version ')[1]
+        except:
+            pass
 
     def storagedata(self):
         # Obtain the SD card size from proc

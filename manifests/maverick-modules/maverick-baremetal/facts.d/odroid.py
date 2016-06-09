@@ -8,6 +8,7 @@ class Odroid(object):
         self.data = {'present': 'no'}
         
     def cpudata(self):
+        count = 0
         # Define main data container
         f = open('/proc/cpuinfo', 'r')
         for line in f:
@@ -22,6 +23,19 @@ class Odroid(object):
                 self.data['revision'] = val
             elif key == "Serial": 
                 self.data['serial'] = val
+            elif key == "processor":
+                count += 1
+        self.data['cpucores'] = count
+        f.close()
+        f = open('/proc/meminfo', 'r')
+        for line in f:
+            r = re.search('^(.*):\s+(.*)', line)
+            if not r or not r.groups(0) or not r.groups(0)[0] or not r.groups(0)[1]: continue
+            (key,val) = r.groups(0)[0],r.groups(0)[1]
+            if key == "MemTotal": 
+                self.data['memory'] = val
+            elif key == "SwapTotal":
+                self.data['swap'] = val
         f.close()
 
     def storagedata(self):

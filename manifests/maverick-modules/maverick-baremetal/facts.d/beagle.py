@@ -10,11 +10,14 @@ class Beagle(object):
         self.data = {'present': 'no', 'emmcbooted': 'no', 'sdcard_present': 'no'}
         
     def cpudata(self):
-        f = open('/sys/firmware/devicetree/base/model', 'r')
-        for line in f:
-            if re.search('BeagleBone Black', line):
-                self.data['present'] = 'yes'
-                self.data['model'] = 'BeagleBone Black'
+        try:
+            f = open('/sys/firmware/devicetree/base/model', 'r')
+            for line in f:
+                if re.search('BeagleBone Black', line):
+                    self.data['present'] = 'yes'
+                    self.data['model'] = 'BeagleBone Black'
+        except:
+            pass
 
         """
         try:
