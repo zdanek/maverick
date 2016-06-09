@@ -53,6 +53,7 @@ class maverick-baremetal::odroid::init (
     package { "mali-fbdev":
         ensure      => present
     }
+    ensure_packages(["libgles2-mesa", "libgles2-mesa-dev"])
     
     # Add odroid-wiringpi from hardkernel github
     oncevcsrepo { "git-odroid-wiringpi":
