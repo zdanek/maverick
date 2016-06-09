@@ -76,3 +76,5 @@ print twocols('Kernel', '\t\t\t' +baseos.data['kernel'])
 print twocols('Timezone', '\t\t' +baseos.data['timezone'])
 print twocols('FQDN', '\t\t\t' +baseos.data['fqdn'])
 print twocols('IP Address', '\t\t' +baseos.data['ipaddress'])
+
+print
