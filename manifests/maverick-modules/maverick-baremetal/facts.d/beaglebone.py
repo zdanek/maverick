@@ -38,7 +38,7 @@ class Beagle(object):
             if re.search("mmcblk0p1$", line):
                 partsize = int(line.split()[2]) / 1024
                 try:
-                    partpct = (data['rootdisksize'] / partsize) * 100
+                    partpct = (self.data['rootdisksize'] / partsize) * 100
                     if partpct > 98:
                         self.data['rootdiskexpanded'] = 'yes'
                     else:
@@ -47,11 +47,11 @@ class Beagle(object):
                     pass
             if re.search("mmcblk0boot0", line):
                 self.data['emmcbooted'] = 'yes'
-                self.data['emmc_size'] = data['rootdisksize']
+                self.data['emmc_size'] = self.data['rootdisksize']
             if re.search("mmcblk1boot0", line):
                 self.data['emmcbooted'] = 'no'
                 self.data['sdcard_present'] = 'yes'
-                self.data['sdcard_size'] = data['rootdisksize']
+                self.data['sdcard_size'] = self.data['rootdisksize']
             try:
                 if self.data['emmcbooted'] == 'yes' and re.search("mmcblk1$", line):
                     self.data['sdcard_present'] = 'yes'
