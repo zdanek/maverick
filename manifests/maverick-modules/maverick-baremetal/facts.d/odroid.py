@@ -32,6 +32,9 @@ class Odroid(object):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
         f.close()
 
+    def runall(self):
+        self.cpudata()
+        self.storagedata()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':

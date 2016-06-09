@@ -32,6 +32,9 @@ class Camera(object):
                     if re.search('oCam', val):
                         self.data['ocam'] = "yes"
 
+    def runall(self):
+        self.camhw()
+
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
     camera = Camera()

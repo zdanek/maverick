@@ -6,7 +6,7 @@ import re, sys, subprocess
 
 class Raspberry(object):
     def __init__(self):
-        self.data = {}
+        self.data = {'present': 'no'}
         
     def cpudata(self):
         # Interrogate cpuinfo as the main source of hardware info for the raspberry
@@ -89,6 +89,10 @@ class Raspberry(object):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
         f.close()
 
+    def runall(self):
+        self.cpudata()
+        self.gpudata()
+        self.storagedata()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
