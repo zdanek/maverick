@@ -5,7 +5,7 @@ import os, re, sys, subprocess
 
 class Baseos(object):
     def __init__(self):
-        self.data = {}
+        self.data = {'baseos_present': 'yes'}
         
     def facter(self):
         # Define main data container

@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick MOTD Creator
+
+[Service]
+Type=oneshot
+RemainAfterExit=True
+TimeoutStartSec=0
+ExecStart=/bin/sh -c '/srv/maverick/software/maverick/bin/maverick-info --motd >/etc/motd'
+User=root
+
+[Install]
+WantedBy=multi-user.target
+

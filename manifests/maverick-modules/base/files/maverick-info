@@ -6,12 +6,19 @@ sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/m
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/base/facts.d')
 sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 
+import argparse  
+parser = argparse.ArgumentParser(description='Display system information')
+parser.add_argument('-m', '--motd', help="Display information in format more suitable to create motd", action="store_true")
+args = parser.parse_args()
+
 ctrls = {}
 ctrls['reset'] = '[0m'
 ctrls['bold'] = '[1m'
 ctrls['bg_black'] = '[40m'
 ctrls['bg_red'] = '[41m'
 ctrls['bg_blue'] = '[44m'
+ctrls['fg_black'] = '[30m'
+ctrls['fg_red'] = '[31m'
 ctrls['fg_grey'] = '[37m'
 
 from raspberry import Raspberry
@@ -36,10 +43,11 @@ baseos.runall()
 
 def twocols(col1, col2):
     return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
-    
-print ctrls['reset']
-print ctrls['bg_blue']+ctrls['fg_grey']+ctrls['bold']+ '** Maverick UAV Companion Computer **' +ctrls['reset']
-print
+
+if args.motd:
+    print
+    print ctrls['bg_blue']+ctrls['fg_grey']+ctrls['bold']+ '** Maverick UAV Companion Computer **' +ctrls['reset']
+    print
 
 if raspberry.data['present'] == 'yes':
     print twocols('Vendor', '\t\t\tRaspberry Pi')
@@ -65,9 +73,8 @@ elif beagle.data['present'] == 'yes':
 
 else:
     print ctrls['bg_red']+ctrls['bold']+ctrls['fg_grey']+ 'Hardware platform not recognised' +ctrls['reset']
-    sys.exit(0)
 
-print " -------------------- "
+print " ---------------------------------- "
 
 print twocols('OS', '\t\t\t' +baseos.data['osname'])
 print twocols('OS Version', '\t\t' +baseos.data['osrelease'])
@@ -77,4 +84,12 @@ print twocols('Timezone', '\t\t' +baseos.data['timezone'])
 print twocols('FQDN', '\t\t\t' +baseos.data['fqdn'])
 print twocols('IP Address', '\t\t' +baseos.data['ipaddress'])
 
-print
+if args.motd:
+    print
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset']
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' This is a potentially dangerous aircraft system. ' +ctrls['reset']
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' No modifications should be made without express  ' +ctrls['reset']
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' permission from the owner.  Any unauthorised     ' +ctrls['reset']
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' access will be reported to the authorities.      ' +ctrls['reset']
+    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset']
+    print

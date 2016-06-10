@@ -13,10 +13,11 @@ fi
 
 # Define usage function
 usage () {
-    echo "--configure                               Configure system - BEWARE this may do major changes to your existing system"
+    echo "--configure                               Configure system - BEWARE this may do major changes to your existing system, requires --confirm to run"
     echo "--env=[bootstrap|dev|production]          Environment to configure, currently bootstrap, dev or production"
     echo "--status                                  Show current running status"
-    echo "--self-update                             Update to latest maverick code, doesn't need --confirm"
+    echo "--info                                    Display system information"
+    echo "--self-update                             Update to latest maverick code"
     echo
     echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
     echo
@@ -43,6 +44,10 @@ do
         STATUS="true"
         shift
         ;;
+        --info)
+        INFO="true"
+        shift
+        ;;
         --self-update)
         SELFUPDATE="true"
         shift
@@ -55,6 +60,22 @@ do
         ;;
     esac
 done
+
+bg=$(tput setab 7)
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+reset=$(tput sgr0)
+
+mavenv () {
+    if [ "x$1" == "xdev" ]; then
+        echo "Maverick Environment:   ${bg}${red}${bold} dev ${reset}"
+    elif [ "x$1" == "xproduction" ]; then
+        echo "Maverick Environment:   ${bg}${green}${bold} production ${reset}"
+    elif [ "x$1" == "xbootstrap" ]; then
+        echo "Maverick Environment:   ${bg}${blue}${bold} bootstrap ${reset}"
+    fi    
+}
 
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
@@ -73,12 +94,21 @@ if [ "$SELFUPDATE" == "true" ]; then
     exit 0
 fi
 
+# If self-update set, action and then exit
+if [ "$INFO" == "true" ]; then
+    if [ -e /srv/maverick/.environment ]; then
+        environment=$(cat /srv/maverick/.environment)
+    fi
+    mavenv ${environment}
+    echo
+    /usr/bin/python /srv/maverick/software/maverick/bin/maverick-info
+    echo
+    exit 0
+fi
+
 # If status set, action and then exit
 if [ "$STATUS" == "true" ]; then
     status () {
-        red=$(tput setaf 1)
-        green=$(tput setaf 2)
-        reset=$(tput sgr0)
         if [ $2 -eq 0 ]; then
             echo "$1: ${green}Running${reset}\n"
         else
@@ -88,12 +118,15 @@ if [ "$STATUS" == "true" ]; then
     if [ -e /srv/maverick/.environment ]; then
         environment=$(cat /srv/maverick/.environment)
     fi
+    mavenv ${environment}
+    echo
     (systemctl status mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
+    (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then
+        statusout+='--------------------: \n'
         (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
         (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL Runner" $?)
         (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
-        (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     fi
     echo -e $statusout | column -c 2 -s : -t
     echo
@@ -167,7 +200,8 @@ if [[ "$ubuntu" != "" && "$upstart" != "" ]]; then
 fi
 
 # OK we're good to go!
-echo "Environment: ${ENV}"
+#echo "Environment: ${ENV}"
+mavenv ${ENV}
 echo 'Proceeding to update system configuration - please be patient, this can take a while..'
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
