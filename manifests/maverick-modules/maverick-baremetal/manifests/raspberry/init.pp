@@ -28,6 +28,19 @@ class maverick-baremetal::raspberry::init (
         require     => Package["raspi-config"]
     }
     
+    confval{ "rpi-enableuart":
+        file        => "/boot/config.txt",
+        field       => "enable_uart",
+        value       => 1,
+    }
+    # If this is a RPi 3, disable the onboard bluetooth and reassign the GPIO UART to uart0 which is more reliable
+    if ($raspberry_model == "3 Model B") {
+        confline { "rpi3-uartoverlay":
+            file        => "/boot/config.txt",
+            line        => "dtoverlay=pi3-disable-bt",
+        }
+    }
+
     if ($overclock) {
         exec { "raspberry-overclock":
             command     => "/usr/bin/raspi-config nonint do_overclock ${overclock}; echo '${overclock}' >/etc/raspi-overclock",

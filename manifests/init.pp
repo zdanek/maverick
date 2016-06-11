@@ -48,6 +48,16 @@ define confval ($file, $field, $value) {
     }
 }
 
+define confline ($file, $line) {
+    if $file and $line {
+        # Firstly, if the value doesn't exist, add it
+        exec { "confline-add-${file}-${line}":
+            command     => "/bin/echo '${line}' >> ${file}",
+            unless      => "/bin/grep -e '^${line}' ${file}"
+        }
+    }
+}
+
 ### End of defines
 
 node default {
