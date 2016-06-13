@@ -1,12 +1,6 @@
-class base::services (
-         
-    ) {
+class base::services {
     
     # Here is where we would disable any services by default
-    # service { "example":
-    #   ensure      => stopped,
-    #   enable      => false
-    # }
     # Disable cups by default.  It breaks things like iptables and who prints on a UAV?!
     service { ["cups", "cups-browsed"]:
         ensure      => stopped,

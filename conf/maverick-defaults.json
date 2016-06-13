@@ -1,6 +1,7 @@
-// These are fall-back defaults.  They can/should be over-ridden higher up the hierarchy.
+// These are the default classes and settings, specified here for convenience and reference.
+// It is highly recommended not to alter this file, but copy any settings to change into localconf.json and change them there.
+// NB: Some defaults are set in localconf.json to protect potentially sensitive data, like passwords and wifi keys.
 {
-	// NB: Some defaults are set in localconf.json to protect potentially sensitive data
 
 	// Set blank defaults for host/ip values.  This is to prevent parsing errors
 	"hostname": "",
@@ -15,16 +16,47 @@
 	"all_ips": [
 	],
 
-	// "base::users::mav_sudopass": false,
+    "base::users::mav_sudopass": false, // If mav sudo should ask for password or not
+
+	"maverick-baremetal::sensors": false, // Install lmsensors
+	"maverick-baremetal::beagle::included_cloud9": false, // false, by default, removes the included beagle cloud9 and installs the standard maverick cloud9
+	"maverick-baremetal::odroid::governor_atboot": "ondemand", // Set the CPU governer: interactive conservative ondemand powersave performance
+	"maverick-baremetal::raspberry::init::expand_root": true, // Expand the root partition to max size of SD card
+    "maverick-baremetal::raspberry::init::gpumem": 128, // How much RAM to assign to GPU from main memory
+    "maverick-baremetal::raspberry::init::overclock": "None", // Overclock CPU - "None", "High", "Turbo"
+    "maverick-baremetal::raspberry::init::devicetree": true, // Use devicetree, should be true
+    "maverick-baremetal::raspberry::init::spi": true, // Enable spi, should be true for LCD screen
+    "maverick-baremetal::raspberry::init::i2c": true, // Enable i2c, should be true for LCD screen
+	"maverick-baremetal::raspberry::init::serialconsole": false, // Normally false to leave the serial lines free for pixhawk
+    "maverick-baremetal::raspberry::init::camera": true, // Enable raspberry camera
+    "maverick-baremetal::raspberry::init::xgl": false, // Experimental X GL support
+    "maverick-baremetal::raspberry::init::v4l2": true, // v4l2 kernel module enabled, should always be true
+    "maverick-baremetal::raspberry::init::overpower_usb": false, // Allow USB ports to provide more than standard 500mw power, useful for high power Wifi modules
 	
-	// "maverick-desktop::enable": false,
+	"maverick-cloud9::enabled": true, // Only enabled for dev environment by default, compiles and runs cloud9 IDE
+	"maverick-cloud9::webport": 6789, // Cloud9 IDE website port
+	"maverick-cloud9::basepath": "/srv/maverick", // Filesystem path exposed in cloud9 IDE
+
+	"maverick-desktop::enable": false, // Disable Desktop by default, to save resources
 	
-	// "maverick-network::dnsclient": "disabled",
-    // "maverick-network::ntpclient": "enabled",
-    // "maverick-network::ethernet": true,
-    // "maverick-network::wireless": true,
-    // "maverick-network::netman": false,
-    // "maverick-network::predictable": false,
+	"maverick-dronekit::dronekit_la_revision": "master", // git branch of dronekit log analyzer
+	"maverick-dronekit::fc": true, // Install and run dronekit environment for the flight controller
+	"maverick-dronekit::fc::dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git branch for flight controller dronekit
+	"maverick-dronekit::sitl": false, // SITL disabled by default, enabled by default in dev environment
+	"maverick-dronekit::sitl::sitl_fw_branch": "master", // Ardupilot git branch for SITL
+	"maverick-dronekit::sitl::sitl_fw_builds": ["ArduCopter"], // Which Ardupilot firmwares to build
+	"maverick-dronekit::sitl::sitl_fw_run": "ArduCopter", // Which firmware will sitl run, must be part of $sitl_fw_builds
+	"maverick-dronekit::sitl::sitl_dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git path to clone for dronekit in SITL environment
+
+	"maverick-network::dnsclient": "disabled", // 
+    "maverick-network::ntpclient": "enabled",
+    "maverick-network::ethernet": true,
+    "maverick-network::wireless": true,
+    "maverick-network::netman": false,
+    "maverick-network::predictable": false,
+    "maverick-network::dhcpcd": false,
+    "maverick-network::dnsmasq": false,
+
     // "maverick-network::ethernet::eth0_name": "eth0",
     // "maverick-network::ethernet::eth0_mode": "dhcp",
     // "maverick-network::wireless::wlan0_name": "wlan0",
@@ -36,20 +68,25 @@
     // "maverick-network::wireless::wlan1_ssid": false,
     // "maverick-network::wireless::wlan1_psk": false,
 
-	// "maverick-security::fail2ban": false,
-	// "maverick-security::firewall": true,
-
-	// "maverick-dronekit::sitl::sitl": true,
-    // "maverick-dronekit::sitl::sitl_fw_branch": "master",
-    // "maverick-dronekit::sitl::sitl_fw_builds": ["ArduCopter"],
-    // "maverick-dronekit::sitl::sitl_fw_run": "ArduCopter", # Which firmware will sitl run, must be part of $sitl_fw_builds
-	// "maverick-dronekit::sitl::sitl_dronekit_source": "https://github.com/mygit/dronekit-python",
-	// "maverick-dronekit::fc::fc_dronekit_source": "https://github.com/mygit/dronekit-python",
+	"maverick-ros::ros_installtype": "source", // Install ROS from source or native packages
+	
+	"maverick-security::fail2ban": true, // fail2ban can stop brute force attacks against ssh
+	"maverick-security::fail2ban::alertemail": "admin@example.com", // Email address to send fail2ban alerts to
+	"maverick-security::firewall": true, // Run firewall by default if security enabled, holes will be automatically made for maverick services
+	"maverick-security::firewall::cronupdate": false, // Optionally run a firewall update every hour, useful if all_ips includes dynamic dns hostnames that can change
+	
+    "maverick-vision::cv": false, // Install and configure opencv
+    "maverick-vision::gstreamer_installtype": "native", // Install gstreamer with native OS packages or by source
+    "maverick-vision::mjpg_streamer": false, // Install mjpg_streamer
+	"maverick-vision::fpv::init::type": "infrastructure", // 'infrastructure' for normal wifi, 'ap' to act as an Access Point, 'broadcast' for wifibroadcast, MUST match maverick-network::wireless::type
 
 	"classes" : [
 		"base",
 		"maverick-desktop",
-		"maverick-security"
+		"maverick-dronekit",
+		"maverick-fcs",
+		"maverick-security",
+		"maverick-vision"
 	]
 	
 }

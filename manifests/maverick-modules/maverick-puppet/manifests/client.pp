@@ -1,15 +1,12 @@
 class maverick-puppet::client (
-    $enabled = true,
 ) {
 
-    if $enabled {
-        package {["puppet", "facter", "hiera"]:
+    package {["puppet", "facter", "hiera"]:
+        ensure	=> installed
+    }
+    if ($operatingsystem == "Debian" or $operatingsystem == "Ubuntu") {
+        package {["ruby-json"]:
             ensure	=> installed
-        }
-        if ($operatingsystem == "Debian" or $operatingsystem == "Ubuntu") {
-            package {["ruby-json"]:
-                ensure	=> installed
-            }
         }
     }
 

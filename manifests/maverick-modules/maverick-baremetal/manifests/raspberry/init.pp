@@ -3,8 +3,8 @@ class maverick-baremetal::raspberry::init (
     $gpumem = 128,
     $overclock = "None", # "None", "High", "Turbo"
     $devicetree = true,
-    $spi = false,
-    $i2c = false,
+    $spi = true,
+    $i2c = true,
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
     $camera = true,
     $xgl = false,

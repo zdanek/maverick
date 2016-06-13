@@ -1,5 +1,5 @@
 class maverick-vision (
-    $fpv = true,
+    $fpv = false,
     $cv = false,
     $gstreamer_installtype = "native",
     $mjpg_streamer = false,
