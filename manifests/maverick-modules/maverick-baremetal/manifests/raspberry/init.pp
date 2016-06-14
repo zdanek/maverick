@@ -39,6 +39,13 @@ class maverick-baremetal::raspberry::init (
             file        => "/boot/config.txt",
             line        => "dtoverlay=pi3-disable-bt",
         }
+        service { "hciuart":
+            enable      => false,
+            ensure      => stopped,
+        } ->
+        package { "hciuart":
+            ensure      => purged
+        }
     }
 
     if ($overclock) {
