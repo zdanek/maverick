@@ -51,7 +51,7 @@
     "maverick-network::ethernet": true,
     "maverick-network::wireless": true,
     "maverick-network::netman": false,
-    "maverick-network::predictable": true,
+    "maverick-network::predictable": false,
     "maverick-network::dhcpcd": false,
     "maverick-network::dnsmasq": false,
 	"maverick-network::dnsclient": "disabled", 

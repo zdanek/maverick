@@ -69,7 +69,7 @@ define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
         }
         exec { "lineval-$file-$field-add":
             command     => "/bin/sed ${file} -i -r -e '/${linesearch}/ s/$/ ${field}=${newvalue}/'",
-            unless      => "/bin/grep '${oldvalue}' ${file}",
+            unless      => "/bin/grep '${field}' ${file}",
         }
     }
 }
