@@ -147,4 +147,14 @@ class base::maverick {
         content     => "export PATH=\$PATH:/srv/maverick/software/maverick/bin",
     }
     
+    # Create symlinks for maverick subcommands
+    file { "/srv/maverick/software/maverick/bin/maverick-info":
+        ensure  => link,
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/base/files/maverick-info"
+    }
+    file { "/srv/maverick/software/maverick/bin/maverick-netinfo":
+        ensure  => link,
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/files/maverick-netinfo"
+    }
+    
 }

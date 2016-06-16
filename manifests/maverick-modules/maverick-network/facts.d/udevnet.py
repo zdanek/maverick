@@ -3,13 +3,13 @@
 
 import os, re, sys, subprocess
 
-class Udev(object):
+class Udevnet(object):
     def __init__(self):
         self.data = {}
         self._data = {}
         
     def udevnet(self):
-        # Define main data container
+        # Parse udev database dump, extract network interfaces and add data into dicts keyed by int_field
         f = subprocess.check_output(['/sbin/udevadm', 'info', '-e'])
         data = f.split("\n")
         counter = 0
@@ -32,7 +32,7 @@ class Udev(object):
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
-    udev = Udev()
+    udev = Udevnet()
     udev.udevnet()
     # Don't run facter as a fact (obviously)
     # Finally, print the data out in the format expected of a fact provider

@@ -82,6 +82,9 @@ class maverick-network (
             }
         }
     } else {
+        file { "/etc/udev/rules.d/80-net-setup-link.rules":
+            ensure      => absent,
+        }
         if $odroid_present == "yes" {
             lineval { "predictable-names-odroid-on":
                 file => "/media/boot/boot.ini", 

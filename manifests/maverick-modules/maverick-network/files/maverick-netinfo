@@ -1,0 +1,122 @@
+#!/usr/bin/python
+
+import os, sys, re
+import netifaces
+# Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/facts.d')
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick-baremetal/facts.d')
+sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
+
+import argparse
+parser = argparse.ArgumentParser(description='Display network information')
+#parser.add_argument('-m', '--motd', help="Display information in format more suitable to create motd", action="store_true")
+args = parser.parse_args()
+
+ctrls = {}
+ctrls['reset'] = '[0m'
+ctrls['bold'] = '[1m'
+ctrls['bg_black'] = '[40m'
+ctrls['bg_red'] = '[41m'
+ctrls['bg_blue'] = '[44m'
+ctrls['fg_black'] = '[30m'
+ctrls['fg_red'] = '[31m'
+ctrls['fg_grey'] = '[37m'
+
+from raspberry import Raspberry
+raspberry = Raspberry()
+raspberry.runall()
+
+from beagle import Beagle
+beagle = Beagle()
+beagle.runall()
+
+from odroid import Odroid
+odroid = Odroid()
+odroid.runall()
+
+from udevnet import Udevnet
+udevnet = Udevnet()
+udevnet.runall()
+
+def twocols(col1, col2):
+    return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
+
+ifs = netifaces.interfaces()
+for _if in ifs:
+    # Skip loopback, tunnel interfaces
+    if re.search("^lo",_if) or re.search("^sit",_if) or re.search("^ip6tnl",_if):
+        continue
+    
+    _macaddress = netifaces.ifaddresses(_if)[netifaces.AF_LINK][0]['addr']
+    try:
+        _ipaddress = netifaces.ifaddresses(_if)[netifaces.AF_INET][0]['addr']
+    except:
+        _ipaddress = None
+    try:
+        _vendor = udevnet.data[_if+"_id_vendor"]
+        _vendorstr = udevnet.data[_if+"_id_vendor_from_database"]
+    except:
+        _vendor = None
+        _vendorstr = None
+    try:
+        _driver = udevnet.data[_if+"_id_net_driver"]
+    except:
+        try:
+            _driver = udevnet.data[_if+"_id_usb_driver"]
+        except:
+            _driver = None
+    try:
+        _model = udevnet.data[_if+"_id_model_id"]
+    except:
+        _model = None
+    try:
+        _modelstr = udevnet.data[_if+"_id_model_from_database"]
+    except:
+        _modelstr = None
+    try:
+        _netname = udevnet.data[_if+"_id_net_name_from_database"]
+    except:
+        try:
+            _netname = udevnet.data[_if+"_id_net_name_onboard"]
+        except:
+            try:
+                _netname = udevnet.data[_if+"_id_net_name_slot"]
+            except:
+                try:
+                    _netname = udevnet.data[_if+"_id_net_name_path"]
+                except:
+                    try:
+                        _netname = udevnet.data[_if+"_id_net_name_mac"]
+                    except:
+                        _netname = None
+    try:
+        _type = udevnet.data[_if+"_devtype"]
+        if _type == "wlan": _type = "Wireless"
+    except:
+        try:
+            if re.search("^en", _netname):
+                _type = "Ethernet"
+            elif re.search("^wl", _netname):
+                _type = "Wireless"
+            else:
+                _type = None
+        except:
+            _type = None
+
+    print twocols("Interface", '\t\t'+str(_if))
+    print twocols("Type", '\t\t\t'+str(_type))
+    print twocols("MAC Address", '\t\t'+str(_macaddress))
+    print twocols("Vendor", '\t\t\t'+str(_vendor)+" : "+str(_vendorstr))
+    print twocols("Model", '\t\t\t'+str(_model)+" : "+str(_modelstr))
+    print twocols("Driver", '\t\t\t'+str(_driver))
+    print twocols("IP Address", '\t\t'+str(_ipaddress))
+    print twocols("Predictable Name", '\t'+str(_netname))
+    print "-----"
+    
+    #for index,value in udevnet.data.items():
+    #    if re.search("^"+_if+"",index):
+    #        print index+" = "+value
+    
+gateways = netifaces.gateways()
+defaultgw = gateways['default'][netifaces.AF_INET][0]
+print twocols("Default Gateway", '\t'+defaultgw)

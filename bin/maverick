@@ -1,8 +1,23 @@
 #!/bin/bash
 
+# If tput is available, populate colour variables
+if hash tput 2>/dev/null; then
+    bgbl=$(tput setab 0)
+    bgr=$(tput setab 1)
+    bgg=$(tput setab 2)
+    bgb=$(tput setab 4)
+    bgw=$(tput setab 7)
+    bold=$(tput bold)
+    red=$(tput setaf 1)
+    green=$(tput setaf 2)
+    blue=$(tput setaf 4)
+    white=$(tput setaf 7)
+    reset=$(tput sgr0)
+fi
+
 echo
-echo 'Maverick - UAV Companion Computer Automation'
-echo '--------------------------------------------'
+echo "${bgb}${bold}Maverick - UAV Companion Computer Automation${reset}"
+echo
 
 # Check that we're root or mav user
 if [[ $EUID -ne 0 && $USER != "mav" ]]; then
@@ -14,12 +29,13 @@ fi
 # Define usage function
 usage () {
     echo "--configure                               Configure system - BEWARE this may do major changes to your existing system, requires --confirm to run"
-    echo "--env=[bootstrap|dev|production]          Environment to configure, currently bootstrap, dev or production"
+    echo "--env=[${bold}${blue}bootstrap${reset}|${bold}${red}dev${reset}|${bold}${green}production${reset}]          Environment to configure: bootstrap, dev or production"
     echo "--status                                  Show current running status"
     echo "--info                                    Display system information"
+    echo "--netinfo                                 Display network information"
     echo "--self-update                             Update to latest maverick code"
     echo
-    echo "WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does."
+    echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does.${reset}"
     echo
     exit 1
 }
@@ -33,47 +49,45 @@ for i in "$@"
 do
     case $i in
         --env=*)
-        ENV="${i#*=}"
-        shift
-        ;;
+            ENV="${i#*=}"
+            shift
+            ;;
         --configure)
-        CONFIGURE="true"
-        shift
-        ;;
+            CONFIGURE="true"
+            shift
+            ;;
         --status)
-        STATUS="true"
-        shift
-        ;;
+            STATUS="true"
+            shift
+            ;;
         --info)
-        INFO="true"
-        shift
-        ;;
+            INFO="true"
+            shift
+            ;;
+        --netinfo)
+            NETINFO="true"
+            shift
+            ;;
         --self-update)
-        SELFUPDATE="true"
-        shift
-        ;;
+            SELFUPDATE="true"
+            shift
+            ;;
         *)
-        echo
-        echo "Error: argument not recognised"
-        echo
-        usage
-        ;;
+            echo
+            echo "Error: argument not recognised"
+            echo
+            usage
+            ;;
     esac
 done
 
-bg=$(tput setab 7)
-bold=$(tput bold)
-red=$(tput setaf 1)
-green=$(tput setaf 2)
-reset=$(tput sgr0)
-
 mavenv () {
     if [ "x$1" == "xdev" ]; then
-        echo "Maverick Environment:   ${bg}${red}${bold} dev ${reset}"
+        echo "Maverick Environment:   ${bgw}${red}${bold} dev ${reset}"
     elif [ "x$1" == "xproduction" ]; then
-        echo "Maverick Environment:   ${bg}${green}${bold} production ${reset}"
+        echo "Maverick Environment:   ${bgw}${green}${bold} production ${reset}"
     elif [ "x$1" == "xbootstrap" ]; then
-        echo "Maverick Environment:   ${bg}${blue}${bold} bootstrap ${reset}"
+        echo "Maverick Environment:   ${bgw}${blue}${bold} bootstrap ${reset}"
     fi    
 }
 
@@ -94,7 +108,7 @@ if [ "$SELFUPDATE" == "true" ]; then
     exit 0
 fi
 
-# If self-update set, action and then exit
+# If info set, action and then exit
 if [ "$INFO" == "true" ]; then
     if [ -e /srv/maverick/.environment ]; then
         environment=$(cat /srv/maverick/.environment)
@@ -102,6 +116,18 @@ if [ "$INFO" == "true" ]; then
     mavenv ${environment}
     echo
     /usr/bin/python /srv/maverick/software/maverick/bin/maverick-info
+    echo
+    exit 0
+fi
+
+# If netinfo set, action and then exit
+if [ "$NETINFO" == "true" ]; then
+    if [ -e /srv/maverick/.environment ]; then
+        environment=$(cat /srv/maverick/.environment)
+    fi
+    mavenv ${environment}
+    echo
+    /usr/bin/python /srv/maverick/software/maverick/bin/maverick-netinfo
     echo
     exit 0
 fi
