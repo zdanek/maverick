@@ -48,14 +48,14 @@
 	"maverick-dronekit::sitl::sitl_fw_run": "ArduCopter", // Which firmware will sitl run, must be part of $sitl_fw_builds
 	"maverick-dronekit::sitl::sitl_dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git path to clone for dronekit in SITL environment
 
-	"maverick-network::dnsclient": "disabled", // 
-    "maverick-network::ntpclient": "enabled",
     "maverick-network::ethernet": true,
     "maverick-network::wireless": true,
     "maverick-network::netman": false,
-    "maverick-network::predictable": false,
+    "maverick-network::predictable": true,
     "maverick-network::dhcpcd": false,
     "maverick-network::dnsmasq": false,
+	"maverick-network::dnsclient": "disabled", 
+    "maverick-network::ntpclient": "enabled",
 
     // "maverick-network::ethernet::eth0_name": "eth0",
     // "maverick-network::ethernet::eth0_mode": "dhcp",

@@ -32,7 +32,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
     }
 }
 
-# Ensure a correct value exists for a field in a specified file
+# Ensure a correct value exists for a field in a specified file, where the field is on a separate line like an ini conf file
 define confval ($file, $field, $value) {
     if $file and $field and $value {
         # Firstly, if the value doesn't exist, add it
@@ -48,12 +48,28 @@ define confval ($file, $field, $value) {
     }
 }
 
+# This adds an entire line to a file if it doesn't already exist
 define confline ($file, $line) {
     if $file and $line {
         # Firstly, if the value doesn't exist, add it
         exec { "confline-add-${file}-${line}":
             command     => "/bin/echo '${line}' >> ${file}",
             unless      => "/bin/grep -e '^${line}' ${file}"
+        }
+    }
+}
+
+# Ensure a correct value exists for a field in a specified file, where the field is within a line of other values, like a grub/boot line
+define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
+    if $file and $field and $oldvalue and $newvalue and $linesearch {
+        # Change the value if it already exists
+        exec { "lineval-$file-$field-change":
+            command     => "/bin/sed ${file} -i -r -e 's/${field}=${oldvalue}/${field}=${newvalue}/'",
+            onlyif      => "/bin/grep '${field}=${oldvalue}' ${file}",
+        }
+        exec { "lineval-$file-$field-add":
+            command     => "/bin/sed ${file} -i -r -e '/${linesearch}/ s/$/ ${field}=${newvalue}/'",
+            unless      => "/bin/grep '${oldvalue}' ${file}",
         }
     }
 }

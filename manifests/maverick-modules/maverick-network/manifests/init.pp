@@ -1,12 +1,12 @@
 class maverick-network (
-    $dnsclient = "disabled", 
-    $ntpclient = "enabled",
     $ethernet = true,
     $wireless = true,
     $netman = false,
     $predictable = false,
     $dhcpcd = false,
     $dnsmasq = false,
+    $dnsclient = "disabled", 
+    $ntpclient = "enabled",
     ) {
 
     if $dhcpcd == false {
@@ -48,12 +48,57 @@ class maverick-network (
         "net.ipv4.tcp_wmem":							value => "10240 87380 12582912";
     }
     
-    # Turn off predictable interface naming
-    # NB: This is temporary-ish probably, eventually we almost certainly want predictable naming
+    ### Interface naming configuration
+    # Turn off biosdevname
+    package { "biosdevname":
+        ensure      => purged,
+    }
+    # Turn off desktop udev rules
+    file { "/etc/udev/rules.d/75-persistent-net-generator.rules":
+        ensure      => link,
+        target      => "/dev/null",
+    }
     if $predictable == false {
         file { "/etc/udev/rules.d/80-net-setup-link.rules":
             ensure      => link,
             target      => "/dev/null",
+        }
+        if $odroid_present == "yes" {
+            lineval { "predictable-names-odroid-off":
+                file => "/media/boot/boot.ini", 
+                field => "net.ifnames", 
+                oldvalue => "1", 
+                newvalue => "0", 
+                linesearch => "bootrootfs"
+            }
+        }
+        if $raspberry_present == "yes" {
+            lineval { "predictable-names-raspberry-off":
+                file => "/boot/cmdline.txt", 
+                field => "net.ifnames", 
+                oldvalue => "1", 
+                newvalue => "0", 
+                linesearch => "root="
+            }
+        }
+    } else {
+        if $odroid_present == "yes" {
+            lineval { "predictable-names-odroid-on":
+                file => "/media/boot/boot.ini", 
+                field => "net.ifnames", 
+                oldvalue => "0", 
+                newvalue => "1", 
+                linesearch => "bootrootfs"
+            }
+        }
+        if $raspberry_present == "yes" {
+            lineval { "predictable-names-raspberry-on":
+                file => "/boot/cmdline.txt", 
+                field => "net.ifnames", 
+                oldvalue => "0", 
+                newvalue => "1", 
+                linesearch => "root="
+            }
         }
     }
     
