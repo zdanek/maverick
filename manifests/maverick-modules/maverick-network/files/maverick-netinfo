@@ -53,11 +53,21 @@ for _if in ifs:
     except:
         _ipaddress = None
     try:
-        _vendor = udevnet.data[_if+"_id_vendor"]
         _vendorstr = udevnet.data[_if+"_id_vendor_from_database"]
     except:
-        _vendor = None
         _vendorstr = None
+    try:
+        _vendoroui = udevnet.data[_if+"_id_oui_from_database"]
+    except:
+        _vendoroui = None
+    try:
+        _vendor = udevnet.data[_if+"_id_vendor"]
+    except:
+        _vendor = None
+    # Hack for onboard raspberry devices
+    if re.search("^Raspberry", _vendoroui):
+        _vendor = "RaspberryPi"
+
     try:
         _driver = udevnet.data[_if+"_id_net_driver"]
     except:
@@ -106,7 +116,7 @@ for _if in ifs:
     print twocols("Interface", '\t\t'+str(_if))
     print twocols("Type", '\t\t\t'+str(_type))
     print twocols("MAC Address", '\t\t'+str(_macaddress))
-    print twocols("Vendor", '\t\t\t'+str(_vendor)+" : "+str(_vendorstr))
+    print twocols("Vendor", '\t\t\t'+str(_vendor)+" : "+str(_vendorstr)+" : "+str(_vendoroui))
     print twocols("Model", '\t\t\t'+str(_model)+" : "+str(_modelstr))
     print twocols("Driver", '\t\t\t'+str(_driver))
     print twocols("IP Address", '\t\t'+str(_ipaddress))
