@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys, re
+import os, sys, re, subprocess
 import netifaces
 # Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/facts.d')
@@ -41,6 +41,7 @@ udevnet.runall()
 def twocols(col1, col2):
     return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
 
+_wifi = {}
 ifs = netifaces.interfaces()
 for _if in ifs:
     # Skip loopback, tunnel interfaces
@@ -113,7 +114,23 @@ for _if in ifs:
         except:
             _type = None
 
-    print twocols("Interface", '\t\t'+str(_if))
+    # What mode is the interface in?
+    _wifi[_if] = {}
+    try:
+        f = subprocess.check_output(['/sbin/iw', _if, 'info'])
+        data = f.split("\n")
+        counter = 0
+        _wifi[_if]['info'] = True
+        for line in data:
+            r = re.search('^\s*(.*) (.*)', line)
+            try:
+                _wifi[_if][r.groups(0)[0]] = r.groups(0)[1]
+            except:
+                pass
+    except:
+        _wifi[_if]['info'] = False
+        
+    print ctrls['bg_black']+ctrls['bold']+"Interface:", str(_if), ctrls['reset']
     print twocols("Type", '\t\t\t'+str(_type))
     print twocols("MAC Address", '\t\t'+str(_macaddress))
     print twocols("Vendor", '\t\t\t'+str(_vendor)+" : "+str(_vendorstr)+" : "+str(_vendoroui))
@@ -121,7 +138,17 @@ for _if in ifs:
     print twocols("Driver", '\t\t\t'+str(_driver))
     print twocols("IP Address", '\t\t'+str(_ipaddress))
     print twocols("Predictable Name", '\t'+str(_netname))
-    print "-----"
+    #print _wifi[_if]
+    if _wifi[_if]['info']:
+        try:
+            print twocols("Wireless Mode", '\t\t'+str(_wifi[_if]['type']))
+            print twocols("Wireless PhysId", '\t'+str(_wifi[_if]['wiphy'])+':'+str(_wifi[_if]['wdev']))
+        except:
+            pass
+    else:
+        print twocols("Wireless Info", '\t\tNone')
+    print
+    
     
     #for index,value in udevnet.data.items():
     #    if re.search("^"+_if+"",index):
@@ -129,4 +156,4 @@ for _if in ifs:
     
 gateways = netifaces.gateways()
 defaultgw = gateways['default'][netifaces.AF_INET][0]
-print twocols("Default Gateway", '\t'+defaultgw)
+print twocols(ctrls['bold']+"Default Gateway"+ctrls['reset'], '\t'+defaultgw)
