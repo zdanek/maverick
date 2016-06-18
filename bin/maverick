@@ -29,13 +29,14 @@ fi
 # Define usage function
 usage () {
     echo "--configure                               Configure system - BEWARE this may do major changes to your existing system, requires --confirm to run"
-    echo "--env=[${bold}${blue}bootstrap${reset}|${bold}${red}dev${reset}|${bold}${green}production${reset}]          Environment to configure: bootstrap, dev or production"
+    echo "--env=[bootstrap|dev|production]          Environment to configure: bootstrap, dev or production"
     echo "--status                                  Show current running status"
     echo "--info                                    Display system information"
     echo "--netinfo                                 Display network information"
     echo "--self-update                             Update to latest maverick code"
     echo
-    echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.  Please do not run without understanding what it does.${reset}"
+    echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
+    echo "${bgr}${bold}         Please do not run without understanding what it does.${reset}"
     echo
     exit 1
 }
@@ -99,10 +100,12 @@ if [ "$SELFUPDATE" == "true" ]; then
         elif [ $USER == "mav" ]; then
             cd /srv/maverick/software/maverick; git pull origin;
         fi
-        echo "Maverick update completed"
+        echo
+        echo "${bgg}Maverick update completed${reset}"
         echo
     else
-        echo "Error: Maverick not found in expected location: /srv/maverick/software/maverick"
+        echo
+        echo "${bgr}Error: Maverick not found in expected location: /srv/maverick/software/maverick${reset}"
         echo
     fi
     exit 0
