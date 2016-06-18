@@ -9,16 +9,7 @@ class maverick-network (
     $ntpclient = "enabled",
     ) {
 
-    if $dhcpcd == false {
-        # Make sure dhcp client daemons are turned off, for now we depend on dhclient/wpa_supplicant
-        service { "udhcpd":
-            ensure      => stopped,
-            enable      => false
-        } ->
-        package { "dhcpcd5":
-            ensure      => absent,
-        }
-    }
+    ensure_packages(["ethtool", "libpcap-dev", "iw"])
 
     # Base network setup
     class { "network": 
@@ -38,6 +29,17 @@ class maverick-network (
     
     if $dnsclient == "enabled" {
         include maverick-network::dnsclient
+    }
+
+    if $dhcpcd == false {
+        # Make sure dhcp client daemons are turned off, for now we depend on dhclient/wpa_supplicant
+        service { "udhcpd":
+            ensure      => stopped,
+            enable      => false
+        } ->
+        package { "dhcpcd5":
+            ensure      => absent,
+        }
     }
 
     # Set high network buffers to better cope with our likely crappy usb ethernet and wifi links (12mb instead of default 128k)
