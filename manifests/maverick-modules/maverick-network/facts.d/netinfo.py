@@ -91,9 +91,18 @@ class Netinfo(object):
             _wifi = iwconfig.Wireless(self._if)
             self.data['mode'] = _wifi.getMode()
             self.data['bitrate'] = _wifi.getBitrate()
+            self.data['essid'] = _wifi.getEssid()
+            self.data['frequency'] = _wifi.getFrequency()
+            self.data['name'] = _wifi.getWirelessName()
+            self.data['txpower'] = _wifi.getTXPower()
+            
         except:
             self.data['mode'] = None
             self.data['bitrate'] = None
+            self.data['essid'] = None
+            self.data['frequency'] = None
+            self.data['name'] = None
+            self.data['txpower'] = None
 
     def runall(self):
         pass

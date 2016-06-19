@@ -49,7 +49,11 @@ for _if in ifs:
     if _netinfo.data['mode']:
         print twocols("Wireless Mode", '\t\t'+str(_netinfo.data['mode']))
         print twocols("Wireless Bitrate", '\t'+str(_netinfo.data['bitrate']))
-    else:
+        print twocols("Wireless EssId", '\t\t'+str(_netinfo.data['essid']))
+        print twocols("Wireless Frequency", '\t'+str(_netinfo.data['frequency']))
+        print twocols("Wireless Name", '\t\t'+str(_netinfo.data['name']))
+        print twocols("Wireless TX Power", '\t'+str(_netinfo.data['txpower']))
+    elif _netinfo.data['type'] == "Wireless":
         print twocols("Wireless Info", '\t\tMissing')
     print
 
