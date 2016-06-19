@@ -10,6 +10,10 @@ class maverick-network (
     ) {
 
     ensure_packages(["ethtool", "libpcap-dev", "iw"])
+    python::pip { 'pip-python-wifi':
+        pkgname     => 'python-wifi',
+        ensure      => present,
+    }
 
     # Base network setup
     class { "network": 

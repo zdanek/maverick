@@ -3,9 +3,16 @@
 import os, sys, re, subprocess
 import netifaces
 # Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
+sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/facts.d')
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick-baremetal/facts.d')
-sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
+sys.path.insert(0, '/usr/local/examples')
+from udevnet import Udevnet
+udevnet = Udevnet()
+udevnet.runall()
+
+from netinfo import Netinfo
+import iwconfig
 
 import argparse
 parser = argparse.ArgumentParser(description='Display network information')
@@ -22,138 +29,30 @@ ctrls['fg_black'] = '[30m'
 ctrls['fg_red'] = '[31m'
 ctrls['fg_grey'] = '[37m'
 
-from raspberry import Raspberry
-raspberry = Raspberry()
-raspberry.runall()
-
-from beagle import Beagle
-beagle = Beagle()
-beagle.runall()
-
-from odroid import Odroid
-odroid = Odroid()
-odroid.runall()
-
-from udevnet import Udevnet
-udevnet = Udevnet()
-udevnet.runall()
-
 def twocols(col1, col2):
     return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
 
-_wifi = {}
 ifs = netifaces.interfaces()
+udevnet = Udevnet()
+udevnet.runall()
 for _if in ifs:
-    # Skip loopback, tunnel interfaces
-    if re.search("^lo",_if) or re.search("^sit",_if) or re.search("^ip6tnl",_if):
-        continue
-    
-    _macaddress = netifaces.ifaddresses(_if)[netifaces.AF_LINK][0]['addr']
-    try:
-        _ipaddress = netifaces.ifaddresses(_if)[netifaces.AF_INET][0]['addr']
-    except:
-        _ipaddress = None
-    try:
-        _vendorstr = udevnet.data[_if+"_id_vendor_from_database"]
-    except:
-        _vendorstr = None
-    try:
-        _vendoroui = udevnet.data[_if+"_id_oui_from_database"]
-    except:
-        _vendoroui = None
-    try:
-        _vendor = udevnet.data[_if+"_id_vendor"]
-    except:
-        _vendor = None
-    # Hack for onboard raspberry devices
-    if re.search("^Raspberry", _vendoroui):
-        _vendor = "RaspberryPi"
-
-    try:
-        _driver = udevnet.data[_if+"_id_net_driver"]
-    except:
-        try:
-            _driver = udevnet.data[_if+"_id_usb_driver"]
-        except:
-            _driver = None
-    try:
-        _model = udevnet.data[_if+"_id_model_id"]
-    except:
-        _model = None
-    try:
-        _modelstr = udevnet.data[_if+"_id_model_from_database"]
-    except:
-        _modelstr = None
-    try:
-        _netname = udevnet.data[_if+"_id_net_name_from_database"]
-    except:
-        try:
-            _netname = udevnet.data[_if+"_id_net_name_onboard"]
-        except:
-            try:
-                _netname = udevnet.data[_if+"_id_net_name_slot"]
-            except:
-                try:
-                    _netname = udevnet.data[_if+"_id_net_name_path"]
-                except:
-                    try:
-                        _netname = udevnet.data[_if+"_id_net_name_mac"]
-                    except:
-                        _netname = None
-    try:
-        _type = udevnet.data[_if+"_devtype"]
-        if _type == "wlan": _type = "Wireless"
-    except:
-        try:
-            if re.search("^en", _netname):
-                _type = "Ethernet"
-            elif re.search("^wl", _netname):
-                _type = "Wireless"
-            else:
-                _type = None
-        except:
-            _type = None
-
-    # What mode is the interface in?
-    _wifi[_if] = {}
-    try:
-        f = subprocess.check_output(['/sbin/iw', _if, 'info'])
-        data = f.split("\n")
-        counter = 0
-        _wifi[_if]['info'] = True
-        for line in data:
-            r = re.search('^\s*(.*) (.*)', line)
-            try:
-                _wifi[_if][r.groups(0)[0]] = r.groups(0)[1]
-            except:
-                pass
-    except:
-        _wifi[_if]['info'] = False
-        
+    _netinfo = Netinfo(_if)
+    _netinfo.getinfo()
     print ctrls['bg_black']+ctrls['bold']+"Interface:", str(_if), ctrls['reset']
-    print twocols("Type", '\t\t\t'+str(_type))
-    print twocols("MAC Address", '\t\t'+str(_macaddress))
-    print twocols("Vendor", '\t\t\t'+str(_vendor)+" : "+str(_vendorstr)+" : "+str(_vendoroui))
-    print twocols("Model", '\t\t\t'+str(_model)+" : "+str(_modelstr))
-    print twocols("Driver", '\t\t\t'+str(_driver))
-    print twocols("IP Address", '\t\t'+str(_ipaddress))
-    print twocols("Predictable Name", '\t'+str(_netname))
-    #print _wifi[_if]
-    if _wifi[_if]['info']:
-        try:
-            print twocols("Wireless Mode", '\t\t'+str(_wifi[_if]['type']))
-            print twocols("Wireless PhysId", '\t'+str(_wifi[_if]['wiphy'])+':'+str(_wifi[_if]['wdev']))
-        except:
-            pass
+    print twocols("Type", '\t\t\t'+str(_netinfo.data['type']))
+    print twocols("MAC Address", '\t\t'+str(_netinfo.data['macaddress']))
+    print twocols("Vendor", '\t\t\t'+str(_netinfo.data['vendor'])+" : "+str(_netinfo.data['vendorstr'])+" : "+str(_netinfo.data['vendoroui']))
+    print twocols("Model", '\t\t\t'+str(_netinfo.data['model'])+" : "+str(_netinfo.data['modelstr']))
+    print twocols("Driver", '\t\t\t'+str(_netinfo.data['driver']))
+    print twocols("IP Address", '\t\t'+str(_netinfo.data['ipaddress']))
+    print twocols("Predictable Name", '\t'+str(_netinfo.data['netname']))
+    if _netinfo.data['mode']:
+        print twocols("Wireless Mode", '\t\t'+str(_netinfo.data['mode']))
+        print twocols("Wireless Bitrate", '\t'+str(_netinfo.data['bitrate']))
     else:
-        print twocols("Wireless Info", '\t\tNone')
+        print twocols("Wireless Info", '\t\tMissing')
     print
-    
-    
-    #for index,value in udevnet.data.items():
-    #    if re.search("^"+_if+"",index):
-    #        print index+" = "+value
-    
+
 gateways = netifaces.gateways()
 defaultgw = gateways['default'][netifaces.AF_INET][0]
 print twocols(ctrls['bold']+"Default Gateway"+ctrls['reset'], '\t'+defaultgw)
