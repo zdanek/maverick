@@ -1,4 +1,5 @@
 class maverick-network::avahi (
+    $explicit_naming = false,
 ) {
     
     ensure_packages(["avahi-daemon", "avahi-utils"])

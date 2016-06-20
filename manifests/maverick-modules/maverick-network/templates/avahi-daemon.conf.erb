@@ -44,7 +44,11 @@ enable-wide-area=yes
 #disable-publishing=no
 #disable-user-service-publishing=no
 #add-service-cookie=no
-#publish-addresses=yes
+<% if @explicit_naming -%>
+publish-addresses=no
+<% else -%>
+publish-addresses=yes
+<% end -%>
 #publish-hinfo=yes
 #publish-workstation=yes
 #publish-domain=yes

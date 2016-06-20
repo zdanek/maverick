@@ -74,7 +74,6 @@ do
             shift
             ;;
         *)
-            echo
             echo "Error: argument not recognised"
             echo
             usage
