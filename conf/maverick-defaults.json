@@ -57,16 +57,12 @@
 	"maverick-network::dnsclient": "disabled", 
     "maverick-network::ntpclient": "enabled",
 
-    // "maverick-network::ethernet::eth0_name": "eth0",
-    // "maverick-network::ethernet::eth0_mode": "dhcp",
-    // "maverick-network::wireless::wlan0_name": "wlan0",
-    // "maverick-network::wireless::wlan0_mode": "dhcp",
-    // "maverick-network::wireless::wlan0_ssid": false,
-    // "maverick-network::wireless::wlan0_psk": false,
-    // "maverick-network::wireless::wlan1_name": "wlan1",
-    // "maverick-network::wireless::wlan1_mode": "dhcp",
-    // "maverick-network::wireless::wlan1_ssid": false,
-    // "maverick-network::wireless::wlan1_psk": false,
+	"maverick-network::interfaces": {
+		"eth0": {},
+		"wlan0": {
+			"type": "wireless"
+		}
+	},
 
 	"maverick-ros::ros_installtype": "source", // Install ROS from source or native packages
 	

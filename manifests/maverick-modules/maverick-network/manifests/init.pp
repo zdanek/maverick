@@ -9,10 +9,17 @@ class maverick-network (
     $ntpclient = "enabled",
     ) {
 
-    ensure_packages(["ethtool", "libpcap-dev", "iw"])
+    # Install software 
+    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill"])
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
         ensure      => present,
+    }
+    # Ensure wpa_supplicant isn't running
+    service { "wpa_supplicant":
+        ensure      => stopped,
+        enable      => false,
+        require     => Package["wpasupplicant"]
     }
 
     # Base network setup
@@ -47,6 +54,7 @@ class maverick-network (
     }
 
     # Set high network buffers to better cope with our likely crappy usb ethernet and wifi links (12mb instead of default 128k)
+    # Need to look closer at this to ensure it doesn't increase latency
     base::sysctl::conf { 
         "net.core.rmem_max": 							value => '12582912';
         "net.core.wmem_max": 							value => '12582912';
@@ -111,14 +119,6 @@ class maverick-network (
         }
     }
     
-    if $ethernet {
-        class { "maverick-network::ethernet": }
-    }
-    
-    if $wireless {
-        class { "maverick-network::wireless": }
-    }
-    
     # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
     # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
     if $netman == false and $netman_connmand == "yes" {
@@ -173,5 +173,70 @@ class maverick-network (
     if $dnsmasq == true {
         class { "maverick-network::dnsmasq": }
     }
+    
+    file { "/etc/systemd/system/rfkill-unblock.service":
+        ensure      => present,
+        source      => "puppet:///modules/maverick-network/rfkill-unblock.service",
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+        require     => Package["rfkill"]
+    } ->
+    service { "rfkill-unblock.service":
+        enable      => true,
+    }
+    
+    # If wireless auth defaults are set in localconf.json, configure it 
+    # Retrieve wireless auth data from hiera
+    $wifi_ssid = hiera('wifi_ssid')
+    $wifi_passphrase = hiera('wifi_passphrase')
+    if $wifi_ssid and $wifi_passphrase {
+        file { "/etc/wpa_supplicant/wpa_supplicant.conf":
+            content => template("maverick-network/wpa_supplicant.conf.erb"),
+            mode    => 600,
+            owner   => "root",
+            group   => "root",
+        }
+    }
+
+    # Retrieve defined interfaces and process
+    $interfaces = hiera_hash("maverick-network::interfaces")
+    if $interfaces {
+        concat { "/etc/udev/rules.d/10-network-customnames.rules":
+            ensure      => present,
+        }
+	    ### Setup defaults that are added to each create_resources iteration
+	    #$def_defaults = {
+		#    'type'      => 'managed',
+	    #}
+	    ### Now convert the managed_interfaces hash into actual function calls
+		#create_resources("process_interface", $interfaces, $def_defaults)
+		create_resources("process_interface", $interfaces)
+	}
+    
+    define process_interface (
+        $mode = "managed",
+        $type = "ethernet",
+        $addressing = "dhcp",
+	    $macaddress = undef,
+	    $ipaddress = undef,
+	    $gateway = undef,
+	    $ssid = undef,
+	    $psk = undef,
+	) {
+	    # Process managed interfaces
+		if $mode == "managed" {
+		    maverick-network::managed { $name:
+		        type        => $type,
+		        addressing  => $addressing,
+		        macaddress  => $macaddress,
+		        ipaddress   => $ipaddress,
+		        gateway     => $gateway,
+		        ssid        => $ssid,
+		        psk         => $psk,
+		    }
+		}
+	}
     
 }

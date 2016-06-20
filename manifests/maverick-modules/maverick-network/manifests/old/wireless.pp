@@ -18,7 +18,7 @@ class maverick-network::wireless (
     $wlan1_psk = undef,
 ) {
 
-    # Ensure wpasupplicant is installed
+    # Ensure wpasupplicant is installed, but not running
     package { "wpasupplicant":
         ensure      => installed
     } ->

@@ -2,6 +2,7 @@
 # This fact extracts network info for network interfaces
 
 import os, re, sys, subprocess
+sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 sys.path.insert(0, '/usr/local/examples')
 try:
     import iwconfig
