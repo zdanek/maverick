@@ -36,7 +36,6 @@ class maverick-baremetal::beagle::init (
         # Serve dhcpd on usb0 so client gets an IP address
         # First, if networking isn't being used then include a stub dnsmasq config
         if !defined(Class["::dnsmasq"]) {
-            #include ::dnsmasq
             class { "maverick-network::dnsmasq": }
         }
         ::dnsmasq::conf { "beagle-usb0-dhcpd":
