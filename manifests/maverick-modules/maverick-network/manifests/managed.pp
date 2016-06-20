@@ -21,7 +21,7 @@ define maverick-network::managed (
 	if $ipaddress {
 	    concat::fragment { "avahi-hosts-${name}":
             target      => "/etc/avahi/hosts",
-            content     => "${ipaddress} ${hostname}-${name}.local",
+            content     => "${ipaddress} ${hostname}-${name}.local\n",
         }
 	}
 	

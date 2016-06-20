@@ -11,7 +11,7 @@ class maverick-network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf"])
+    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "mercurial"])
     
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
@@ -243,6 +243,10 @@ class maverick-network (
 		        nameservers => $nameservers,
 		        ssid        => $ssid,
 		        psk         => $psk,
+		    }
+		} elsif $mode == "wifibroadcast" {
+		    maverick-network::wifibroadcast { $name:
+		        macaddress  => $macaddress,
 		    }
 		}
 	}
