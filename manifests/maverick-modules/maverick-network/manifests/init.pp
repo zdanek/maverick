@@ -10,7 +10,7 @@ class maverick-network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill", "bind-utils", "dig", "resolvconf"])
+    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf"])
     
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
