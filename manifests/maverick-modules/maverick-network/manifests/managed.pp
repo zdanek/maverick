@@ -4,6 +4,7 @@ define maverick-network::managed (
     $ipaddress = undef,
     $macaddress = undef,
     $gateway = undef,
+    $nameservers = undef,
     $ssid = undef,
     $psk = undef,
 ) {
@@ -63,6 +64,7 @@ define maverick-network::managed (
                 ipaddress       => $ipaddress,
                 netmask         => $netmask,
                 gateway         => $gateway,
+                dns_nameservers => $nameservers,
                 template        => "maverick-network/interface_fragment_wireless.erb",
                 wpa_ssid        => $_ssid,
                 wpa_psk         => $_psk,
@@ -77,6 +79,7 @@ define maverick-network::managed (
                 ipaddress       => $ipaddress,
                 netmask         => $netmask,
                 gateway         => $gateway,
+                dns_nameservers => $nameservers,
             }
         }
     }

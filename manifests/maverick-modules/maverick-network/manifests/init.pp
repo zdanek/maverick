@@ -5,8 +5,8 @@ class maverick-network (
     $predictable = false,
     $dhcpcd = false,
     $dnsmasq = false,
-    $dnsclient = "disabled", 
-    $ntpclient = "enabled",
+    $dnsclient = false, 
+    $ntpclient = false,
     ) {
 
     # Install software 
@@ -34,12 +34,16 @@ class maverick-network (
         manage_order    => 0,
     }
 
-    if $ntpclient == "enabled" {
-        include maverick-network::ntpclient
+    if $ntpclient == true {
+        class { "maverick-network::ntpclient": }
     }
     
-    if $dnsclient == "enabled" {
-        include maverick-network::dnsclient
+    if $dnsclient == true {
+        class { "maverick-network::dnsclient": }
+    }
+
+    if $dnsmasq == true {
+        class { "maverick-network::dnsmasq": }
     }
 
     if $dhcpcd == false {
@@ -169,10 +173,6 @@ class maverick-network (
         command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5/"',
         unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
     }
-
-    if $dnsmasq == true {
-        class { "maverick-network::dnsmasq": }
-    }
     
     file { "/etc/systemd/system/rfkill-unblock.service":
         ensure      => present,
@@ -222,6 +222,7 @@ class maverick-network (
 	    $macaddress = undef,
 	    $ipaddress = undef,
 	    $gateway = undef,
+	    $nameservers = undef,
 	    $ssid = undef,
 	    $psk = undef,
 	) {
@@ -233,6 +234,7 @@ class maverick-network (
 		        macaddress  => $macaddress,
 		        ipaddress   => $ipaddress,
 		        gateway     => $gateway,
+		        nameservers => $nameservers,
 		        ssid        => $ssid,
 		        psk         => $psk,
 		    }

@@ -54,9 +54,8 @@
     "maverick-network::predictable": false,
     "maverick-network::dhcpcd": false,
     "maverick-network::dnsmasq": false,
-	"maverick-network::dnsclient": "disabled", 
-    "maverick-network::ntpclient": "enabled",
-
+	"maverick-network::dnsclient": false, 
+    "maverick-network::ntpclient": false,
 	"maverick-network::interfaces": {
 		"eth0": {},
 		"wlan0": {
