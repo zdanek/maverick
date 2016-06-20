@@ -9,10 +9,19 @@ define maverick-network::managed (
     $psk = undef,
 ) {
     
+    # If the mac address is specified, then set the interface name statically in udev
 	if $macaddress {
     	concat::fragment { "interface-customname-${name}":
             target      => "/etc/udev/rules.d/10-network-customnames.rules",
             content     => "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"${macaddress}\", NAME=\"${name}\"\n",
+        }
+	}
+	
+	# If IP address is specified, then add it to avahi hosts
+	if $ipaddress {
+	    concat::fragment { "avahi-hosts-${name}":
+            target      => "/etc/avahi/hosts",
+            content     => "${ipaddress} ${hostname}-${name}.local",
         }
 	}
 	

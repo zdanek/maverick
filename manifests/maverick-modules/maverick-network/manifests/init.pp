@@ -4,6 +4,7 @@ class maverick-network (
     $netman = false,
     $predictable = false,
     $dhcpcd = false,
+    $avahi = true,
     $dnsmasq = false,
     $dnsclient = false, 
     $ntpclient = false,
@@ -41,6 +42,10 @@ class maverick-network (
     
     if $dnsclient == true {
         class { "maverick-network::dnsclient": }
+    }
+
+    if $avahi == true {
+        class { "maverick-network::avahi": }
     }
 
     if $dnsmasq == true {

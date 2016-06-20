@@ -53,6 +53,7 @@
     "maverick-network::netman": false,
     "maverick-network::predictable": false,
     "maverick-network::dhcpcd": false,
+    "maverick-network::avahi": true,
     "maverick-network::dnsmasq": false,
 	"maverick-network::dnsclient": false, 
     "maverick-network::ntpclient": false,
