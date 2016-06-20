@@ -28,7 +28,7 @@ fi
 
 # Define usage function
 usage () {
-    echo "--configure                               Configure system - BEWARE this may do major changes to your existing system, requires --confirm to run"
+    echo "--configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
     echo "--env=[bootstrap|dev|production]          Environment to configure: bootstrap, dev or production"
     echo "--status                                  Show current running status"
     echo "--info                                    Display system information"
