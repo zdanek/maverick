@@ -6,8 +6,6 @@ class maverick-network::dnsclient (
         $search_domains = ["home", "local"]
     ) {
 
-    ensure_packages(["bind-utils", "dig", "resolvconf"])
-    
     class { "::dnsclient":
         nameservers     => $servers,
         domain          => $domain,
