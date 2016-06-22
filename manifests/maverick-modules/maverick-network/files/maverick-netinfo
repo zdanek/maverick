@@ -32,10 +32,12 @@ ctrls['fg_grey'] = '[37m'
 def twocols(col1, col2):
     return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
 
-ifs = netifaces.interfaces()
+ifs = sorted(netifaces.interfaces())
 udevnet = Udevnet()
 udevnet.runall()
 for _if in ifs:
+    if _if == "lo":
+        continue
     _netinfo = Netinfo(_if)
     _netinfo.getinfo()
     print ctrls['bg_black']+ctrls['bold']+"Interface:", str(_if), ctrls['reset']
