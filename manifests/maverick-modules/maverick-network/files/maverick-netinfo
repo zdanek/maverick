@@ -25,6 +25,7 @@ ctrls['bold'] = '[1m'
 ctrls['bg_black'] = '[40m'
 ctrls['bg_red'] = '[41m'
 ctrls['bg_blue'] = '[44m'
+ctrls['bg_purple'] = '[45m'
 ctrls['fg_black'] = '[30m'
 ctrls['fg_red'] = '[31m'
 ctrls['fg_grey'] = '[37m'
@@ -49,7 +50,10 @@ for _if in ifs:
     print twocols("IP Address", '\t\t'+str(_netinfo.data['ipaddress']))
     print twocols("Predictable Name", '\t'+str(_netinfo.data['netname']))
     if _netinfo.data['mode']:
-        print twocols("Wireless Mode", '\t\t'+str(_netinfo.data['mode']))
+        if _netinfo.data['mode'] == "Managed":
+            print twocols("Wireless Mode", '\t\t'+ctrls['bg_blue']+str(_netinfo.data['mode']+ctrls['reset']))
+        elif _netinfo.data['mode'] == "Monitor":
+            print twocols("Wireless Mode", '\t\t'+ctrls['bg_purple']+str(_netinfo.data['mode']+ctrls['reset']))
         print twocols("Wireless Bitrate", '\t'+str(_netinfo.data['bitrate']))
         print twocols("Wireless EssId", '\t\t'+str(_netinfo.data['essid']))
         print twocols("Wireless Frequency", '\t'+str(_netinfo.data['frequency']))
