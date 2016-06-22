@@ -7,3 +7,6 @@ bin/wifibroadcast-if.sh
 bin/maverick-info
 bin/maverick-netinfo
 bin/maverick-visiond
+bin/mavproxy-fc.sh
+bin/mavproxy-sitl.sh
+
