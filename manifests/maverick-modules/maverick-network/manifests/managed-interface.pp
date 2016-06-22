@@ -1,4 +1,4 @@
-define maverick-network::managed (
+define maverick-network::managed-interface (
     $type = "ethernet",
     $addressing = "dhcp",
     $ipaddress = undef,

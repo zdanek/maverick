@@ -11,12 +11,14 @@ class maverick-network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "libpcap-dev", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "mercurial"])
-    
+    ensure_packages(["ethtool", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "mercurial"])
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
         ensure      => present,
     }
+    # Install/setup wifibroadcast
+    class { "maverick-network::wifibroadcast": }
+    
     # Ensure wpa_supplicant isn't running
     service { "wpa_supplicant":
         ensure      => stopped,
@@ -234,7 +236,7 @@ class maverick-network (
 	) {
 	    # Process managed interfaces
 		if $mode == "managed" {
-		    maverick-network::managed { $name:
+		    maverick-network::managed-interface { $name:
 		        type        => $type,
 		        addressing  => $addressing,
 		        macaddress  => $macaddress,
@@ -245,7 +247,7 @@ class maverick-network (
 		        psk         => $psk,
 		    }
 		} elsif $mode == "wifibroadcast" {
-		    maverick-network::wifibroadcast { $name:
+		    maverick-network::wifibroadcast-interface { $name:
 		        macaddress  => $macaddress,
 		    }
 		}

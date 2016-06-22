@@ -1,0 +1,13 @@
+[Unit]
+Description=Wifibroadcast interface setup for %I
+After=network.target
+
+[Service]
+ExecStart=/srv/maverick/software/maverick/bin/wifibroadcast-if.sh start %I
+ExecStop=/srv/maverick/software/maverick/bin/wifibroadcast-if.sh stop %I
+User=root
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
+
