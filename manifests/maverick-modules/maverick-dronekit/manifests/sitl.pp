@@ -117,11 +117,8 @@ class maverick-dronekit::sitl (
         source      => "puppet:///modules/maverick-dronekit/mavproxy-sitl.conf",
     } ->
     file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
-        ensure      => present,
-        owner       => "mav",
-        group       => "mav",
-        mode        => 755,
-        source      => "puppet:///modules/maverick-dronekit/mavproxy-sitl.sh",
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-dronekit/files/mavproxy-sitl.sh",
     } ->
     file { "/etc/systemd/system/mavproxy-sitl.service":
         content     => template("maverick-dronekit/mavproxy-sitl.service.erb"),

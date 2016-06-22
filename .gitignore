@@ -1,3 +1,9 @@
 nodes/
 ssl/
 *.pyc
+bin/cpu-control
+bin/ocam-viewer
+bin/wifibroadcast-if.sh
+bin/maverick-info
+bin/maverick-netinfo
+bin/maverick-visiond

@@ -51,11 +51,8 @@ class maverick-dronekit::fc (
         source      => "puppet:///modules/maverick-dronekit/mavproxy-fc.conf",
     } ->
     file { "/srv/maverick/software/maverick/bin/mavproxy-fc.sh":
-        ensure      => present,
-        owner       => "mav",
-        group       => "mav",
-        mode        => 755,
-        source      => "puppet:///modules/maverick-dronekit/mavproxy-fc.sh",
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-dronekit/files/mavproxy-fc.sh",
     } ->
     file { "/etc/systemd/system/mavproxy-fc.service":
         content     => template("maverick-dronekit/mavproxy-fc.service.erb"),
