@@ -16,6 +16,8 @@
 	"all_ips": [
 	],
 
+	"base::locale::timezone": "Europe/London",
+
     "base::users::mav_sudopass": false, // If mav sudo should ask for password or not
 
 	"maverick-baremetal::sensors": false, // Install lmsensors

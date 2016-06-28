@@ -49,6 +49,9 @@ class base {
     ### Include useful functions
     class { "base::functions": }
         
+    ### Setup locale and timezones
+    class { "base::locale": }
+        
     ### Setup console visual configuration
     class { "base::console": }
 
