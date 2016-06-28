@@ -1,7 +1,7 @@
 class maverick-network::wifibroadcast (
 ) {
     
-    ensure_packages(["libpcap-dev", "gcc", "make"])
+    ensure_packages(["libpcap-dev", "gcc", "make", "libcap2-bin"])
     
     oncevcsrepo { "git-wifibroadcast":
         gitsource   => "https://github.com/fnoop/wifibroadcast",
@@ -14,6 +14,15 @@ class maverick-network::wifibroadcast (
         creates     => "/srv/maverick/software/wifibroadcast/tx",
         user        => "mav",
         cwd         => "/srv/maverick/software/wifibroadcast",
+    } ->
+    file { "/srv/maverick/software/wifibroadcast/tx":
+        mode        => 755,
+        owner       => "mav",
+        group       => "mav",
+    } ->
+    exec { "setcaps-wtx":
+        command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibroadcast/tx",
+        # unless      => "",
     } ->
     exec { "copy-patched-9271-firmware":
         command     => "/bin/cp -f /srv/maverick/software/wifibroadcast/patches/AR9271/firmware/htc_9271.fw /lib/firmware",

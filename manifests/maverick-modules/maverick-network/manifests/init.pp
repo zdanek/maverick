@@ -11,7 +11,7 @@ class maverick-network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "mercurial"])
+    ensure_packages(["ethtool", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "nload"])
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
         ensure      => present,
