@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys, os, time, logging, errno, re, ConfigParser
+import sys, os, time, logging, errno, re, ConfigParser, traceback, subprocess
 import v4l2
 from fcntl import ioctl
 import gi
@@ -45,9 +45,11 @@ class Streamer(object):
                 self.output_dynudp()
             elif output == "rtsp":
                 self.output_rtsp()
+            elif output == "wcast":
+                self.output_wcast(dest, port)
                 
             self.bus()
-            self.start() # need to self start the object for PiCamera method
+            self.start() # start the pipeline
 
         ### Input methods
         def input_appsrc(self):
@@ -77,8 +79,10 @@ class Streamer(object):
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
             self.pipeline.add(capsfilter)
             self.source.link(capsfilter)
+            # Try and construct a parse element.
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
             if parse:
+                logger.debug('h264parse element created')
                 self.pipeline.add(parse)
                 capsfilter.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
@@ -101,6 +105,7 @@ class Streamer(object):
             capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
             self.pipeline.add(capsfilter)
             self.source.link(capsfilter)
+            # Try and construct a parse element.
             parse = Gst.ElementFactory.make("jpegparse", "jpegparse")
             if parse:
                 self.pipeline.add(parse)
@@ -132,8 +137,10 @@ class Streamer(object):
                 self.h264enc.set_property('tune', 0x00000004)
             self.pipeline.add(self.h264enc)
             self.source_attach.link(self.h264enc)
+            # Try and construct a parse element.  This will fail on later (1.9+) gstreamer versions, so the subsequent (if parse) code bypasses if not present
             parse = Gst.ElementFactory.make("h264parse", "h264parse")
             if parse:
+                logger.debug('h264parse element created')
                 self.pipeline.add(parse)
                 self.h264enc.link(parse)
             h264pay = Gst.ElementFactory.make("rtph264pay", "h264-payload")
@@ -173,6 +180,20 @@ class Streamer(object):
             self.pipeline.add(sink)
             self.encode_attach.link(sink)
         
+        def output_wcast(self, dest, port):
+            logger.info("Attaching output 'wcast'")
+            # Create an OS pipe so we can attach the gstream pipeline to one end, and wifibroadcast tx to the other end
+            read, write = os.pipe()
+            # Create an fdsink to dump the pipeline out of
+            sink = Gst.ElementFactory.make("fdsink", "fdsink")
+            # Attach the sink to one end of the os pipe
+            sink.set_property("fd", write)
+            sink.set_property("sync", False)
+            self.pipeline.add(sink)
+            self.encode_attach.link(sink)
+            # Spawn wifibroadcast tx
+            wcast_tx = subprocess.Popen(['/srv/maverick/software/wifibroadcast/tx','-b 8', '-r 4', '-f 1024', dest], stdin=read)
+            
         def output_dynudp(self):
             logger.info("Attaching output 'dynudp'")
             sink = Gst.ElementFactory.make("dynudpsink", "dynudpsink")
@@ -279,8 +300,8 @@ class App():
             streamtype = 'mjpeg'
         try:
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, self.config['input'], self.config['camera'], self.config['output'], self.config['output_dest'], int(self.config['output_port']))
-        except:
-            logger.critical('Error creating '+streamtype+' stream')
+        except Exception as e:
+            logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
             sys.exit(1)
 
         while True:
@@ -349,7 +370,7 @@ class App():
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
                 logger.debug("Camera format: "+capture.description)
                 capture.index += 1
-                if re.search('H264', capture.description):
+                if re.search('H264', capture.description) or re.search('H.264', capture.description):
                     h264 = True
         except:
             pass
