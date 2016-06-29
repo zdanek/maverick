@@ -5,6 +5,8 @@ class maverick-dronekit::sitl (
     $sitl_fw_builds = ["ArduCopter"], # only build copter by default
     $sitl_fw_run = "ArduCopter", # Which firmware will sitl run, must be part of $sitl_fw_builds
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
+    $mavproxy_state = undef,
+    $sitl_state = undef,
 ) {
     
     # Install a virtual environment for dronekit sitl
@@ -128,12 +130,12 @@ class maverick-dronekit::sitl (
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
     } ->
     service { "dev-sitl":
-        ensure      => running,
+        ensure      => $sitl_state,
         enable      => true,
         require     => [ Exec["sitl_fw_build_${sitl_fw_run}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
     }
     service { "mavproxy-sitl":
-        ensure      => running,
+        ensure      => $mavproxy_state,
         enable      => true,
         require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
     }

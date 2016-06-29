@@ -1,5 +1,6 @@
 class maverick-dronekit::fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
+    $mavproxy_state = undef,
 ) {
     
     # Install a virtual environment for dronekit fc
@@ -62,7 +63,7 @@ class maverick-dronekit::fc (
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-fc"] ]
     } ->
     service { "mavproxy-fc":
-        ensure      => running,
+        ensure      => $mavproxy_state,
         enable      => true,
         require       => Exec["maverick-systemctl-daemon-reload"]
     }

@@ -22,7 +22,7 @@ class maverick-network::wifibroadcast (
     } ->
     exec { "setcaps-wtx":
         command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibroadcast/tx",
-        # unless      => "",
+        unless      => "/sbin/getcap /srv/maverick/software/wifibroadcast/tx",
     } ->
     exec { "copy-patched-9271-firmware":
         command     => "/bin/cp -f /srv/maverick/software/wifibroadcast/patches/AR9271/firmware/htc_9271.fw /lib/firmware",

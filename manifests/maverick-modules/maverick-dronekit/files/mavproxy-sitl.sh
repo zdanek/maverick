@@ -1,9 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 # Set defaults, can be overriden in /srv/maverick/data/config/mavproxy-sitl.conf
+ENABLE=true
 SCREEN_NAME=mavproxy-sitl
 
 [ ! -r /srv/maverick/data/config/mavproxy-sitl.conf ] || . /srv/maverick/data/config/mavproxy-sitl.conf
+
+if [ "$ENABLE" == "false" ]; then
+    echo "ENABLE flag is set to false, exiting"
+    exit 0
+fi
 
 # Wait 5 seconds to ensure dev-sitl has fully started
 sleep 5

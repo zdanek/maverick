@@ -3,6 +3,7 @@ class maverick-vision (
     $cv = false,
     $gstreamer_installtype = "native",
     $mjpg_streamer = false,
+    $visiond_state = undef,
 ) {
     
     # Setup standard packages for all platforms
@@ -201,7 +202,7 @@ class maverick-vision (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     service { "maverick-visiond":
-        ensure      => running,
+        ensure      => $visiond_state,
         enable      => true,
     }
     
