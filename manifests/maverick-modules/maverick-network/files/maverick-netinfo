@@ -37,7 +37,7 @@ ifs = sorted(netifaces.interfaces())
 udevnet = Udevnet()
 udevnet.runall()
 for _if in ifs:
-    if _if == "lo":
+    if _if == "lo" or re.search('^sit', _if) or re.search('^ip6tnl', _if):
         continue
     _netinfo = Netinfo(_if)
     _netinfo.getinfo()
