@@ -1,4 +1,4 @@
-define maverick-network::wifibroadcast-interface (
+define maverick-network::monitor-interface (
     $macaddress = undef,
 ) {
 
@@ -11,19 +11,19 @@ define maverick-network::wifibroadcast-interface (
 	}
 	
     # Define a service definition for this interface
-	service { "wifibroadcast@${name}":
+	service { "monitor-interface@${name}":
         ensure      => running,
         enable      => true,
-        require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/wifibroadcast@.service"] ]
+        require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/monitor-interface@.service"] ]
     }
 
     # Add a config file for this interface
-    file { "/srv/maverick/data/config/wifibroadcast-${name}.conf":
+    file { "/srv/maverick/data/config/monitor-interface-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         replace     => false, # initialize but don't overwrite in the future
-        source      => "puppet:///modules/maverick-network/wifibroadcast-if.conf",
+        source      => "puppet:///modules/maverick-network/monitor-interface.conf",
     }
 
 }

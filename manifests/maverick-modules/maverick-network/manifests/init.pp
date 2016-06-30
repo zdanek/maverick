@@ -16,6 +16,7 @@ class maverick-network (
         pkgname     => 'python-wifi',
         ensure      => present,
     }
+    
     # Install/setup wifibroadcast
     class { "maverick-network::wifibroadcast": }
     
@@ -208,6 +209,19 @@ class maverick-network (
         }
     }
 
+    # Define and configure monitor-mode interface setup in systemd
+    file { "/srv/maverick/software/maverick/bin/monitor-interface-if.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/files/monitor-interface-if.sh"
+    } ->
+    file { "/etc/systemd/system/monitor-interface@.service":
+        content     => template("maverick-network/monitor-interface@.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => [ Exec["maverick-systemctl-daemon-reload"] ]
+    }
+    
     # Retrieve defined interfaces and process
     $interfaces = hiera_hash("maverick-network::interfaces")
     if $interfaces {
@@ -246,8 +260,8 @@ class maverick-network (
 		        ssid        => $ssid,
 		        psk         => $psk,
 		    }
-		} elsif $mode == "wifibroadcast" {
-		    maverick-network::wifibroadcast-interface { $name:
+		} elsif $mode == "monitor" {
+		    maverick-network::monitor-interface { $name:
 		        macaddress  => $macaddress,
 		    }
 		}
