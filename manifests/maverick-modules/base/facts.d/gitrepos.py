@@ -17,3 +17,5 @@ if gitfiles:
     #for key,val in sorted(gitfiles.items()):
     #    print "camera_%s=%s" % (key, val)
     print "gitrepos="+str(",".join(gitfiles))
+else:
+    print "gitrepos=false"
