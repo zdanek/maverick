@@ -15,22 +15,6 @@ class maverick-cloud9 (
         dest        => "/srv/maverick/software/cloud9",
         notify		=> Exec["install-cloud9"],
     } ->
-    file { "/srv/maverick/software/cloud9/scripts/install.sh":
-        ensure      => present,
-        content     => template("maverick-cloud9/install.sh.erb"),
-        mode        => 755,
-        owner       => "mav",
-        group       => "mav",
-        require     => Oncevcsrepo["git-cloud9"]
-    } ->
-    exec { "install-preinstall-fix":
-        # This is a fix for compiling dependencies on arm platforms
-        creates     => "/srv/maverick/.c9/installed",
-        command     => "/srv/maverick/software/cloud9/scripts/install.sh >/srv/maverick/data/logs/build/cloud9-deps.build.log 2>&1",
-        timeout     => 0,
-        user        => "mav",
-        environment => ["HOME=/srv/maverick"],
-    }
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/data/logs/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
@@ -38,6 +22,22 @@ class maverick-cloud9 (
         timeout		=> 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
+    } ->
+    file { "/srv/maverick/.c9/user.settings":
+        ensure      => present,
+        content     => template("maverick-cloud9/user.settings.erb"),
+        mode        => 644,
+        owner       => "mav",
+        group       => "mav",
+        replace     => false,
+    } ->
+    file { "/srv/maverick/.c9/state.settings":
+        ensure      => present,
+        content     => template("maverick-cloud9/state.settings.erb"),
+        mode        => 644,
+        owner       => "mav",
+        group       => "mav",
+        replace     => false,
     } ->
     file { "/etc/systemd/system/cloud9.service":
         content     => template("maverick-cloud9/cloud9.service.erb"),
@@ -57,12 +57,6 @@ class maverick-cloud9 (
             ips         => hiera("all_ips"),
             proto       => "tcp"
         }
-    }
-    
-    exec { "change-cloud9-theme":
-        command     => "/bin/sed /srv/maverick/.c9/user.settings -i -r -e 's/\"@theme\": \".*\"/\"@theme\": \"ace\\/theme\\/cloud9_day\"/'",
-        unless      => "/bin/grep '@theme' /srv/maverick/.c9/user.settings | /bin/grep 'ace/theme/cloud9_day'",
-        onlyif      => "/bin/ls /srv/maverick/.c9/user.settings",
     }
     
 }
