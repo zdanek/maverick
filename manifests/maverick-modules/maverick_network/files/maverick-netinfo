@@ -1,0 +1,68 @@
+#!/usr/bin/python
+
+import os, sys, re, subprocess
+import netifaces
+# Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
+sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/facts.d')
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_baremetal/facts.d')
+sys.path.insert(0, '/usr/local/examples')
+from udevnet import Udevnet
+udevnet = Udevnet()
+udevnet.runall()
+
+from netinfo import Netinfo
+import iwconfig
+
+import argparse
+parser = argparse.ArgumentParser(description='Display network information')
+#parser.add_argument('-m', '--motd', help="Display information in format more suitable to create motd", action="store_true")
+args = parser.parse_args()
+
+ctrls = {}
+ctrls['reset'] = '[0m'
+ctrls['bold'] = '[1m'
+ctrls['bg_black'] = '[40m'
+ctrls['bg_red'] = '[41m'
+ctrls['bg_blue'] = '[44m'
+ctrls['bg_purple'] = '[45m'
+ctrls['fg_black'] = '[30m'
+ctrls['fg_red'] = '[31m'
+ctrls['fg_grey'] = '[37m'
+
+def twocols(col1, col2):
+    return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
+
+ifs = sorted(netifaces.interfaces())
+udevnet = Udevnet()
+udevnet.runall()
+for _if in ifs:
+    if _if == "lo" or re.search('^sit', _if) or re.search('^ip6tnl', _if):
+        continue
+    _netinfo = Netinfo(_if)
+    _netinfo.getinfo()
+    print ctrls['bg_black']+ctrls['bold']+"Interface:", str(_if), ctrls['reset']
+    print twocols("Type", '\t\t\t'+str(_netinfo.data['type']))
+    print twocols("MAC Address", '\t\t'+str(_netinfo.data['macaddress']))
+    print twocols("Vendor", '\t\t\t'+str(_netinfo.data['vendor'])+" : "+str(_netinfo.data['vendorstr'])+" : "+str(_netinfo.data['vendoroui']))
+    print twocols("Model", '\t\t\t'+str(_netinfo.data['model'])+" : "+str(_netinfo.data['modelstr']))
+    print twocols("Driver", '\t\t\t'+str(_netinfo.data['driver']))
+    print twocols("IP Address", '\t\t'+str(_netinfo.data['ipaddress']))
+    print twocols("Predictable Name", '\t'+str(_netinfo.data['netname']))
+    if _netinfo.data['mode']:
+        if _netinfo.data['mode'] == "Managed":
+            print twocols("Wireless Mode", '\t\t'+ctrls['bg_blue']+str(_netinfo.data['mode']+ctrls['reset']))
+        elif _netinfo.data['mode'] == "Monitor":
+            print twocols("Wireless Mode", '\t\t'+ctrls['bg_purple']+str(_netinfo.data['mode']+ctrls['reset']))
+        print twocols("Wireless Bitrate", '\t'+str(_netinfo.data['bitrate']))
+        print twocols("Wireless EssId", '\t\t'+str(_netinfo.data['essid']))
+        print twocols("Wireless Frequency", '\t'+str(_netinfo.data['frequency']))
+        print twocols("Wireless Name", '\t\t'+str(_netinfo.data['name']))
+        print twocols("Wireless TX Power", '\t'+str(_netinfo.data['txpower']))
+    elif _netinfo.data['type'] == "Wireless":
+        print twocols("Wireless Info", '\t\tMissing')
+    print
+
+gateways = netifaces.gateways()
+defaultgw = gateways['default'][netifaces.AF_INET][0]
+print twocols(ctrls['bold']+"Default Gateway"+ctrls['reset'], '\t'+defaultgw)
