@@ -147,7 +147,7 @@ class base::maverick {
     }
     file { "/srv/maverick/software/maverick/bin/maverick-netinfo":
         ensure  => link,
-        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/files/maverick-netinfo",
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/maverick-netinfo",
         require => Oncevcsrepo["git-maverick"],
     }
     

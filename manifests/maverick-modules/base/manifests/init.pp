@@ -19,7 +19,7 @@ class base {
     }
     
     ### Bootstrap puppet
-    class { "maverick-puppet::client":
+    class { "maverick_puppet::client":
         stage   => "bootstrap",
         require => Class["base::defaults", "base::packages"],
     }
@@ -27,7 +27,7 @@ class base {
     ### Before we do anything, set our IP in /etc/hosts
     class { "base::hostip":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::packages", "maverick-puppet::client"],
+        require => Class["base::defaults", "base::packages", "maverick_puppet::client"],
     }
     
     ### Setup base system users
@@ -67,7 +67,7 @@ class base {
     ### Physical setup
     } else {
         $servertype = "Physical Computer"
-        class { "maverick-baremetal": }
+        class { "maverick_baremetal": }
     }
     
     ### NOTE: Hiera will also include classes, depending on hierarchy.
