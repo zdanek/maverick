@@ -150,11 +150,13 @@ class base::maverick {
     # Create symlinks for maverick subcommands
     file { "/srv/maverick/software/maverick/bin/maverick-info":
         ensure  => link,
-        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/base/files/maverick-info"
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/base/files/maverick-info",
+        require => Oncevcsrepo["git-maverick"],
     }
     file { "/srv/maverick/software/maverick/bin/maverick-netinfo":
         ensure  => link,
-        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/files/maverick-netinfo"
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick-network/files/maverick-netinfo",
+        require => Oncevcsrepo["git-maverick"],
     }
     
 }
