@@ -99,17 +99,9 @@ class base::maverick {
     }
 
     # Pull maverick into it's final resting place
-    file { "/srv/maverick/software/maverick":
-        ensure 		=> directory,
-        require		=> File["/srv/maverick/software"],
-        mode		=> 755,
-        owner		=> "mav",
-        group		=> "mav",
-    } ->
     oncevcsrepo { "git-maverick":
         gitsource   => "https://github.com/fnoop/maverick.git",
         dest        => "/srv/maverick/software/maverick",
-        require     => File["/srv/maverick/software/maverick"]
     } ->
     exec { "gitfreeze-localconf":
         cwd         => "/srv/maverick/software/maverick",
