@@ -17,7 +17,7 @@ class maverick-dronekit (
         gitsource   => "https://github.com/dronekit/dronekit-la.git",
         dest        => "/srv/maverick/software/dronekit-la",
         revision	=> "${dronekit_la_revision}",
-        submodules  => false,
+        submodules  => true,
     }
     # Compile dronekit-la
     exec { "compile-dronekit-la":
