@@ -83,10 +83,7 @@
 	"classes" : [
 		"base",
 		"maverick-desktop",
-		"maverick-dronekit",
-		"maverick-fcs",
-		"maverick-security",
-		"maverick-vision"
+		"maverick-security"
 	]
 	
 }

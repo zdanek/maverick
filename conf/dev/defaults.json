@@ -11,6 +11,8 @@
     // "maverick-cloud9::basepath": "/srv/maverick",
 
 	"classes": [
+		"maverick-fcs",
+		"maverick-vision",
 		"maverick-dronekit",
 		"maverick-cloud9"
 	]

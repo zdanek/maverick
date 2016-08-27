@@ -1,5 +1,7 @@
 // These are defaults for the production environment.
 {
 	"classes": [
+		"maverick-fcs",
+		"maverick-vision"
 	]
 }
