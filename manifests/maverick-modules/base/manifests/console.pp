@@ -12,6 +12,14 @@ class base::console {
         enable      => true
     }
     
+    # Leave the ubuntu motd header in place as it usually contains the OS+kernel version, but remove the help stuff
+    file { "/etc/update-motd.d/10-help-text":
+        ensure      => absent
+    }
+    file { "/etc/update-motd.d/00-header":
+        ensure      => absent
+    }
+    
     ### Colored Profile
     file { "/etc/profile.d/colorprompt.sh":
         content 	=> template("base/colorprompt.sh.erb"),
