@@ -46,7 +46,7 @@ class maverick_dronekit::sitl (
         exec { "sitl_fw_build_${build}":
             user        => "mav",
             timeout     => 0,
-            command     => "/usr/bin/make -j${::processorcount} sitl >/srv/maverick/data/logs/build/sitl-fw-${build}.build.log 2>&1",
+            command     => "/usr/bin/make -j${::processorcount} sitl >/srv/maverick/var/log/build/sitl-fw-${build}.build.log 2>&1",
             cwd         => "/srv/maverick/code/dronekit-sitl/sitl-fw/${build}",
             creates     => "/srv/maverick/code/dronekit-sitl/sitl-fw/${build}/${build}.elf",
         }
@@ -104,7 +104,7 @@ class maverick_dronekit::sitl (
         }
     }
     
-    file { "/srv/maverick/data/logs/mavproxy-sitl":
+    file { "/srv/maverick/var/log/mavproxy-sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

@@ -13,4 +13,4 @@ if [ "$ENABLE" == "false" ]; then
     exit 0
 fi
 
-/usr/bin/screen -S $SCREEN_NAME -d -m /srv/maverick/.virtualenvs/dronekit-fc/bin/python /srv/maverick/.virtualenvs/dronekit-fc/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD --out=udpin:0.0.0.0:14550 --out=udpin:0.0.0.0:14551 --out=udp:127.0.0.1:14552 --out=udp:127.0.0.1:14553 --state-basedir=/srv/maverick/data/logs/mavproxy-fc
+/usr/bin/screen -S $SCREEN_NAME -d -m /srv/maverick/.virtualenvs/dronekit-fc/bin/python /srv/maverick/.virtualenvs/dronekit-fc/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD --out=udpin:0.0.0.0:14550 --out=udpin:0.0.0.0:14551 --out=udp:127.0.0.1:14552 --out=udp:127.0.0.1:14553 --state-basedir=/srv/maverick/var/log/mavproxy-fc

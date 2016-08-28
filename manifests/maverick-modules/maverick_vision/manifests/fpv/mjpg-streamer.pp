@@ -11,7 +11,7 @@ class maverick_vision::fpv::mjpg-streamer {
         user        => "mav",
         timeout     => 0,
         require     => Package["cmake", "libjpeg-dev"],
-        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/data/logs/build/mjpg-streamer.build.log 2>&1",
+        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/mjpg-streamer.build.log 2>&1",
         cwd         => "/srv/maverick/software/mjpg-streamer/mjpg-streamer-experimental",
         creates     => "/srv/maverick/software/mjpg-streamer/mjpg-streamer-experimental/mjpg_streamer",
     }

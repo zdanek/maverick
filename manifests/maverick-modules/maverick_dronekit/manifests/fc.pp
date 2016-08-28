@@ -37,7 +37,7 @@ class maverick_dronekit::fc (
         timeout     => 0,
     }
         
-    file { "/srv/maverick/data/logs/mavproxy-fc":
+    file { "/srv/maverick/var/log/mavproxy-fc":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

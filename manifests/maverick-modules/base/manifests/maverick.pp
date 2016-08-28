@@ -44,13 +44,25 @@ class base::maverick {
         group   => "mav",
         mode    => 755
     }
-    file { "/srv/maverick/data/run":
+    file { "/srv/maverick/var":
         ensure	=> directory,
         owner   => "mav",
         group   => "mav",
         mode    => 755
     }
-    file { "/srv/maverick/data/logs/build":
+    file { "/srv/maverick/var/log":
+        ensure	=> directory,
+        owner   => "mav",
+        group   => "mav",
+        mode    => 755
+    }
+    file { "/srv/maverick/var/log/build":
+        ensure	=> directory,
+        owner   => "mav",
+        group   => "mav",
+        mode    => 755
+    }
+    file { "/srv/maverick/var/run":
         ensure	=> directory,
         owner   => "mav",
         group   => "mav",

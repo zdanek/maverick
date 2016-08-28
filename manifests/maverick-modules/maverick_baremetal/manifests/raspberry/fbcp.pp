@@ -11,7 +11,7 @@ class maverick_baremetal::raspberry::fbcp (
     } ->
     exec { "build-raspi2fb":
         timeout     => 0,
-        command     => "/usr/bin/cmake .. && /usr/bin/make && /usr/bin/make install >/srv/maverick/data/logs/build/raspi2fb.build.out 2>&1",
+        command     => "/usr/bin/cmake .. && /usr/bin/make && /usr/bin/make install >/srv/maverick/var/log/build/raspi2fb.build.out 2>&1",
         cwd         => "/srv/maverick/build/raspi2fb/build",
         creates     => "/usr/local/bin/raspi2fb",
         require     => [ Package["cmake"], Oncevcsrepo["git-raspi2fb"], Package["libbsd-dev"] ] # ensure we have all the dependencies satisfied

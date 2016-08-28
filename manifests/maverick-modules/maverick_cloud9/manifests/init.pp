@@ -16,7 +16,7 @@ class maverick_cloud9 (
         notify		=> Exec["install-cloud9"],
     } ->
     exec { "install-cloud9":
-        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/data/logs/build/cloud9-sdk.build.log 2>&1",
+        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
         creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
         timeout		=> 0,

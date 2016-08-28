@@ -70,7 +70,7 @@ class maverick_vision (
         exec { "gstreamer_core-build":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/core/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_core.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/core/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/core",
             creates     => "/usr/local/bin/gst-launch-1.0",
             require     => [ Package["libglib2.0-dev", "bison", "flex"], Oncevcsrepo["git-gstreamer_core"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"] ] # ensure we have all the dependencies satisfied
@@ -82,7 +82,7 @@ class maverick_vision (
         exec { "gstreamer_gst_plugins_base":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-plugins-base/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_plugins_base.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-plugins-base/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_base.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-plugins-base",
             creates     => "/usr/local/bin/gst-play-1.0",
             require     => [ Oncevcsrepo["git-gstreamer_plugins_base"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_core-build"] ]
@@ -90,7 +90,7 @@ class maverick_vision (
         exec { "gstreamer_gst_plugins_good":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-plugins-good/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_plugins_good.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-plugins-good/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_good.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-plugins-good",
             creates     => "/usr/local/lib/gstreamer-1.0/libgstjpeg.so",
             require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
@@ -98,7 +98,7 @@ class maverick_vision (
         exec { "gstreamer_gst_plugins_bad":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_plugins_bad.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-plugins-bad",
             creates     => "/usr/local/lib/libgstgl-1.0.so",
             require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
@@ -106,7 +106,7 @@ class maverick_vision (
         exec { "gstreamer_gst_plugins_ugly":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-plugins-ugly/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_plugins_ugly.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-plugins-ugly/autogen.sh --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_ugly.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-plugins-ugly",
             creates     => "/usr/local/lib/gstreamer-1.0/libgstx264.so",
             require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_plugins_ugly"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
@@ -114,7 +114,7 @@ class maverick_vision (
         exec { "gstreamer_gst_python":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-python/autogen.sh  --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_gst_python.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-python/autogen.sh  --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-python",
             creates     => "/usr/local/lib/gstreamer-1.0/libgstpythonplugin.so",
             require     => [ Package["python-gobject-dev"], Oncevcsrepo["git-gstreamer_gst_python"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
@@ -122,7 +122,7 @@ class maverick_vision (
         exec { "gstreamer_gst_rtsp_server":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/build/gstreamer/gst-rtsp-server/autogen.sh  --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_gst_rtsp_server.build.out 2>&1",
+            command     => "/srv/maverick/build/gstreamer/gst-rtsp-server/autogen.sh  --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
             cwd         => "/srv/maverick/build/gstreamer/gst-rtsp-server",
             creates     => "/usr/local/lib/libgstrtspserver-1.0.so",
             require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]
@@ -136,7 +136,7 @@ class maverick_vision (
             exec { "gstreamer_gst_omx":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/srv/maverick/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/data/logs/build/gstreamer_omx.build.out 2>&1",
+                command     => "/srv/maverick/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --disable-docbook && /usr/bin/make -j${::processorcount} && /usr/bin/sudo /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
                 cwd         => "/srv/maverick/build/gstreamer/gst-omx",
                 creates     => "/usr/local/lib/gstreamer-1.0/libgstomx.so",
                 require     => [ Oncevcsrepo["git-gstreamer_omx"], Package["libgstreamer1.0-0"], Package["libgirepository1.0-dev"], Exec["gstreamer_gst_plugins_base"] ]

@@ -36,7 +36,7 @@ class maverick_fcs (
     exec { "build-kivy":
         user        => "mav",
         timeout     => 0,
-        command     => "/usr/bin/make >/srv/maverick/data/logs/build/kivy.build.out 2>&1",
+        command     => "/usr/bin/make >/srv/maverick/var/log/build/kivy.build.out 2>&1",
         cwd         => "/srv/maverick/software/kivy",
         creates     => "/srv/maverick/software/kivy/kivy/properties.so",
         require     => [ Package["cython"], Oncevcsrepo["git-kivy"], Package["libgstreamer1.0-dev"] ] # ensure we have all the dependencies satisfied
