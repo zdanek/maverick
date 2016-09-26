@@ -19,7 +19,8 @@ class base::packages {
         "bsdmainutils",
         "v4l-utils",
         "cmake",
-        "pkg-config"
+        "pkg-config",
+        "usbutils"
     ])
 
     # These packages should be removed from all installs.  
