@@ -179,8 +179,8 @@ class maverick_network (
     } ->
     # Change the timeout value if necessary
     exec { "dhcp-reduce-timeout":
-        command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5/"',
-        unless      => "/bin/grep -e '^timeout 5' /etc/dhcp/dhclient.conf",
+        command     => '/bin/sed /etc/dhcp/dhclient.conf -i -r -e "s/^timeout\s.*/timeout 5;/"',
+        unless      => "/bin/grep -e '^timeout 5;' /etc/dhcp/dhclient.conf",
     }
     
     file { "/etc/systemd/system/rfkill-unblock.service":
