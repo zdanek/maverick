@@ -20,7 +20,8 @@ class base::packages {
         "v4l-utils",
         "cmake",
         "pkg-config",
-        "usbutils"
+        "usbutils",
+        "linux-firmware"
     ])
 
     # These packages should be removed from all installs.  
