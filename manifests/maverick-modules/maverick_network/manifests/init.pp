@@ -11,9 +11,13 @@ class maverick_network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "iw", "wpasupplicant", "rfkill", "dnsutils", "resolvconf", "nload"])
+    ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload"])
     python::pip { 'pip-python-wifi':
         pkgname     => 'python-wifi',
+        ensure      => present,
+    }
+    python::pip {'pip-python-pyric':
+        pkgname     => 'PyRIC',
         ensure      => present,
     }
     
