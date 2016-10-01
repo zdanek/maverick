@@ -11,12 +11,12 @@ class maverick_baremetal::peripheral::ocam (
         user        => "mav",
         timeout     => 0,
         command     => "/usr/bin/qmake && /usr/bin/make -j${::processorcount} release >/srv/maverick/var/log/build/ocam-viewer.build.log 2>&1",
-        cwd         => "/srv/maverick/software/odroid-ocam/oCam_viewer",
-        creates     => "/srv/maverick/software/odroid-ocam/oCam_viewer/oCam-viewer",
+        cwd         => "/srv/maverick/software/odroid-ocam/Software/oCam_viewer_Linux",
+        creates     => "/srv/maverick/software/odroid-ocam/Software/oCam_viewer_Linux/oCam-viewer",
     } ->
     file { "/srv/maverick/software/maverick/bin/ocam-viewer":
         ensure      => link,
-        target      => "/srv/maverick/software/odroid-ocam/oCam_viewer/oCam-viewer",
+        target      => "/srv/maverick/software/odroid-ocam/Software/oCam_viewer_Linux/oCam-viewer",
     }
     
 }
