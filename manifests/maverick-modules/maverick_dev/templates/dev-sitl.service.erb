@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick Dev Dronekit SITL
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-sitl; source bin/activate; ./bin/python ./bin/dronekit-sitl /srv/maverick/code/dronekit-sitl/sitl-fw/<%= @sitl_fw_run %>/<%= @sitl_fw_run %>.elf --instance 1'
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

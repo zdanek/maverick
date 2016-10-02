@@ -1,0 +1,133 @@
+class maverick_dev::sitl (
+    $sitl_fwtype,
+    $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
+    $mavproxy_state = undef,
+    $sitl_state = undef,
+) {
+    
+    # Install a virtual environment for dronekit sitl
+    file { "/srv/maverick/code/dronekit-sitl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
+    python::virtualenv { '/srv/maverick/code/dronekit-sitl':
+        ensure       => present,
+        version      => 'system',
+        systempkgs   => false,
+        distribute   => true,
+        venv_dir     => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        owner        => 'mav',
+        group        => 'mav',
+        cwd          => '/srv/maverick/code/dronekit-sitl',
+        timeout      => 0,
+    } ->
+    file { "/srv/maverick/.virtualenvs/dronekit-sitl/lib/python2.7/no-global-site-packages.txt":
+        ensure  => absent
+    } ->
+    oncevcsrepo { "git-sitl-dronekit-python":
+        gitsource   => $sitl_dronekit_source,
+        dest        => "/srv/maverick/code/dronekit-sitl/dronekit-python",
+    }
+    
+    # Install dronekit-sitl into dronekit-sitl
+    python::pip { 'pip-dronekit-sitl':
+        pkgname     => 'dronekit',
+        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        ensure      => present,
+        owner       => 'mav',
+        timeout     => 0,
+    }
+    python::pip { 'pip-dronekit-sitl-sitl':
+        pkgname     => 'dronekit-sitl',
+        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        ensure      => present,
+        owner       => 'mav',
+        timeout     => 0,
+    }
+    python::pip { 'pip-mavproxy-sitl':
+        pkgname     => 'MAVProxy',
+        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        ensure      => present,
+        owner       => 'mav',
+        timeout     => 0,
+    }
+        
+    # This is needed for sitl run
+    file { "/var/APM":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    }
+    
+    # Punch some holes in the firewall for sitl, protect 5770 which mavproxy-sitl uses
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "dev-sitl":
+            ports       => [5771-5775],
+            ips         => hiera("all_ips"),
+            proto       => "tcp"
+        }
+    }
+    
+    file { "/srv/maverick/var/log/mavproxy-sitl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
+    file { "/srv/maverick/data/config/mavproxy-sitl.conf":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        replace     => false, # initialize but don't overwrite in the future
+        source      => "puppet:///modules/maverick_dev/mavproxy-sitl.conf",
+        notify      => Service["mavproxy-sitl"]
+    } ->
+    file { "/srv/maverick/data/config/mavproxy-sitl.screen.conf":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        source      => "puppet:///modules/maverick_dev/mavproxy-sitl.screen.conf",
+        notify      => Service["mavproxy-sitl"]
+    } ->
+    file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/mavproxy-sitl.sh",
+    } ->
+    file { "/etc/systemd/system/dev-sitl.service":
+        content     => template("maverick_dev/dev-sitl.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ]
+    } ->
+    service { "dev-sitl":
+        ensure      => $sitl_state,
+        enable      => true,
+        require     => [ Maverick_dev::Ardupilot::Fwbuildwaf["sitl_${$sitl_fwtype}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+    }
+    file { "/etc/systemd/system/mavproxy-sitl.service":
+        content     => template("maverick_dev/mavproxy-sitl.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
+    } ->
+    service { "mavproxy-sitl":
+        ensure      => $mavproxy_state,
+        enable      => true,
+        require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
+    }
+
+    # Punch some holes in the firewall for sitl
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "mavproxy-sitl":
+            ports       => [14560-14565],
+            ips         => hiera("all_ips"),
+            proto       => "udp"
+        }
+    }
+
+}
