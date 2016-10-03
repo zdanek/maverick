@@ -29,6 +29,7 @@ class maverick_dev::ardupilot (
         }
     }
     
+    # Define function to build ardupilot firmwares using old make system
     define fwbuildmake ($build, $board) {
         $downvar = downcase($build)
         $buildvar = "ardupilotfw_${downvar}"

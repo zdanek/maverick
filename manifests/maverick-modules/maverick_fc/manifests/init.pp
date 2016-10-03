@@ -5,12 +5,12 @@ class maverick_fc (
 ) {
 
     # Install dronekit through pip globally
-    python::pip { 'pip-dronekit' :
-        pkgname       => 'dronekit',
-        ensure        => present,
-        owner         => 'root',
-        timeout       => 1800,
-    }
+    #python::pip { 'pip-dronekit' :
+    #    pkgname       => 'dronekit',
+    #    ensure        => present,
+    #    owner         => 'root',
+    #    timeout       => 1800,
+    #}
     
     # Install dronekit-la (log analyzer)
     oncevcsrepo { "git-dronekit-la":
@@ -54,6 +54,13 @@ class maverick_fc (
         dest        => "/srv/maverick/code/fc/dronekit-python",
     }
     
+    python::pip { 'pip-dronekit-fc':
+        pkgname     => 'dronekit',
+        virtualenv  => '/srv/maverick/.virtualenvs/fc',
+        ensure      => present,
+        owner       => 'mav',
+        timeout     => 0,
+    }
     python::pip { 'pip-mavproxy-fc':
         pkgname     => 'MAVProxy',
         virtualenv  => '/srv/maverick/.virtualenvs/fc',
