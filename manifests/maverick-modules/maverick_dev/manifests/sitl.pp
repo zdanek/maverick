@@ -1,54 +1,53 @@
 class maverick_dev::sitl (
-    $sitl_fwtype,
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavproxy_state = undef,
     $sitl_state = undef,
 ) {
     
     # Install a virtual environment for dronekit sitl
-    file { "/srv/maverick/code/dronekit-sitl":
+    file { "/srv/maverick/code/sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => 755,
     } ->
-    python::virtualenv { '/srv/maverick/code/dronekit-sitl':
+    python::virtualenv { '/srv/maverick/code/sitl':
         ensure       => present,
         version      => 'system',
         systempkgs   => false,
         distribute   => true,
-        venv_dir     => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        venv_dir     => '/srv/maverick/.virtualenvs/sitl',
         owner        => 'mav',
         group        => 'mav',
-        cwd          => '/srv/maverick/code/dronekit-sitl',
+        cwd          => '/srv/maverick/code/sitl',
         timeout      => 0,
     } ->
-    file { "/srv/maverick/.virtualenvs/dronekit-sitl/lib/python2.7/no-global-site-packages.txt":
+    file { "/srv/maverick/.virtualenvs/sitl/lib/python2.7/no-global-site-packages.txt":
         ensure  => absent
     } ->
     oncevcsrepo { "git-sitl-dronekit-python":
         gitsource   => $sitl_dronekit_source,
-        dest        => "/srv/maverick/code/dronekit-sitl/dronekit-python",
+        dest        => "/srv/maverick/code/sitl/dronekit-python",
     }
     
-    # Install dronekit-sitl into dronekit-sitl
+    # Install dronekit-sitl into sitl
     python::pip { 'pip-dronekit-sitl':
         pkgname     => 'dronekit',
-        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
     }
     python::pip { 'pip-dronekit-sitl-sitl':
         pkgname     => 'dronekit-sitl',
-        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
     }
     python::pip { 'pip-mavproxy-sitl':
         pkgname     => 'MAVProxy',
-        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-sitl',
+        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
@@ -68,6 +67,15 @@ class maverick_dev::sitl (
             ports       => [5771-5775],
             ips         => hiera("all_ips"),
             proto       => "tcp"
+        }
+    }
+    
+    # Punch some holes in the firewall for sitl mavproxy
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "mavproxy-sitl":
+            ports       => [14560-14565],
+            ips         => hiera("all_ips"),
+            proto       => "udp"
         }
     }
     
@@ -106,7 +114,7 @@ class maverick_dev::sitl (
     service { "dev-sitl":
         ensure      => $sitl_state,
         enable      => true,
-        require     => [ Maverick_dev::Ardupilot::Fwbuildwaf["sitl_${$sitl_fwtype}"], Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+        require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
     }
     file { "/etc/systemd/system/mavproxy-sitl.service":
         content     => template("maverick_dev/mavproxy-sitl.service.erb"),
@@ -121,13 +129,5 @@ class maverick_dev::sitl (
         require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
     }
 
-    # Punch some holes in the firewall for sitl
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "mavproxy-sitl":
-            ports       => [14560-14565],
-            ips         => hiera("all_ips"),
-            proto       => "udp"
-        }
-    }
 
 }

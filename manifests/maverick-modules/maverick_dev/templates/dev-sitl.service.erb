@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/dronekit-sitl; source bin/activate; ./bin/python ./bin/dronekit-sitl /srv/maverick/code/dronekit-sitl/sitl-fw/<%= @sitl_fw_run %>/<%= @sitl_fw_run %>.elf --instance 1'
+ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/sitl; source bin/activate; ./bin/python ./bin/sitl /srv/maverick/code/ardupilot/<%= @sitl_fw_run %>/<%= @sitl_fw_run %>.elf --instance 1'
 User=mav
 
 [Install]

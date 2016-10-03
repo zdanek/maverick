@@ -29,34 +29,34 @@ class maverick_fc (
     }
     
     # Install a virtual environment for dronekit fc
-    file { "/srv/maverick/code/dronekit-fc":
+    file { "/srv/maverick/code/fc":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => 755,
     } ->
-    python::virtualenv { '/srv/maverick/code/dronekit-fc':
+    python::virtualenv { '/srv/maverick/code/fc':
         ensure       => present,
         version      => 'system',
         systempkgs   => false,
         distribute   => true,
-        venv_dir     => '/srv/maverick/.virtualenvs/dronekit-fc',
+        venv_dir     => '/srv/maverick/.virtualenvs/fc',
         owner        => 'mav',
         group        => 'mav',
-        cwd          => '/srv/maverick/code/dronekit-fc',
+        cwd          => '/srv/maverick/code/fc',
         timeout      => 0,
     } ->
-    file { "/srv/maverick/.virtualenvs/dronekit-fc/lib/python2.7/no-global-site-packages.txt":
+    file { "/srv/maverick/.virtualenvs/fc/lib/python2.7/no-global-site-packages.txt":
         ensure  => absent
     } ->
     oncevcsrepo { "git-fc-dronekit-python":
         gitsource   => $fc_dronekit_source,
-        dest        => "/srv/maverick/code/dronekit-fc/dronekit-python",
+        dest        => "/srv/maverick/code/fc/dronekit-python",
     }
     
     python::pip { 'pip-mavproxy-fc':
         pkgname     => 'MAVProxy',
-        virtualenv  => '/srv/maverick/.virtualenvs/dronekit-fc',
+        virtualenv  => '/srv/maverick/.virtualenvs/fc',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
