@@ -267,7 +267,7 @@ class App():
         self.stdin_path = '/dev/null'
         self.stdout_path = '/srv/maverick/var/log/maverick_visiond.log'
         self.stderr_path = '/srv/maverick/var/log/maverick_visiond.log'
-        self.pidfile_path = '/srv/maverick/data/run/maverick_visiond.pid'
+        self.pidfile_path = '/srv/maverick/var/run/maverick_visiond.pid'
         self.pidfile_timeout = 5
 
     def run(self):
