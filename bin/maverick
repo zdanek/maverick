@@ -36,7 +36,7 @@ usage () {
     echo "--self-update                             Update to latest maverick code"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
-    echo "${bgr}${bold}         Please do not run without understanding what it does.${reset}"
+    echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
     echo
     exit 1
 }
@@ -152,8 +152,8 @@ if [ "$STATUS" == "true" ]; then
     (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
-        (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
-        (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL Runner" $?)
+        # (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
+        (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
         (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
     fi
     echo -e $statusout | column -c 2 -s : -t
