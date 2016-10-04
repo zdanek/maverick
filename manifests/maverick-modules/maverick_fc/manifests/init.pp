@@ -4,14 +4,6 @@ class maverick_fc (
     $dronekit_la_revision = "master",
 ) {
 
-    # Install dronekit through pip globally
-    #python::pip { 'pip-dronekit' :
-    #    pkgname       => 'dronekit',
-    #    ensure        => present,
-    #    owner         => 'root',
-    #    timeout       => 1800,
-    #}
-    
     # Install dronekit-la (log analyzer)
     oncevcsrepo { "git-dronekit-la":
         gitsource   => "https://github.com/dronekit/dronekit-la.git",
