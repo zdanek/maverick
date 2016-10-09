@@ -5,8 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-#ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/sitl; source bin/activate; /srv/maverick/software/maverick/bin/dev-sitl.sh <%= @ardupilot_type %> >/srv/maverick/var/log/dev-sitl/dev-sitl.startup.log 2>&1'
-ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/sitl; source bin/activate; /usr/bin/screen -L -c /srv/maverick/data/config/dev-sitl.screen.conf -S dev-sitl -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v <%= @ardupilot_type %>'
+ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/sitl; source bin/activate; source /srv/maverick/data/config/dev-sitl.conf; /usr/bin/screen -L -c /srv/maverick/data/config/dev-sitl.screen.conf -S dev-sitl -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v <%= @ardupilot_type %> -I 1 -m $MAVPROXY_ARGS'
 User=mav
 Type=forking
 

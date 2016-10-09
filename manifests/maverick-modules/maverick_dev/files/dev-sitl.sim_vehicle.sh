@@ -3,6 +3,7 @@
 # Set defaults, can be overriden in /srv/maverick/data/config/dev-sitl.conf
 ENABLE=true
 SCREEN_NAME=dev-sitl
+MAVPROXY_ARGS="--out=udpin:0.0.0.0:14560 --out=udpin:0.0.0.0:14561 --out=tcpin:0.0.0.0:5770"
 
 [ ! -r /srv/maverick/data/config/dev-sitl.conf ] || . /srv/maverick/data/config/dev-sitl.conf
 
@@ -12,4 +13,4 @@ if [ "$ENABLE" == "false" ]; then
 fi
 
 # Start mavproxy-sitl
-/usr/bin/screen -L -c /srv/maverick/data/config/dev-sitl.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v $1
+/usr/bin/screen -L -c /srv/maverick/data/config/dev-sitl.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v $1 -m $MAVPROXY_ARGS

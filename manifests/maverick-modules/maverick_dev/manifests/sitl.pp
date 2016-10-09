@@ -64,7 +64,7 @@ class maverick_dev::sitl (
     # Punch some holes in the firewall for sitl, protect 5770 which mavproxy-sitl uses
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "dev-sitl":
-            ports       => [5771-5775],
+            ports       => [5770-5775],
             ips         => hiera("all_ips"),
             proto       => "tcp"
         }
@@ -73,7 +73,7 @@ class maverick_dev::sitl (
     # Punch some holes in the firewall for sitl mavproxy
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "mavproxy-sitl":
-            ports       => [14560-14565],
+            ports       => [14562-14563],
             ips         => hiera("all_ips"),
             proto       => "udp"
         }
@@ -163,6 +163,7 @@ class maverick_dev::sitl (
         file { "/srv/maverick/software/maverick/bin/dev-sitl.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/dev-sitl.sim_vehicle.sh",
+            notify      => Service["dev-sitl"]
         } ->
         file { "/etc/systemd/system/dev-sitl.service":
             content     => template("maverick_dev/dev-sitl.sim_vehicle.service.erb"),
