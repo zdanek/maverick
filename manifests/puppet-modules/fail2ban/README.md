@@ -72,7 +72,7 @@ global default values. These values can be overridden by individual jails.
  * `maxretry` Number of times an IP address must trigger failgregexes to get
    banned. Default value is '3'
  * `backend` How should fail2ban look for modifications on log files. Default
-   value is 'polling'
+   value is 'auto'
  * `destemail` Default email address that should get notifications with the
    actions that send emails. Default value is 'root@localhost'
  * `banaction` Default action to use for jails. Default value is
@@ -123,6 +123,7 @@ Here's the full list of parameters you can use:
  * `ignoreip` Override default IP(s) to ignore (e.g. don't ban this IP).
  * `order` Optional numerical position. This lets you order jails as you see
    fit.
+ * `backend` Override default log file following method.
 
 To remove a jail, simply remove the resource for it from your manifests:
 puppetlabs-concat will automatically remove all fragments that are not managed
@@ -174,6 +175,14 @@ Here's the full list of parameters you can use with the defined type:
  * `ensure` Should this filter be present or not. Default value is present
  * `ignoreregexes` List of regular expressions (strings) that, if matched, will
    invalidate failregex matching. Default value is an empty list.
+ * `includes` List of file names that should be included before the filter
+   definition. An `[INCLUDES]` section will be added to the top of the filter
+   configuration file, and the file names in this list will be added to a
+   `before =` line.
+ * `includes_after` List of file names that should be included after the filter
+   definition. An `[INCLUDES]` section will be added to the top of the filter
+   configuration file, and the file names in this list will be added to an
+   `after =` line.
  * `additional_defs` List of lines that could define more arbitrary values.
    Lines will be placed in the file as they are in the list. Default value is
    an empty list.

@@ -1,6 +1,6 @@
 class maverick_security (
 	$selinux = "permissive",
-	$fail2ban = true,
+	$fail2ban = false,
 	$firewall = true,
 	) {
     

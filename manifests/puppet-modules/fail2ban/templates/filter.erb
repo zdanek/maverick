@@ -1,10 +1,20 @@
 # Fail2Ban configuration file
 #
 
+<% if ! @includes.empty? or ! @includes_after.empty? -%>
+[INCLUDES]
+<%   if ! @includes.empty? -%>
+before = <%= @includes.join("\n         ") %>
+<%   end -%>
+<%   if ! @includes_after.empty? -%>
+after = <%= @includes_after.join("\n        ") %>
+<%   end -%>
+
+<% end -%>
 [Definition]
 
 <% @additional_defs.each do |line| -%>
-<%= line %>
+<%=  line %>
 <% end -%>
 
 # Option:  failregex
