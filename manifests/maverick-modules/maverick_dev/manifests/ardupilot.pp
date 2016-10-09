@@ -1,5 +1,7 @@
 class maverick_dev::ardupilot (
     $ardupilot_source = "https://github.com/ArduPilot/ardupilot.git",
+    $ardupilot_setupstream = true,
+    $ardupilot_upstream = "https://github.com/ArduPilot/ardupilot.git",
     $ardupilot_branch = "master", # eg. master, Copter-3.3, ArduPlane-release
     $ardupilot_board = "px4-v4",
     $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
@@ -14,6 +16,15 @@ class maverick_dev::ardupilot (
         revision	=> $ardupilot_branch,
     }
     ensure_packages(["make", "gawk", "g++", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
+    
+    # If a custom ardupilot repo is specified, configure the upstream automagically
+    if $ardupilot_source != $ardupilot_upstream and $ardupilot_setupstream {
+        exec { "ardupilot_setupstream":
+            command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
+            unless      => "/usr/bin/git remote -v | /bin/grep ${ardupilot_upstream}",
+            cwd         => "/srv/maverick/code/ardupilot",
+        }
+    }
     
     # Define function to build ardupilot firmwares using new waf system
     define fwbuildwaf ($build, $board) {
