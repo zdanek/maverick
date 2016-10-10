@@ -5,8 +5,9 @@ import os, re, sys, subprocess
 sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 sys.path.insert(0, '/usr/local/examples')
 try:
-    import iwconfig
     import netifaces
+    import pyric             # pyric errors
+    import pyric.pyw as pyw  # iw functionality
     from udevnet import Udevnet
     netinfo = {}
 except:
@@ -22,7 +23,10 @@ class Netinfo(object):
 
 
     def getinfo(self):
-        self.data['macaddress'] = netifaces.ifaddresses(self._if)[netifaces.AF_LINK][0]['addr']
+        try:
+            self.data['macaddress'] = netifaces.ifaddresses(self._if)[netifaces.AF_LINK][0]['addr']
+        except:
+            self.data['macaddress'] = None
         try:
             self.data['ipaddress'] = netifaces.ifaddresses(self._if)[netifaces.AF_INET][0]['addr']
         except:
@@ -88,38 +92,104 @@ class Netinfo(object):
                     self.data['type'] = None
             except:
                 self.data['type'] = None
-        _wifi = iwconfig.Wireless(self._if)
+
+        # Stop here if we don't have a wireless card
+        if self.data['type'] != "Wireless":
+            return
+
+        # Retrieve wireless info
         try:
-            self.data['mode'] = _wifi.getMode()
+            _ifobj = pyw.getcard(self._if)
+            _ifinfo = pyw.ifinfo(_ifobj)
+            _devinfo = pyw.devinfo(_ifobj)
+            _physinfo = pyw.phyinfo(_ifobj)
+            _linkinfo = pyw.link(_ifobj)
+        except:
+            pass
+        try:
+            self.data['isup'] = pyw.isup(_ifobj)
+        except:
+            self.data['isup'] = None
+        try:
+            self.data['blocked'] = pyw.isblocked(_ifobj)
+        except:
+            self.data['blocked'] = None
+        try:
+            self.data['mode'] = _devinfo['mode']
         except:
             self.data['mode'] = None
         try:
-            self.data['bitrate'] = _wifi.getBitrate()
+            self.data['modes'] = _physinfo['modes']
         except:
-            self.data['bitrate'] = None
+            self.data['modes'] = None
         try:
-            self.data['essid'] = _wifi.getEssid()
+            self.data['bands'] = _physinfo['bands']
         except:
-            self.data['essid'] = None
+            self.data['bands'] = None
         try:
-            self.data['frequency'] = _wifi.getFrequency()
+            self.data['standards'] = pyw.devstds(_ifobj)
+        except:
+            self.data['standards'] = None
+        try:
+            self.data['freqs'] = pyw.devfreqs(_ifobj)
+        except:
+            self.data['freqs'] = None
+        try:
+            self.data['txpower'] = pyw.txget(_ifobj)
+        except:
+            self.data['txpower'] = None
+        try:
+            self.data['chans'] = pyw.devchs(_ifobj)
+        except:
+            self.data['chans'] = None
+        try:
+            self.data['reg'] = pyw.regget(_ifobj)
+        except:
+            self.data['reg'] = None
+        try:
+            self.data['chipset'] = _ifinfo['chipset']
+        except:
+            self.data['chipset'] = None
+        try:
+            self.data['state'] = _linkinfo['stat']
+        except:
+            self.data['state'] = None
+        try:
+            self.data['ssid'] = _linkinfo['ssid']
+        except:
+            self.data['ssid'] = None
+        try:
+            self.data['chw'] = _linkinfo['chw']
+        except:
+            self.data['chw'] = None
+        try:
+            self.data['frequency'] = _linkinfo['freq']
         except:
             self.data['frequency'] = None
         try:
-            self.data['name'] = _wifi.getWirelessName()
+            self.data['rss'] = _linkinfo['rss']
         except:
-            self.data['name'] = None
+            self.data['rss'] = None
         try:
-            self.data['txpower'] = _wifi.getTXPower()
+            self.data['wtx'] = _linkinfo['tx']
         except:
-            self.data['txpower'] = None
+            self.data['wtx'] = None
+        try:
+            self.data['wrx'] = _linkinfo['rx']
+        except:
+            self.data['wrx'] = None
 
     def runall(self):
         pass
     
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
-    ifs = netifaces.interfaces()
+    try:
+        ifs = pyw.interfaces()
+    except pyric.error as e:
+        print "Error running netinfo, pyric not available"
+        sys.exit(1)
+        
     for _if in ifs:
         _netinfo = Netinfo(_if)
         _netinfo.getinfo()
