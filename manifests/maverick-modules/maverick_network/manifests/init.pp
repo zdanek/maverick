@@ -210,9 +210,9 @@ class maverick_network (
     }
 
     # Define and configure monitor-mode interface setup in systemd
-    file { "/srv/maverick/software/maverick/bin/monitor-interface-if.sh":
+    file { "/srv/maverick/software/maverick/bin/monitor-interface.sh":
         ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/monitor-interface-if.sh"
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/monitor-interface.sh"
     } ->
     file { "/etc/systemd/system/monitor-interface@.service":
         content     => template("maverick_network/monitor-interface@.service.erb"),

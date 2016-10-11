@@ -70,8 +70,14 @@ for _if in ifs:
             print twocols("Wireless Mode", '\t\t'+ctrls['bg_purple']+str(_netinfo.data['mode'].capitalize()+ctrls['reset']))
         
         print twocols("Wireless SSID", '\t\t'+str(_netinfo.data['ssid']))
-        print twocols("Wireless State", '\t\t'+str(_netinfo.data['state'].capitalize()))
-        print twocols("Wireless Frequency", '\t'+str(float(_netinfo.data['frequency'])/1000) +' Ghz')
+        try:
+            print twocols("Wireless State", '\t\t'+str(_netinfo.data['state'].capitalize()))
+        except:
+            pass
+        try:
+            print twocols("Wireless Frequency", '\t'+str(float(_netinfo.data['frequency'])/1000) +' Ghz')
+        except:
+            pass
         print twocols("Wireless Chanwidth", '\t'+str(_netinfo.data['chw']))
         print twocols("Wireless RSS", '\t\t'+str(_netinfo.data['rss']))
         
