@@ -286,16 +286,16 @@ class Streamer(object):
 class App():
     def __init__(self):
         self.stdin_path = '/dev/null'
-        self.stdout_path = '/srv/maverick/var/log/maverick_visiond.log'
-        self.stderr_path = '/srv/maverick/var/log/maverick_visiond.log'
-        self.pidfile_path = '/srv/maverick/var/run/maverick_visiond.pid'
+        self.stdout_path = '/srv/maverick/var/log/maverick-visiond.log'
+        self.stderr_path = '/srv/maverick/var/log/maverick-visiond.log'
+        self.pidfile_path = '/srv/maverick/var/run/maverick-visiond.pid'
         self.pidfile_timeout = 5
 
     def run(self):
-        logger.info("Starting maverick_visiond")
+        logger.info("Starting maverick-visiond")
 
         # Get config
-        self.config = self.config_parse("/srv/maverick/data/config/maverick_visiond.conf")
+        self.config = self.config_parse("/srv/maverick/data/config/maverick-visiond.conf")
 
         # If on/off switch is off, exit
         if self.config['enable'].lower() == 'false':
@@ -431,13 +431,13 @@ class App():
 
  
 if __name__ == "__main__":
-    print "Starting maverick_visiond daemon"
+    print "Starting maverick-visiond daemon"
 
     # Setup logging
     logger = logging.getLogger("DaemonLog")
     logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    handler = logging.FileHandler("/srv/maverick/var/log/maverick_visiond.log")
+    handler = logging.FileHandler("/srv/maverick/var/log/maverick-visiond.log")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     
@@ -447,5 +447,5 @@ if __name__ == "__main__":
     daemon_runner.daemon_context.files_preserve=[handler.stream]
     daemon_runner.do_action()
     
-    logger.info("Stopping maverick_visiond")
-    print "Stopped maverick_visiond daemon"
+    logger.info("Stopping maverick-visiond")
+    print "Stopped maverick-visiond daemon"

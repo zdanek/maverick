@@ -158,10 +158,10 @@ class maverick_vision (
             group       => "root",
             content     => "export GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0:/usr/lib/girepository-1.0",
         }
-        file { "/etc/systemd/system/maverick_visiond.service.d":
+        file { "/etc/systemd/system/maverick-visiond.service.d":
             ensure      => directory
         } ->
-        file { "/etc/systemd/system/maverick_visiond.service.d/typelib-path.conf":
+        file { "/etc/systemd/system/maverick-visiond.service.d/typelib-path.conf":
             ensure      => present,
             mode        => 644,
             content     => "[Service]\nEnvironment=\"GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0:/usr/lib/girepository-1.0\""
@@ -180,12 +180,12 @@ class maverick_vision (
         class { "maverick_vision::cv::init": }
     }
     
-    # Link maverick_visiond into central bin directory
-    file { "/srv/maverick/software/maverick/bin/maverick_visiond":
+    # Link maverick-visiond into central bin directory
+    file { "/srv/maverick/software/maverick/bin/maverick-visiond":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/maverick-visiond",
     }
-    file { "/srv/maverick/data/config/maverick_visiond.conf":
+    file { "/srv/maverick/data/config/maverick-visiond.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -194,14 +194,14 @@ class maverick_vision (
     }
     
     # Add visiond as a service
-    file { "/etc/systemd/system/maverick_visiond.service":
+    file { "/etc/systemd/system/maverick-visiond.service":
         content     => template("maverick_vision/maverick-visiond.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => 644,
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service { "maverick_visiond":
+    service { "maverick-visiond":
         ensure      => $visiond_state,
         enable      => true,
     }

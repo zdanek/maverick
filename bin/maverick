@@ -149,7 +149,7 @@ if [ "$STATUS" == "true" ]; then
     mavenv ${environment}
     echo
     (systemctl status mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
-    (systemctl status maverick_visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
+    (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
         # (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
