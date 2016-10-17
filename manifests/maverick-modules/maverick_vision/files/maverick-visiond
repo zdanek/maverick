@@ -35,6 +35,13 @@ class Streamer(object):
                 self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_mjpeg()
                 self.encode_h264()
+            elif format == "yuv":
+                self.capstring = 'video/x-raw,format=(fourcc)YUV2,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
+                self.stream_yuv()
+                self.encode_h264()
+            else:
+                logger.critical("Stream starting with unrecognised video format: " + str(format))
+                return
             
             # Finally connect the requested output to the end of the pipeline
             if output == "file":
@@ -119,6 +126,20 @@ class Streamer(object):
             queue = Gst.ElementFactory.make("queue", "queue")
             self.pipeline.add(queue)
             dec.link(queue)
+            vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
+            self.pipeline.add(vconvert)
+            queue.link(vconvert)
+            self.source_attach = vconvert
+            
+        def stream_yuv(self):
+            logger.info("Attaching stream 'yuv'")
+            capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
+            capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
+            self.pipeline.add(capsfilter)
+            self.source.link(capsfilter)
+            queue = Gst.ElementFactory.make("queue", "queue")
+            self.pipeline.add(queue)
+            capsfilter.link(queue)
             vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
             self.pipeline.add(vconvert)
             queue.link(vconvert)
@@ -296,14 +317,26 @@ class App():
         
         # Autodetect if we have h264 available from the camera, if so setup a passthrough pipeline.
         streamtype = None
-        if self.check_h264():
-            logger.info('Camera h264 stream available, using h264 passthrough')
-            streamtype = 'h264'
-        # Otherwise, setup an mjpg->h264 encoder pipeline.
-        else:
-            logger.info('Camera h264 stream not available, using mjpeg -> h264 encoder')
-            streamtype = 'mjpeg'
         try:
+            if self.config['format']:
+                streamtype = self.config['format']
+        except:
+            # format not set, carry on and try to autodetect
+            if self.check_format('h264'):
+                logger.info('Camera h264 stream available, using h264 passthrough')
+                streamtype = 'h264'
+            # Otherwise, check for an mjpg->h264 encoder pipeline.
+            elif self.check_format('mjpeg'):
+                logger.info('Camera MJPEG stream available, using mjpeg -> h264 encoder')
+                streamtype = 'mjpeg'
+            elif self.check_format('yuv'):
+                logger.info('Camera YUV stream available, using yuv -> h264 encoder')
+                streamtype = 'yuv'
+        if not streamtype:
+            logger.critical('Error detecting camera video format')
+            sys.exit(1)
+        try:
+            logger.info("Creating stream object - camera:"+self.config['camera']+", format:"+streamtype+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output'])
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, self.config['input'], self.config['camera'], self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
             logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
@@ -354,7 +387,18 @@ class App():
                 break
             logger.debug("Camera control: "+queryctrl.name)
             queryctrl = v4l2.v4l2_queryctrl(queryctrl.id + 1)
-
+        
+        # Log formats available
+        capture = v4l2.v4l2_fmtdesc()
+        capture.index = 0
+        capture.type = v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE
+        try:
+            while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
+                    logger.debug("Camera format: "+capture.description)
+                    capture.index += 1
+        except:
+            pass
+        
     def check_input(self):
         input = v4l2.v4l2_input(0)
         try:
@@ -366,20 +410,24 @@ class App():
         except:
             return False
 
-    def check_h264(self):
+    def check_format(self, format):
         capture = v4l2.v4l2_fmtdesc()
         capture.index = 0
         capture.type = v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE
-        h264 = False
+        available = False
+        logger.info("checking format:"+format)
         try:
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
-                logger.debug("Camera format: "+capture.description)
+                if format.lower() == "h264":
+                    if re.search('H264', capture.description.lower()) or re.search('H.264', capture.description.lower()):
+                        available = True
+                else:
+                    if re.search(format.lower(), capture.description.lower()):
+                        available = True
                 capture.index += 1
-                if re.search('H264', capture.description) or re.search('H.264', capture.description):
-                    h264 = True
         except:
             pass
-        return h264
+        return available
 
  
 if __name__ == "__main__":
@@ -388,7 +436,7 @@ if __name__ == "__main__":
     # Setup logging
     logger = logging.getLogger("DaemonLog")
     logger.setLevel(logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
     handler = logging.FileHandler("/srv/maverick/var/log/maverick_visiond.log")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
