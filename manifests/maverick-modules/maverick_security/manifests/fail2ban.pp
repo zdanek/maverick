@@ -9,15 +9,5 @@ class maverick_security::fail2ban (
         maxretry            => 6,
     }
     class { "::fail2ban::jail::ssh": }
-    firewall { '900 fail2ban return rule':
-        chain    => 'f2b-ssh',
-        jump     => 'RETURN',
-        proto    => 'all',
-    }
-    firewall { '001 f2b-ssh call':
-      chain     => 'INPUT',
-      jump      => "f2b-ssh",
-      proto     => "tcp",
-      dport     => [22],
-    }
+
 }
