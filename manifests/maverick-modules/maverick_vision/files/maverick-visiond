@@ -20,7 +20,9 @@ class Streamer(object):
             self.size = 0
             self.playing = False
             self.paused = False
-            
+            self.format = format
+            self.encoder = encoder
+
             # Start with creating a pipeline from source element
             if input == "appsrc":
                 self.input_appsrc()
@@ -42,9 +44,16 @@ class Streamer(object):
                 return
             
             # Next choose the encoder
-            if encoder == "h264":
+            if encoder == format:
+                if format == "mjpeg":
+                    mjpegpay = Gst.ElementFactory.make("rtpjpegpay", "mjpeg-payload")
+                    mjpegpay.set_property("pt", 26)
+                    self.pipeline.add(mjpegpay)
+                    self.source_attach.link(mjpegpay)
+                    self.encode_attach = mjpegpay
+            elif encoder == "h264":
                 self.encode_h264()
-            elif encoder == "mjpg":
+            elif encoder == "mjpeg":
                 self.encode_mjpeg()
             elif encoder == "yuv":
                 self.encode_yuv()
@@ -113,8 +122,7 @@ class Streamer(object):
                 logger.debug('Attaching h264pay direct to capsfilter')
                 capsfilter.link(h264pay)
             self.source_attach = h264pay
-            self.encode_attach = self.source_attach # fake encode_attach as we don't need to encode, we already have encoded stream
-            
+
         def stream_mjpeg(self):
             logger.info("Attaching stream 'mjpeg'")
             capsfilter = Gst.ElementFactory.make("capsfilter", "capsfilter")
@@ -126,15 +134,22 @@ class Streamer(object):
             if parse:
                 self.pipeline.add(parse)
                 capsfilter.link(parse)
-            dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
-            self.pipeline.add(dec)
-            if parse:
-                parse.link(dec)
-            else:
-                capsfilter.link(dec)
             queue = Gst.ElementFactory.make("queue", "queue")
-            self.pipeline.add(queue)
-            dec.link(queue)
+            if self.format != self.encoder:
+                dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
+                self.pipeline.add(dec)
+                if parse:
+                    parse.link(dec)
+                else:
+                    capsfilter.link(dec)
+                self.pipeline.add(queue)
+                dec.link(queue)
+            else:
+                self.pipeline.add(queue)
+                if parse:
+                    parse.link(queue)
+                else:
+                    capsfilter.link(queue)
             vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
             self.pipeline.add(vconvert)
             queue.link(vconvert)
@@ -340,7 +355,7 @@ class App():
             if self.check_format('h264'):
                 logger.info('Camera H264 stream available, using H264 stream')
                 streamtype = 'h264'
-            # Otherwise, check for an mjpg->h264 encoder pipeline.
+            # Otherwise, check for an mjpeg->h264 encoder pipeline.
             elif self.check_format('mjpeg'):
                 logger.info('Camera MJPEG stream available, using mjpeg stream')
                 streamtype = 'mjpeg'
