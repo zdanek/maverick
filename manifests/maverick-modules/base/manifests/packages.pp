@@ -21,9 +21,14 @@ class base::packages {
         "cmake",
         "pkg-config",
         "usbutils",
-        "linux-firmware"
     ])
 
+    if $operatingsystem == "Ubuntu" {
+        ensure_packages(["linux-firmware"])
+    } elsif $operatingsystem == "Debian" {
+        ensure_packages(["firmware-linux", "firmware-atheros", "firmware-brcm80211", "firmware-ralink", "firmware-realtek"])
+    }
+    
     # These packages should be removed from all installs.  
     # Usually these are included in the default OS build and are not necessary, or cause some conflict or unwanted behaviour
     # We have to list them independently because putting them in a package [] doesn't seem to deal with dependencies
