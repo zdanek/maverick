@@ -68,7 +68,7 @@
 		}
 	},
 
-	"maverick_ros::ros_installtype": "source", // Install ROS from source or native packages
+	"maverick_ros::ros_installtype": "native", // Install ROS from source or native packages
 	
 	"maverick_security::fail2ban": true, // fail2ban can stop brute force attacks against ssh
 	"maverick_security::fail2ban::alertemail": "admin@example.com", // Email address to send fail2ban alerts to

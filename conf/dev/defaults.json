@@ -9,6 +9,7 @@
 	"classes": [
 		"maverick_fc",
 		"maverick_vision",
+		"maverick_ros",
 		"maverick_dev",
 		"maverick_cloud9"
 	]
