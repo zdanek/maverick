@@ -13,8 +13,8 @@ for line in proc.stdout:
 proc.communicate()
 
 # Look for an arbitrary file to determine if ros is installed
-rosroot = os.environ['ROS_ROOT']
 try:
+    rosroot = os.environ['ROS_ROOT']
     if not os.path.isfile(os.path.join(rosroot,"package.xml")):
         print "ros_installed=no"
         sys.exit(0)
@@ -24,5 +24,5 @@ except:
 
 print "ros_installed=yes"
 print "ros_distribution="+str(os.environ['ROS_DISTRO'])
-print "ros_root="+rosroot
+print "ros_root="+str(os.environ['ROS_ROOT'])
 print "ros_etc="+str(os.environ['ROS_ETC_DIR'])
