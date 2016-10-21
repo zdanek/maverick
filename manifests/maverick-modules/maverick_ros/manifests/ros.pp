@@ -41,8 +41,9 @@ class maverick_ros::ros (
         creates      => "/etc/apt/sources.list.d/ros-latest.list",
     } ->
     exec { "ros-repo-key":
-        command     => "/usr/bin/wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -",
-        unless      => "/usr/bin/apt-key list |/bin/grep ros.org",
+        #command     => "/usr/bin/wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -",
+        command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
+        unless      => "/usr/bin/apt-key list |/bin/grep B01FA116",
     } ->
     exec { "ros-aptupdate":
         command     => "/usr/bin/apt-get update",
@@ -94,13 +95,13 @@ class maverick_ros::ros (
             group           => "mav",
         } ->
         exec { "catkin_rosinstall":
-            command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro jade --deps --wet-only --tar > jade-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${::processorcount} src jade-ros_comm-wet.rosinstall",
+            command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${::processorcount} src ${distribution}-ros_comm-wet.rosinstall",
             cwd             => "/srv/maverick/var/build/ros_catkin_ws",
             user            => "mav",
             creates         => "/srv/maverick/var/build/ros_catkin_ws/src/.rosinstall"
         } ->
         exec { "rosdep-install":
-            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro jade -y",
+            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y",
             cwd             => "/srv/maverick/var/build/ros_catkin_ws",
             unless          => "/usr/bin/dpkg -l libboost-all-dev"
         } ->
@@ -116,7 +117,7 @@ class maverick_ros::ros (
         # Add opencv to the existing workspace through vision_opencv package, this also installs std_msgs package as dependency
         ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
         exec { "ws_add_opencv":
-            command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro jade --deps --wet-only --tar >jade-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src jade-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
+            command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
             cwd             => "/srv/maverick/var/build/ros_catkin_ws",
             user            => "mav",
             creates         => "/srv/maverick/var/build/ros_catkin_ws/src/vision_opencv",
@@ -133,7 +134,7 @@ class maverick_ros::ros (
 
         # Add mavros to the existing workspace, this also installs mavlink package as dependency
         exec { "ws_add_mavros":
-            command         => "/usr/bin/rosinstall_generator mavros --rosdistro jade --deps --wet-only --tar >jade-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro jade --deps --wet-only --tar >>jade-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro jade --deps --wet-only --tar >>jade-mavros-wet.rosinstall && /usr/bin/wstool merge -t src jade-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+            command         => "/usr/bin/rosinstall_generator mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
             cwd             => "/srv/maverick/var/build/ros_catkin_ws",
             user            => "mav",
             creates         => "/srv/maverick/var/build/ros_catkin_ws/src/mavros",

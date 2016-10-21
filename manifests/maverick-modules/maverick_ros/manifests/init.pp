@@ -8,7 +8,7 @@ class maverick_ros (
     }
 
     if $mavros_install == true {
-        class { "maverick_ros::mavros": }
+        #class { "maverick_ros::mavros": }
     }
     
 }
