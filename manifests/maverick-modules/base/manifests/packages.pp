@@ -59,10 +59,11 @@ class base::packages {
     } ->
     package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon"]:
         ensure      => present
-    } ->
-    python::pip {'pip-python-pyric':
-        pkgname     => 'PyRIC',
-        ensure      => present,
     }
-    
+    # Python::pip doesn't seem to work here, use exec instead
+    exec { "install pyric":
+        command     => "/usr/bin/pip install PyRIC",
+        unless      => "/usr/bin/pip show PyRIC",
+    }
+
 }
