@@ -57,7 +57,7 @@ class maverick_ros::ros (
 
     # Install from ros repos
     if $_installtype == "native" {
-        package { ["ros-${distribution}-ros-base"]:
+        package { ["ros-${distribution}-ros-base", "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros", "ros-${distribution}-vision-opencv"]:
             ensure      => installed
         }
         
@@ -85,6 +85,7 @@ class maverick_ros::ros (
             group       => "mav",
             mode        => 755,
         }
+        $buildparallel = $::processorcount / 2
         
         # Initialize rosdep
         exec { "rosdep-init":
@@ -107,10 +108,12 @@ class maverick_ros::ros (
         exec { "rosdep-install":
             command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y",
             cwd             => "${_builddir}",
-            unless          => "/usr/bin/dpkg -l libboost-all-dev",
+            user            => "mav",
+            timeout         => 0,
+            unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satisfied'",
         } ->
         exec { "catkin_make":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${::processorcount}",
+            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
             cwd             => "${_builddir}",
             user            => "mav",
             creates         => "${_installdir}/lib/rosbag/topic_renamer.py",
