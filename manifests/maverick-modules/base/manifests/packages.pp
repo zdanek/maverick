@@ -59,6 +59,10 @@ class base::packages {
     } ->
     package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon"]:
         ensure      => present
+    } ->
+    python::pip {'pip-python-pyric':
+        pkgname     => 'PyRIC',
+        ensure      => present,
     }
     
 }
