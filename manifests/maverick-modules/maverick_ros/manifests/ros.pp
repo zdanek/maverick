@@ -85,7 +85,7 @@ class maverick_ros::ros (
             group       => "mav",
             mode        => 755,
         }
-        $buildparallel = $::processorcount / 2
+        $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
         
         # Initialize rosdep
         exec { "rosdep-init":
@@ -149,7 +149,7 @@ class maverick_ros::ros (
         } ->
         exec { "catkin_make_mavros":
             # Note must only use -j1 otherwise we get compiler errors
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j1",
+            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j1",
             cwd             => "${_builddir}",
             user            => "mav",
             creates         => "${_installdir}/lib/libmavros.so",

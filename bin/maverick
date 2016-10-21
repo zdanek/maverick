@@ -83,11 +83,11 @@ done
 
 mavenv () {
     if [ "x$1" == "xdev" ]; then
-        echo "Maverick Environment:   ${bgw}${red}${bold} dev ${reset}"
+        echo "Maverick Environment:   ${bgr}${white}${bold} dev ${reset}"
     elif [ "x$1" == "xproduction" ]; then
-        echo "Maverick Environment:   ${bgw}${green}${bold} production ${reset}"
+        echo "Maverick Environment:   ${bgg}${white}${bold} production ${reset}"
     elif [ "x$1" == "xbootstrap" ]; then
-        echo "Maverick Environment:   ${bgw}${blue}${bold} bootstrap ${reset}"
+        echo "Maverick Environment:   ${bgb}${white}${bold} bootstrap ${reset}"
     fi    
 }
 
