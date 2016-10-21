@@ -1,6 +1,6 @@
 class maverick_ros::ros (
     $installtype = "",
-    $ros_distribution = "kinetic",
+    $distribution = "kinetic",
 ) {
     
     # If installtype is set then use it and skip autodetection
@@ -9,9 +9,9 @@ class maverick_ros::ros (
     } elsif $installtype == "source" {
         $_installtype = "source"
     # First try and determine build type based on OS and architecture
-    } elsif ($ros_distribution == "kinetic") {
+    } elsif ($distribution == "kinetic") {
     
-        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "arm7l" or $architecture == "amd64" or $architecture == "i386")) or
+        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "amd64" or $architecture == "i386")) or
                 ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
                 ($operatingsystem == "Debian" and $lsbdistcodename == "jessie" and ($architecture == "amd64" or $architecture == "arm64"))
         ) {
@@ -19,8 +19,8 @@ class maverick_ros::ros (
         } else {
             $_installtype = "source"
         }
-    } elsif $ros_distribution == "jade" {
-        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and $architecture == "arm7l") or
+    } elsif $distribution == "jade" {
+        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and $architecture == "armv7l") or
                 ($operatingsystem == "Ubuntu" and ($lsbdistcodename =="trusty" or $lsbdistcodename == "utopic" or $lsbdistcodename == "vivid") and ($architecture == "amd64" or $architecture == "i386"))
         ) {
             $_installtype = "native"
@@ -29,7 +29,11 @@ class maverick_ros::ros (
         }
     }
     
-    warning("ROS installtype: ${_installtype}")
+    if $_installtype == "native" and $ros_installed == "no" {
+        warning("ROS: supported platform detected for ${distribution} distribution, using native packages")
+    } elsif $_installtype == "source" and $ros_installed == "no" {
+        warning("ROS: unsupported platform for ${distribution} distribution, installing from source")
+    }
     
     # Install ROS bootstrap from ros.org packages
     exec { "ros-repo":
@@ -51,9 +55,8 @@ class maverick_ros::ros (
     ensure_packages(["python-wstool", "build-essential"])
 
     # Install from ros repos
-    if $installtype == "native" {
-        $_package = "ros-${ros_distribution}-ros-base"
-        package { ["${_package}"]:
+    if $_installtype == "native" {
+        package { ["ros-${distribution}-ros-base"]:
             ensure      => installed
         }
         
@@ -62,11 +65,11 @@ class maverick_ros::ros (
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "source /opt/ros/${ros_distribution}/setup.bash",
+            content     => "source /opt/ros/${distribution}/setup.bash",
         }
         
     # Build from source
-    } elsif $installtype == "source" {
+    } elsif $_installtype == "source" {
         file { "/srv/maverick/software/ros":
             ensure      => directory,
             owner       => "mav",
