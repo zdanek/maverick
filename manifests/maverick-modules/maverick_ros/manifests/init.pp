@@ -1,5 +1,5 @@
 class maverick_ros (
-    $ros_installtype = "native",
+    $ros_installtype = "",
     $mavros_install = true
 ) {
 
