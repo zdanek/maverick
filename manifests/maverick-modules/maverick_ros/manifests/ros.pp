@@ -100,7 +100,7 @@ class maverick_ros::ros (
             require         => Package["python-rosdep"]
         } ->
         exec { "catkin_rosinstall":
-            command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${::processorcount} src ${distribution}-ros_comm-wet.rosinstall",
+            command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${distribution}-ros_comm-wet.rosinstall",
             cwd             => "${_builddir}",
             user            => "mav",
             creates         => "${_builddir}/src/.rosinstall"
@@ -110,7 +110,7 @@ class maverick_ros::ros (
             cwd             => "${_builddir}",
             user            => "mav",
             timeout         => 0,
-            unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satisfied'",
+            unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satis'",
         } ->
         exec { "catkin_make":
             command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
@@ -131,10 +131,10 @@ class maverick_ros::ros (
             require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
         } ->
         exec { "catkin_make_vision_opencv":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${::processorcount}",
+            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
             cwd             => "${_builddir}",
             user            => "mav",
-            creates         => "${_installdir}/share/opencv_apps/nodelet_plugins.xml",
+            creates         => "${_installdir}/lib/libopencv_optflow3.so.3.1.0",
             timeout         => 0,
             require         => File["${_installdir}"]
         }
