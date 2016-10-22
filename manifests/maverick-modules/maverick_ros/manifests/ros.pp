@@ -61,14 +61,6 @@ class maverick_ros::ros (
             ensure      => installed
         }
         
-        file { "/etc/profile.d/ros-env.sh":
-            ensure      => present,
-            mode        => 644,
-            owner       => "root",
-            group       => "root",
-            content     => "source /opt/ros/${distribution}/setup.bash",
-        }
-        
     # Build from source
     } elsif $_installtype == "source" {
         $_installdir = "/srv/maverick/software/ros"
@@ -157,14 +149,25 @@ class maverick_ros::ros (
             require         => File["${_installdir}"]
         }
 
-        file { "/etc/profile.d/ros-env.sh":
-            ensure      => present,
-            mode        => 644,
+        # Create symlink to usual vendor install directory
+        file { "/opt/ros":
+            ensure      => directory,
+            mode        => "755",
             owner       => "root",
             group       => "root",
-            content     => "source ~/software/ros/setup.bash",
+        } ->
+        file { "/opt/ros/${distribution}":
+            ensure      => link,
+            target      => "/srv/maverick/software/ros"
         }
-    
     }  
+    
+    file { "/etc/profile.d/ros-env.sh":
+        ensure      => present,
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "source /opt/ros/${distribution}/setup.bash",
+    }
     
 }
