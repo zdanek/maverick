@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick Mavros - FC
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/bin/bash -c 'source /opt/ros/<%= @distribution %>/setup.bash; /opt/ros/<%= @distribution %>/bin/roslaunch --pid=/srv/maverick/var/run/mavros-sitl.pid mavros apm2.launch fcu_url:=tcp://localhost:5761'
+ExecStop=/bin/kill `cat /srv/maverick/var/run/mavros-fc.pid`
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

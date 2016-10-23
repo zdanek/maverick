@@ -169,5 +169,37 @@ class maverick_ros::ros (
         group       => "root",
         content     => "source /opt/ros/${distribution}/setup.bash",
     }
+
+    # If SITL is active, add a mavros service for sitl link
+    if defined("maverick_dev::sitl") {
+        file { "/etc/systemd/system/maverick-mavros-sitl.service":
+            content     => template("maverick_ros/maverick-mavros-sitl.service.erb"),
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        service { "maverick-mavros-sitl":
+            ensure      => running,
+            enable      => true,
+            require     => Exec["maverick-systemctl-daemon-reload"]
+        }
+    }
+    
+    # If FC is active, add a mavros service for FC link
+    if defined("maverick_fc") {
+        file { "/etc/systemd/system/maverick-mavros-fc.service":
+            content     => template("maverick_ros/maverick-mavros-fc.service.erb"),
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        service { "maverick-mavros-fc":
+            ensure      => running,
+            enable      => true,
+            require     => Exec["maverick-systemctl-daemon-reload"]
+        }
+    }
     
 }
