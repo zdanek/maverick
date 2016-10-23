@@ -117,18 +117,6 @@ class maverick_dev::sitl (
             enable      => true,
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
-        file { "/etc/systemd/system/mavproxy-sitl.service":
-            content     => template("maverick_dev/mavproxy-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
-        } ->
-        service { "mavproxy-sitl":
-            ensure      => $mavproxy_state,
-            enable      => true,
-            require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
-        }
         
     } elsif getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "waf" {
         $ardupilot_vehicle = getvar("maverick_dev::ardupilot::ardupilot_vehicle")
@@ -177,7 +165,19 @@ class maverick_dev::sitl (
             enable      => true,
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
-        
+    }
+    
+    file { "/etc/systemd/system/mavproxy-sitl.service":
+        content     => template("maverick_dev/mavproxy-sitl.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
+    } ->
+    service { "mavproxy-sitl":
+        ensure      => $mavproxy_state,
+        enable      => true,
+        require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
     }
 
 }
