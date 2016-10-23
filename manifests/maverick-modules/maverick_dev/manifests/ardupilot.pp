@@ -41,6 +41,7 @@ class maverick_dev::ardupilot (
                 command     => "/srv/maverick/code/ardupilot/waf configure --board ${board} && /srv/maverick/code/ardupilot/waf ${build} >/srv/maverick/var/log/build/ardupilot-fw-${build}.build.log 2>&1",
                 cwd         => "/srv/maverick/code/ardupilot",
                 creates     => "/srv/maverick/code/ardupilot/${build}.elf",
+                require     => Python::Pip['pip-future']
             }
         }
     }
