@@ -16,6 +16,11 @@ class maverick_dev::ardupilot (
         revision	=> $ardupilot_branch,
     }
     ensure_packages(["make", "gawk", "g++", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
+    # Waf build requires python future
+    python::pip { 'pip-future':
+        pkgname     => 'future',
+        ensure      => present,
+    }
     
     # If a custom ardupilot repo is specified, configure the upstream automagically
     if $ardupilot_source != $ardupilot_upstream and $ardupilot_setupstream {
