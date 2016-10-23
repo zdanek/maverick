@@ -16,14 +16,14 @@ class maverick_vision::cv::init (
     # Pull opencv and opencv_contrib from git
     oncevcsrepo { "git-opencv":
         gitsource   => "https://github.com/Itseez/opencv.git",
-        dest        => "/srv/maverick/build/opencv",
+        dest        => "/srv/maverick/var/build/opencv",
     } ->
     oncevcsrepo { "git-opencv_contrib":
         gitsource   => "https://github.com/Itseez/opencv_contrib.git",
-        dest        => "/srv/maverick/build/opencv_contrib",
+        dest        => "/srv/maverick/var/build/opencv_contrib",
     }
     # Create build directory
-    file { "/srv/maverick/build/opencv/build":
+    file { "/srv/maverick/var/build/opencv/build":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
@@ -33,23 +33,23 @@ class maverick_vision::cv::init (
     exec { "opencv-prepbuild":
         user        => "mav",
         timeout     => 0,
-        command     => "/usr/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/build/opencv_contrib/modules -D BUILD_EXAMPLES=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1",
-        cwd         => "/srv/maverick/build/opencv/build",
-        creates     => "/srv/maverick/build/opencv/build/Makefile",
+        command     => "/usr/bin/cmake -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -D BUILD_EXAMPLES=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1",
+        cwd         => "/srv/maverick/var/build/opencv/build",
+        creates     => "/srv/maverick/var/build/opencv/build/Makefile",
         require     => Package["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] # ensure we have all the dependencies satisfied
     } ->
     exec { "opencv-build":
         user        => "mav",
         timeout     => 0,
         command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/opencv.build.out 2>&1",
-        cwd         => "/srv/maverick/build/opencv/build",
-        creates     => "/srv/maverick/build/opencv/build/lib/cv2.so",
+        cwd         => "/srv/maverick/var/build/opencv/build",
+        creates     => "/srv/maverick/var/build/opencv/build/lib/cv2.so",
     } ->
     exec { "opencv-install":
         user        => "root",
         timeout     => 0,
         command     => "/usr/bin/make install >/srv/maverick/var/log/build/opencv.install.out 2>&1",
-        cwd         => "/srv/maverick/build/opencv/build",
+        cwd         => "/srv/maverick/var/build/opencv/build",
         creates     => "/usr/local/lib/libopencv_core.so.3.1.0",
     }
     
