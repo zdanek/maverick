@@ -11,3 +11,4 @@ bin/mavproxy-fc.sh
 bin/mavproxy-sitl.sh
 bin/dev-sitl.sh
 bin/monitor-interface.sh
+conf/local-nodes/
