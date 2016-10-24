@@ -17,7 +17,6 @@ class maverick_baremetal::raspberry::init (
     python::pip { 'pip-wiringpi':
         pkgname     => 'wiringpi',
         ensure      => present,
-        owner       => 'mav',
     }
     
     if ($expand_root) {
