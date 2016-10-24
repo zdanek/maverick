@@ -12,5 +12,12 @@ class base::functions {
         command         => "/bin/systemctl daemon-reload",
         refreshonly     => true,
     }
+    
+    # Define an exec to do systemctl reset-failed that can be called through notify
+    exec { "maverick-systemctl-reset-failed":
+        command         => "/bin/systemctl reset-failed",
+        refreshonly     => true,
+    }
+    
 
 }
