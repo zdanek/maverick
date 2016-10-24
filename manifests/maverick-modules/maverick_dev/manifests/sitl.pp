@@ -80,13 +80,6 @@ class maverick_dev::sitl (
     }
     
     if getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "make" {
-        file { "/srv/maverick/data/config/mavproxy-sitl.screen.conf":
-            ensure      => present,
-            owner       => "mav",
-            group       => "mav",
-            source      => "puppet:///modules/maverick_dev/mavproxy-sitl.screen.conf",
-            notify      => Service["mavproxy-sitl"]
-        } ->
         file { "/etc/systemd/system/dev-sitl.service":
             content     => template("maverick_dev/dev-sitl.service.erb"),
             owner       => "root",
@@ -149,6 +142,13 @@ class maverick_dev::sitl (
         }
     }
     
+    file { "/srv/maverick/data/config/mavproxy-sitl.screen.conf":
+        ensure      => present,
+        owner       => "mav",
+        group       => "mav",
+        source      => "puppet:///modules/maverick_dev/mavproxy-sitl.screen.conf",
+        notify      => Service["mavproxy-sitl"]
+    } ->
     file { "/srv/maverick/var/log/mavproxy-sitl":
         ensure      => directory,
         owner       => "mav",
