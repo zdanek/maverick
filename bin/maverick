@@ -290,6 +290,7 @@ if [ $ENV == "bootstrap" ]; then
     echo "-------------------------"
     echo "WARNING: If this is the first bootstrap run, please reboot NOW to activate system changes."
     echo "If system is not rebooted after first bootstrap run, further runs may not work as expected."
+    echo "After reboot, login as 'mav' user - default password is 'wingman'"
     echo "-------------------------"
 fi
 
