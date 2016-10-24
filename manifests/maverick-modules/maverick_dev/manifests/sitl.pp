@@ -101,10 +101,6 @@ class maverick_dev::sitl (
             source      => "puppet:///modules/maverick_dev/mavproxy-sitl.screen.conf",
             notify      => Service["mavproxy-sitl"]
         } ->
-        file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
-            ensure      => link,
-            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/mavproxy-sitl.sh",
-        } ->
         file { "/etc/systemd/system/dev-sitl.service":
             content     => template("maverick_dev/dev-sitl.service.erb"),
             owner       => "root",
@@ -167,6 +163,10 @@ class maverick_dev::sitl (
         }
     }
     
+    file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/mavproxy-sitl.sh",
+    } ->
     file { "/etc/systemd/system/mavproxy-sitl.service":
         content     => template("maverick_dev/mavproxy-sitl.service.erb"),
         owner       => "root",
