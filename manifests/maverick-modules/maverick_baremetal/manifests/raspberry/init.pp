@@ -12,8 +12,14 @@ class maverick_baremetal::raspberry::init (
     $overpower_usb = false,
     ) {
 
-    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "wiringpi", "raspi-gpio"])
-
+    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
+    # Install wiringpi through pip as it's not always available through apt
+    python::pip { 'pip-wiringpi':
+        pkgname     => 'wiringpi',
+        ensure      => present,
+        owner       => 'mav',
+    }
+    
     if ($expand_root) {
         exec { "raspberry-expandroot":
             command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
