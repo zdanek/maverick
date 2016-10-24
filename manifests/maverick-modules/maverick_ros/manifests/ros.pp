@@ -58,7 +58,8 @@ class maverick_ros::ros (
     # Install from ros repos
     if $_installtype == "native" {
         package { ["ros-${distribution}-ros-base", "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros", "ros-${distribution}-vision-opencv"]:
-            ensure      => installed
+            ensure      => installed,
+            require     => Package["python-rosdep"]
         }
         
     # Build from source
@@ -83,7 +84,7 @@ class maverick_ros::ros (
         exec { "rosdep-init":
             command         => "/usr/bin/rosdep init",
             creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
-            require         => Package["python-rosdep"]
+            require         => [ Package["python-rosdep"], Package["python-wstool"] ]
         } ->
         exec { "rosdep-update":
             user            => "mav",
