@@ -80,14 +80,14 @@ class maverick_dev::sitl (
     }
     
     if getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "make" {
-        file { "/etc/systemd/system/dev-sitl.service":
+        file { "/etc/systemd/system/maverick-dev-sitl.service":
             content     => template("maverick_dev/dev-sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ]
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-dev-sitl"] ]
         } ->
-        service { "dev-sitl":
+        service { "maverick-dev-sitl":
             ensure      => $sitl_state,
             enable      => true,
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
@@ -127,7 +127,7 @@ class maverick_dev::sitl (
         service { "mavproxy-sitl":
             ensure      => $mavproxy_state,
             enable      => true,
-            require       => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ],
+            require       => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-dev-sitl"] ],
         }
 
     } elsif getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "waf" {
@@ -151,28 +151,28 @@ class maverick_dev::sitl (
             group       => "mav",
             replace     => false, # initialize but don't overwrite in the future
             source      => "puppet:///modules/maverick_dev/dev-sitl.conf",
-            notify      => Service["dev-sitl"]
+            notify      => Service["maverick-dev-sitl"]
         } ->
         file { "/srv/maverick/data/config/dev-sitl.screen.conf":
             ensure      => present,
             owner       => "mav",
             group       => "mav",
             source      => "puppet:///modules/maverick_dev/dev-sitl.sim_vehicle.screen.conf",
-            notify      => Service["dev-sitl"]
+            notify      => Service["maverick-dev-sitl"]
         } ->
         file { "/srv/maverick/software/maverick/bin/dev-sitl.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/dev-sitl.sim_vehicle.sh",
-            notify      => Service["dev-sitl"]
+            notify      => Service["maverick-dev-sitl"]
         } ->
-        file { "/etc/systemd/system/dev-sitl.service":
+        file { "/etc/systemd/system/maverick-dev-sitl.service":
             content     => template("maverick_dev/dev-sitl.sim_vehicle.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["dev-sitl"] ]
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-dev-sitl"] ]
         } ->
-        service { "dev-sitl":
+        service { "maverick-dev-sitl":
             ensure      => $sitl_state,
             enable      => true,
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
@@ -185,7 +185,7 @@ class maverick_dev::sitl (
         } ->
         file { "/etc/systemd/system/mavproxy-sitl.service":
             ensure      => absent,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Exec["maverick-systemctl-reset-failed"], Service["dev-sitl"] ]
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Exec["maverick-systemctl-reset-failed"], Service["maverick-dev-sitl"] ]
         }
 
     }

@@ -156,7 +156,7 @@ if [ "$STATUS" == "true" ]; then
     (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
-        (systemctl status dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
+        (systemctl status maverick-dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
         $(systemctl -a |grep mavproxy-sitl >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
             (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
