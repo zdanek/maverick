@@ -60,6 +60,13 @@ class maverick_ros::ros (
         package { ["ros-${distribution}-ros-base", "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros", "ros-${distribution}-vision-opencv"]:
             ensure      => installed,
             require     => Package["python-rosdep"]
+        } ->
+        file { "/etc/profile.d/ros-env.sh":
+            ensure      => present,
+            mode        => 644,
+            owner       => "root",
+            group       => "root",
+            content     => "source /opt/ros/${distribution}/setup.bash",
         }
         
     # Build from source
@@ -160,17 +167,17 @@ class maverick_ros::ros (
         file { "/opt/ros/${distribution}":
             ensure      => link,
             target      => "/srv/maverick/software/ros"
+        } ->
+        file { "/etc/profile.d/ros-env.sh":
+            ensure      => present,
+            mode        => 644,
+            owner       => "root",
+            group       => "root",
+            content     => "source /opt/ros/${distribution}/setup.bash",
+            require         => Exec["catkin_make"]
         }
     }  
     
-    file { "/etc/profile.d/ros-env.sh":
-        ensure      => present,
-        mode        => 644,
-        owner       => "root",
-        group       => "root",
-        content     => "source /opt/ros/${distribution}/setup.bash",
-    }
-
     # If SITL is active, add a mavros service for sitl link
     if defined("maverick_dev::sitl") {
         file { "/etc/systemd/system/maverick-mavros-sitl.service":
@@ -183,7 +190,7 @@ class maverick_ros::ros (
         service { "maverick-mavros-sitl":
             ensure      => running,
             enable      => true,
-            require     => Exec["maverick-systemctl-daemon-reload"]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
         }
     }
     
@@ -199,7 +206,7 @@ class maverick_ros::ros (
         service { "maverick-mavros-fc":
             ensure      => running,
             enable      => true,
-            require     => Exec["maverick-systemctl-daemon-reload"]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
         }
     }
     
