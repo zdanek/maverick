@@ -60,11 +60,16 @@ class base::packages {
     package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon"]:
         ensure      => present
     }
+    # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
     # Python::pip doesn't seem to work here, use exec instead
-    exec { "install pyric":
+    exec { "install-pyric":
         command     => "/usr/bin/pip install PyRIC",
         unless      => "/usr/bin/pip show PyRIC",
         require     => [ Package["python-pip"], Class["base::locale"] ]
     }
-
+    exec { "install-netifaces":
+        command     => "/usr/bin/pip install netifaces",
+        unless      => "/usr/bin/pip show netifaces",
+        require     => [ Package["python-pip"], Class["base::locale"] ]
+    }
 }

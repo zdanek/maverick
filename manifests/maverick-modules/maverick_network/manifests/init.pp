@@ -11,7 +11,7 @@ class maverick_network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload", "python-netifaces", "python3-netifaces"])
+    ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload"])
     
     # Install/setup wifibroadcast
     class { "maverick_network::wifibroadcast": }
