@@ -10,6 +10,8 @@ class maverick_fc (
         dest        => "/srv/maverick/software/dronekit-la",
         revision	=> "${dronekit_la_revision}",
         submodules  => true,
+        owner        => mav,
+        group       => mav,
     }
     # Compile dronekit-la
     exec { "compile-dronekit-la":
