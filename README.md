@@ -42,9 +42,9 @@ After the first reboot login as 'mav' user with the default password 'wingman', 
 ```
 maverick --env=dev --configure
 ```
-Or production environment (for safer flying and faster setup):
+Or flight environment (for safer flying and faster setup):
 ```
-maverick --env=production --configure
+maverick --env=flight --configure
 ```
 To update to the latest Maverick:
 ```

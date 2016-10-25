@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Maverick - UAV Companion Computer system
+# http://github.com/fnoop/maverick
+
 # If tput is available, populate colour variables
 if hash tput 2>/dev/null; then
     bgbl=$(tput setab 0)
@@ -29,7 +32,7 @@ fi
 # Define usage function
 usage () {
     echo "--configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
-    echo "--env=[bootstrap|dev|production]          Environment to configure: bootstrap, dev or production"
+    echo "--env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
     echo "--status                                  Show current running status"
     echo "--info                                    Display system information"
     echo "--netinfo                                 Display network information"
@@ -84,8 +87,8 @@ done
 mavenv () {
     if [ "x$1" == "xdev" ]; then
         echo "Maverick Environment:   ${bgr}${white}${bold} dev ${reset}"
-    elif [ "x$1" == "xproduction" ]; then
-        echo "Maverick Environment:   ${bgg}${white}${bold} production ${reset}"
+    elif [ "x$1" == "xflight" ]; then
+        echo "Maverick Environment:   ${bgg}${white}${bold} flight ${reset}"
     elif [ "x$1" == "xbootstrap" ]; then
         echo "Maverick Environment:   ${bgb}${white}${bold} bootstrap ${reset}"
     fi    
@@ -177,7 +180,7 @@ if [ -e /srv/maverick/.environment ]; then
     environment=$(cat /srv/maverick/.environment)
     if [[ $environment && "$ENV" != "" ]]; then
         echo "Environment marker set but is being ignored as --env is set"
-    elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "production" ]]; then
+    elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "flight" ]]; then
         echo "Environment marker set and is being used to set maverick environment: ${environment}"
         ENV=$environment
     else
@@ -185,9 +188,9 @@ if [ -e /srv/maverick/.environment ]; then
     fi
 fi
 
-# If environment not set to dev or production, exit
-if [[ "$ENV" != "dev" && "$ENV" != "production" && "$ENV" != "bootstrap" ]]; then 
-    echo "Error: --env not set to a recognised environment (bootstrap, dev or production)"
+# If environment not set to dev or flight, exit
+if [[ "$ENV" != "dev" && "$ENV" != "flight" && "$ENV" != "bootstrap" ]]; then 
+    echo "Error: --env not set to a recognised environment (bootstrap, dev or flight)"
     echo
     usage
 fi

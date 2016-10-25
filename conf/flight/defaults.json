@@ -1,4 +1,4 @@
-// These are defaults for the production environment.
+// These are defaults for the flight environment.
 {
 	"classes": [
 		"maverick_fc",
