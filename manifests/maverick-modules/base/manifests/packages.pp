@@ -64,7 +64,7 @@ class base::packages {
     exec { "install pyric":
         command     => "/usr/bin/pip install PyRIC",
         unless      => "/usr/bin/pip show PyRIC",
-        require     => Package["python-pip"],
+        require     => [ Package["python-pip"], Class["base::locale"] ]
     }
 
 }

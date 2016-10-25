@@ -12,10 +12,15 @@ class base {
         stage	=> "bootstrap",
     }
     
+    ### Setup locale and timezones
+    class { "base::locale": 
+        stage   => "bootstrap",
+    }
+    
     ### Make sure basic packages are installed
     class { "base::packages": 
         stage	=> "bootstrap",
-        require		=> Class["base::defaults"],
+        require		=> Class["base::defaults", "base::locale"],
     }
     
     ### Bootstrap puppet
@@ -48,9 +53,6 @@ class base {
 
     ### Include useful functions
     class { "base::functions": }
-        
-    ### Setup locale and timezones
-    class { "base::locale": }
         
     ### Setup console visual configuration
     class { "base::console": }
