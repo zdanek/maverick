@@ -59,7 +59,7 @@ class maverick_ros::ros (
     if $_installtype == "native" {
         package { ["ros-${distribution}-ros-base", "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros", "ros-${distribution}-vision-opencv"]:
             ensure      => installed,
-            require     => Package["python-rosdep"]
+            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"] ],
         } ->
         file { "/etc/profile.d/ros-env.sh":
             ensure      => present,
