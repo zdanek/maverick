@@ -287,6 +287,12 @@ else
     exit 1
 fi
 
+# If maverick not running from expected home assume we want to migrate local-node files
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ x"$DIR" != x"/srv/maverick/software/maverick/bin" ]; then
+    cp -unp $DIR/../conf/local-nodes/*.json /srv/maverick/software/maverick/conf/local-nodes >/dev/null 2>&1
+fi
+
 # If bootstrap environment, print a reboot warning
 if [ $ENV == "bootstrap" ]; then
     echo
