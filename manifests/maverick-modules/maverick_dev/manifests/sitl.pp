@@ -64,7 +64,7 @@ class maverick_dev::sitl (
     # Punch some holes in the firewall for sitl, protect 5770 which mavproxy-sitl uses
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "dev-sitl":
-            ports       => [5770-5775],
+            ports       => [5775-5777],
             ips         => hiera("all_ips"),
             proto       => "tcp"
         }
@@ -73,7 +73,7 @@ class maverick_dev::sitl (
     # Punch some holes in the firewall for sitl mavproxy
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "mavproxy-sitl":
-            ports       => [14562-14563],
+            ports       => [14565-14567],
             ips         => hiera("all_ips"),
             proto       => "udp"
         }

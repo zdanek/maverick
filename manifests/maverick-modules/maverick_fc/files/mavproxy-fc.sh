@@ -5,7 +5,7 @@ ENABLE=true
 SCREEN_NAME=mavproxy-fc
 MAVPROXY_PORT=/dev/ttyUSB0
 MAVPROXY_BAUD=115200
-MAVPROXY_ARGS="--out=udpin:0.0.0.0:14550 --out=udpin:0.0.0.0:14551 --out=tcpin:0.0.0.0:5760"
+MAVPROXY_ARGS="--out=udpin:0.0.0.0:14555 --out=udpin:0.0.0.0:14556 --out=udpin:0.0.0.0:14557 --out=tcpin:0.0.0.0:5765 --out=tcpin:0.0.0.0:5766 --out=tcpin:0.0.0.0:5767"
 
 [ ! -r /srv/maverick/data/config/mavproxy-fc.conf ] || . /srv/maverick/data/config/mavproxy-fc.conf
 

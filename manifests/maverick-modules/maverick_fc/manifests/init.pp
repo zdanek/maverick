@@ -105,12 +105,12 @@ class maverick_fc (
     # Punch some holes in the firewall for mavproxy
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "mavproxy-fc-udp":
-            ports       => [14550-14551],
+            ports       => [14555-14557],
             ips         => hiera("all_ips"),
             proto       => "udp"
         }
         maverick_security::firewall::firerule { "mavproxy-fc-tcp":
-            ports       => [5760],
+            ports       => [5765-5777],
             ips         => hiera("all_ips"),
             proto       => "tcp"
         }
