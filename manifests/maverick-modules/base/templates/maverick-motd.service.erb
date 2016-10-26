@@ -1,5 +1,7 @@
 [Unit]
 Description=Maverick MOTD Creator
+After=network-online.target
+Requires=network-online.target
 
 [Service]
 Type=oneshot
