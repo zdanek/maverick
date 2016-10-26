@@ -39,14 +39,14 @@ class maverick_cloud9 (
         group       => "mav",
         replace     => false,
     } ->
-    file { "/etc/systemd/system/cloud9.service":
+    file { "/etc/systemd/system/maverick-cloud9.service":
         content     => template("maverick_cloud9/cloud9.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => 644,
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service { "cloud9":
+    service { "maverick-cloud9":
         ensure      => running,
         enable      => true
     }

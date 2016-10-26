@@ -151,8 +151,8 @@ if [ "$STATUS" == "true" ]; then
     fi
     mavenv ${environment}
     echo
-    (systemctl status mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
-    $(systemctl -a |grep mavros-fc >/dev/null 2>&1)
+    (systemctl status maverick-mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
+    $(systemctl -a |grep maverick-mavros-fc >/dev/null 2>&1)
     if [ $? -eq 0 ]; then
         (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)
     fi
@@ -160,15 +160,15 @@ if [ "$STATUS" == "true" ]; then
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
         (systemctl status maverick-dev-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
-        $(systemctl -a |grep mavproxy-sitl >/dev/null 2>&1)
+        $(systemctl -a |grep maverick-mavproxy-sitl >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
-            (systemctl status mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
+            (systemctl status maverick-mavproxy-sitl >/dev/null 2>&1); statusout+=$(status "Mavproxy (SITL)" $?)
         fi
         $(systemctl -a |grep mavros-sitl >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
             (systemctl status maverick-mavros-sitl >/dev/null 2>&1); statusout+=$(status "Mavros (SITL)" $?)
         fi
-        (systemctl status cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
+        (systemctl status maverick-cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
     fi
     echo -e $statusout | column -c 2 -s : -t
     echo

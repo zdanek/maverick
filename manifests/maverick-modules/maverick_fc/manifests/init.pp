@@ -76,27 +76,27 @@ class maverick_fc (
         group       => "mav",
         replace     => false, # initialize but don't overwrite in the future
         source      => "puppet:///modules/maverick_fc/mavproxy-fc.conf",
-        notify      => Service["mavproxy-fc"]
+        notify      => Service["maverick-mavproxy-fc"]
     } ->
     file { "/srv/maverick/data/config/mavproxy-fc.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         source      => "puppet:///modules/maverick_fc/mavproxy-fc.screen.conf",
-        notify      => Service["mavproxy-fc"]
+        notify      => Service["maverick-mavproxy-fc"]
     } ->
     file { "/srv/maverick/software/maverick/bin/mavproxy-fc.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_fc/files/mavproxy-fc.sh",
     } ->
-    file { "/etc/systemd/system/mavproxy-fc.service":
+    file { "/etc/systemd/system/maverick-mavproxy-fc.service":
         content     => template("maverick_fc/mavproxy-fc.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => 644,
-        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-fc"] ]
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-mavproxy-fc"] ]
     } ->
-    service { "mavproxy-fc":
+    service { "maverick-mavproxy-fc":
         ensure      => $mavproxy_state,
         enable      => true,
         require       => Exec["maverick-systemctl-daemon-reload"]
