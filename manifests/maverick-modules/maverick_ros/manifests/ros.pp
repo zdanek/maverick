@@ -1,6 +1,8 @@
 class maverick_ros::ros (
     $installtype = "",
     $distribution = "kinetic",
+    $rossitl_service = "running",
+    $rosfc_service = "running",
 ) {
     
     # If installtype is set then use it and skip autodetection
@@ -188,7 +190,7 @@ class maverick_ros::ros (
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         service { "maverick-mavros-sitl":
-            ensure      => running,
+            ensure      => $rossitl_service,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
         }
@@ -204,7 +206,7 @@ class maverick_ros::ros (
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         service { "maverick-mavros-fc":
-            ensure      => running,
+            ensure      => $rosfc_service,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
         }
