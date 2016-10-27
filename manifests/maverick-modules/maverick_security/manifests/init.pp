@@ -1,7 +1,9 @@
 class maverick_security (
 	$selinux = "permissive",
-	$fail2ban = false,
 	$firewall = true,
+	$fail2ban = false,
+	$rkhunter = false,
+	$clamav = false,
 	) {
     
     ### Turn selinux on to at least permissive by default
@@ -16,6 +18,9 @@ class maverick_security (
 		class { "maverick_security::firewall": }
 	}
 
+	### Configure/enable ssh client, including various mandatory keys
+	class { "maverick_security::ssh": }
+
 	### Configure fail2ban for ssh
 	if $fail2ban {
 		class { "maverick_security::fail2ban": }
@@ -27,9 +32,9 @@ class maverick_security (
 	}
 
 	### Configure scanners like rkhunter and clamav
-	class { "maverick_security::scanners": }
-	
-	### Configure/enable ssh client, including various mandatory keys
-	class { "maverick_security::ssh": }
+	class { "maverick_security::scanners":
+		rkhunter		=> $rkhunter,
+		clamav			=> $clamav,
+	}
 	
 }

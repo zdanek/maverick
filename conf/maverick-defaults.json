@@ -70,10 +70,12 @@
 
 	"maverick_ros::ros_installtype": "", // Install ROS from source or native packages, leave blank to autodetect
 	
-	"maverick_security::fail2ban": true, // fail2ban can stop brute force attacks against ssh
+	"maverick_security::fail2ban": false, // fail2ban can stop brute force attacks against ssh
 	"maverick_security::fail2ban::alertemail": "admin@example.com", // Email address to send fail2ban alerts to
 	"maverick_security::firewall": true, // Run firewall by default if security enabled, holes will be automatically made for maverick services
 	"maverick_security::firewall::cronupdate": false, // Optionally run a firewall update every hour, useful if all_ips includes dynamic dns hostnames that can change
+	"maverick_security::rkhunter": false, // Install rootkit hunter utility
+	"maverick_security::clamav": false, // Install, configure and run antivirus
 	
     "maverick_vision::cv": false, // Install and configure opencv
     "maverick_vision::gstreamer_installtype": "native", // Install gstreamer with native OS packages or by source
