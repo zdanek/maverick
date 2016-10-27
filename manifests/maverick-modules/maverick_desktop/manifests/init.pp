@@ -18,6 +18,7 @@ class maverick_desktop (
         exec { "stop-desktop-target":
             unless      => "/bin/systemctl status graphical.target |grep inactive",
             command     => "/bin/systemctl isolate multi-user.target",
+            timeout     => 500,
         }
         exec { "disable-desktop-target":
             unless      => "/bin/systemctl get-default |grep multi-user;",
