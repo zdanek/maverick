@@ -31,9 +31,9 @@ Initial Installation
 --------------------
 For debian based distributions:
 ```
-sudo apt-get update && sudo apt-get install -y git
-git clone https://github.com/fnoop/maverick.git; cd maverick
-sudo ./bin/maverick --env=bootstrap --configure
+sudo apt-get update && sudo apt-get -y upgrade
+sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
+cd maverick && sudo ./bin/maverick --env=bootstrap --configure
 sudo reboot
 ```
 The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
