@@ -138,6 +138,7 @@ class maverick_ros (
             cwd             => "${_builddir}",
             user            => "mav",
             creates         => "${_builddir}/src/vision_opencv",
+            timeout         => 0,
             require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
         } ->
         exec { "catkin_make_vision_opencv":
@@ -155,6 +156,7 @@ class maverick_ros (
             cwd             => "${_builddir}",
             user            => "mav",
             creates         => "${_builddir}/src/mavros",
+            timeout         => 0,
             require         => Exec["catkin_make"]
         } ->
         exec { "catkin_make_mavros":
