@@ -56,7 +56,14 @@ class maverick_ros (
         ensure      => installed,
         require     => Exec["ros-aptupdate"],
     }
-    ensure_packages(["python-wstool", "build-essential"])
+    ensure_packages(["build-essential"])
+    $wstool_package = $::operatingsystem ? {
+        'Ubuntu'        => 'python-wstool',
+        'Debian'        => 'python-wstools',
+    }
+    package { "python-wstool":
+        name        => $wstool_package
+    }
 
     # Install from ros repos
     if $_installtype == "native" {
