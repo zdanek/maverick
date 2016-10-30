@@ -20,10 +20,13 @@ class maverick_baremetal::raspberry::init (
     }
     
     if ($expand_root) {
-        exec { "raspberry-expandroot":
-            command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
-            unless      => "/bin/grep 'done' /etc/raspi-expandroot",
-            require	    => Package["raspi-config"],
+        # $rootpart_expanded and $rootfs_expanded are facts provided by facts.d/filesystems.py
+        if $::rootpart_expanded == False or $::rootfs_expanded == False {
+            exec { "raspberry-expandroot":
+                command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
+                unless      => "/bin/grep 'done' /etc/raspi-expandroot",
+                require	    => Package["raspi-config"],
+            }
         }
     }
         
