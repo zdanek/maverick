@@ -261,6 +261,14 @@ class maverick_network (
 		        macaddress  => $macaddress,
 		    }
 		}
+		# If not defined as monitor mode, ensure monitor disabled for this interface
+		if $mode != "monitor" {
+		    service { "monitor-interface@${name}":
+                ensure      => stopped,
+                enable      => false,
+                require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/monitor-interface@.service"] ]
+            }
+		}
 	}
     
 }
