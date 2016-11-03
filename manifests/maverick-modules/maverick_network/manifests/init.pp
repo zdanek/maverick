@@ -11,7 +11,7 @@ class maverick_network (
     ) {
 
     # Install software 
-    ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload"])
+    ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload", "hostapd"])
     
     # Install/setup wifibroadcast
     class { "maverick_network::wifibroadcast": }
@@ -258,6 +258,10 @@ class maverick_network (
 		    }
 		} elsif $mode == "monitor" {
 		    maverick_network::monitor-interface { $name:
+		        macaddress  => $macaddress,
+		    }
+		} elsif $mode == "ap" {
+		    maverick_network::ap-interface { $name:
 		        macaddress  => $macaddress,
 		    }
 		}
