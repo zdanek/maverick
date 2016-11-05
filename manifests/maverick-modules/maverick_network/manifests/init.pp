@@ -243,10 +243,18 @@ class maverick_network (
 	    $nameservers = undef,
 	    $ssid = undef,
 	    $psk = undef,
+	    $dhcp_range = undef,
 	) {
+	    # If the mac address is specified, then set the interface name statically in udev
+    	if $macaddress {
+        	concat::fragment { "interface-customname-${name}":
+                target      => "/etc/udev/rules.d/10-network-customnames.rules",
+                content     => "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"${macaddress}\", NAME=\"${name}\"\n",
+            }
+    	}
 	    # Process managed interfaces
 		if $mode == "managed" {
-		    maverick_network::managed-interface { $name:
+		    maverick_network::interface_managed { $name:
 		        type        => $type,
 		        addressing  => $addressing,
 		        macaddress  => $macaddress,
@@ -257,11 +265,19 @@ class maverick_network (
 		        psk         => $psk,
 		    }
 		} elsif $mode == "monitor" {
-		    maverick_network::monitor-interface { $name:
+		    maverick_network::interface_monitor { $name:
 		        macaddress  => $macaddress,
 		    }
 		} elsif $mode == "ap" {
-		    maverick_network::ap-interface { $name:
+	        # First create the underlying interface that hostapd will run on
+		    maverick_network::interface_managed { $name:
+		        type        => $type,
+		        addressing  => "master",
+		        macaddress  => $macaddress,
+		        ipaddress   => $ipaddress,
+		    }
+		    # Then setup the AP
+		    maverick_network::interface_ap { $name:
 		        macaddress  => $macaddress,
 		    }
 		}

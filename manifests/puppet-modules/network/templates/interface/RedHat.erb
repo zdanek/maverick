@@ -12,6 +12,15 @@ UUID="<%= @uuid %>"
 <% if @ethtool_opts -%>
 ETHTOOL_OPTS="<%= @ethtool_opts %>"
 <% end -%>
+<% if @subchannels -%>
+SUBCHANNELS="<%= @subchannels.sort.join(',') %>"
+<% end -%>
+<% if @layer2 -%>
+LAYER2="<%= @layer2 %>"
+<% end -%>
+<% if @nettype -%>
+NETTYPE="<%= @nettype %>"
+<% end -%>
 <% if @manage_ipaddr -%>
 IPADDR="<%= @manage_ipaddr %>"
 <% end -%>
@@ -57,6 +66,9 @@ MASTER="<%= @master %>"
 <% if @slave  -%>
 SLAVE="<%= @slave %>"
 <% end -%>
+<% if @bonding_master -%>
+BONDING_MASTER="<%= @bonding_master %>"
+<% end -%>
 <% if @bonding_opts -%>
 BONDING_OPTS="<%= @bonding_opts %>"
 <% else -%>
@@ -96,6 +108,9 @@ NOZEROCONF="<%= @nozeroconf %>"
 <% end -%>
 <% if @linkdelay -%>
 LINKDELAY="<%= @linkdelay %>"
+<% end -%>
+<% if @hotplug -%>
+HOTPLUG="<%= @hotplug %>"
 <% end -%>
 <% if @devicetype -%>
 DEVICETYPE="<%= @devicetype %>"

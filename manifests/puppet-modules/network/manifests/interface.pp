@@ -102,6 +102,9 @@
 #  $check_link_down = false
 #    Set to true to add check_link_down function in the interface file
 #
+#  $hotswap = undef
+#    Set to no to prevent interface from being activated when hot swapped - Default is yes
+#
 # == RedHat only Open vSwitch specific parameters
 #
 #  $devicetype      = undef,
@@ -137,6 +140,16 @@
 #
 # Check the arguments in the code for the other Suse specific settings
 # If defined they are set in the used template.
+#
+#
+# == Red Hat zLinux on IBM ZVM/System Z (s390/s390x) only parameters
+#
+#  $subchannels = undef,
+#     The hardware addresses of QETH or Hipersocket hardware.
+#
+#  $nettype = undef,
+#     The networking hardware type.  qeth, lcs or ctc.
+#     The default is 'qeth'.
 #
 define network::interface (
 
@@ -218,17 +231,26 @@ define network::interface (
   $bond_primary    = undef,
   $bond_slaves     = [ ],
   $bond_xmit_hash_policy    = undef,
+  $bond_num_grat_arp = undef,
+  $bond_arp_all = undef,
+  $bond_arp_interval = undef,
+  $bond_arp_iptarget = undef,
+  $bond_fail_over_mac = undef,
+  $use_carrier     = undef,
+  $primary_reselect = undef,
 
   # For bridging
   $bridge_ports    = [ ],
   $bridge_stp      = undef,
   $bridge_fd       = undef,
   $bridge_maxwait  = undef,
-  
+  $bridge_waitport = undef,
+
   # For wireless
   $wpa_ssid        = undef,
   $wpa_psk         = undef,
-
+  $wireless_mode   = undef,
+  
   # RedHat specific
   $ipaddr          = '',
   $uuid            = undef,
@@ -249,6 +271,7 @@ define network::interface (
   $nm_controlled   = undef,
   $master          = undef,
   $slave           = undef,
+  $bonding_master  = undef,
   $bonding_opts    = undef,
   $vlan            = undef,
   $vlan_name_type  = undef,
@@ -260,6 +283,7 @@ define network::interface (
   $nozeroconf      = undef,
   $linkdelay       = undef,
   $check_link_down = false,
+  $hotplug         = undef,
 
   # RedHat specific for Open vSwitch
   $devicetype      = undef,
@@ -272,6 +296,11 @@ define network::interface (
   $ovs_tunnel_type = undef,
   $ovs_tunnel_options = undef,
   $ovsdhcpinterfaces  = undef,
+
+  # RedHat specifice for zLinux
+  $subchannels     = undef,
+  $nettype         = undef,
+  $layer2          = undef,
 
   ## Suse specific
   $startmode       = '',
@@ -306,6 +335,13 @@ define network::interface (
   validate_array($slaves)
   validate_array($bond_slaves)
   validate_array($bridge_ports)
+
+  # $subchannels is only valid for zLinux/SystemZ/s390x.
+  if $::architecture == 's390x' {
+    validate_array($subchannels)
+    validate_re($nettype, '^(qeth|lcs|ctc)$', "${name}::\$nettype may be 'qeth', 'lcs' or 'ctc' only and is set to <${nettype}>.")
+    validate_re($layer2, '^0|1$', "${name}::\$layer2 must be 1 or 0 and is to <${layer2}>.")
+  }
 
   if $arp != undef and ! ($arp in ['yes', 'no']) {
     fail('arp must be one of: undef, yes, no')
@@ -487,6 +523,66 @@ define network::interface (
         owner   => 'root',
         group   => 'root',
         notify  => $network::manage_config_file_notify,
+      }
+    }
+
+    'Solaris': {
+      if $::operatingsystemrelease == '5.11' {
+        if ! defined(Service['svc:/network/physical:nwam']) {
+          service { 'svc:/network/physical:nwam':
+            ensure => stopped,
+            enable => false,
+            before => [
+              Service['svc:/network/physical:default'],
+              Exec["create ipaddr ${title}"],
+              File["hostname iface ${title}"],
+            ],
+          }
+        }
+      }
+      case $::operatingsystemmajrelease {
+        '11','5': {
+          if $enable_dhcp {
+            $create_ip_command = "ipadm create-addr -T dhcp ${title}/dhcp"
+            $show_ip_command = "ipadm show-addr ${title}/dhcp"
+          } else {
+            $create_ip_command = "ipadm create-addr -T static -a ${ipaddress}/${netmask} ${title}/v4static"
+            $show_ip_command = "ipadm show-addr ${title}/v4static"
+          }
+        }
+        default: {
+          $create_ip_command = 'true'
+          $show_ip_command = 'true'
+        }
+      }
+      exec { "create ipaddr ${title}":
+        command => $create_ip_command,
+        unless  => $show_ip_command,
+        path    => '/bin:/sbin:/usr/sbin:/usr/bin:/usr/gnu/bin',
+        tag     => 'solaris',
+      }
+      file { "hostname iface ${title}":
+        ensure  => file,
+        path    => "/etc/hostname.${title}",
+        content => inline_template("<%= @ipaddress %> netmask <%= @netmask %>\n"),
+        require => Exec["create ipaddr ${title}"],
+        tag     => 'solaris',
+      }
+      host { $::fqdn:
+        ensure       => present,
+        ip           => $ipaddress,
+        host_aliases => [$::hostname],
+        require      => File["hostname iface ${title}"],
+      }
+      if ! defined(Service['svc:/network/physical:default']) {
+        service { 'svc:/network/physical:default':
+          ensure    => running,
+          enable    => true,
+          subscribe => [
+            File["hostname iface ${title}"],
+            Exec["create ipaddr ${title}"],
+          ],
+        }
       }
     }
 

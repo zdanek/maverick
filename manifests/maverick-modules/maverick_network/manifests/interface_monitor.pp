@@ -1,15 +1,7 @@
-define maverick_network::monitor-interface (
+define maverick_network::interface_monitor (
     $macaddress = undef,
 ) {
 
-    # If the mac address is specified, then set the interface name statically in udev
-	if $macaddress {
-    	concat::fragment { "interface-customname-${name}":
-            target      => "/etc/udev/rules.d/10-network-customnames.rules",
-            content     => "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"${macaddress}\", NAME=\"${name}\"\n",
-        }
-	}
-	
     # Define a service definition for this interface
 	service { "monitor-interface@${name}":
         ensure      => running,

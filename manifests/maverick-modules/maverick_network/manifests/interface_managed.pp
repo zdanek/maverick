@@ -1,4 +1,4 @@
-define maverick_network::managed-interface (
+define maverick_network::interface_managed (
     $type = "ethernet",
     $addressing = "dhcp",
     $ipaddress = undef,
@@ -8,14 +8,6 @@ define maverick_network::managed-interface (
     $ssid = undef,
     $psk = undef,
 ) {
-    
-    # If the mac address is specified, then set the interface name statically in udev
-	if $macaddress {
-    	concat::fragment { "interface-customname-${name}":
-            target      => "/etc/udev/rules.d/10-network-customnames.rules",
-            content     => "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"${macaddress}\", NAME=\"${name}\"\n",
-        }
-	}
 	
 	# If IP address is specified, then add it to avahi hosts
 	if $ipaddress {
@@ -62,7 +54,7 @@ define maverick_network::managed-interface (
                 method          => "dhcp",
             }
         }
-    } elsif "static" {
+    } elsif $addressing == "static" {
         if $type == "wireless" {
             network::interface { "$name":
                 enable_dhcp     => false,
@@ -90,6 +82,16 @@ define maverick_network::managed-interface (
                 gateway         => $gateway,
                 dns_nameservers => $nameservers,
             }
+        }
+    } elsif $addressing == "master" {
+        network::interface { "$name":
+            enable_dhcp     => false,
+            auto            => true,
+            allow_hotplug   => true,
+            method          => "static",
+            wireless_mode   => "master",
+            ipaddress       => $ipaddress,
+            netmask         => $netmask,
         }
     }
     
