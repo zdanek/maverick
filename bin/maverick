@@ -151,7 +151,10 @@ if [ "$STATUS" == "true" ]; then
     fi
     mavenv ${environment}
     echo
-    (systemctl status maverick-mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
+    $(systemctl -a |grep maverick-mavproxy-fc >/dev/null 2>&1)
+    if [ $? -eq 0 ]; then
+        (systemctl status maverick-mavproxy-fc >/dev/null 2>&1); statusout+=$(status "Mavproxy (Flight Controller)" $?)
+    fi
     $(systemctl -a |grep maverick-mavros-fc >/dev/null 2>&1)
     if [ $? -eq 0 ]; then
         (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)

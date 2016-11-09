@@ -1,6 +1,6 @@
 class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavproxy_state = undef,
+    $mavproxy_active = true,
     $dronekit_la_revision = "master",
 ) {
 
@@ -95,11 +95,19 @@ class maverick_fc (
         group       => "root",
         mode        => 644,
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-mavproxy-fc"] ]
-    } ->
-    service { "maverick-mavproxy-fc":
-        ensure      => $mavproxy_state,
-        enable      => true,
-        require       => Exec["maverick-systemctl-daemon-reload"]
+    }
+
+    if $mavproxy_active == true {
+        service { "maverick-mavproxy-fc":
+            ensure      => running,
+            enable      => true,
+            require     =>[ File["/etc/systemd/system/maverick-mavproxy-fc.service"], Exec["maverick-systemctl-daemon-reload"] ]
+        }
+    } else {
+        service { "maverick-mavproxy-fc":
+            ensure      => stopped,
+            enable      => false,
+        }
     }
     
     # Punch some holes in the firewall for mavproxy
