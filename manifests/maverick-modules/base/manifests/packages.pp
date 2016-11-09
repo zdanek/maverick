@@ -21,6 +21,8 @@ class base::packages {
         "cmake",
         "pkg-config",
         "usbutils",
+        "lsof",
+        "tcpdump",
     ])
 
     if $operatingsystem == "Ubuntu" {
