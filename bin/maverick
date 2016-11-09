@@ -60,6 +60,10 @@ do
             CONFIGURE="true"
             shift
             ;;
+        --dryrun)
+            DRYRUN="--noop"
+            shift
+            ;;
         --status)
             STATUS="true"
             shift
@@ -267,22 +271,29 @@ if [[ "$ubuntu" != "" && "$upstart" != "" ]]; then
 fi
 
 # OK we're good to go!
-#echo "Environment: ${ENV}"
 mavenv ${ENV}
-echo 'Proceeding to update system configuration - please be patient, this can take a while..'
+if [ "x${DRYRUN}" == "x" ]; then
+    echo "${bgbl}${bold}${red}Proceeding to update system configuration - please be patient, this can take a while..${reset}"
+    RUNMODE="--no-noop"
+else
+    echo "${bgbl}${bold}${green}Dry run requested, running configure in a readonly/nondestructive mode${reset}"
+    RUNMODE="--noop"
+fi
+echo
+
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} manifests
+        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} manifests
+        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} manifests
+        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} manifests
+        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
     fi
     cd $cwd
 else
