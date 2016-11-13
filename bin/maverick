@@ -33,6 +33,7 @@ fi
 usage () {
     echo "--configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
     echo "--env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
+    echo "--dryrun                                  Configure dry run - just show what would be done"
     echo "--status                                  Show current running status"
     echo "--info                                    Display system information"
     echo "--netinfo                                 Display network information"
