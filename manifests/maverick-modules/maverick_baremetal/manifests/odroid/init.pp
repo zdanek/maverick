@@ -1,5 +1,6 @@
 class maverick_baremetal::odroid::init (
-    $governor_atboot = "ondemand"
+    $governor_atboot = "ondemand",
+    $kernel4x = false,
 ) {
 
     ensure_packages(["axel", "whiptail"])
@@ -8,6 +9,15 @@ class maverick_baremetal::odroid::init (
     oncevcsrepo { "git-odroid-utility":
         gitsource   => "https://github.com/mdrjr/odroid-utility.git",
         dest        => "/srv/maverick/software/odroid-utility",
+    }
+    
+    # Expand rootfs
+    if $rootpart_expanded == "False" {
+        warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
+        exec { "odroid-expand-rootfs":
+            command     => "/bin/bash /srv/maverick/software/odroid-utility/fs_resize.sh start",
+            require     => Oncevcsrepo["git-odroid-utility"]
+        }
     }
     
     # Add odroid-cpu-control from git, very useful
@@ -64,6 +74,10 @@ class maverick_baremetal::odroid::init (
         command     => "/srv/maverick/software/odroid-wiringpi/build >/srv/maverick/var/log/build/odroid-wiringpi.build.log 2>&1",
         cwd         => "/srv/maverick/software/odroid-wiringpi",
         creates     => "/srv/maverick/software/odroid-wiringpi/wiringPi/libwiringPi.so.2.0",
+    }
+    
+    if $kernel4x == true {
+        class { "maverick_baremetal::odroid::kernel4x": }
     }
     
 }
