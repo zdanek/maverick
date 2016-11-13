@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Set defaults, can be overriden in /srv/maverick/data/config/wifibroadcast-if.conf
-RATE=24M
+RATE=24
 CHAN5G=149
 CHAN2G=13
+POWER=10
 
 # This script must run as root
 if [[ $EUID -ne 0 ]]; then
@@ -19,12 +20,6 @@ if hash ifconfig; then
     ifconfig=$(which ifconfig)
 else
     echo "Error: 'ifconfig' not found"
-    exit 1
-fi
-if hash iwconfig; then
-    iwconfig=$(which iwconfig)
-else
-    echo "Error: 'iwconfig' not found"
     exit 1
 fi
 if hash iw; then
@@ -55,8 +50,9 @@ case $1 in
     			$iw dev $2 set monitor otherbss fcsfail
     			$ifconfig $2 up
     			$iw reg set BO
-    			$iwconfig $2 rate $RATE
-    			$iwconfig $2 channel $CHAN5G
+    			$iw dev $2 set bitrates legacy-5 $RATE
+    			$iw dev $2 set channel $CHAN5G
+    			# $iw dev $2 set txpower fixed $POWER
 			    ;;
             *)
                 echo "This wifi chipset ($driver) has not yet been evaluated with wifibroadcast"

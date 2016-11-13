@@ -159,11 +159,11 @@ class Netinfo(object):
         except:
             self.data['ssid'] = None
         try:
-            self.data['chw'] = _linkinfo['chw']
+            self.data['chw'] = _devinfo['CHW']
         except:
             self.data['chw'] = None
         try:
-            self.data['frequency'] = _linkinfo['freq']
+            self.data['frequency'] = _devinfo['RF']
         except:
             self.data['frequency'] = None
         try:

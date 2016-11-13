@@ -15,11 +15,9 @@ udevnet = Udevnet()
 udevnet.runall()
 
 from netinfo import Netinfo # from facts.d/netinfo.py
-#import iwconfig
 
 import argparse
 parser = argparse.ArgumentParser(description='Display network information')
-#parser.add_argument('-m', '--motd', help="Display information in format more suitable to create motd", action="store_true")
 args = parser.parse_args()
 
 ctrls = {}
