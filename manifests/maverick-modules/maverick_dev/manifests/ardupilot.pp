@@ -14,6 +14,7 @@ class maverick_dev::ardupilot (
         gitsource   => $ardupilot_source,
         dest        => "/srv/maverick/code/ardupilot",
         revision	=> $ardupilot_branch,
+        submodules  => true,
     }
     ensure_packages(["make", "gawk", "g++", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
     # Waf build requires python future
