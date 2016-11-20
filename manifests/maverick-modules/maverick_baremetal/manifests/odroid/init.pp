@@ -14,10 +14,18 @@ class maverick_baremetal::odroid::init (
     # Expand rootfs
     if $rootpart_expanded == "False" {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
+        file { "/aafirstboot":
+            source      => "puppet:///modules/maverick_baremetal/aafirstboot",
+            mode        => "755",
+        } ->
+        file { "/.first_boot":
+            ensure      => present,
+        } ->
         exec { "odroid-expand-rootfs":
-            command     => "/bin/bash /srv/maverick/software/odroid-utility/fs_resize.sh start",
-            require     => Oncevcsrepo["git-odroid-utility"]
+            command     => "/bin/bash /aafirstboot start",
         }
+        # Note this runs the first part of aafirstboot to expand the partition but keeps it in place to run
+        #  the second phase of expanding the root filesystem at next boot.  Hence the warning to reboot.
     }
     
     # Add odroid-cpu-control from git, very useful
