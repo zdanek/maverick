@@ -8,6 +8,7 @@ class maverick_network (
     $dnsmasq = false,
     $dnsclient = false, 
     $ntpclient = false,
+    $ipv6 = undef,
     ) {
 
     # Install software 
@@ -63,10 +64,18 @@ class maverick_network (
     }
 
     # Turn off IPv6 - #213
-    base::sysctl::conf {
-    	"net.ipv6.conf.all.disable_ipv6": 					value => 1;
-	"net.ipv6.conf.default.disable_ipv6": 					value => 1;
-	"net.ipv6.conf.lo.disable_ipv6": 					value => 1;
+    if $ipv6 == false {
+        base::sysctl::conf {
+        	"net.ipv6.conf.all.disable_ipv6": 					value => 1;
+            "net.ipv6.conf.default.disable_ipv6": 				value => 1;
+            "net.ipv6.conf.lo.disable_ipv6": 					value => 1;
+        }
+    } elseif $ipv6 == true {
+        base::sysctl::conf {
+        	"net.ipv6.conf.all.disable_ipv6": 					value => 0;
+            "net.ipv6.conf.default.disable_ipv6": 				value => 0;
+            "net.ipv6.conf.lo.disable_ipv6": 					value => 0;
+        }
     }
     
     # Set high network buffers to better cope with our likely crappy usb ethernet and wifi links (12mb instead of default 128k)
