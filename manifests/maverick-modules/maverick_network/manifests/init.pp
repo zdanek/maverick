@@ -62,6 +62,13 @@ class maverick_network (
         }
     }
 
+    # Turn off IPv6 - #213
+    base::sysctl::conf {
+    	"net.ipv6.conf.all.disable_ipv6": 1;
+	"net.ipv6.conf.default.disable_ipv6": 1;
+	"net.ipv6.conf.lo.disable_ipv6": 1;
+    }
+    
     # Set high network buffers to better cope with our likely crappy usb ethernet and wifi links (12mb instead of default 128k)
     # Need to look closer at this to ensure it doesn't increase latency
     base::sysctl::conf { 
