@@ -1,1 +1,0 @@
-/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/monitor-interface-if.sh
