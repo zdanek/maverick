@@ -70,7 +70,7 @@ class maverick_network (
             "net.ipv6.conf.default.disable_ipv6": 				value => 1;
             "net.ipv6.conf.lo.disable_ipv6": 					value => 1;
         }
-    } elseif $ipv6 == true {
+    } elsif $ipv6 == true {
         base::sysctl::conf {
         	"net.ipv6.conf.all.disable_ipv6": 					value => 0;
             "net.ipv6.conf.default.disable_ipv6": 				value => 0;
