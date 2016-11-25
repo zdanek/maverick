@@ -39,15 +39,21 @@ class maverick_baremetal::odroid::kernel4x (
         creates     => "/srv/maverick/var/build/linux/arch/arm/boot/zImage",
         require     => [ Package["bc"], Package["make"], Exec["odroid-backup-kernel3"] ]
     } ->
-    exec { "odroid-kernel4x-cpkern":
-        command     => "/bin/cp -f arch/arm/boot/zImage arch/arm/boot/dts/exynos5422-odroidxu[34].dtb /media/boot",
-        cwd         => "/srv/maverick/var/build/linux",
-        creates     => "/media/boot/exynos5422-odroidxu4.dtb",
+    exec { "odroid-kernel4x-marker":
+        command     => "/usr/bin/make -C /srv/maverick/var/build/linux -s kernelrelease >/srv/maverick/var/build/linux/.kernelrelease",
+        creates     => "/srv/maverick/var/build/linux/.kernelrelease",
     }
     
     # Get the version of the kernel we're building.  Note that we use generate here which runs on the 'master'.  If
     #  maverick is not running as a puppet agent (ie master/client model), this will break.
-    $kver = chomp(generate("/usr/bin/make","-C","/srv/maverick/var/build/linux","-s","kernelrelease"))
+    if $::odroid_kernel4x_release != "no" {
+        $kver = $::odroid_kernel4x_release
+        warning("Building second stage Odroid 4.x kernel, please reboot once this run is complete.")
+    } else {
+        $kver = undef
+        warning("Building Odroid 4.x kernel is currently a two stage process, please run maverick --configure again after this run is complete.")
+    }
+    
     if $kver {
         exec { "odroid-kernel4x-fw":
             command     => "/usr/bin/make firmware_install; /usr/bin/touch /lib/firmware/.fw-${kver}",
@@ -59,6 +65,11 @@ class maverick_baremetal::odroid::kernel4x (
             cwd         => "/srv/maverick/var/build/linux",
             creates     => "/lib/modules/${kver}/modules.dep",
             require     => Exec["odroid-kernel4x-make"]
+        } ->
+        exec { "odroid-kernel4x-cpkern":
+            command     => "/bin/cp -f arch/arm/boot/zImage arch/arm/boot/dts/exynos5422-odroidxu[34].dtb /media/boot",
+            cwd         => "/srv/maverick/var/build/linux",
+            creates     => "/media/boot/exynos5422-odroidxu4.dtb",
         } ->
         exec { "odroid-kernel4x-config":
             command     => "/bin/cp -f .config /boot/config-${kver}",
@@ -83,7 +94,7 @@ class maverick_baremetal::odroid::kernel4x (
             command     => "/bin/sed -i -e 's/odroidxu3/odroidxu4/' /media/boot/boot.ini",
             onlyif      => "/bin/grep odroidxu3 /media/boot/boot.ini"
         }
-            
+                
     }
     
     

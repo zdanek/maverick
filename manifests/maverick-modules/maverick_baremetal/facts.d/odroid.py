@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # This fact extracts as much hardware information out of an odroid as possible
 
-import re, sys, subprocess
+import os, re, sys, subprocess
 
 class Odroid(object):
     def __init__(self):
@@ -46,9 +46,24 @@ class Odroid(object):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
         f.close()
 
+    def kernelbuild(self):
+        try:
+            if os.path.isdir('/srv/maverick/var/build/linux'):
+                self.data['kernel4x_dir'] = "yes"
+            else:
+                self.data['kernel4x_dir'] = "no"
+            with open ("/srv/maverick/var/build/linux/.kernelrelease", "r") as kernelrelease:
+                kr=kernelrelease.readlines()
+            if kr:
+                self.data['kernel4x_release'] = kr[0].rstrip()
+        except:
+            self.data['kernel4x_dir'] = "no"
+            self.data['kernel4x_release'] = "no"
+
     def runall(self):
         self.cpudata()
         self.storagedata()
+        self.kernelbuild()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
@@ -58,6 +73,8 @@ if __name__ == '__main__':
         print "odroid_present=no"
         sys.exit(1)
     odroid.storagedata()
+    odroid.kernelbuild()
+    
     # Finally, print the data out in the format expected of a fact provider
     if odroid.data:
         for key,val in odroid.data.items():
