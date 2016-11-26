@@ -8,4 +8,12 @@ class maverick_gcs (
         class { "maverick_gcs::skysense": }
     }
     
+    if $qgroundcontrol == true {
+        class { "maverick_gcs::qgroundcontrol": }
+    }
+    
+    if $apmplanner2 == true {
+        class { "maverick_gcs::apmplanner2": }
+    }
+    
 }

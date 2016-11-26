@@ -66,10 +66,10 @@ class maverick_baremetal::odroid::init (
     
     # Ensure Mali GL libraries are installed
     package { "mali-x11":
-        ensure      => absent
+        ensure      => present
     } ->
     package { "mali-fbdev":
-        ensure      => present
+        ensure      => absent
     }
     ensure_packages(["libgles2-mesa", "libgles2-mesa-dev"])
     
