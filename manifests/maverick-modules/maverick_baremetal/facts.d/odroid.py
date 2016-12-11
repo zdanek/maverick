@@ -17,7 +17,7 @@ class Odroid(object):
             (key,val) = r.groups(0)[0],r.groups(0)[1]
             if key == "Hardware": 
                 self.data['model'] = val
-                if re.search('ODROID', val):
+                if re.search('ODROID', val) or re.search('EXYNOS', val):
                     self.data['present'] = 'yes'
             elif key == "Revision": 
                 self.data['revision'] = val
@@ -42,7 +42,7 @@ class Odroid(object):
         # Obtain the SD card size from proc
         f = open('/proc/partitions', 'r')
         for line in f:
-            if re.search("mmcblk0$", line):
+            if re.search("mmcblk[01]$", line):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
         f.close()
 

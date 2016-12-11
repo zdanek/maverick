@@ -22,7 +22,10 @@ try:
     rootpart = data['filesystems']['/']['partition'].replace("/dev/","")
     rootsize = float(data['filesystems']['/']['size'])
     partsize = float(data['partitions'][rootpart])
-    disksize = float(data['partitions']['mmcblk0'])
+    try:
+        disksize = float(data['partitions']['mmcblk0'])
+    except:
+        disksize = float(data['partitions']['mmcblk1'])
     part_ratio = (rootsize / partsize) * 100
     disk_ratio = (partsize / disksize) * 100
     data['rootpart_expanded'] = True if disk_ratio > 95 else False
