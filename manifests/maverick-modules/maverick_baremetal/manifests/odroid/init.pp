@@ -20,10 +20,10 @@ class maverick_baremetal::odroid::init (
         } ->
         file { "/.first_boot":
             ensure      => present,
-        } ->
-        exec { "odroid-expand-rootfs":
-            command     => "/bin/bash /aafirstboot start",
         }
+        #exec { "odroid-expand-rootfs":
+        #    command     => "/bin/bash /aafirstboot start",
+        #}
         # Note this runs the first part of aafirstboot to expand the partition but keeps it in place to run
         #  the second phase of expanding the root filesystem at next boot.  Hence the warning to reboot.
     }
