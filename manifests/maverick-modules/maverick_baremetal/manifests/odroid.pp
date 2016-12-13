@@ -42,12 +42,12 @@ class maverick_baremetal::odroid (
     #  .. first reset all governors except what we want
     exec { "odroid-boot-governor-others":
         command     => '/bin/sed /media/boot/boot.ini -i -r -e "/^setenv governor \"${governor_atboot}\"/! s/^(setenv governor)\s(=[^,]*)?/\# setenv governor $1/"',
-        onlyif      => "/bin/grep '^setenv governor' /media/boot/boot.ini | /bin/grep -v ${governor_atboot}"
+        onlyif      => "/bin/grep -e '^setenv governor' /media/boot/boot.ini | /bin/grep -v '${governor_atboot}'",
     } ->
     # .. then set the requested governor
     exec { "odroid-boot-governor-requested":
         command     => "/bin/sed /media/boot/boot.ini -i -r -e 's/^# setenv governor \"${governor_atboot}\"/setenv governor \"${governor_atboot}\"/'",
-        onlyif      => "/bin/grep '^# setenv governor \"${governor_atboot}\"' /media/boot/boot.ini"
+        onlyif      => "/bin/egrep -e '^# setenv governor \"${governor_atboot}\"' /media/boot/boot.ini"
     }
     concat { "/etc/profile.d/maverick-path-odroid.sh":
         ensure      => present,
