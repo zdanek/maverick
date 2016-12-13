@@ -1,4 +1,4 @@
-class maverick_baremetal::raspberry::init (
+class maverick_baremetal::raspberry (
     $expand_root = true,
     $gpumem = 128,
     $overclock = "None", # "None", "High", "Turbo"

@@ -1,4 +1,4 @@
-class maverick_vision::cv::init (
+class maverick_vision::opencv (
 ) {
     
     # Compile opencv3, note this can take a while.  This is (loosely) based on the guide here:

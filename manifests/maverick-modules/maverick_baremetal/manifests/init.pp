@@ -4,19 +4,19 @@ class maverick_baremetal (
 	
 	# Setup hardware sensors (lmsensors)
 	if ($sensors) {
-    	include maverick_baremetal::sensors
+    	class { "maverick_baremetal::sensors": }
 	}
 
 	if ($raspberry_present == "yes") {
-		class { "maverick_baremetal::raspberry::init": }
+		class { "maverick_baremetal::raspberry": }
 	}
 	
 	if ($beagle_present == "yes") {
-		class { "maverick_baremetal::beagle::init": }
+		class { "maverick_baremetal::beagle": }
 	}
 	
 	if ($odroid_present == "yes") {
-		class { "maverick_baremetal::odroid::init": }
+		class { "maverick_baremetal::odroid": }
 	}
 	
 	# Setup ocam software

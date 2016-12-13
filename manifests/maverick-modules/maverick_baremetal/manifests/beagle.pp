@@ -1,4 +1,4 @@
-class maverick_baremetal::beagle::init (
+class maverick_baremetal::beagle (
     $included_cloud9 = false,
     ) {
     

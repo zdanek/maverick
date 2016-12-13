@@ -1,4 +1,4 @@
-class maverick_baremetal::odroid::init (
+class maverick_baremetal::odroid (
     $governor_atboot = "ondemand",
     $kernel4x = false,
 ) {
