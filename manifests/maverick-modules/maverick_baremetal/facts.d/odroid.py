@@ -81,6 +81,11 @@ class Odroid(object):
         except:
             pass
         
+        if os.path.exists("/srv/maverick/var/build/linux/.install_flag"):
+            self.data['kernel_install_flag'] = "yes"
+        else:
+            self.data['kernel_install_flag'] = "no"
+
     def runall(self):
         self.cpudata()
         self.storagedata()

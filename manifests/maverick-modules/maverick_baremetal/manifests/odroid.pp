@@ -84,8 +84,10 @@ class maverick_baremetal::odroid (
         creates     => "/srv/maverick/software/odroid-wiringpi/wiringPi/libwiringPi.so.2.0",
     }
     
-    if $kernel4x == true {
+    if $kernel4x == true and $::odroid_kernel_install_flag == "no" {
         class { "maverick_baremetal::odroid::kernel4x": }
+    } elsif $kernel4x == true and $::odroid_kernel_install_flag == "yes" {
+        # do nothing
     } else {
         class { "maverick_baremetal::odroid::kernel3x": }
     }
