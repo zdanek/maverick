@@ -1,5 +1,5 @@
 class maverick_baremetal::odroid (
-    $governor_atboot = "ondemand",
+    $governor_atboot = "performance",
     $kernel4x = false,
 ) {
 
