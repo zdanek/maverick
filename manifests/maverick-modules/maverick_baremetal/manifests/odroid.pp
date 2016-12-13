@@ -86,6 +86,8 @@ class maverick_baremetal::odroid (
     
     if $kernel4x == true {
         class { "maverick_baremetal::odroid::kernel4x": }
+    } else {
+        class { "maverick_baremetal::odroid::kernel3x": }
     }
     
 }

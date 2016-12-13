@@ -12,7 +12,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
     # This depends on gitfiles fact, declared in maverick-modules/base/facts.d/gitrepos.py
     $gitrepos = split($gitrepos, ',')
     if ! ("${dest}/.git/HEAD" in $gitrepos) {
-        warning("oncevcsrepo: ${dest} git repo doesn't exist locally, cloning may take a while..")
+        notice("oncevcsrepo: ${dest} git repo doesn't exist locally, cloning may take a while..")
         file { "${dest}":
             ensure      => directory,
             owner       => "${owner}",

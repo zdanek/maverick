@@ -46,7 +46,7 @@ class Odroid(object):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
         f.close()
 
-    def kernelbuild(self):
+    def kernel(self):
         try:
             if os.path.isdir('/srv/maverick/var/build/linux'):
                 self.data['kernel4x_dir'] = "yes"
@@ -60,10 +60,31 @@ class Odroid(object):
             self.data['kernel4x_dir'] = "no"
             self.data['kernel4x_release'] = "no"
 
+        try:
+            if os.path.exists("/media/boot/boot.ini-k3bak") and os.path.exists("/media/boot/config-k3bak") and os.path.exists("/media/boot/exynos5422-odroidxu3.dtb-k3bak") and os.path.exists("/media/boot/uInitrd-k3bak") and os.path.exists("/media/boot/zImage-k3bak"):
+                self.data['kernel3x_backups'] = "yes"
+            else:
+                self.data['kernel3x_backups'] = "no"
+        except:
+            self.data['kernel3x_backups'] = "no"
+            
+        self.data['kernel_current'] = "no"
+        try:
+            try:
+                klines = subprocess.check_output(["/usr/bin/mkimage", "-l", "/media/boot/uInitrd"]).split("\n")
+            except subprocess.CalledProcessError, e:
+                klines = None
+            for kline in klines:
+                if re.search("Image Name", kline):
+                    kver = re.split('.*initrd.img-', kline)[1]
+                    self.data['kernel_current'] = kver
+        except:
+            pass
+        
     def runall(self):
         self.cpudata()
         self.storagedata()
-        self.kernelbuild()
+        self.kernel()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
@@ -73,7 +94,7 @@ if __name__ == '__main__':
         print "odroid_present=no"
         sys.exit(1)
     odroid.storagedata()
-    odroid.kernelbuild()
+    odroid.kernel()
     
     # Finally, print the data out in the format expected of a fact provider
     if odroid.data:
