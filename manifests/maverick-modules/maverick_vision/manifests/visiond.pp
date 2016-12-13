@@ -1,4 +1,5 @@
 class maverick_vision::visiond (
+    $visiond_state = undef,
 ) {
         
     # Setup standard packages for all platforms

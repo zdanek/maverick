@@ -3,7 +3,6 @@ class maverick_vision (
     $gstreamer = true,
     $opencv = true,
     $mjpg_streamer = false,
-    $visiond_state = undef,
 ) {
 
     if $visiond == true {
