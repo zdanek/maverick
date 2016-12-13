@@ -31,13 +31,18 @@ fi
 
 # Define usage function
 usage () {
-    echo "--configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
-    echo "--env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
-    echo "--dryrun                                  Configure dry run - just show what would be done"
-    echo "--status                                  Show current running status"
-    echo "--info                                    Display system information"
-    echo "--netinfo                                 Display network information"
-    echo "--self-update                             Update to latest maverick code"
+    echo "maverick [--options] command"
+    echo
+    echo "Options"
+    echo " --env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
+    echo " --dryrun                                  Configure dry run - just show what would be done"
+    echo
+    echo "Commands"
+    echo " status                                  Show current running status"
+    echo " info                                    Display system information"
+    echo " netinfo                                 Display network information"
+    echo " self-update                             Update to latest maverick code"
+    echo " configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
@@ -57,27 +62,27 @@ do
             ENV="${i#*=}"
             shift
             ;;
-        --configure)
-            CONFIGURE="true"
-            shift
-            ;;
         --dryrun)
             DRYRUN="--noop"
             shift
             ;;
-        --status)
+        configure)
+            CONFIGURE="true"
+            shift
+            ;;
+        status)
             STATUS="true"
             shift
             ;;
-        --info)
+        info)
             INFO="true"
             shift
             ;;
-        --netinfo)
+        netinfo)
             NETINFO="true"
             shift
             ;;
-        --self-update)
+        self-update)
             SELFUPDATE="true"
             shift
             ;;
@@ -205,7 +210,7 @@ fi
 
 # If configure not set, exit
 if [ "$CONFIGURE" != "true" ]; then	
-    echo "Error: --configure not set"
+    echo "Error: configure not set"
     echo
     usage
 fi
