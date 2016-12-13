@@ -1,5 +1,5 @@
 class base::locale (
-    $locale = "",
+    $locale = "en_GB.UTF-8",
     $timezone = "Europe/London",
 ) {
     

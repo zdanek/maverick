@@ -3,93 +3,93 @@
 // NB: Some defaults are set in localconf.json to protect potentially sensitive data, like passwords and wifi keys.
 {
 
-	// Set blank defaults for host/ip values.  This is to prevent parsing errors
-	"hostname": "",
-	"fqdn": "",
-	"primaryip": "",
-	"hostaliases": "",
-	
-	// List of all internal IP addresses.  These IPs are used for default iptables and other access control,
-	//  so be careful what is put in here.
-	// These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
-	// If all_ips is left blank, ALL IPs will be allowed for configured rules.
-	"all_ips": [
-	],
+    // Set blank defaults for host/ip values.  This is to prevent parsing errors
+    "hostname": "",
+    "fqdn": "",
+    "primaryip": "",
+    "hostaliases": "",
+    
+    // List of all internal IP addresses.  These IPs are used for default iptables and other access control,
+    //  so be careful what is put in here.
+    // These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
+    // If all_ips is left blank, ALL IPs will be allowed for configured rules.
+    "all_ips": [
+    ],
 
-	"base::locale::timezone": "en_GB.UTF-8",
-	"base::locale::timezone": "Europe/London",
+    // "base::locale::locale": "en_GB.UTF-8",
+    // "base::locale::timezone": "Europe/London",
 
-    "base::users::mav_sudopass": false, // If mav sudo should ask for password or not
+    // "base::users::mav_sudopass": false, // If mav sudo should ask for password or not
 
-	"maverick_baremetal::sensors": false, // Install lmsensors
-	"maverick_baremetal::beagle::included_cloud9": false, // false, by default, removes the included beagle cloud9 and installs the standard maverick cloud9
-	"maverick_baremetal::odroid::governor_atboot": "ondemand", // Set the CPU governer: interactive conservative ondemand powersave performance
-	"maverick_baremetal::raspberry::init::expand_root": true, // Expand the root partition to max size of SD card
-    "maverick_baremetal::raspberry::init::gpumem": 128, // How much RAM to assign to GPU from main memory
-    "maverick_baremetal::raspberry::init::overclock": "None", // Overclock CPU - "None", "High", "Turbo"
-    "maverick_baremetal::raspberry::init::devicetree": true, // Use devicetree, should be true
-    "maverick_baremetal::raspberry::init::spi": true, // Enable spi, should be true for LCD screen
-    "maverick_baremetal::raspberry::init::i2c": true, // Enable i2c, should be true for LCD screen
-	"maverick_baremetal::raspberry::init::serialconsole": false, // Normally false to leave the serial lines free for pixhawk
-    "maverick_baremetal::raspberry::init::camera": true, // Enable raspberry camera
-    "maverick_baremetal::raspberry::init::xgl": false, // Experimental X GL support
-    "maverick_baremetal::raspberry::init::v4l2": true, // v4l2 kernel module enabled, should always be true
-    "maverick_baremetal::raspberry::init::overpower_usb": false, // Allow USB ports to provide more than standard 500mw power, useful for high power Wifi modules
-	
-	"maverick_cloud9::enabled": true, // Only enabled for dev environment by default, compiles and runs cloud9 IDE
-	"maverick_cloud9::webport": 6789, // Cloud9 IDE website port
-	"maverick_cloud9::basepath": "/srv/maverick", // Filesystem path exposed in cloud9 IDE
+    // "maverick_baremetal::sensors": false, // Install lmsensors
+    // "maverick_baremetal::beagle::included_cloud9": false, // false, by default, removes the included beagle cloud9 and installs the standard maverick cloud9
+    // "maverick_baremetal::odroid::governor_atboot": "performance", // Set the CPU governer: interactive conservative ondemand powersave performance
+    // "maverick_baremetal::odroid::kernel4x": false, // Install experimental kernel 4.x
+    // "maverick_baremetal::raspberry::expand_root": true, // Expand the root partition to max size of SD card
+    // "maverick_baremetal::raspberry::gpumem": 128, // How much RAM to assign to GPU from main memory
+    // "maverick_baremetal::raspberry::overclock": "None", // Overclock CPU - "None", "High", "Turbo"
+    // "maverick_baremetal::raspberry::devicetree": true, // Use devicetree, should be true
+    // "maverick_baremetal::raspberry::spi": true, // Enable spi, should be true for LCD screen
+    // "maverick_baremetal::raspberry::i2c": true, // Enable i2c, should be true for LCD screen
+    // "maverick_baremetal::raspberry::serialconsole": false, // Normally false to leave the serial lines free for pixhawk
+    // "maverick_baremetal::raspberry::camera": true, // Enable raspberry camera
+    // "maverick_baremetal::raspberry::xgl": false, // Experimental X GL support
+    // "maverick_baremetal::raspberry::v4l2": true, // v4l2 kernel module enabled, should always be true
+    // "maverick_baremetal::raspberry::overpower_usb": false, // Allow USB ports to provide more than standard 500mw power, useful for high power Wifi modules
+    
+    // "maverick_cloud9::enabled": true, // Only enabled for dev environment by default, compiles and runs cloud9 IDE
+    // "maverick_cloud9::webport": 6789, // Cloud9 IDE website port
+    // "maverick_cloud9::basepath": "/srv/maverick", // Filesystem path exposed in cloud9 IDE
 
-	"maverick_desktop::enable": false, // Disable Desktop by default, to save resources
-	
-	"maverick_dronekit::dronekit_la_revision": "master", // git branch of dronekit log analyzer
-	"maverick_dronekit::fc": true, // Install and run dronekit environment for the flight controller
-	"maverick_dronekit::fc::dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git branch for flight controller dronekit
-	"maverick_dronekit::sitl": false, // SITL disabled by default, enabled by default in dev environment
-	"maverick_dronekit::sitl::sitl_fw_branch": "master", // Ardupilot git branch for SITL
-	"maverick_dronekit::sitl::sitl_fw_builds": ["ArduCopter"], // Which Ardupilot firmwares to build
-	"maverick_dronekit::sitl::sitl_fw_run": "ArduCopter", // Which firmware will sitl run, must be part of $sitl_fw_builds
-	"maverick_dronekit::sitl::sitl_dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git path to clone for dronekit in SITL environment
+    // "maverick_desktop::enable": false, // Disable Desktop by default, to save resources
+    
+    // "maverick_dronekit::dronekit_la_revision": "master", // git branch of dronekit log analyzer
+    // "maverick_dronekit::fc": true, // Install and run dronekit environment for the flight controller
+    // "maverick_dronekit::fc::dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git branch for flight controller dronekit
+    // "maverick_dronekit::sitl": false, // SITL disabled by default, enabled by default in dev environment
+    // "maverick_dronekit::sitl::sitl_fw_branch": "master", // Ardupilot git branch for SITL
+    // "maverick_dronekit::sitl::sitl_fw_builds": ["ArduCopter"], // Which Ardupilot firmwares to build
+    // "maverick_dronekit::sitl::sitl_fw_run": "ArduCopter", // Which firmware will sitl run, must be part of $sitl_fw_builds
+    // "maverick_dronekit::sitl::sitl_dronekit_source": "http://github.com/dronekit/dronekit-python.git", // git path to clone for dronekit in SITL environment
 
-    "maverick_network::ethernet": true,
-    "maverick_network::wireless": true,
-    "maverick_network::netman": false,
-    "maverick_network::predictable": false,
-    "maverick_network::dhcpcd": false,
-    "maverick_network::avahi": true,
-    "maverick_network::avahi::explicit_naming": false,
-    "maverick_network::dnsmasq": false,
-	"maverick_network::dnsclient": false, 
-    "maverick_network::ntpclient": false,
-	"maverick_network::interfaces": {
-		"eth0": {},
-		"wlan0": {
-			"type": "wireless"
-		}
-	},
+    // "maverick_network::ethernet": true,
+    // "maverick_network::wireless": true,
+    // "maverick_network::netman": false,
+    // "maverick_network::predictable": false,
+    // "maverick_network::dhcpcd": false,
+    // "maverick_network::avahi": true,
+    // "maverick_network::avahi::explicit_naming": false,
+    // "maverick_network::dnsmasq": false,
+    // "maverick_network::dnsclient": false, 
+    // "maverick_network::ntpclient": false,
+    "maverick_network::interfaces": {
+        "eth0": {},
+        "wlan0": {
+            "type": "wireless"
+        }
+    },
 
-	"maverick_ros::ros_installtype": "", // Install ROS from source or native packages, leave blank to autodetect
-	"maverick_ros::mavros_install": true, // Install Mavros
-    "maverick_ros::distribution": "kinetic", // ROS distribution to install
-    "maverick_ros::mavros_sitl_active": true, // Should SITL Mavros service autostart
-    "maverick_ros::mavros_fc_active": true, // Should FC Mavros service autostart
-	
-	"maverick_security::fail2ban": false, // fail2ban can stop brute force attacks against ssh
-	"maverick_security::fail2ban::alertemail": "admin@example.com", // Email address to send fail2ban alerts to
-	"maverick_security::firewall": true, // Run firewall by default if security enabled, holes will be automatically made for maverick services
-	"maverick_security::firewall::cronupdate": false, // Optionally run a firewall update every hour, useful if all_ips includes dynamic dns hostnames that can change
-	"maverick_security::rkhunter": false, // Install rootkit hunter utility
-	"maverick_security::clamav": false, // Install, configure and run antivirus
-	
-    "maverick_vision::cv": false, // Install and configure opencv
-    "maverick_vision::gstreamer_installtype": "native", // Install gstreamer with native OS packages or by source
-    "maverick_vision::mjpg_streamer": false, // Install mjpg_streamer
-	"maverick_vision::fpv::init::type": "infrastructure", // 'infrastructure' for normal wifi, 'ap' to act as an Access Point, 'broadcast' for wifibroadcast, MUST match maverick_network::wireless::type
+    // "maverick_ros::ros_installtype": "", // Install ROS from source or native packages, leave blank to autodetect
+    // "maverick_ros::mavros_install": true, // Install Mavros
+    // "maverick_ros::distribution": "kinetic", // ROS distribution to install
+    // "maverick_ros::mavros_sitl_active": true, // Should SITL Mavros service autostart
+    // "maverick_ros::mavros_fc_active": true, // Should FC Mavros service autostart
+    
+    // "maverick_security::fail2ban": false, // fail2ban can stop brute force attacks against ssh
+    // "maverick_security::fail2ban::alertemail": "admin@example.com", // Email address to send fail2ban alerts to
+    // "maverick_security::firewall": true, // Run firewall by default if security enabled, holes will be automatically made for maverick services
+    // "maverick_security::firewall::cronupdate": false, // Optionally run a firewall update every hour, useful if all_ips includes dynamic dns hostnames that can change
+    // "maverick_security::rkhunter": false, // Install rootkit hunter utility
+    // "maverick_security::clamav": false, // Install, configure and run antivirus
+    
+    // "maverick_vision::opencv": false, // Install and configure opencv
+    // "maverick_vision::gstreamer::gstreamer_installtype": "native", // Install gstreamer with native OS packages or by source
+    // "maverick_vision::mjpg_streamer": false, // Install mjpg_streamer
 
-	"classes" : [
-		"base",
-		"maverick_desktop",
-		"maverick_security"
-	]
-	
+    "classes" : [
+        "base",
+        "maverick_desktop",
+        "maverick_security"
+    ]
+    
 }
