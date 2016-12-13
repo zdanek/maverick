@@ -21,7 +21,7 @@ class maverick_vision::opencv (
     oncevcsrepo { "git-opencv_contrib":
         gitsource   => "https://github.com/Itseez/opencv_contrib.git",
         dest        => "/srv/maverick/var/build/opencv_contrib",
-    }
+    } ->
     # Create build directory
     file { "/srv/maverick/var/build/opencv/build":
         ensure      => directory,
