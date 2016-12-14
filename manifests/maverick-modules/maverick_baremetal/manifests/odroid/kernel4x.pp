@@ -35,7 +35,7 @@ class maverick_baremetal::odroid::kernel4x (
     #    creates     => "/srv/maverick/var/build/linux/.config",
     #} ->
     file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
-        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern49-cleanconfig",
+        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
     } ->
     exec { "odroid-kernel4x-make":
         timeout     => 0,
