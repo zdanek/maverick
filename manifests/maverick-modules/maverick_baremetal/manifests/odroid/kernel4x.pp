@@ -35,14 +35,14 @@ class maverick_baremetal::odroid::kernel4x (
     #    creates     => "/srv/maverick/var/build/linux/.config",
     #} ->
     file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
-        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
+        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern49-cleanconfig",
     } ->
     exec { "odroid-kernel4x-make":
         timeout     => 0,
         command     => "/usr/bin/make -j 8 zImage dtbs modules >/srv/maverick/var/log/build/odroid-kernel4x.make.log 2>&1",
         cwd         => "/srv/maverick/var/build/linux",
         # creates     => "/srv/maverick/var/build/linux/arch/arm/boot/zImage",
-        require     => [ Package["bc"], Package["make"], Exec["odroid-backup-kernel3"] ],
+        require     => [ Package["bc"], Package["make"] ],
         user        => "mav",
     } ->
     exec { "odroid-kernel4x-marker":

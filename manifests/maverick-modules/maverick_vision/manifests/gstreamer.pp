@@ -4,7 +4,7 @@ class maverick_vision::gstreamer (
     
     # Install gstreamer
     if $gstreamer_installtype == "native" {
-        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-good", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0"])
+        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
     	}
@@ -166,6 +166,40 @@ class maverick_vision::gstreamer (
             ips         => hiera("all_ips"),
             proto       => "tcp", # allow both tcp and udp for rtsp and rtp
         }
+    }
+    
+    # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
+    if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
+        ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
+        ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "gstreamer1.0-doc", "gstreamer1.0-plugins-base-doc", "libjack-jackd2-dev", "libvpx-dev"])
+        file { "/srv/maverick/var/build/gstreamer_odroidmfc":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        oncevcsrepo { "git-gstreamer_odroidmfc":
+            gitsource   => "https://github.com/fnoop/gst-plugins-good.git",
+            dest        => "/srv/maverick/var/build/gstreamer_odroidmfc/gst-plugins-good",
+            require     => Package["libgstreamer1.0-0"],
+        } ->
+        exec { "odroidmfc-package":
+            command     => "/usr/bin/dpkg-buildpackage -us -uc -b -j4",
+            cwd         => "/srv/maverick/var/build/gstreamer_odroidmfc/gst-plugins-good",
+            creates     => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
+            timeout     => 0,
+        } ->
+        package { "libgstreamer-plugins-good1.0-0":
+            provider    => dpkg,
+            ensure      => latest,
+            source      => "/srv/maverick/var/build/gstreamer_odroidmfc/libgstreamer-plugins-good1.0-0_1.8.2-1ubuntu3_armhf.deb",
+        } ->
+        package { "gstreamer1.0-plugins-good":
+            provider    => dpkg,
+            ensure      => latest,
+            source      => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
+        }
+    } else {
+        ensure_packages(["gstreamer-plugins-good"])
     }
     
 }
