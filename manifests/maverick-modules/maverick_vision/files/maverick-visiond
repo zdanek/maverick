@@ -187,7 +187,15 @@ class Streamer(object):
             if Gst.ElementFactory.find("omxh264enc"):
                 logger.info("Raspberry hardware encoder detected, using omxh264enc as h264 encoder")
                 self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
-            else:
+            # Try and detect encoder
+            try:
+                v4lencoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
+                if v4lencoder:
+                    logger.info("Odroid MFC hardware encoder detected, attempting to use "+v4lencoder+" as h264 encoder")
+                    self.h264enc = Gst.ElementFactory.make(v4lencoder, "odroid-h264-encode")
+            except subprocess.CalledProcessError, e:
+                pass
+            if not self.h264enc:
                 logger.info("No hardware encoder detected, using software x264 encoder")
                 self.h264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
                 self.h264enc.set_property('speed-preset', 1)
@@ -399,7 +407,7 @@ class App():
         self.camera_info()
         
         # Try and autodetect MFC device
-        mfcdev = None
+        self.mfcdev = None
         for devicepath in devicepaths:
             cp = v4l2.v4l2_capability()
             ioctl(open(devicepath, 'rw'), v4l2.VIDIOC_QUERYCAP, cp)
@@ -441,7 +449,7 @@ class App():
             
         # Create the stream
         try:
-            logger.info("Creating stream object - camera:"+self.config['camera']+", format:"+streamtype+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output'])
+            logger.info("Creating stream object - camera:"+cameradev+", format:"+streamtype+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output'])
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, encoder, self.config['input'], self.config['camera'], self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
             logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
