@@ -12,8 +12,9 @@ class maverick_vision::opencv (
     ensure_packages(["libatlas-base-dev", "gfortran"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
-    ensure_packages(["libtbb-dev", "libeigen3-dev"])
+    ensure_packages(["libeigen3-dev"])
     ensure_packages(["libvtk6-dev", "vtk6"])
+    # ensure_packages(["libtbb-dev"]) # https://github.com/fnoop/maverick/issues/233
     
     # Pull opencv and opencv_contrib from git
     oncevcsrepo { "git-opencv":
