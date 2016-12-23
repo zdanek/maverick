@@ -16,6 +16,9 @@ class maverick_baremetal::raspberry (
     # https://github.com/fnoop/maverick/issues/234
     user { "pi":
         password    => "${pi_password}",
+    } ->
+    file { "/etc/profile.d/sshpasswd.sh":
+        ensure      => absent
     }
     
     ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
