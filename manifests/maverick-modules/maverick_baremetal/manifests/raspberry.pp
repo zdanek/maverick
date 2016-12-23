@@ -10,8 +10,14 @@ class maverick_baremetal::raspberry (
     $xgl = false,
     $v4l2 = true,
     $overpower_usb = false,
+    $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     ) {
 
+    # https://github.com/fnoop/maverick/issues/234
+    user { "pi":
+        password    => "${pi_password}",
+    }
+    
     ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
     # Install wiringpi through pip as it's not always available through apt
     python::pip { 'pip-wiringpi':
