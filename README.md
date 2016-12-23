@@ -28,7 +28,7 @@ To update to the latest Maverick:
 ```
 maverick self-update
 ```
-Then call maverick with just --confirm flag to update the current environment:
+To update system with the current environment, just call configure:
 ```
 maverick configure
 ```
