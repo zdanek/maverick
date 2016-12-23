@@ -83,7 +83,7 @@ class maverick_vision::opencv (
             timeout     => 0,
             command     => "/usr/bin/cmake -D CMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -D CMAKE_BUILD_TYPE=RELEASE -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF -D BUILD_EXAMPLES=ON -D BUILD_PACKAGE=ON -D WITH_EIGEN=ON -D WITH_OPENGL=ON -D ENABLE_NEON=ON -D WITH_TBB=OFF -D BUILD_TBB=OFF -D ENABLE_VFPV3=ON .. >/srv/maverick/var/log/build/opencv.contrib.cmake.out 2>&1",
             cwd         => "/srv/maverick/var/build/opencv/build",
-            unless      => "/bin/grep contrib verison_string.tmp",
+            unless      => "/bin/grep opencv_contrib version_string.tmp",
             require     => Exec["opencv-install"],
         } ->
         exec { "opencv-contrib-build":
