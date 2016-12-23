@@ -199,7 +199,7 @@ class maverick_vision::gstreamer (
             source      => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
         }
     } else {
-        ensure_packages(["gstreamer-plugins-good"])
+        ensure_packages(["gstreamer1.0-plugins-good"])
     }
     
 }
