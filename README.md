@@ -3,6 +3,52 @@ UAV Companion Computer automation
 
 This is a proof of concept project to automate the installation, configuration, setup and management of UAV companion computers using Configuration Management.  The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
 
+
+Initial Installation
+--------------------
+For debian based distributions:
+```
+sudo apt-get update && sudo apt-get -y upgrade
+sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
+cd maverick && sudo ./bin/maverick --env=bootstrap configure
+sudo reboot
+```
+The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
+
+After the first reboot login as 'mav' user with the default password 'wingman', and then the required environment can then be configured:
+For flight environment (for safer flying and faster setup):
+```
+maverick --env=flight configure
+```
+For dev environment (includes coding IDE, SITL virtual flight environment):
+```
+maverick --env=dev configure
+```
+To update to the latest Maverick:
+```
+maverick self-update
+```
+Then call maverick with just --confirm flag to update the current environment:
+```
+maverick configure
+```
+To see the current status of Maverick services:
+```
+maverick status
+```
+
+To see info about the system/hardware:
+```
+maverick info
+```
+
+To see info about the network cards/dongles:
+```
+maverick netinfo
+```
+
+What's it for?
+--------------------
 Instead of creating, distributing and maintaining large complete OS images and package repositories for each different type of computer and OS, this concept allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic.  The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes irrelevent.  It is hoped that this will provide the way forward for the evolution of Companion Computers and APM, potentially the next Big Thing(TM) for the APM (aka Ardupilot) project.
 
 The idea is that by downloading the Maverick code and running a single command, anyone can setup a fully functioning Companion Computer (CC), no other technical expertise is needed.  Advanced users can customise the system by specifying parameters to existing classes/modules or by including new ones.  There is also a full development environment available - again through a single command - including a full-featured IDE and APM, Dronekit, ROS and OpenCV code trees, which will make it more convenient and consistent for existing developers and also make it far easier for new developers to start coding. 
@@ -26,35 +72,3 @@ But it is eventually intended to support all of the following:
  - And more!
 
 It will detect the base hardware platform and apply default settings as necessary.  Further base and peripheral config is available by specifying config parameters and including new modules.
-
-Initial Installation
---------------------
-For debian based distributions:
-```
-sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
-cd maverick && sudo ./bin/maverick --env=bootstrap --configure
-sudo reboot
-```
-The first run must take place as above, bootstrap mode then a reboot.  This is to ensure the base system is setup correctly and the root filesystem is expanded, so there is space for the chosen working environment.
-
-After the first reboot login as 'mav' user with the default password 'wingman', and then the required environment can then be configured:
-```
-maverick --env=dev --configure
-```
-Or flight environment (for safer flying and faster setup):
-```
-maverick --env=flight --configure
-```
-To update to the latest Maverick:
-```
-maverick --self-update
-```
-Then call maverick with just --confirm flag to update the current environment:
-```
-maverick --configure
-```
-To see the current status of Maverick services:
-```
-maverick --status
-```
