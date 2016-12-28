@@ -1,41 +1,48 @@
 class maverick_ros (
     $installtype = "",
-    $mavros_install = true,
     $distribution = "kinetic",
+    $installdir = "/srv/maverick/software/ros",
     $mavros_sitl_active = true,
     $mavros_fc_active = true,
 ) {
     
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
+        if $ros_installed == "no" { 
+            notice("ROS: Native installation requested")
+        }
         $_installtype = "native"
     } elsif $installtype == "source" {
+        if $ros_installed == "no" {
+            notice("ROS: Source installation requested")
+        }
         $_installtype = "source"
     # First try and determine build type based on OS and architecture
-    } elsif ($distribution == "kinetic") {
-    
-        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "amd64" or $architecture == "i386")) or
-                ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
-                ($operatingsystem == "Debian" and $lsbdistcodename == "jessie" and ($architecture == "amd64" or $architecture == "arm64"))
-        ) {
-            $_installtype = "native"
-        } else {
-            $_installtype = "source"
+    } else {
+        if ($distribution == "kinetic") {
+            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "amd64" or $architecture == "i386")) or
+                    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
+                    ($operatingsystem == "Debian" and $lsbdistcodename == "jessie" and ($architecture == "amd64" or $architecture == "arm64"))
+            ) {
+                $_installtype = "native"
+            } else {
+                $_installtype = "source"
+            }
+        } elsif $distribution == "jade" {
+            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and $architecture == "armv7l") or
+                    ($operatingsystem == "Ubuntu" and ($lsbdistcodename =="trusty" or $lsbdistcodename == "utopic" or $lsbdistcodename == "vivid") and ($architecture == "amd64" or $architecture == "i386"))
+            ) {
+                $_installtype = "native"
+            } else {
+                $_installtype = "source"
+            }
         }
-    } elsif $distribution == "jade" {
-        if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and $architecture == "armv7l") or
-                ($operatingsystem == "Ubuntu" and ($lsbdistcodename =="trusty" or $lsbdistcodename == "utopic" or $lsbdistcodename == "vivid") and ($architecture == "amd64" or $architecture == "i386"))
-        ) {
-            $_installtype = "native"
-        } else {
-            $_installtype = "source"
-        }
-    }
     
-    if $_installtype == "native" and $ros_installed == "no" {
-        warning("ROS: supported platform detected for ${distribution} distribution, using native packages")
-    } elsif $_installtype == "source" and $ros_installed == "no" {
-        warning("ROS: unsupported platform for ${distribution} distribution, installing from source")
+        if $_installtype == "native" and $ros_installed == "no" {
+            notice("ROS: supported platform detected for ${distribution} distribution, using native packages")
+        } elsif $_installtype == "source" and $ros_installed == "no" {
+            notice("ROS: unsupported platform for ${distribution} distribution, installing from source")
+        }
     }
     
     # Install ROS bootstrap from ros.org packages
@@ -81,8 +88,7 @@ class maverick_ros (
         
     # Build from source
     } elsif $_installtype == "source" {
-        $_installdir = "/srv/maverick/software/ros"
-        file { "${_installdir}":
+        file { ["${installdir}", "${installdir}/${distribution}"]:
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
@@ -123,15 +129,15 @@ class maverick_ros (
             unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satis'",
         } ->
         exec { "catkin_make":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
             cwd             => "${_builddir}",
             user            => "mav",
-            creates         => "${_installdir}/lib/rosbag/topic_renamer.py",
+            creates         => "${installdir}/${distribution}/lib/rosbag/topic_renamer.py",
             timeout         => 0,
-            require         => File["${_installdir}"]
+            require         => File["${installdir}/${distribution}"]
         }
         
-        # Add opencv to the existing workspace through vision_opencv package, this also installs std_msgs package as dependency
+        # Add opencv to the existing workspace through vision_opencv package
         ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
         exec { "ws_add_opencv":
             command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
@@ -142,12 +148,12 @@ class maverick_ros (
             require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
         } ->
         exec { "catkin_make_vision_opencv":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
             cwd             => "${_builddir}",
             user            => "mav",
-            creates         => "${_installdir}/lib/libopencv_optflow3.so.3.1.0",
+            creates         => "${installdir}/${distribution}/lib/libopencv_optflow3.so.3.1.0",
             timeout         => 0,
-            require         => File["${_installdir}"]
+            require         => File["${installdir}/${distribution}"]
         }
 
         # Add mavros to the existing workspace, this also installs mavlink package as dependency
@@ -161,16 +167,16 @@ class maverick_ros (
         } ->
         exec { "catkin_make_mavros":
             # Note must only use -j1 otherwise we get compiler errors
-            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${_installdir} -DCMAKE_BUILD_TYPE=Release -j1",
+            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j1",
             cwd             => "${_builddir}",
             user            => "mav",
-            creates         => "${_installdir}/lib/libmavros.so",
+            creates         => "${installdir}/${distribution}/lib/libmavros.so",
             timeout         => 0,
-            require         => File["${_installdir}"]
+            require         => File["${installdir}/${distribution}"]
         }
 
         # Create symlink to usual vendor install directory
-        file { "/opt/ros":
+        file { ["/opt", "/opt/ros"]:
             ensure      => directory,
             mode        => "755",
             owner       => "root",
@@ -178,7 +184,8 @@ class maverick_ros (
         } ->
         file { "/opt/ros/${distribution}":
             ensure      => link,
-            target      => "/srv/maverick/software/ros"
+            target      => "${installdir}/${distribution}",
+            force       => true,
         } ->
         file { "/etc/profile.d/ros-env.sh":
             ensure      => present,
