@@ -101,13 +101,13 @@ class Streamer(object):
             self.source.set_property("min-latency",0)
         
         def input_v4l2(self, source):
-            logger.info("Attaching input 'v4l2'")
             if not source:
                 source = "/dev/video0"
+            logger.info("Attaching input 'v4l2': "+str(source))
             self.pipeline = Gst.Pipeline.new()
             self.source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
-            self.pipeline.add(self.source)
             self.source.set_property("device", source)
+            self.pipeline.add(self.source)
 
         ### Stream methods
         def stream_h264(self):

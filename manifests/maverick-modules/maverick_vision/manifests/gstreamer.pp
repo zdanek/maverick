@@ -148,7 +148,7 @@ class maverick_vision::gstreamer (
             user        => "mav",
             timeout     => 0,
             environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-            command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
+            command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=/usr/lib/arm-linux-gnueabihf --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpythonplugin.so",
             require     => [ Package["python-gobject-dev"], Oncevcsrepo["git-gstreamer_gst_python"] ]
@@ -219,6 +219,12 @@ class maverick_vision::gstreamer (
             owner       => "root",
             group       => "root",
             content     => "GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0:\$GST_PLUGIN_PATH",
+        }
+        file { "/etc/profile.d/gstreamer-pythonpath.sh":
+            mode        => 644,
+            owner       => "root",
+            group       => "root",
+            content     => "PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
         }
     }
 

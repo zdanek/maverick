@@ -10,7 +10,7 @@ class maverick_vision::opencv (
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
-    ensure_packages(["libopenni2-dev", "libopenni-dev", "libopenni-sensor-primesense-dev"])
+    ensure_packages(["libopenni2-dev"])
     # ensure_packages(["qtbase5-dev"])
     # ensure_packages(["libtbb-dev"]) # https://github.com/fnoop/maverick/issues/233
     
@@ -35,11 +35,11 @@ class maverick_vision::opencv (
     
     # Run cmake and generate build files
     if $contrib == true {
-        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI=ON -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         $_creates           = "/srv/maverick/var/build/opencv/build/lib/libopencv_structured_light.so"
         $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_structured_light.so"
     } else {
-        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI=ON -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         $_creates           = "/srv/maverick/var/build/opencv/build/lib/cv2.so"
         $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_core.so"
     }
