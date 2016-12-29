@@ -3,6 +3,9 @@ class maverick_network::avahi (
 ) {
     
     ensure_packages(["avahi-daemon", "avahi-utils"])
+    package { ["avahi-autoipd", "avahi-dnsconfd"]:
+        ensure      => purged,
+    } ->
     
     file { "/etc/avahi/avahi-daemon.conf":
         owner       => root,
