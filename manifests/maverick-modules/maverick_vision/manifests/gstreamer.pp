@@ -92,13 +92,6 @@ class maverick_vision::gstreamer (
             creates     => "/srv/maverick/software/gstreamer/bin/gst-launch-1.0",
             require     => [ Package["libglib2.0-dev", "bison", "flex"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ] # ensure we have all the dependencies satisfied
         }->
-        file { "/etc/ld.so.conf.d/gstreamer.conf":
-            content     => "/srv/maverick/software/gstreamer/lib",
-        } ->
-        exec { "gstreamer_core-build-ldconfig":
-            command     => "/sbin/ldconfig",
-            unless      => "/sbin/ldconfig -v |/bin/grep libgstreamer"
-        } ->
         exec { "gstreamer_gst_plugins_base":
             user        => "mav",
             timeout     => 0,
