@@ -8,14 +8,27 @@ class maverick_vision::gstreamer (
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
     	}
-    	file { "/srv/maverick/var/build/gstreamer_odroidmfc":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-        } ->
-        oncevcsrepo { "git-gstreamer_odroidmfc":
-            gitsource   => "https://github.com/fnoop/gst-plugins-good.git",
-            dest        => "/srv/maverick/var/build/gstreamer_odroidmfc/gst-plugins-good",
+        # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
+        if $odroid_present == "yes" and $camera_odroidmfc == "yes" and 1 == 2 {
+            ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
+            ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "libjack-jackd2-dev", "libvpx-dev"])
+            exec { "odroidmfc-package":
+                command     => "/usr/bin/dpkg-buildpackage -us -uc -b -j4",
+                cwd         => "/srv/maverick/var/build/gstreamer_odroidmfc/gst-plugins-good",
+                creates     => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
+                timeout     => 0,
+                require     => Oncevcsrepo["git-gstreamer_odroidmfc"],
+            } ->
+            package { "libgstreamer-plugins-good1.0-0":
+                provider    => dpkg,
+                ensure      => latest,
+                source      => "/srv/maverick/var/build/gstreamer_odroidmfc/libgstreamer-plugins-good1.0-0_1.8.2-1ubuntu3_armhf.deb",
+            } ->
+            package { "gstreamer1.0-plugins-good":
+                provider    => dpkg,
+                ensure      => latest,
+                source      => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
+            }
         }
 	} elsif $gstreamer_installtype == "source" {
         # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
@@ -108,17 +121,40 @@ class maverick_vision::gstreamer (
             command     => "/srv/maverick/var/build/gstreamer/gst-plugins-good/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --enable-v4l2-probe --with-libv4l2 --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_good.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-good",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstjpeg.so",
-            require     => [ Oncevcsrepo["git-gstreamer_plugins_good"] ]
-        } ->
-        exec { "gstreamer_gst_plugins_bad":
-            user        => "mav",
-            timeout     => 0,
-            environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-            command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
-            cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
-            creates     => "/srv/maverick/software/gstreamer/lib/libgstgl-1.0.so",
-            require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"] ]
-        } ->
+            require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Exec["gstreamer_gst_plugins_base"] ]
+        }
+        if $raspberry_present == "yes" {
+            exec { "gstreamer_gst_plugins_bad":
+                user        => "mav",
+                timeout     => 0,
+                environment => [
+                    "CFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                    "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                    "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
+                    "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", 
+                    "EGL_CFLAGS=/opt/vc/include",
+                    "EGL_LIBS=/opt/vc/lib",
+                    "GLES2_CFLAGS=/opt/vc/include",
+                    "GLES2_LIBS=/opt/vc/lib"
+                ],
+                # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl -enable-opengl --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux' CPPFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux'  CXXFLAGS+='-Wno-redundant-decls' LDFLAGS+='-L/opt/vc/lib' && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl --enable-gles2 --with-gles2-module-name=/opt/vc/lib/libGLESv2.so --with-egl-module-name=/opt/vc/lib/libEGL.so --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --enable-egl --enable-gles2 --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
+                creates     => "/srv/maverick/software/gstreamer/lib/libgstgl-1.0.so",
+                require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"] ]
+            }
+        } else {
+            exec { "gstreamer_gst_plugins_bad":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
+                creates     => "/srv/maverick/software/gstreamer/lib/libgstbadbase-1.0.so",
+                require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"] ]
+            }
+        }
         exec { "gstreamer_gst_plugins_ugly":
             user        => "mav",
             timeout     => 0,
@@ -126,7 +162,7 @@ class maverick_vision::gstreamer (
             command     => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_ugly.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstx264.so",
-            require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_plugins_ugly"] ]
+            require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_plugins_ugly"], Exec["gstreamer_gst_plugins_base"] ]
         } ->
         exec { "gstreamer_gst_libav":
             user        => "mav",
@@ -135,7 +171,7 @@ class maverick_vision::gstreamer (
             command     => "/srv/maverick/var/build/gstreamer/gst-libav/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_ugly.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-libav",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstlibav.so",
-            require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_libav"] ]
+            require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_libav"], Exec["gstreamer_gst_plugins_base"] ]
         } ->
         exec { "gstreamer_gst_python":
             user        => "mav",
@@ -144,7 +180,7 @@ class maverick_vision::gstreamer (
             command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=/usr/lib/arm-linux-gnueabihf --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpythonplugin.so",
-            require     => [ Package["python-gobject-dev"], Oncevcsrepo["git-gstreamer_gst_python"] ]
+            require     => [ Package["python-gobject-dev"], Oncevcsrepo["git-gstreamer_gst_python"], Exec["gstreamer_gst_plugins_base"] ]
         } ->
         exec { "gstreamer_gst_rtsp_server":
             user        => "mav",
@@ -153,21 +189,23 @@ class maverick_vision::gstreamer (
             command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
             creates     => "/srv/maverick/software/gstreamer/lib/libgstrtspserver-1.0.so",
-            require     => Oncevcsrepo["git-gstreamer_gst_rtsp_server"]
-        } ->
-        exec { "gstreamer_after-build-ldconfig":
-            command     => "/sbin/ldconfig",
-            unless      => "/sbin/ldconfig -v |/bin/grep libgstrtspserver"
+            require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Exec["gstreamer_gst_plugins_base"] ]
         }
 
         if ($raspberry_present == "yes") {
             exec { "gstreamer_gst_omx":
                 user        => "mav",
                 timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --disable-docbook --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                environment => [
+                    "CFLAGS=-I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                    "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                    "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
+                    "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
+                ],
+                # command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} make CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
-                creates     => "/usr/local/lib/gstreamer-1.0/libgstomx.so",
+                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
                 require     => [ Oncevcsrepo["git-gstreamer_omx"], Package["libx264-dev"], Exec["gstreamer_gst_plugins_base"] ]
             } ->
             file { "/etc/xdg":
@@ -199,25 +237,25 @@ class maverick_vision::gstreamer (
         # Set profile scripts for custom gstreamer location
         file { "/etc/profile.d/gstreamer-path.sh":
             mode        => 644,
-            content     => "PATH=/srv/maverick/software/gstreamer/bin:\$PATH",
+            content     => "export PATH=/srv/maverick/software/gstreamer/bin:\$PATH",
         }
         file { "/etc/profile.d/gstreamer-pkgconfig.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:\$PKG_CONFIG_PATH",
+            content     => "export PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:\$PKG_CONFIG_PATH",
         }
         file { "/etc/profile.d/gstreamer-plugins.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0:\$GST_PLUGIN_PATH",
+            content     => "export GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0:\$GST_PLUGIN_PATH",
         }
         file { "/etc/profile.d/gstreamer-pythonpath.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
+            content     => "export PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
         }
     }
 
@@ -233,32 +271,6 @@ class maverick_vision::gstreamer (
             ips         => hiera("all_ips"),
             proto       => "tcp", # allow both tcp and udp for rtsp and rtp
         }
-    }
-    
-    # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
-    if $odroid_present == "yes" and $camera_odroidmfc == "yes" and 1 == 2 {
-        ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
-        # ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "gstreamer1.0-doc", "gstreamer1.0-plugins-base-doc", "libjack-jackd2-dev", "libvpx-dev"])
-        ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "libjack-jackd2-dev", "libvpx-dev"])
-        exec { "odroidmfc-package":
-            command     => "/usr/bin/dpkg-buildpackage -us -uc -b -j4",
-            cwd         => "/srv/maverick/var/build/gstreamer_odroidmfc/gst-plugins-good",
-            creates     => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
-            timeout     => 0,
-            require     => Oncevcsrepo["git-gstreamer_odroidmfc"],
-        } ->
-        package { "libgstreamer-plugins-good1.0-0":
-            provider    => dpkg,
-            ensure      => latest,
-            source      => "/srv/maverick/var/build/gstreamer_odroidmfc/libgstreamer-plugins-good1.0-0_1.8.2-1ubuntu3_armhf.deb",
-        } ->
-        package { "gstreamer1.0-plugins-good":
-            provider    => dpkg,
-            ensure      => latest,
-            source      => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
-        }
-    } else {
-        # ensure_packages(["gstreamer1.0-plugins-good"])
     }
     
 }
