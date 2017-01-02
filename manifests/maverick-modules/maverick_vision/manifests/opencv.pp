@@ -43,6 +43,11 @@ class maverick_vision::opencv (
         $_creates           = "/srv/maverick/var/build/opencv/build/lib/cv2.so"
         $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_core.so"
     }
+    if $raspberry_present == yes {
+        $_makej = 2
+    } else {
+        $_makej = $processorcount
+    }
     exec { "opencv-prepbuild":
         user        => "mav",
         timeout     => 0,
@@ -55,7 +60,7 @@ class maverick_vision::opencv (
     exec { "opencv-build":
         user        => "mav",
         timeout     => 0,
-        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/opencv.build.out 2>&1",
+        command     => "/usr/bin/make -j${_makej} >/srv/maverick/var/log/build/opencv.build.out 2>&1",
         cwd         => "/srv/maverick/var/build/opencv/build",
         creates     => $_creates,
         require     => Exec["opencv-prepbuild"],
