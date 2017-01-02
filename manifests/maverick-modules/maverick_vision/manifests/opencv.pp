@@ -67,7 +67,7 @@ class maverick_vision::opencv (
         cwd         => "/srv/maverick/var/build/opencv/build",
         creates     => $_install_creates,
     }
-    file { "/etc/profile.d/maverick-opencv.sh":
+    file { "/etc/profile.d/40-maverick-opencv.sh":
         mode        => 644,
         owner       => "root",
         group       => "root",

@@ -78,7 +78,7 @@ class maverick_ros (
             ensure      => installed,
             require     => [ Exec["ros-aptupdate"], Package["python-rosdep"] ],
         } ->
-        file { "/etc/profile.d/ros-env.sh":
+        file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
             mode        => 644,
             owner       => "root",
@@ -187,7 +187,7 @@ class maverick_ros (
             target      => "${installdir}/${distribution}",
             force       => true,
         } ->
-        file { "/etc/profile.d/ros-env.sh":
+        file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
             mode        => 644,
             owner       => "root",
@@ -209,7 +209,7 @@ class maverick_ros (
         service { "maverick-mavros-sitl":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
         }
     } else {
         service { "maverick-mavros-sitl":
@@ -231,13 +231,13 @@ class maverick_ros (
         service { "maverick-mavros-fc":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
         }
     } else {
         service { "maverick-mavros-fc":
             ensure      => stopped,
             enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/ros-env.sh"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
         }
 
     }

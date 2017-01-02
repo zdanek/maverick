@@ -218,7 +218,7 @@ class maverick_vision::gstreamer (
         }
         
         # Export local typelib for gobject introspection
-        file { "/etc/profile.d/gi-typelibs.sh":
+        file { "/etc/profile.d/50-maverick-gi-typelibs.sh":
             ensure      => present,
             mode        => 644,
             owner       => "root",
@@ -235,23 +235,23 @@ class maverick_vision::gstreamer (
         }
         
         # Set profile scripts for custom gstreamer location
-        file { "/etc/profile.d/gstreamer-path.sh":
+        file { "/etc/profile.d/50-maverick-gstreamer-path.sh":
             mode        => 644,
             content     => "export PATH=/srv/maverick/software/gstreamer/bin:\$PATH",
         }
-        file { "/etc/profile.d/gstreamer-pkgconfig.sh":
+        file { "/etc/profile.d/50-maverick-gstreamer-pkgconfig.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
             content     => "export PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:\$PKG_CONFIG_PATH",
         }
-        file { "/etc/profile.d/gstreamer-plugins.sh":
+        file { "/etc/profile.d/50-maverick-gstreamer-plugins.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
             content     => "export GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0:\$GST_PLUGIN_PATH",
         }
-        file { "/etc/profile.d/gstreamer-pythonpath.sh":
+        file { "/etc/profile.d/50-maverick-gstreamer-pythonpath.sh":
             mode        => 644,
             owner       => "root",
             group       => "root",
