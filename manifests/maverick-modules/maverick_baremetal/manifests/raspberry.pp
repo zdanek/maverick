@@ -131,13 +131,13 @@ class maverick_baremetal::raspberry (
     
     if ($camera == true) {
         exec { "raspberry-camera":
-            command     => "/usr/bin/raspi-config nonint set_camera 1; echo 'true' >/etc/raspi-camera",
+            command     => "/usr/bin/raspi-config nonint do_camera 0; echo 'true' >/etc/raspi-camera",
             unless      => "/bin/grep 'true' /etc/raspi-camera",
             require     => Package["raspi-config"],
         }
     } else {
         exec { "raspberry-camera":
-            command     => "/usr/bin/raspi-config nonint set_camera 0; echo 'false' >/etc/raspi-camera",
+            command     => "/usr/bin/raspi-config nonint do_camera 1; echo 'false' >/etc/raspi-camera",
             unless      => "/bin/grep 'false' /etc/raspi-camera",
             require     => Package["raspi-config"],
         }
