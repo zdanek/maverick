@@ -48,7 +48,8 @@ class maverick_ros (
     # Install ROS bootstrap from ros.org packages
     exec { "ros-repo":
         command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
-        creates      => "/etc/apt/sources.list.d/ros-latest.list",
+        creates     => "/etc/apt/sources.list.d/ros-latest.list",
+        require     => Class["maverick_vision::opencv"],
     } ->
     exec { "ros-repo-key":
         #command     => "/usr/bin/wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -",
