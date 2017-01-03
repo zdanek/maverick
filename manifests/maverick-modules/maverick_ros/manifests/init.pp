@@ -1,5 +1,5 @@
 class maverick_ros (
-    $installtype = "",
+    $installtype = "source",
     $distribution = "kinetic",
     $installdir = "/srv/maverick/software/ros",
     $mavros_sitl_active = true,
