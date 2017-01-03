@@ -66,7 +66,7 @@ class base::packages {
     # Python::pip doesn't seem to work here, use exec instead
     exec { "install-pyric":
         command     => "/usr/bin/pip install PyRIC",
-        unless      => "/usr/bin/pip show PyRIC",
+        unless      => "/usr/bin/pip list |grep PyRIC",
         require     => [ Package["python-pip"], Class["base::locale"] ]
     }
     exec { "install-netifaces":
