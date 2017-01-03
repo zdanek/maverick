@@ -1,10 +1,10 @@
 class maverick_vision::gstreamer (
     $gstreamer_installtype = "source",
+    $x264 = "absent",
 ) {
-    
     # Install gstreamer
     if $gstreamer_installtype == "native" {
-        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0"])
+        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
     	}
@@ -43,7 +43,14 @@ class maverick_vision::gstreamer (
         }
 
         # Install necessary dependencies and compile
-        ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "libx264-dev", "gobject-introspection", "libgirepository1.0-dev"])
+        ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi"])
+        package { ["libx264-dev", "libx264"]:
+            ensure      => $x264,
+        } ->
+        package { ["gstreamer*", "libgstreamer*", "python-gst-1.0"]:
+            ensure      => absent,
+        } ->
+
         file { "/srv/maverick/var/build/gstreamer":
             ensure      => directory,
             owner       => "mav",
@@ -124,6 +131,9 @@ class maverick_vision::gstreamer (
             require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Exec["gstreamer_gst_plugins_base"] ]
         }
         if $raspberry_present == "yes" {
+            package { ["libgl1-mesa-dev", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libglu1-mesa", "libglu1-mesa-dev", "mesa-common-dev"]:
+                ensure      => purged
+            } ->
             exec { "gstreamer_gst_plugins_bad":
                 user        => "mav",
                 timeout     => 0,
@@ -206,7 +216,7 @@ class maverick_vision::gstreamer (
                 command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
                 creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
-                require     => [ Oncevcsrepo["git-gstreamer_omx"], Package["libx264-dev"], Exec["gstreamer_gst_plugins_base"] ]
+                require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
             } ->
             file { "/etc/xdg":
                 ensure      => directory,
@@ -218,7 +228,7 @@ class maverick_vision::gstreamer (
         }
         
         # Export local typelib for gobject introspection
-        file { "/etc/profile.d/50-maverick-gi-typelibs.sh":
+        file { "/etc/profile.d/50-gi-typelibs.sh":
             ensure      => present,
             mode        => 644,
             owner       => "root",
@@ -256,6 +266,12 @@ class maverick_vision::gstreamer (
             owner       => "root",
             group       => "root",
             content     => "export PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
+        }
+        file { "/etc/profile.d/50-maverick-gstreamer-ldlibrarypath.sh":
+            mode        => 644,
+            owner       => "root",
+            group       => "root",
+            content     => "export LD_LIBRARY_PATH=/srv/maverick/software/gstreamer/lib:\$LD_LIBRARY_PATH",
         }
     }
 

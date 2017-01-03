@@ -7,7 +7,7 @@ class maverick_vision::opencv (
     # as we want to access from both, so we install into global.
     
     # Install dependencies
-    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev"])
+    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
     ensure_packages(["libopenni2-dev"])
@@ -55,7 +55,7 @@ class maverick_vision::opencv (
         command     => $_command,
         cwd         => "/srv/maverick/var/build/opencv/build",
         creates     => "/srv/maverick/var/build/opencv/build/Makefile",
-        require     => [ Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libeigen3-dev", "libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libx264-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] ], # ensure we have all the dependencies satisfied
+        require     => [ Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libeigen3-dev", "libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] ], # ensure we have all the dependencies satisfied
     } ->
     exec { "opencv-build":
         user        => "mav",

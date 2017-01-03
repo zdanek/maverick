@@ -42,7 +42,8 @@ class Streamer(object):
                 self.capstring = 'image/jpeg,width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_mjpeg()
             elif format == "yuv":
-                yuvform = "YUY2" # Could be (fourcc)YUV2 etc
+                # yuvform = "YUY2" # Could be (fourcc)YUV2 etc
+                yuvform = "I420"
                 self.capstring = 'video/x-raw,format='+yuvform+',width='+str(width)+',height='+str(height)+',framerate='+str(framerate)+'/1'
                 self.stream_yuv()
             else:

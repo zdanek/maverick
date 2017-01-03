@@ -4,7 +4,6 @@ class maverick_vision::visiond (
         
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
-    ensure_packages(["x264"])
 
     # Add v4l2 python bindings
     python::pip { 'pip-v4l2':
