@@ -76,7 +76,7 @@ class maverick_vision::opencv (
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH; LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:\$LD_LIBRARY_PATH",
+        content     => "PATH=/srv/maverick/software/opencv/bin:\$PATH:PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH; LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:\$LD_LIBRARY_PATH",
     }
     
 }
