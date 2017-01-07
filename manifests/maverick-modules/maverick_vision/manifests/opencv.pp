@@ -71,12 +71,30 @@ class maverick_vision::opencv (
         command     => "/usr/bin/make install >/srv/maverick/var/log/build/opencv.install.out 2>&1",
         cwd         => "/srv/maverick/var/build/opencv/build",
         creates     => $_install_creates,
-    }
-    file { "/etc/profile.d/40-maverick-opencv.sh":
+    } ->
+    file { "/etc/profile.d/40-maverick-opencv-path.sh":
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "PATH=/srv/maverick/software/opencv/bin:\$PATH:PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH; LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:\$LD_LIBRARY_PATH",
+        content     => "export PATH=/srv/maverick/software/opencv/bin:\$PATH",
+    } ->
+    file { "/etc/profile.d/40-maverick-opencv-pkgconfig.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH",
+    } ->
+    file { "/etc/profile.d/40-maverick-opencv-ldlibrarypath.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:\$LD_LIBRARY_PATH",
+    } ->
+    file { "/etc/profile.d/40-maverick-opencv-pythonpath.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export PYTHONPATH=/srv/maverick/software/opencv/lib/python2.7/dist-packages:\$PYTHONPATH",
     }
     
 }
