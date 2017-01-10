@@ -1,9 +1,12 @@
 class maverick_ros (
     $installtype = "source",
     $distribution = "kinetic",
+    $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $mavros_sitl_active = true,
     $mavros_fc_active = true,
+    $module_mavros = true,
+    $module_opencv = false,
 ) {
     
     # If installtype is set then use it and skip autodetection
@@ -95,8 +98,7 @@ class maverick_ros (
             group       => "mav",
             mode        => 755,
         }
-        $_builddir = "/srv/maverick/var/build/ros_catkin_ws"
-        file { "${_builddir}":
+        file { "${builddir}":
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
@@ -118,64 +120,72 @@ class maverick_ros (
         } ->
         exec { "catkin_rosinstall":
             command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${distribution}-ros_comm-wet.rosinstall",
-            cwd             => "${_builddir}",
+            cwd             => "${builddir}",
             user            => "mav",
-            creates         => "${_builddir}/src/.rosinstall"
+            creates         => "${builddir}/src/.rosinstall"
         } ->
         exec { "rosdep-install":
             command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y",
-            cwd             => "${_builddir}",
+            cwd             => "${builddir}",
             user            => "mav",
             timeout         => 0,
             unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satis'",
         } ->
         exec { "catkin_make":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
-            cwd             => "${_builddir}",
+            command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+            cwd             => "${builddir}",
             user            => "mav",
             creates         => "${installdir}/${distribution}/lib/rosbag/topic_renamer.py",
             timeout         => 0,
             require         => File["${installdir}/${distribution}"]
         }
         
-        # Add opencv to the existing workspace through vision_opencv package
-        ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
-        exec { "ws_add_opencv":
-            command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
-            cwd             => "${_builddir}",
-            user            => "mav",
-            creates         => "${_builddir}/src/vision_opencv",
-            timeout         => 0,
-            require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
-        } ->
-        exec { "catkin_make_vision_opencv":
-            command         => "${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
-            cwd             => "${_builddir}",
-            user            => "mav",
-            creates         => "${installdir}/${distribution}/lib/libopencv_optflow3.so.3.1.0",
-            timeout         => 0,
-            require         => File["${installdir}/${distribution}"]
+        if $module_opencv == true {
+            # Add opencv to the existing workspace through vision_opencv package
+            ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
+            exec { "ws_add_opencv":
+                command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
+                cwd             => "${builddir}",
+                user            => "mav",
+                creates         => "${builddir}/src/vision_opencv",
+                timeout         => 0,
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
+                require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
+            } ->
+            exec { "catkin_make_vision_opencv":
+                command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                cwd             => "${builddir}",
+                user            => "mav",
+                creates         => "${installdir}/${distribution}/lib/libopencv_optflow3.so",
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
+                timeout         => 0,
+                require         => File["${installdir}/${distribution}"]
+            }
         }
-
-        # Add mavros to the existing workspace, this also installs mavlink package as dependency
-        exec { "ws_add_mavros":
-            command         => "/usr/bin/rosinstall_generator mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
-            cwd             => "${_builddir}",
-            user            => "mav",
-            creates         => "${_builddir}/src/mavros",
-            timeout         => 0,
-            require         => Exec["catkin_make"]
-        } ->
-        exec { "catkin_make_mavros":
-            # Note must only use -j1 otherwise we get compiler errors
-            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${_builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j1",
-            cwd             => "${_builddir}",
-            user            => "mav",
-            creates         => "${installdir}/${distribution}/lib/libmavros.so",
-            timeout         => 0,
-            require         => File["${installdir}/${distribution}"]
+        
+        if $module_mavros == true {
+            # Add mavros to the existing workspace, this also installs mavlink package as dependency
+            exec { "ws_add_mavros":
+                command         => "/usr/bin/rosinstall_generator mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+                cwd             => "${builddir}",
+                user            => "mav",
+                creates         => "${builddir}/src/mavros",
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
+                timeout         => 0,
+                require         => Exec["catkin_make"]
+            } ->
+            exec { "catkin_make_mavros":
+                # Note must only use -j1 otherwise we get compiler errors
+                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j1",
+                cwd             => "${builddir}",
+                user            => "mav",
+                creates         => "${installdir}/${distribution}/lib/libmavros.so",
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
+                timeout         => 0,
+                require         => File["${installdir}/${distribution}"]
+            }
         }
-
+        
         # Create symlink to usual vendor install directory
         file { ["/opt", "/opt/ros"]:
             ensure      => directory,

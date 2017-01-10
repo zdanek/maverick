@@ -176,10 +176,11 @@ class Streamer(object):
             queue = Gst.ElementFactory.make("queue", "queue")
             self.pipeline.add(queue)
             capsfilter.link(queue)
-            vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-            self.pipeline.add(vconvert)
-            queue.link(vconvert)
-            self.source_attach = vconvert
+            #vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
+            #self.pipeline.add(vconvert)
+            #queue.link(vconvert)
+            #self.source_attach = vconvert
+            self.source_attach = queue
 
         ### Encoding methods
         def encode_h264(self):
@@ -269,7 +270,7 @@ class Streamer(object):
             if not dest:
                 logger.warn("UDP destination must be set")
                 return
-            logger.info("Attaching output 'udp'")
+            logger.info("Attaching output 'udp', sending to "+str(dest)+":"+str(port))
             sink = Gst.ElementFactory.make("udpsink", "udpsink")
             sink.set_property("host", dest)
             sink.set_property("port", port)
