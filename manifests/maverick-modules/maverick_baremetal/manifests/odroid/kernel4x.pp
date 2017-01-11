@@ -21,22 +21,24 @@ class maverick_baremetal::odroid::kernel4x (
     
     # Clone and build 4.x kernel for xu4
     oncevcsrepo { "git-odroid-kernel4x":
-        gitsource   => "https://github.com/Dmole/linux.git",
+        # gitsource   => "https://github.com/Dmole/linux.git",
+        gitsource   => "https://github.com/mdrjr/linux.git",
         # revision    => "odroidxu4-mihailescu2m-4.8",
-        revision    => "odroidxu4-mihailescu2m-4.9.y",
+        # revision    => "odroidxu4-mihailescu2m-4.9.y",
+        revision    => "odroidxu3-4.9.y",
         dest        => "/srv/maverick/var/build/linux",
         owner       => "mav",
         group       => "mav",
     } ->
-    #exec { "odroid-kernel4x-makedep":
-    #    timeout     => 0,
-    #    command     => "/usr/bin/make odroidxu4_defconfig >/srv/maverick/var/log/build/odroid-kernel4x.makedep.log 2>&1",
-    #    cwd         => "/srv/maverick/var/build/linux",
-    #    creates     => "/srv/maverick/var/build/linux/.config",
-    #} ->
-    file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
-        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
+    exec { "odroid-kernel4x-makedep":
+        timeout     => 0,
+        command     => "/usr/bin/make odroidxu3_defconfig >/srv/maverick/var/log/build/odroid-kernel4x.makedep.log 2>&1",
+        cwd         => "/srv/maverick/var/build/linux",
+        creates     => "/srv/maverick/var/build/linux/.config",
     } ->
+    #file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
+    #    source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
+    #} ->
     exec { "odroid-kernel4x-make":
         timeout     => 0,
         command     => "/usr/bin/make -j 8 zImage dtbs modules >/srv/maverick/var/log/build/odroid-kernel4x.make.log 2>&1",
@@ -58,7 +60,7 @@ class maverick_baremetal::odroid::kernel4x (
         warning("Building second stage Odroid 4.x kernel, please reboot once this run is complete.")
     } else {
         $kver = undef
-        warning("Building Odroid 4.x kernel is currently a two stage process, please run maverick --configure again after this run is complete.")
+        warning("Building Odroid 4.x kernel is currently a two stage process, please run maverick configure again after this run is complete.")
     }
     
     if $kver {
