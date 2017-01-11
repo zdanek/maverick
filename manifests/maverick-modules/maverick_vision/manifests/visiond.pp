@@ -32,6 +32,24 @@ class maverick_vision::visiond (
         mode        => 644,
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
+    file { "/etc/systemd/system/maverick-visiond.service.d":
+        ensure      => directory
+    } ->
+    file { "/etc/systemd/system/maverick-visiond.service.d/typelib-path.conf":
+        ensure      => present,
+        mode        => 644,
+        content     => "[Service]\nEnvironment=\"GI_TYPELIB_PATH=/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0\""
+    } ->
+    file { "/etc/systemd/system/maverick-visiond.service.d/library-path.conf":
+        ensure      => present,
+        mode        => 644,
+        content     => "[Service]\nEnvironment=\"LD_LIBRARY_PATH=/srv/maverick/software/gstreamer/lib\""
+    } ->
+    file { "/etc/systemd/system/maverick-visiond.service.d/path.conf":
+        ensure      => present,
+        mode        => 644,
+        content     => "[Service]\nEnvironment=\"PATH=/srv/maverick/software/gstreamer/bin:/usr/sbin:/usr/bin:/sbin:/bin\""
+    } ->
     service { "maverick-visiond":
         ensure      => $visiond_state,
         enable      => true,

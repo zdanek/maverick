@@ -233,15 +233,7 @@ class maverick_vision::gstreamer (
             group       => "root",
             content     => "export GI_TYPELIB_PATH=/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0",
         }
-        file { "/etc/systemd/system/maverick-visiond.service.d":
-            ensure      => directory
-        } ->
-        file { "/etc/systemd/system/maverick-visiond.service.d/typelib-path.conf":
-            ensure      => present,
-            mode        => 644,
-            content     => "[Service]\nEnvironment=\"GI_TYPELIB_PATH=/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0\""
-        }
-        
+
         # Set profile scripts for custom gstreamer location
         file { "/etc/profile.d/50-maverick-gstreamer-path.sh":
             mode        => 644,
