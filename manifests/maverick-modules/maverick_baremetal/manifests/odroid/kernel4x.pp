@@ -30,15 +30,15 @@ class maverick_baremetal::odroid::kernel4x (
         owner       => "mav",
         group       => "mav",
     } ->
-    exec { "odroid-kernel4x-makedep":
-        timeout     => 0,
-        command     => "/usr/bin/make odroidxu3_defconfig >/srv/maverick/var/log/build/odroid-kernel4x.makedep.log 2>&1",
-        cwd         => "/srv/maverick/var/build/linux",
-        creates     => "/srv/maverick/var/build/linux/.config",
-    } ->
-    #file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
-    #    source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
+    #exec { "odroid-kernel4x-makedep":
+    #    timeout     => 0,
+    #    command     => "/usr/bin/make odroidxu3_defconfig >/srv/maverick/var/log/build/odroid-kernel4x.makedep.log 2>&1",
+    #    cwd         => "/srv/maverick/var/build/linux",
+    #    creates     => "/srv/maverick/var/build/linux/.config",
     #} ->
+    file { "/srv/maverick/var/build/linux/.config": # use a predefined .config instead of creating one from recipe
+        source      => "puppet:///modules/maverick_baremetal/odroidxu4-kern4x-config",
+    } ->
     exec { "odroid-kernel4x-make":
         timeout     => 0,
         command     => "/usr/bin/make -j 8 zImage dtbs modules >/srv/maverick/var/log/build/odroid-kernel4x.make.log 2>&1",
