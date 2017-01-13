@@ -1,6 +1,6 @@
 This is where to put (hiera) config files to influence the build configuration, based on hostname.
 This allows customised, repeatable, consistent builds from a single file.  
-Just copy the file in here before running maverick --configure for the first time, although it will also work on subsequent runs.
+Just copy the file in here before running maverick configure for the first time, although it will also work on subsequent runs.
 Files must have .json extension.
 
 Sample files can be found in /srv/maverick/conf/sample-nodes.
