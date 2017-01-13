@@ -46,6 +46,12 @@ class maverick_vision::aruco (
         group       => "root",
         content     => "export PATH=/srv/maverick/software/aruco/bin:\$PATH",
     } ->
+    file { "/etc/profile.d/60-maverick-aruco-pkgconfig.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export PKG_CONFIG_PATH=/srv/maverick/software/aruco/lib/pkgconfig:\$PKG_CONFIG_PATH",
+    } ->
     file { "/etc/profile.d/40-maverick-aruco-ldlibrarypath.sh":
         mode        => 644,
         owner       => "root",
