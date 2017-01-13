@@ -211,7 +211,8 @@ class maverick_vision::gstreamer (
                     "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
                 ],
                 # command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} make CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
-                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                # command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} make && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
                 creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
                 require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
