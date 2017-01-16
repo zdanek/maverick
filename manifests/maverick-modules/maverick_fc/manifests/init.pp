@@ -32,6 +32,12 @@ class maverick_fc (
         user        => "mav",
         cwd         => "/srv/maverick/var/build/dronekit-la",
         timeout     => 0,
+    } ->
+    file { "/srv/maverick/data/config/dataflash_logger.conf":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        content     => template("maverick_fc/dataflash_logger.conf.erb")
     }
     
     # Install a virtual environment for dronekit fc
