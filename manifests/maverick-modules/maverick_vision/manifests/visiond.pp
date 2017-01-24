@@ -1,5 +1,6 @@
 class maverick_vision::visiond (
     $visiond_state = undef,
+    $visiond_enable = true,
 ) {
         
     # Setup standard packages for all platforms
@@ -52,7 +53,7 @@ class maverick_vision::visiond (
     } ->
     service { "maverick-visiond":
         ensure      => $visiond_state,
-        enable      => true,
+        enable      => $visiond_enable,
     }
     
 }
