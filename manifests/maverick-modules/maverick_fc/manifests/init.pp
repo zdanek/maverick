@@ -2,7 +2,16 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavproxy_active = true,
     $dronekit_la_revision = "master",
+    $global_dronekit = true,
 ) {
+
+    if $global_dronekit == true {
+        python::pip { 'pip-dronekit-global':
+            pkgname     => 'dronekit',
+            ensure      => present,
+            timeout     => 0,
+        }
+    }
 
     # Install dronekit-la (log analyzer)
     oncevcsrepo { "git-dronekit-la":
