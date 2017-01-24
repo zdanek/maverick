@@ -13,10 +13,10 @@ class maverick_dev::dronekit (
         gitsource   => "https://github.com/rmackay9/ardupilot-balloon-finder.git",
         dest        => "/srv/maverick/code/dronekit-apps/red-balloon-finder",
     }
-    # Install djnugent precision landing
-    oncevcsrepo { "git-precision-landing":
-        gitsource   => "https://github.com/djnugent/Precland.git",
-        dest        => "/srv/maverick/code/dronekit-apps/precision-landing",
+    # Install vision_landing
+    oncevcsrepo { "git-vision_landing":
+        gitsource   => "https://github.com/fnoop/vision_landing.git",
+        dest        => "/srv/maverick/code/dronekit-apps/vision_landing",
     }
         
 }
