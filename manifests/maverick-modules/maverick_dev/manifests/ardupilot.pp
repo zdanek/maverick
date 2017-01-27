@@ -29,6 +29,7 @@ class maverick_dev::ardupilot (
             command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
             unless      => "/usr/bin/git remote -v | /bin/grep ${ardupilot_upstream}",
             cwd         => "/srv/maverick/code/ardupilot",
+            require     => Oncevcsrepo["git-ardupilot"],
         }
     }
     
@@ -67,7 +68,7 @@ class maverick_dev::ardupilot (
     # Compile SITL
     if $sitl and $ardupilot_buildsystem == "waf" {
         fwbuildwaf { "sitl_${ardupilot_vehicle}":
-            require     => Oncevcsrepo["git-ardupilot"],
+            require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
             board       => "sitl",
             build       => $ardupilot_vehicle,
         }
@@ -80,7 +81,7 @@ class maverick_dev::ardupilot (
             $ardupilot_type = "ArduRover"
         }
         fwbuildmake { "sitl_${ardupilot_vehicle}": 
-            require     => Oncevcsrepo["git-ardupilot"],
+            require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
             board       => "sitl",
             build       => $ardupilot_type,
         }
