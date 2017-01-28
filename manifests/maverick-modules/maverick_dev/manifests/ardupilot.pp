@@ -24,15 +24,13 @@ class maverick_dev::ardupilot (
     }
     
     # If a custom ardupilot repo is specified, configure the upstream automagically
-    if $ardupilot_source != $ardupilot_upstream and $ardupilot_setupstream {
-        exec { "ardupilot_setupstream":
-            command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
-            unless      => "/usr/bin/git remote -v | /bin/grep ${ardupilot_upstream}",
-            cwd         => "/srv/maverick/code/ardupilot",
-            require     => Oncevcsrepo["git-ardupilot"],
-        }
+    exec { "ardupilot_setupstream":
+        command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
+        unless      => "/usr/bin/git remote -v | /bin/grep ${ardupilot_upstream}",
+        cwd         => "/srv/maverick/code/ardupilot",
+        require     => Oncevcsrepo["git-ardupilot"],
     }
-    
+
     # Define function to build ardupilot firmwares using new waf system
     define fwbuildwaf ($build, $board) {
         if ! ("${board}/bin/ardu${build}" in $waffiles) {
