@@ -255,6 +255,7 @@ class maverick_network (
         $addressing = "dhcp",
 	    $macaddress = undef,
 	    $ipaddress = undef,
+	    $apaddress = "192.168.10.1",
 	    $gateway = undef,
 	    $nameservers = undef,
 	    $ssid = undef,
@@ -290,7 +291,7 @@ class maverick_network (
 		        type        => $type,
 		        addressing  => "master",
 		        macaddress  => $macaddress,
-		        ipaddress   => $ipaddress,
+		        ipaddress   => $apaddress,
 		    }
 		    # Then setup the AP
 		    maverick_network::interface_ap { $name:

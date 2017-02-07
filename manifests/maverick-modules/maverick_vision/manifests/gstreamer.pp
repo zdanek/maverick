@@ -1,9 +1,10 @@
 class maverick_vision::gstreamer (
     $gstreamer_installtype = "source",
+    $gstreamer_version = "1.10.3",
     $libx264 = "installed",
 ) {
-    # Install gstreamer
-    if $gstreamer_installtype == "native" {
+    # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
+    if $gstreamer_installtype == "native" or $raspberry_present == "yes" {
         ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
@@ -29,6 +30,10 @@ class maverick_vision::gstreamer (
                 ensure      => latest,
                 source      => "/srv/maverick/var/build/gstreamer_odroidmfc/gstreamer1.0-plugins-good_1.8.2-1ubuntu3_armhf.deb",
             }
+        } else {
+            package { "gstreamer1.0-plugins-good":
+                ensure      => present
+            }
         }
 	} elsif $gstreamer_installtype == "source" {
         # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
@@ -40,7 +45,7 @@ class maverick_vision::gstreamer (
             ensure_packages(["mesa-utils"])
         } else {
             $gst_plugins_good_src = "https://github.com/GStreamer/gst-plugins-good.git"
-            $gst_plugins_good_revision = "1.10.2"
+            $gst_plugins_good_revision = $gstreamer_version
         }
 
         # Install necessary dependencies and compile
@@ -61,12 +66,12 @@ class maverick_vision::gstreamer (
         oncevcsrepo { "git-gstreamer_core":
             gitsource   => "https://github.com/GStreamer/gstreamer.git",
             dest        => "/srv/maverick/var/build/gstreamer/core",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_plugins_base":
             gitsource   => "https://github.com/GStreamer/gst-plugins-base.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-base",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_plugins_good":
             gitsource   => $gst_plugins_good_src,
@@ -76,32 +81,27 @@ class maverick_vision::gstreamer (
         oncevcsrepo { "git-gstreamer_plugins_bad":
             gitsource   => "https://github.com/GStreamer/gst-plugins-bad.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_plugins_ugly":
             gitsource   => "https://github.com/GStreamer/gst-plugins-ugly.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_libav":
             gitsource   => "https://github.com/GStreamer/gst-libav.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-libav",
-            revision    => "1.10.2",
-        } ->
-        oncevcsrepo { "git-gstreamer_omx":
-            gitsource   => "https://github.com/GStreamer/gst-omx.git",
-            dest        => "/srv/maverick/var/build/gstreamer/gst-omx",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_gst_python":
             gitsource   => "https://github.com/GStreamer/gst-python.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-python",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         oncevcsrepo { "git-gstreamer_gst_rtsp_server":
             gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
             dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-            revision    => "1.10.2",
+            revision    => $gstreamer_version,
         } ->
         
         exec { "gstreamer_core-build":
@@ -200,19 +200,23 @@ class maverick_vision::gstreamer (
             require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Exec["gstreamer_gst_plugins_base"] ]
         }
 
+        # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
+        # See https://github.com/fnoop/maverick/issues/242
         if ($raspberry_present == "yes") {
+            oncevcsrepo { "git-gstreamer_omx":
+                gitsource   => "https://github.com/fnoop/gst-omx-rpi.git",
+                dest        => "/srv/maverick/var/build/gstreamer/gst-omx",
+            } ->
             exec { "gstreamer_gst_omx":
                 user        => "mav",
                 timeout     => 0,
                 environment => [
-                    "CFLAGS=-I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                    "CFLAGS=-DOMX_SKIP64BIT -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                     "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                     "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
                     "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
                 ],
-                # command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} make CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
-                # command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+=\"-Wno-error -Wno-redundant-decls\" LDFLAGS+=\"-L/opt/vc/lib\" && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
-                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-header-path=/opt/vc/include/IL --with-omx-target=rpi --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} make && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer; /usr/bin/make -j${::processorcount}; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
                 creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
                 require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
