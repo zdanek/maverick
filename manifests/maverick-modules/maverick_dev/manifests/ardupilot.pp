@@ -16,7 +16,7 @@ class maverick_dev::ardupilot (
         revision	=> $ardupilot_branch,
         submodules  => true,
     }
-    ensure_packages(["make", "gawk", "g++", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
+    ensure_packages(["make", "gawk", "g++", "zip", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
     # Waf build requires python future
     python::pip { 'pip-future':
         pkgname     => 'future',
