@@ -1,5 +1,3 @@
-![logo](_media/icon.svg)
-
 # docsify <small>1.2.0</small>
 
 > A magical documentation site generator.
