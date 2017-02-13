@@ -1,11 +1,16 @@
-# docsify <small>1.2.0</small>
+![alt text](media/maverick-logo.svg)  
+> Companion Computer System
 
-> A magical documentation site generator.
+- Automate building, installation, configuration, updates and maintenance
+- Create repeatable consistent, reliable, secure systems
+- Hardware and OS agnostic
+- Ready-to-fly images for popular SBCs (Raspberry, Odroid)
+- Multiple environments - flight, development
+- Rich functionality of the the box
+- Open Source - GPLv3
 
-- Simple and lightweight (~12kb gzipped)
-- Multiple themes
-- Not build static html files
-
-
-[GitHub](https://github.com/QingWei-Li/docsify/)
+[What is Maverick?](#what-is-maverick)
 [Get Started](#quick-start)
+
+<!-- background image
+![](_media/bg.png) -->
