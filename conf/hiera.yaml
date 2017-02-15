@@ -6,8 +6,8 @@
 :hierarchy:
   - "%{environment}/nodes/%{::hostname}"
   - "%{environment}/defaults"
-  - "sample-nodes/%{::hostname}"
   - "local-nodes/%{::hostname}"
+  - "sample-nodes/%{::hostname}"
   - localconf
   - maverick-defaults
   - puppet-defaults
