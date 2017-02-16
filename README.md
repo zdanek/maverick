@@ -1,4 +1,4 @@
-## What is Maverick?
+## About Maverick?
 Maverick is a system for creating, installing, configuring, updating and maintaining UAV companion computers, with a high level of automation, consistency and reliability, minimizing risk.
 
 The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.

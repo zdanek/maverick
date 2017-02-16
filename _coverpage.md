@@ -9,7 +9,7 @@
 - Rich functionality of the the box
 - Open Source - GPLv3
 
-[What is Maverick?](#what-is-maverick)
+[What is Maverick?](#about-maverick)
 [Quick Start](#installation)
 
 <!-- background image
