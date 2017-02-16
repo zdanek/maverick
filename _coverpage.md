@@ -10,7 +10,7 @@
 - Open Source - GPLv3
 
 [What is Maverick?](#what-is-maverick)
-[Get Started](#quick-start)
+[Quick Start](#installation)
 
 <!-- background image
 ![](_media/bg.png) -->

@@ -4,9 +4,13 @@ Maverick is a system for creating, installing, configuring, updating and maintai
 The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
 
 ### Why Maverick?
-UAV Companion Computers suffer from a lack of collaborative development, unlike flight controller development.  Software for companion computers is usually distributed in the form of modified vendor OS images.  These are simple to download and install, but are difficult or clumsy to create and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce images for that platform.
+UAVs, as flight vehicles that share a busy airspace and are autonomous to varying degrees, are becoming more regulated and licensed globally and as such require better and more thorough engineering.  Companion Computers are often used in conjunction with dedicated Flight Controllers to influence partially or entirely the characteristics of flight, and should be subject to the same rigours of engineering and development as any complex system in a critical environment.
 
-Instead of creating, distributing and maintaining large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevent.
+Maverick applies Configuration Management to the problem of building and maintaining Companion Computers, drawing on decades of engineering experience to bring increased reliability and reduced risk to this important technology.  Configuration Management is a tried and tested engineering process and is almost completely ubiquitous in aerospace, space and military engineering.
+
+UAV Companion Computers also suffer from a lack of collaborative development, unlike flight controller development.  Software for companion computers is usually distributed in the form of modified vendor OS images or adhoc scripts.  These are simple to download and install, but are difficult or clumsy to create and collaborate on, and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce logic and images for that platform.
+
+Instead of creating, distributing and maintaining separate logic and large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevant.
 
 Maverick provides easy to install OS images for convenience, but can be entirely installed from a few K of github code.  When new features are developed using Maverick, existing installs can be updated quickly and safely with a single command without any disruption to data or running services.
 
@@ -27,7 +31,7 @@ Even though Maverick enables a rich set of functionality out of the box, the mai
 ### How does it work?
 At the heart of Maverick is the tried and tested Configuration Management system Puppet.  Puppet is a system that abstracts the configuration of a system into declarative code, and is widely used in complex computing environments to automate computer configuration in a secure, repeatable manner that reduces risk and increases reliability.  Maverick can be used to create and install companion systems, but can also be used to update an existing system.  Maverick can be re-run any number of times and will only make changes where necessary to bring the system into the configured state.
 
-The declarative code are called manifests and are arranged in modules.  They effectively form building blocks that can be put together to create system blueprints.  Each module and manifest can have parameters applied through configuration files that adapt the way the declarative code is applied.  This makes a very flexible and efficient method of describing and building systems.
+The declarative code files are called manifests and are arranged in modules.  They effectively form building blocks that can be put together to create system blueprints.  Each module and manifest can have parameters applied through configuration files that adapt the way the declarative code is applied.  This makes a very flexible and efficient method of describing and building systems.
 
 ### Hardware support
 Maverick is designed to be cross platform and hardware agnostic. Initially it is being developed and tested on the following platforms:
@@ -76,7 +80,7 @@ Web IDE |  |  |  x
 
 ______
 
-## Quick Start
+## Installation
 There are two ways to get started with Maverick:  
 [Download OS Images](#os-images)  
   *_or_*  
