@@ -11,7 +11,7 @@ define speak ($message = "", $level = "") {
 define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group="mav", $submodules=false, $depth=1) {
     # This depends on gitfiles fact, declared in maverick-modules/base/facts.d/gitrepos.py
     $gitrepos = split($gitrepos, ',')
-    if ! ("${dest}/.git/HEAD" in $gitrepos) {
+    if ! ("${dest}/.git" in $gitrepos) {
         notice("oncevcsrepo: ${dest} git repo doesn't exist locally, cloning may take a while..")
         file { "${dest}":
             ensure      => directory,
