@@ -1,10 +1,10 @@
 class maverick_vision::aruco (
+    $aruco_gitsource = "https://git.code.sf.net/p/aruco/aruco-git"
 ) {
-    
 
     # Pull aruco from git mirror
     oncevcsrepo { "git-aruco":
-        gitsource   => "https://github.com/fnoop/aruco",
+        gitsource   => $aruco_gitsource,
         dest        => "/srv/maverick/var/build/aruco",
     } ->
     # Create build directory

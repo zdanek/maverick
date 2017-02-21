@@ -1,54 +1,8 @@
 class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavproxy_active = true,
-    $dronekit_la_revision = "master",
-    $global_dronekit = true,
 ) {
 
-    if $global_dronekit == true {
-        python::pip { 'pip-dronekit-global':
-            pkgname     => 'dronekit',
-            ensure      => present,
-            timeout     => 0,
-        }
-    }
-
-    # Install dronekit-la (log analyzer)
-    oncevcsrepo { "git-dronekit-la":
-        gitsource   => "https://github.com/dronekit/dronekit-la.git",
-        dest        => "/srv/maverick/var/build/dronekit-la",
-        revision	=> "${dronekit_la_revision}",
-        submodules  => true,
-        owner        => mav,
-        group       => mav,
-    } ->
-    # Compile dronekit-la
-    exec { "compile-dronekit-la":
-        command     => "/usr/bin/make -j${::processorcount} dronekit-la dataflash_logger >/srv/maverick/var/log/build/dronekit-la.build.log 2>&1",
-        creates     => "/srv/maverick/var/build/dronekit-la/dronekit-la",
-        user        => "mav",
-        cwd         => "/srv/maverick/var/build/dronekit-la",
-        timeout     => 0,
-    } ->
-    file { "/srv/maverick/software/dronekit-la":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-    } ->
-    exec { "install-dronekit-la":
-        command     => "/bin/cp dronekit-la dataflash_logger README.mdd /srv/maverick/software/dronekit-la; chmod a+rx /srv/maverick/software/dronekit-la/* >/srv/maverick/var/log/build/dronekit-la.install.log 2>&1",
-        creates     => "/srv/maverick/software/dronekit-la/dronekit-la",
-        user        => "mav",
-        cwd         => "/srv/maverick/var/build/dronekit-la",
-        timeout     => 0,
-    } ->
-    file { "/srv/maverick/data/config/dataflash_logger.conf":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        content     => template("maverick_fc/dataflash_logger.conf.erb")
-    }
-    
     # Install a virtual environment for dronekit fc
     file { "/srv/maverick/code/fc":
         ensure      => directory,
