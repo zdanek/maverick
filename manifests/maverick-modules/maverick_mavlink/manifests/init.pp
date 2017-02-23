@@ -76,7 +76,7 @@ class maverick_mavlink (
             timeout     => 0,
             command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && /srv/maverick/var/build/mavlinkrouter/configure CFLAGS='-g -O2' --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/mavlinkrouter",
-            creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlinkrouterd",
+            creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlink-routerd",
         }
         file { "/etc/systemd/system/maverick-mavlinkrouter@.service":
             source      => "puppet:///modules/maverick_mavlink/maverick-mavlinkrouter@.service",
