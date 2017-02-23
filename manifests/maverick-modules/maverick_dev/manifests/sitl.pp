@@ -1,6 +1,6 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavproxy_state = undef,
+    $mavproxy_active = true,
     $sitl_state = undef,
 ) {
     
@@ -30,7 +30,7 @@ class maverick_dev::sitl (
         dest        => "/srv/maverick/code/sitl/dronekit-python",
     }
     
-    # Install dronekit-sitl into sitl
+    # Install dronekit into sitl
     python::pip { 'pip-dronekit-sitl':
         pkgname     => 'dronekit',
         virtualenv  => '/srv/maverick/.virtualenvs/sitl',
@@ -60,25 +60,21 @@ class maverick_dev::sitl (
         group       => "mav",
         mode        => 755,
     }
-    
-    # Punch some holes in the firewall for sitl, protect 5770 which mavproxy-sitl uses
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "sitl":
-            ports       => [5775-5777],
-            ips         => hiera("all_ips"),
-            proto       => "tcp"
-        }
+
+    file { "/srv/maverick/var/log/sitl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
+    file { "/srv/maverick/var/log/mavlink-sitl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
     }
     
-    # Punch some holes in the firewall for sitl mavproxy
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "mavproxy-sitl":
-            ports       => [14565-14567],
-            ips         => hiera("all_ips"),
-            proto       => "udp"
-        }
-    }
-    
+    ### make build is out of date, needs updating, but should be rarely used now
     if getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "make" {
         file { "/etc/systemd/system/maverick-sitl.service":
             content     => template("maverick_dev/maverick-sitl.service.erb"),
@@ -139,34 +135,9 @@ class maverick_dev::sitl (
         } elsif $ardupilot_vehicle == "rover" {
             $ardupilot_type = "ArduRover"
         }
-        file { "/srv/maverick/var/log/sitl":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-            mode        => 755,
-        } ->
-        file { "/srv/maverick/data/config/sitl.conf":
-            ensure      => present,
-            owner       => "mav",
-            group       => "mav",
-            replace     => false, # initialize but don't overwrite in the future
-            source      => "puppet:///modules/maverick_dev/sitl.conf",
-            notify      => Service["maverick-sitl"]
-        } ->
-        file { "/srv/maverick/data/config/sitl.screen.conf":
-            ensure      => present,
-            owner       => "mav",
-            group       => "mav",
-            source      => "puppet:///modules/maverick_dev/sitl.sim_vehicle.screen.conf",
-            notify      => Service["maverick-sitl"]
-        } ->
-        file { "/srv/maverick/software/maverick/bin/sitl.sh":
-            ensure      => link,
-            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/sitl.sim_vehicle.sh",
-            notify      => Service["maverick-sitl"]
-        } ->
+
         file { "/etc/systemd/system/maverick-sitl.service":
-            content     => template("maverick_dev/sitl.sim_vehicle.service.erb"),
+            content     => template("maverick_dev/maverick-sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => 644,
@@ -178,18 +149,14 @@ class maverick_dev::sitl (
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
         
-        # For waf build, make sure that mavproxy-sitl isn't defined
-        service { "mavproxy-sitl":
-            ensure      => stopped,
-            enable      => false,
-        } ->
-        file { "/etc/systemd/system/mavproxy-sitl.service":
-            ensure      => absent,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Exec["maverick-systemctl-reset-failed"], Service["maverick-sitl"] ]
+        maverick_mavlink::mavproxy { "sitl":
+            input       => "tcp:localhost:5760",
+            instance    => 1,
+            startingudp => 14560,
+            startingtcp => 5770,
+            active      => $mavproxy_active,
         }
 
     }
-    
-
 
 }

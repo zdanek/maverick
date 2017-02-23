@@ -1,0 +1,11 @@
+[fcserial]
+    type=serial
+    port=<%= @input %>
+    baud=115200
+    flow_control=false
+
+<% (0..(@udpports.to_i()-1)).each do |i| -%>
+[udpin<%= i -%>]
+    type=socket
+    localport=<%= @startingudp.to_i() + i %>
+<% end -%>

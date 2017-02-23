@@ -1,0 +1,11 @@
+[General]
+tcp=@startingtcp
+report-stats=false
+
+<% (0..(@udpports.to_i()-1)).each do |i| -%>
+[Endpoint <%= i -%>]
+    Type = UDP
+    Mode = Eavesdropping
+    Address = 0.0.0.0
+    Port = <%= @startingudp.to_i() + i %>
+<% end -%>

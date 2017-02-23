@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/bin/bash -a -c 'source /opt/ros/<%= @distribution %>/setup.bash && ROS_NAMESPACE="mavsitl" /opt/ros/<%= @distribution %>/bin/roslaunch mavros apm.launch fcu_url:=tcp://localhost:5775'
+ExecStart=/bin/bash -a -c 'source /opt/ros/<%= @distribution %>/setup.bash && ROS_NAMESPACE="mavsitl" /opt/ros/<%= @distribution %>/bin/roslaunch mavros apm.launch fcu_url:=tcp://localhost:5770'
 User=mav
 
 [Install]

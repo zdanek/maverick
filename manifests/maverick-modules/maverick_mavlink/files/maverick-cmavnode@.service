@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick cmavnode Mavlink Proxy - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Type=forking
+EnvironmentFile=/srv/maverick/data/config/cmavnode-%I.service.conf
+ExecStart=/srv/maverick/software/maverick/bin/cmavnode.sh %I
+User=mav
+
+[Install]
+WantedBy=multi-user.target

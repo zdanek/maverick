@@ -1,8 +1,8 @@
 class maverick_mavlink (
     $cmavnode_install = true,
     $cmavnode_source = "https://github.com/MonashUAS/cmavnode.git",
-    $mavlink_router_install = true,
-    $mavlink_router_source = "https://github.com/01org/mavlink-router.git",
+    $mavlinkrouter_install = true,
+    $mavlinkrouter_source = "https://github.com/01org/mavlink-router.git",
     $mavproxy_install = true,
     $dronekit_install = true,
     $dronekit_la_install = true,
@@ -11,6 +11,7 @@ class maverick_mavlink (
     
     $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
     
+    ### cmavnode
     # Install cmavnode from gitsource
     if $cmavnode_install {
         ensure_packages(["libboost-all-dev", "cmake", "libconfig++-dev", "libreadline-dev"])
@@ -49,24 +50,49 @@ class maverick_mavlink (
             cwd         => "/srv/maverick/var/build/cmavnode/build",
             creates     => "/srv/maverick/software/cmavnode/bin/cmavnode",
         }
+        file { "/etc/systemd/system/maverick-cmavnode@.service":
+            source      => "puppet:///modules/maverick_mavlink/maverick-cmavnode@.service",
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
+        file { "/srv/maverick/software/maverick/bin/cmavnode.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/cmavnode.sh",
+        }
     }
-    
-    # Install cmavnode from gitsource
-    if $mavlink_router_install {
-        oncevcsrepo { "git-mavlink_router":
-            gitsource   => $mavlink_router_source,
-            dest        => "/srv/maverick/var/build/mavlink_router",
+
+    ### mavlinkrouter
+    # Install mavlinkrouter from gitsource
+    if $mavlinkrouter_install {
+        oncevcsrepo { "git-mavlinkrouter":
+            gitsource   => $mavlinkrouter_source,
+            dest        => "/srv/maverick/var/build/mavlinkrouter",
             submodules  => true,
         } ->
-        exec { "mavlink_router-build":
+        exec { "mavlinkrouter-build":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/var/build/mavlink_router/autogen.sh && /srv/maverick/var/build/mavlink_router/configure CFLAGS='-g -O2' --prefix=/srv/maverick/software/mavlink-router && /usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/mavlink_router.build.out 2>&1",
-            cwd         => "/srv/maverick/var/build/mavlink_router",
-            creates     => "/srv/maverick/software/mavlink-router/bin/mavlink-routerd",
+            command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && /srv/maverick/var/build/mavlinkrouter/configure CFLAGS='-g -O2' --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
+            cwd         => "/srv/maverick/var/build/mavlinkrouter",
+            creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlinkrouterd",
+        }
+        file { "/etc/systemd/system/maverick-mavlinkrouter@.service":
+            source      => "puppet:///modules/maverick_mavlink/maverick-mavlinkrouter@.service",
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
+        file { "/srv/maverick/software/maverick/bin/mavlinkrouter.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlinkrouter.sh",
         }
     }
     
+    
+    ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
     if $mavproxy_install {
         python::pip { 'pip-mavproxy-global':
@@ -74,7 +100,19 @@ class maverick_mavlink (
             ensure      => present,
             timeout     => 0,
         }
+        file { "/etc/systemd/system/maverick-mavproxy@.service":
+            source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
+        file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavproxy.sh",
+        }
     }
+
     
     # Install dronekit globall (not in virtualenv) from pip
     if $dronekit_install {

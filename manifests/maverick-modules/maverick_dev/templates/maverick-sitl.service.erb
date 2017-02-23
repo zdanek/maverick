@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick ArduPilot SITL
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/bin/bash -c 'cd /srv/maverick/.virtualenvs/sitl; source bin/activate; /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N --no-mavproxy -v <%= @ardupilot_type %> --use-dir=/srv/maverick/var/log/sitl'
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

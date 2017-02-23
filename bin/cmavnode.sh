@@ -1,0 +1,1 @@
+/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/cmavnode.sh

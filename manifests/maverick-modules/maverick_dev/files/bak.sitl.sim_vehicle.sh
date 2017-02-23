@@ -13,4 +13,5 @@ if [ "$ENABLE" == "false" ]; then
 fi
 
 # Start mavproxy-sitl
-/usr/bin/screen -L -c /srv/maverick/data/config/sitl.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v $1 -m $MAVPROXY_ARGS
+# /usr/bin/screen -L -c /srv/maverick/data/config/sitl.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N -v $1 -m $MAVPROXY_ARGS
+/usr/bin/screen -L -c /srv/maverick/data/config/sitl.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N --no-mavproxy -v $1

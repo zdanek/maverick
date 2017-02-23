@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick mavlink-router Mavlink Proxy - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+Type=forking
+EnvironmentFile=/srv/maverick/data/config/mavlinkrouter-%I.service.conf
+ExecStart=/srv/maverick/software/maverick/bin/mavlinkrouter.sh %I
+User=mav
+
+[Install]
+WantedBy=multi-user.target
