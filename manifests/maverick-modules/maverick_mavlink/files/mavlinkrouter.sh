@@ -12,4 +12,4 @@ if [ "$ENABLE" == "false" ]; then
     exit 0
 fi
 
-/srv/maverick/software/mavlinkrouter/bin/mavlink-router -c /srv/maverick/data/config/mavlinkrouter-$1.conf $SOURCE -r
+/srv/maverick/software/mavlinkrouter/bin/mavlink-router -c /srv/maverick/data/config/mavlinkrouter-$1.conf $SOURCE

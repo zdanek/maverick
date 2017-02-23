@@ -1,5 +1,5 @@
 [General]
-tcp=@startingtcp
+tcp=<%= @startingtcp %>
 report-stats=false
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
@@ -8,4 +8,5 @@ report-stats=false
     Mode = Eavesdropping
     Address = 0.0.0.0
     Port = <%= @startingudp.to_i() + i %>
-<% end -%>
+    
+<% end %>
