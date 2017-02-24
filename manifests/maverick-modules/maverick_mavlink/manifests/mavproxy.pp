@@ -7,7 +7,6 @@ define maverick_mavlink::mavproxy (
     $tcpports = 5,
     $active = true,
 ) {
- 
     file { "/srv/maverick/data/config/mavproxy-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
@@ -31,6 +30,21 @@ define maverick_mavlink::mavproxy (
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavproxy@.service"] ]
         }
+        # Punch some holes in the firewall for mavproxy
+        if defined(Class["::maverick_security"]) {
+            $endingudp = $startingudp + $udpports
+            maverick_security::firewall::firerule { "mavlink-${name}-udp":
+                ports       => ["${startingudp}-${endingudp}"],
+                ips         => hiera("all_ips"),
+                proto       => "udp"
+            }
+            $endingtcp = $startingtcp + $tcpports
+            maverick_security::firewall::firerule { "mavlink-${name}-tcp":
+                ports       => ["${startingtcp}-${endingtcp}"],
+                ips         => hiera("all_ips"),
+                proto       => "tcp"
+            }
+        }
     } else {
     	service { "maverick-mavproxy@${name}":
             ensure      => stopped,
@@ -38,21 +52,5 @@ define maverick_mavlink::mavproxy (
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavproxy@.service"] ]
         }
     }
-    
-    # Punch some holes in the firewall for mavproxy
-    if defined(Class["::maverick_security"]) {
-        $endingudp = $startingudp + $udpports
-        maverick_security::firewall::firerule { "mavlink-${name}-udp":
-            ports       => ["${startingudp}-${endingudp}"],
-            ips         => hiera("all_ips"),
-            proto       => "udp"
-        }
-        $endingtcp = $startingtcp + $tcpports
-        maverick_security::firewall::firerule { "mavlink-${name}-tcp":
-            ports       => ["${startingtcp}-${endingtcp}"],
-            ips         => hiera("all_ips"),
-            proto       => "tcp"
-        }
-    }
-    
+
 }

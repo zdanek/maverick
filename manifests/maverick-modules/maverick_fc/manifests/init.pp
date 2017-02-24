@@ -54,6 +54,12 @@ class maverick_fc (
    
     ### Setup mavlink proxy
     if $mavlink_proxy == "mavproxy" {
+        maverick_mavlink::cmavnode { "fc":
+            active      => false
+        } ->
+        maverick_mavlink::mavlinkrouter { "fc":
+            active      => false
+        } ->
         maverick_mavlink::mavproxy { "fc":
             input       => "/dev/ttyAMA0",
             instance    => 2,
@@ -61,22 +67,31 @@ class maverick_fc (
             startingtcp => 5780,
             active      => $mavlink_active,
         }
-        #### TODO: Shut down cmavnode/mavlinkrouter
     } elsif $mavlink_proxy == "cmavnode" {
+        maverick_mavlink::mavproxy { "fc":
+            active      => false
+        } ->
+        maverick_mavlink::mavlinkrouter { "fc":
+            active      => false
+        } ->
         maverick_mavlink::cmavnode { "fc":
             input       => "/dev/ttyAMA0",
             startingudp => 14570,
             startingtcp => 5780,
             active      => $mavlink_active,
         }
-        #### TODO: Shut down mavproxy/mavlinkrouter        
     } elsif $mavlink_proxy == "mavlinkrouter" {
+        maverick_mavlink::cmavnode { "fc":
+            active      => false
+        } ->
+        maverick_mavlink::mavproxy { "fc":
+            active      => false
+        } ->
         maverick_mavlink::mavlinkrouter { "fc":
             input       => "/dev/ttyAMA0",
             startingudp => 14570,
             startingtcp => 5780,
             active      => $mavlink_active,
         }
-        #### TODO: Shut down cmavnode/mavlinkrouter
     }
 }

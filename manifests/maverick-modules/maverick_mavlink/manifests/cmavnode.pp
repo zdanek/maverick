@@ -39,27 +39,26 @@ define maverick_mavlink::cmavnode (
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-cmavnode@.service"] ]
         }
+        # Punch some holes in the firewall for cmavnode
+        if defined(Class["::maverick_security"]) {
+            $endingudp = $startingudp + $udpports
+            maverick_security::firewall::firerule { "mavlink-${name}-udp":
+                ports       => ["${startingudp}-${endingudp}"],
+                ips         => hiera("all_ips"),
+                proto       => "udp"
+            }
+            $endingtcp = $startingtcp + $tcpports
+            maverick_security::firewall::firerule { "mavlink-${name}-tcp":
+                ports       => ["${startingtcp}-${endingtcp}"],
+                ips         => hiera("all_ips"),
+                proto       => "tcp"
+            }
+        }
     } else {
     	service { "maverick-cmavnode@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-cmavnode@.service"] ]
-        }
-    }
-    
-    # Punch some holes in the firewall for cmavnode
-    if defined(Class["::maverick_security"]) {
-        $endingudp = $startingudp + $udpports
-        maverick_security::firewall::firerule { "mavlink-${name}-udp":
-            ports       => ["${startingudp}-${endingudp}"],
-            ips         => hiera("all_ips"),
-            proto       => "udp"
-        }
-        $endingtcp = $startingtcp + $tcpports
-        maverick_security::firewall::firerule { "mavlink-${name}-tcp":
-            ports       => ["${startingtcp}-${endingtcp}"],
-            ips         => hiera("all_ips"),
-            proto       => "tcp"
         }
     }
     

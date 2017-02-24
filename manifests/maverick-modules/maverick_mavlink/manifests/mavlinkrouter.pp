@@ -30,27 +30,26 @@ define maverick_mavlink::mavlinkrouter (
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlinkrouter@.service"] ]
         }
+        # Punch some holes in the firewall for mavlinkrouter
+        if defined(Class["::maverick_security"]) {
+            $endingudp = $startingudp + $udpports
+            maverick_security::firewall::firerule { "mavlink-${name}-udp":
+                ports       => ["${startingudp}-${endingudp}"],
+                ips         => hiera("all_ips"),
+                proto       => "udp"
+            }
+            $endingtcp = $startingtcp + $tcpports
+            maverick_security::firewall::firerule { "mavlink-${name}-tcp":
+                ports       => ["${startingtcp}-${endingtcp}"],
+                ips         => hiera("all_ips"),
+                proto       => "tcp"
+            }
+        }
     } else {
     	service { "maverick-mavlinkrouter@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlinkrouter@.service"] ]
-        }
-    }
-    
-    # Punch some holes in the firewall for mavlinkrouter
-    if defined(Class["::maverick_security"]) {
-        $endingudp = $startingudp + $udpports
-        maverick_security::firewall::firerule { "mavlink-${name}-udp":
-            ports       => ["${startingudp}-${endingudp}"],
-            ips         => hiera("all_ips"),
-            proto       => "udp"
-        }
-        $endingtcp = $startingtcp + $tcpports
-        maverick_security::firewall::firerule { "mavlink-${name}-tcp":
-            ports       => ["${startingtcp}-${endingtcp}"],
-            ips         => hiera("all_ips"),
-            proto       => "tcp"
         }
     }
     
