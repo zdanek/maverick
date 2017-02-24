@@ -161,14 +161,15 @@ if [ "$STATUS" == "true" ]; then
     fi
     mavenv ${environment}
     echo
-    $(systemctl -a |grep maverick-mavlink-fc >/dev/null 2>&1)
-    if [ $? -eq 0 ]; then
-        (systemctl status maverick-mavlink-fc >/dev/null 2>&1); statusout+=$(status "Mavlink (Flight Controller)" $?)
-    fi
-    $(systemctl -a |grep maverick-mavros-fc >/dev/null 2>&1)
-    if [ $? -eq 0 ]; then
-        (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)
-    fi
+    mavfc=1
+    for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
+        $(systemctl -a |grep "maverick-$mavtype@fc" >/dev/null 2>&1)
+        if [ $? -eq 0 ]; then
+            mavfc=0
+        fi
+    done
+    statusout+=$(status "Mavlink (Flight Controller)" $mavfc)
+    (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)
     (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
@@ -177,10 +178,16 @@ if [ "$STATUS" == "true" ]; then
         if [ $? -eq 0 ]; then
             (systemctl status maverick-mavlink-sitl >/dev/null 2>&1); statusout+=$(status "Mavlink (SITL)" $?)
         fi
-        $(systemctl -a |grep mavros-sitl >/dev/null 2>&1)
-        if [ $? -eq 0 ]; then
-            (systemctl status maverick-mavros-sitl >/dev/null 2>&1); statusout+=$(status "Mavros (SITL)" $?)
-        fi
+        mavsitl=1
+        for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
+            $(systemctl -a |grep "maverick-$mavtype@sitl" >/dev/null 2>&1)
+            if [ $? -eq 0 ]; then
+                mavsitl=0
+            fi
+        done
+        statusout+=$(status "Mavlink (SITL)" $mavsitl)
+
+        (systemctl status maverick-mavros-sitl >/dev/null 2>&1); statusout+=$(status "Mavros (SITL)" $?)
         (systemctl status maverick-cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
     fi
     echo -e $statusout | column -c 2 -s : -t
