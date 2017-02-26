@@ -59,7 +59,7 @@ class base::packages {
         virtualenv => 'present',
         gunicorn   => 'absent',
     } ->
-    package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon"]:
+    package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon", "python-future"]:
         ensure      => present
     }
     # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
