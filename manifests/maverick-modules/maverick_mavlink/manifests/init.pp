@@ -30,7 +30,7 @@ class maverick_mavlink (
         exec { "cmavnode-prepbuild":
             user        => "mav",
             timeout     => 0,
-            command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/cmavnode -DCMAKE_INSTALL_RPATH=/srv/maverick/software/cmavnode/lib ..",
+            command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/cmavnode ..",
             cwd         => "/srv/maverick/var/build/cmavnode/build",
             creates     => "/srv/maverick/var/build/cmavnode/build/Makefile",
             require     => [ File["/srv/maverick/var/build/cmavnode/build"], Package["libreadline-dev"] ], # ensure we have all the dependencies satisfied
