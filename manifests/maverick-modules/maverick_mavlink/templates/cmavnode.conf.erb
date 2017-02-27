@@ -1,8 +1,15 @@
+<% if @udpinaddress and @udpinport %>
+[linkname]
+    type=socket
+    targetip=<%= @udpinaddress %>
+    targetport=<%= @udpinport %>
+<% else -%>
 [fcserial]
     type=serial
     port=<%= @input %>
     baud=115200
     flow_control=false
+<% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
 [udpin<%= i -%>]

@@ -1,6 +1,10 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavproxy_active = true,
+    $mavlink_proxy = "mavproxy",
+    $mavlink_in = "/dev/ttyAMA0",
+    $mavlink_udpinaddress = "",
+    $mavlink_udpinport = "",
+    $mavlink_active = true,
     $sitl_state = undef,
 ) {
     
@@ -148,15 +152,57 @@ class maverick_dev::sitl (
             enable      => true,
             require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
-        
+
+    }
+
+    if $mavlink_proxy == "mavproxy" {
+        maverick_mavlink::cmavnode { "sitl":
+            active      => false
+        } ->
+        maverick_mavlink::mavlinkrouter { "sitl":
+            active      => false
+        } ->
         maverick_mavlink::mavproxy { "sitl":
             input       => "tcp:localhost:5760",
             instance    => 1,
             startingudp => 14560,
             startingtcp => 5770,
-            active      => $mavproxy_active,
+            active      => $mavlink_active,
         }
-
+    } elsif $mavlink_proxy == "cmavnode" {
+        maverick_mavlink::mavproxy { "sitl":
+            active      => false
+        } ->
+        maverick_mavlink::mavlinkrouter { "sitl":
+            active      => false
+        } ->
+        maverick_mavlink::cmavnode { "sitl":
+            # input       => "utcp:localhost:5760",
+            udpinaddress => $mavlink_udpinaddress,
+            udpinport   => $mavlink_udpinport,
+            startingudp => 14560,
+            startingtcp => 5770,
+            active      => $mavlink_active,
+        }
+    } elsif $mavlink_proxy == "mavlinkrouter" {
+        maverick_mavlink::cmavnode { "sitl":
+            active      => false
+        } ->
+        maverick_mavlink::mavproxy { "sitl":
+            active      => false
+        } ->
+        maverick_mavlink::mavlinkrouter { "sitl":
+            input       => "udp:localhost:5501",
+            startingudp => 14560,
+            startingtcp => 5770,
+            active      => $mavlink_active,
+        }
     }
-
+    
+    maverick_security::firewall::firerule { "mavlink-sitl-udp-test":
+        ports       => [5501],
+        ips         => hiera("all_ips"),
+        proto       => "udp"
+    }
+    
 }
