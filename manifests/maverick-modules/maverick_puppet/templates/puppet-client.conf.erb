@@ -9,7 +9,8 @@ strict_variables = true
 basemodulepath = /srv/maverick/software/maverick/manifests/maverick-modules:/srv/maverick/software/maverick/manifests/puppet-modules
 hiera_config = $confdir/hiera.yaml
 environment = <%= @environment %>
-    
+stringify_facts = false
+
 [agent]
 classfile = $vardir/classes.txt
 localconfig = $vardir/localconfig
