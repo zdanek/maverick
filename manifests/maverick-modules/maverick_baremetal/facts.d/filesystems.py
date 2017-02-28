@@ -24,16 +24,20 @@ try:
     partsize = float(data['partitions'][rootpart])
     try:
         disksize = float(data['partitions']['mmcblk0'])
+        data['rootpart_device'] = "mmcblk0"
     except:
         disksize = float(data['partitions']['mmcblk1'])
+        data['rootpart_device'] = "mmcblk1"
     part_ratio = (rootsize / partsize) * 100
     disk_ratio = (partsize / disksize) * 100
     data['rootpart_expanded'] = True if disk_ratio > 95 else False
     data['rootfs_expanded'] = True if part_ratio > 95 else False
 except:
     data['rootpart_expanded'] = False
+    data['rootpart_device'] = False
     data['rootfs_expanded'] = False
     
 # Finally, print the data out in the format expected of a fact provider
 print "rootpart_expanded="+str(data['rootpart_expanded'])
+print "rootpart_device="+str(data['rootpart_device'])
 print "rootfs_expanded="+str(data['rootfs_expanded'])
