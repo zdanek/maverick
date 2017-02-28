@@ -16,6 +16,9 @@
     "all_ips": [
     ],
 
+    "wifi_ssid": "",
+    "wifi_passphrase": "",
+    
     // "base::locale::locale": "en_GB.UTF-8",
     // "base::locale::timezone": "Europe/London",
 
