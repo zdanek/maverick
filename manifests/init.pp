@@ -6,6 +6,38 @@ define speak ($message = "", $level = "") {
     }
 }
 
+# Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef) {
+  if $::python_modules {
+    case $ensure {
+      'present': {
+        unless downcase($pkgname) in $python_modules {
+            warning("Installing pip: ${pkgname}")
+            python::pip { $title:
+                pkgname => $pkgname,
+                ensure => 'present',
+                virtualenv => $virtualenv,
+                owner => $owner,
+                timeout => $timeout
+            }
+        }
+      }
+      'absent': {
+        if downcase($pkgname) in $python_modules {
+          python::pip { $title:
+            pkgname => $pkgname,
+            ensure => 'absent'
+          }
+        }
+      }
+
+    }
+  }
+  else {
+    python::pip { $title: ensure => $ensure }
+  }
+}
+
 # oncevcsrepo is a wrapper to only call vcsrepo if a clone doesn't exist at all locally.
 # Otherwise, vcsrepo gets called for each define each puppet run, which can take a long time (and require internet access)
 define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group="mav", $submodules=false, $depth=1) {

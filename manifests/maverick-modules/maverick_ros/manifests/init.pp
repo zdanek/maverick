@@ -124,15 +124,8 @@ class maverick_ros (
             user            => "mav",
             creates         => "${builddir}/src/.rosinstall"
         } ->
-        exec { "rosdep-install":
-            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y",
-            cwd             => "${builddir}",
-            user            => "mav",
-            timeout         => 0,
-            unless          => "/usr/bin/rosdep check --from-paths src --ignore-src --rosdistro ${distribution} -y |/bin/grep 'have been satis'",
-        } ->
         exec { "catkin_make":
-            command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+            command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
             cwd             => "${builddir}",
             user            => "mav",
             creates         => "${installdir}/${distribution}/lib/rosbag/topic_renamer.py",

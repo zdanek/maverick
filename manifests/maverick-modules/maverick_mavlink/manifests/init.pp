@@ -95,7 +95,7 @@ class maverick_mavlink (
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
     if $mavproxy_install {
-        python::pip { 'pip-mavproxy-global':
+        install_python_module { 'pip-mavproxy-global':
             pkgname     => 'mavproxy',
             ensure      => present,
             timeout     => 0,
@@ -116,9 +116,9 @@ class maverick_mavlink (
     
     # Install dronekit globall (not in virtualenv) from pip
     if $dronekit_install {
-        python::pip { 'pip-dronekit-global':
-            pkgname     => 'dronekit',
-            ensure      => present,
+        install_python_module { "pip-dronekit-global":
+            pkgname     => "dronekit",
+            ensure      => "present",
             timeout     => 0,
         }
     }

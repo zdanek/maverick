@@ -23,7 +23,7 @@ class maverick_baremetal::raspberry (
     
     ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
     # Install wiringpi through pip as it's not always available through apt
-    python::pip { 'pip-wiringpi':
+    install_python_module { 'pip-wiringpi':
         pkgname     => 'wiringpi',
         ensure      => present,
     }

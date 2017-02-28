@@ -30,14 +30,14 @@ class maverick_fc (
         dest        => "/srv/maverick/code/fc/dronekit-python",
     }
     
-    python::pip { 'pip-dronekit-fc':
+    install_python_module { 'pip-dronekit-fc':
         pkgname     => 'dronekit',
         virtualenv  => '/srv/maverick/.virtualenvs/fc',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
     }
-    python::pip { 'pip-mavproxy-fc':
+    install_python_module { 'pip-mavproxy-fc':
         pkgname     => 'MAVProxy',
         virtualenv  => '/srv/maverick/.virtualenvs/fc',
         ensure      => present,

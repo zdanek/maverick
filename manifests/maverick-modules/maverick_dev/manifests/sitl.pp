@@ -35,22 +35,22 @@ class maverick_dev::sitl (
     }
     
     # Install dronekit into sitl
-    python::pip { 'pip-dronekit-sitl':
+    install_python_module { 'pip-dronekit-sitl':
         pkgname     => 'dronekit',
         virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
     }
-    python::pip { 'pip-dronekit-sitl-sitl':
+    install_python_module { 'pip-dronekit-sitl-sitl':
         pkgname     => 'dronekit-sitl',
         virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
     }
-    python::pip { 'pip-mavproxy-sitl':
-        pkgname     => 'MAVProxy',
+    install_python_module { 'pip-mavproxy-sitl':
+        pkgname     => 'mavproxy',
         virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',
@@ -90,7 +90,7 @@ class maverick_dev::sitl (
         service { "maverick-sitl":
             ensure      => $sitl_state,
             enable      => true,
-            require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
         file { "/srv/maverick/data/config/mavproxy-sitl.screen.conf":
             ensure      => present,
@@ -150,7 +150,7 @@ class maverick_dev::sitl (
         service { "maverick-sitl":
             ensure      => $sitl_state,
             enable      => true,
-            require     => [ Python::Pip['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
         }
 
     }
@@ -198,11 +198,5 @@ class maverick_dev::sitl (
             active      => $mavlink_active,
         }
     }
-    
-    maverick_security::firewall::firerule { "mavlink-sitl-udp-test":
-        ports       => [5501],
-        ips         => hiera("all_ips"),
-        proto       => "udp"
-    }
-    
+
 }

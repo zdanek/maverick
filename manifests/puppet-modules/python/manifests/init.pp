@@ -82,6 +82,7 @@ class python (
   $python_pyvenvs            = { },
   $python_requirements       = { },
   $use_epel                  = $python::params::use_epel,
+  $rhscl_use_public_repository = $python::params::rhscl_use_public_repository,
 ) inherits python::params{
 
   if $provider != undef and $provider != '' {
@@ -90,8 +91,8 @@ class python (
   }
 
   $exec_prefix = $provider ? {
-    'scl'   => "scl enable ${version} -- ",
-    'rhscl' => "scl enable ${version} -- ",
+    'scl'   => "/usr/bin/scl enable ${version} -- ",
+    'rhscl' => "/usr/bin/scl enable ${version} -- ",
     default => '',
   }
 
@@ -126,7 +127,7 @@ class python (
   validate_bool($use_epel)
 
   # Module compatibility check
-  $compatible = [ 'Debian', 'RedHat', 'Suse' ]
+  $compatible = [ 'Debian', 'RedHat', 'Suse', 'Gentoo' ]
   if ! ($::osfamily in $compatible) {
     fail("Module is not compatible with ${::operatingsystem}")
   }

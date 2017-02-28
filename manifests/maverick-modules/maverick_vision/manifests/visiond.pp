@@ -7,7 +7,7 @@ class maverick_vision::visiond (
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
     # Add v4l2 python bindings
-    python::pip { 'pip-v4l2':
+    install_python_module { 'pip-v4l2':
         pkgname     => 'v4l2',
         ensure      => present,
     }
