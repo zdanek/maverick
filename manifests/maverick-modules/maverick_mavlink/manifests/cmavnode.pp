@@ -9,7 +9,7 @@ define maverick_mavlink::cmavnode (
     $active = true,  
 ) {
  
-    file { "/srv/maverick/data/config/cmavnode-${name}.conf":
+    file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -17,7 +17,7 @@ define maverick_mavlink::cmavnode (
         content     => template("maverick_mavlink/cmavnode.conf.erb"),
         notify      => Service["maverick-cmavnode@${name}"],
     }
-    file { "/srv/maverick/data/config/cmavnode-${name}.service.conf":
+    file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -25,7 +25,7 @@ define maverick_mavlink::cmavnode (
         content     => template("maverick_mavlink/cmavnode.service.conf.erb"),
         notify      => Service["maverick-cmavnode@${name}"],
     }
-    file { "/srv/maverick/data/config/cmavnode-${name}.screen.conf":
+    file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

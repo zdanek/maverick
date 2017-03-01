@@ -11,6 +11,11 @@ class maverick_mavlink (
     
     $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
     
+    # Create config directory for all mavlink configs
+    file { "/srv/maverick/data/config/mavlink":
+        ensure      => directory
+    }
+    
     ### cmavnode
     # Install cmavnode from gitsource
     if $cmavnode_install {
@@ -152,11 +157,15 @@ class maverick_mavlink (
             cwd         => "/srv/maverick/var/build/dronekit-la",
             timeout     => 0,
         } ->
-        file { "/srv/maverick/data/config/dataflash_logger.conf":
+        file { "/srv/maverick/data/config/mavlink/dataflash_logger.conf":
             owner       => "mav",
             group       => "mav",
             mode        => "644",
-            content     => template("maverick_fc/dataflash_logger.conf.erb")
+            content     => template("maverick_mavlink/dataflash_logger.conf.erb")
+        }
+        # Create a directory for logs
+        file { "/srv/maverick/data/logs/dataflash":
+            ensure      => directory
         }
     }
     

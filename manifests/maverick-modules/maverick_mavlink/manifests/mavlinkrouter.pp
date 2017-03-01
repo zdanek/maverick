@@ -7,7 +7,7 @@ define maverick_mavlink::mavlinkrouter (
     $active = true,  
 ) {
  
-    file { "/srv/maverick/data/config/mavlinkrouter-${name}.conf":
+    file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -15,7 +15,7 @@ define maverick_mavlink::mavlinkrouter (
         content     => template("maverick_mavlink/mavlinkrouter.conf.erb"),
         notify      => Service["maverick-mavlinkrouter@${name}"],
     }
-    file { "/srv/maverick/data/config/mavlinkrouter-${name}.service.conf":
+    file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

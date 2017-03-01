@@ -6,7 +6,7 @@ Requires=network-online.target
 [Service]
 TimeoutStartSec=0
 Type=forking
-EnvironmentFile=/srv/maverick/data/config/mavproxy-%I.service.conf
+EnvironmentFile=/srv/maverick/data/config/mavlink/mavproxy-%I.service.conf
 ExecStart=/srv/maverick/software/maverick/bin/mavproxy.sh %I
 User=mav
 

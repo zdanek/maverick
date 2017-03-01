@@ -7,7 +7,7 @@ define maverick_mavlink::mavproxy (
     $tcpports = 5,
     $active = true,
 ) {
-    file { "/srv/maverick/data/config/mavproxy-${name}.service.conf":
+    file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -15,7 +15,7 @@ define maverick_mavlink::mavproxy (
         content     => template("maverick_mavlink/mavproxy.service.conf.erb"),
         notify      => Service["maverick-mavproxy@${name}"],
     }
-    file { "/srv/maverick/data/config/mavproxy-${name}.screen.conf":
+    file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
