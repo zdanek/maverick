@@ -1,6 +1,7 @@
 // These are defaults for the flight environment.
 {
 	"classes": [
+		"maverick_mavlink",
 		"maverick_vision",
 		"maverick_fc",
 		"maverick_ros"

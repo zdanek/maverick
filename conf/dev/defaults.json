@@ -7,6 +7,7 @@
     // "maverick_cloud9::basepath": "/srv/maverick",
 
 	"classes": [
+		"maverick_mavlink",
 		"maverick_vision",
 		"maverick_fc",
 		"maverick_ros",

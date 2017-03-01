@@ -92,8 +92,7 @@
     "classes" : [
         "base",
         "maverick_desktop",
-        "maverick_security",
-        "maverick_mavlink"
+        "maverick_security"
     ]
     
 }
