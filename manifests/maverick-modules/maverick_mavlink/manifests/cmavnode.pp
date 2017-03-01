@@ -1,7 +1,7 @@
 define maverick_mavlink::cmavnode (
-    $input = "",
-    $udpinaddress = "",
-    $udpinport = "",
+    $input = undef,
+    $udpinaddress = undef,
+    $udpinport = undef,
     $startingudp = 14560,
     $udpports = 5,
     $startingtcp = 5770,
