@@ -40,7 +40,7 @@ class maverick_vision::gstreamer (
         if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
             $gst_plugins_good_src = "https://github.com/fnoop/gst-plugins-good.git"
             $gst_plugins_good_revision = "1.10.2-patched"
-            ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
+            ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev", "nasm"])
             ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "libjack-jackd2-dev", "libvpx-dev"])
             ensure_packages(["mesa-utils"])
         } else {
