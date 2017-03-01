@@ -124,7 +124,6 @@ class base::maverick {
         ensure      => link,
         target      => "/srv/maverick/software/maverick/conf",
     }
-
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,
         mode        => 644,
