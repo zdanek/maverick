@@ -80,7 +80,7 @@ class base::maverick {
         group   => "mav",
         mode    => 755
     }
-
+    
     # Setup git for the mav user
     include git
     $git_username = hiera('git_username')
@@ -119,7 +119,12 @@ class base::maverick {
         cwd         => "/srv/maverick/software/maverick",
         onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
         command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
+    } ->
+    file { "/srv/maverick/data/config/maverick":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/conf",
     }
+
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,
         mode        => 644,
