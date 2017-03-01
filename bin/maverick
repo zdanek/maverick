@@ -276,7 +276,7 @@ fi
 
 # Kludge to address #60: Remove upstart before we run puppet as it gets upset
 #  with broken upstart/init setup
-ubuntu=$(/bin/grep 'DISTRIB_DESCRIPTION\="Ubuntu 15.10"' /etc/lsb-release 2>/dev/null)
+ubuntu=$(/bin/grep -e 'DISTRIB_DESCRIPTION\="Ubuntu 1[56]' /etc/lsb-release 2>/dev/null)
 upstart=$(which upstart)
 if [[ "$ubuntu" != "" && "$upstart" != "" ]]; then
 	echo "Removing broken ubuntu upstart"
