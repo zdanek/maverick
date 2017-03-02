@@ -165,7 +165,10 @@ class maverick_mavlink (
         }
         # Create a directory for logs
         file { "/srv/maverick/data/logs/dataflash":
-            ensure      => directory
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
         }
     }
     
