@@ -13,16 +13,18 @@ class maverick_vision::opencv (
     ensure_packages(["libgtk2.0-dev"])
     ensure_packages(["libopenni2-dev"])
     # ensure_packages(["qtbase5-dev"])
-    # ensure_packages(["libtbb-dev"]) # https://github.com/fnoop/maverick/issues/233
-    
+    if $architecture == "amd64" { # https://github.com/fnoop/maverick/issues/233
+        ensure_packages(["libtbb-dev", "libtbb2"])
+    }
+        
     # Pull opencv and opencv_contrib from git
     oncevcsrepo { "git-opencv":
-        gitsource   => "https://github.com/Itseez/opencv.git",
+        gitsource   => "https://github.com/opencv/opencv.git",
         dest        => "/srv/maverick/var/build/opencv",
         revision    => $opencv_version,
     } ->
     oncevcsrepo { "git-opencv_contrib":
-        gitsource   => "https://github.com/Itseez/opencv_contrib.git",
+        gitsource   => "https://github.com/opencv/opencv_contrib.git",
         dest        => "/srv/maverick/var/build/opencv_contrib",
         revision    => $opencv_version,
     } ->
@@ -36,14 +38,21 @@ class maverick_vision::opencv (
     
     # Run cmake and generate build files
     if $contrib == true {
-        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+        $contribstr = "-DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF"
+    } else {
+        $contribstr = ""
+    }
+
+    if $architecture == "amd64" {
+        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         $_creates           = "/srv/maverick/var/build/opencv/build/lib/libopencv_structured_light.so"
         $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_structured_light.so"
     } else {
-        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
-        $_creates           = "/srv/maverick/var/build/opencv/build/lib/cv2.so"
-        $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_core.so"
+        $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+        $_creates           = "/srv/maverick/var/build/opencv/build/lib/libopencv_structured_light.so"
+        $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_structured_light.so"
     }
+
     if $raspberry_present == yes {
         $_makej = 2
     } else {
