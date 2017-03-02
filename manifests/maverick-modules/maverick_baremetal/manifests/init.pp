@@ -19,6 +19,10 @@ class maverick_baremetal (
 		class { "maverick_baremetal::odroid": }
 	}
 	
+	if ($joule_present == "yes") {
+		class { "maverick_baremetal::joule": }
+	}
+	
 	# Setup ocam software
 	if ($camera_ocam == "yes") {
 		class { "maverick_baremetal::peripheral::ocam": }

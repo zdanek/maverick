@@ -200,6 +200,24 @@ class maverick_vision::gstreamer (
             require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Exec["gstreamer_gst_plugins_base"] ]
         }
 
+        # Install vaapi for joule platform
+        if $joule_present {
+            oncevcsrepo { "git-gstreamer_vaapi":
+                gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
+                dest        => "/srv/maverick/var/build/gstreamer/gst-vaapi",
+                revision    => $gstreamer_version,
+            } ->
+            exec { "gstreamer_gst_vaapi":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/gst-vaapi/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_vaapi.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/gst-vaapi",
+                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstvaapi.so",
+                require     => [ Exec["gstreamer_gst_plugins_base"], Package["libva1"] ]
+            }
+        }
+        
         # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
         # See https://github.com/fnoop/maverick/issues/242
         if ($raspberry_present == "yes") {

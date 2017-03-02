@@ -7,6 +7,7 @@ class maverick_dev::ardupilot (
     $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
     $ardupilot_vehicle = "copter", # copter, plane or rover
     $sitl, # passed from init.pp
+    $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
 ) {
     
     # Install ardupilot from git
@@ -16,7 +17,11 @@ class maverick_dev::ardupilot (
         revision	=> $ardupilot_branch,
         submodules  => true,
     }
-    ensure_packages(["make", "gawk", "g++", "zip", "arduino-core", "gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "genromfs", "python-empy"])
+    ensure_packages(["make", "gawk", "g++", "zip", "genromfs", "python-empy"])
+    if $armeabi_packages {
+        ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi"])
+    }
+    
     # Waf build requires python future
     install_python_module { 'pip-future':
         pkgname     => 'future',
