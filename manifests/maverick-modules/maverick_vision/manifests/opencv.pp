@@ -1,5 +1,6 @@
 class maverick_vision::opencv (
     $contrib = true,
+    $opencv_version = "3.2.0"
 ) {
     
     # Compile opencv3, note this can take a while.
@@ -18,12 +19,12 @@ class maverick_vision::opencv (
     oncevcsrepo { "git-opencv":
         gitsource   => "https://github.com/Itseez/opencv.git",
         dest        => "/srv/maverick/var/build/opencv",
-        revision    => "3.2.0",
+        revision    => $opencv_version,
     } ->
     oncevcsrepo { "git-opencv_contrib":
         gitsource   => "https://github.com/Itseez/opencv_contrib.git",
         dest        => "/srv/maverick/var/build/opencv_contrib",
-        revision    => "3.2.0",
+        revision    => $opencv_version,
     } ->
     # Create build directory
     file { "/srv/maverick/var/build/opencv/build":
