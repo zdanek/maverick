@@ -18,7 +18,7 @@ class maverick_vision::aruco (
     exec { "aruco-prepbuild":
         user        => "mav",
         timeout     => 0,
-        environment => ["PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig", "LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
+        environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
         command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib ..",
         cwd         => "/srv/maverick/var/build/aruco/build",
         creates     => "/srv/maverick/var/build/aruco/build/Makefile",

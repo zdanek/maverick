@@ -1,5 +1,6 @@
 class maverick_dev::dronekit (
-    ) {
+    $vision_landing_active = false,
+) {
         
     file { "/srv/maverick/code/dronekit-apps":
         ensure      => "directory",
@@ -17,6 +18,32 @@ class maverick_dev::dronekit (
     oncevcsrepo { "git-vision_landing":
         gitsource   => "https://github.com/fnoop/vision_landing.git",
         dest        => "/srv/maverick/code/dronekit-apps/vision_landing",
+    } ->
+    # Compile vision_landing
+    exec { "vision_landing-compile":
+        cwd         => "/srv/maverick/code/dronekit-apps/vision_landing/src",
+        command     => "/usr/bin/cmake . && make && make install",
+        creates     => "/srv/maverick/code/dronekit-apps/vision_landing/tarck_targets",
+    } ->
+    # Install systemd manifest
+    file { "/etc/systemd/system/vision_landing.service":
+        source      => "puppet:///modules/maverick_vision/vision_landing.service",
+        owner       => root,
+        group       => root,
     }
-        
+    
+    # Activate or inactivate service
+    if $vision_landing_active {
+        service { "vision_landing":
+            ensure  => running,
+            enable  => true,
+            require => Exec["vision_landing"]
+        }
+    } else {
+        service { "vision_landing":
+            ensure  => stopped,
+            enable  => false
+        }
+    }
+
 }
