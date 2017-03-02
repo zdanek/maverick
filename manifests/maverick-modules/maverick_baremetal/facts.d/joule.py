@@ -47,7 +47,6 @@ class Joule(object):
     def runall(self):
         self.cpudata()
         self.storagedata()
-        self.kernel()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':

@@ -33,6 +33,10 @@ from odroid import Odroid
 odroid = Odroid()
 odroid.runall()
 
+from joule import Joule
+joule = Joule()
+joule.runall()
+
 from camera import Camera
 camera = Camera()
 camera.runall()
@@ -71,6 +75,10 @@ elif beagle.data['present'] == 'yes':
     print twocols('Vendor', '\t\t\tBeaglebone')
     print twocols('Model', '\t\t\t' +beagle.data['model'])
 
+elif joule.data['present'] == 'yes':
+    print twocols('Vendor', '\t\t\tIntel')
+    print twocols('Model', '\t\t\t'+joule.data['model'])
+    
 else:
     print ctrls['bg_red']+ctrls['bold']+ctrls['fg_grey']+ 'Hardware platform not recognised' +ctrls['reset']
 
