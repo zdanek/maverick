@@ -205,7 +205,7 @@ class Streamer(object):
                     self.h264enc.set_property('extra-controls', h264struct)
                 # Determine vaapi encoder exists, but suppress output
                 with open(os.devnull, "w") as devnull:
-                    vaapi264encoder = subprocess.call(["gst-inspect-1.0", "vaapih264enc"], stdout=devnull)
+                    vaapi264encoder = subprocess.call(["gst-inspect-1.0", "vaapih264enc"], stdout=devnull, stderr=devnull)
                 if not vaapi264encoder:
                     logger.info("VAAPI hardware encoder detected, attempting to use vaapi as h264 encoder")
                     self.h264enc = Gst.ElementFactory.make("vaapih264enc", "vaapih264enc")
