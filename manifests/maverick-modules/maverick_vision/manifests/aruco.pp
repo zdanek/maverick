@@ -22,7 +22,7 @@ class maverick_vision::aruco (
         command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib ..",
         cwd         => "/srv/maverick/var/build/aruco/build",
         creates     => "/srv/maverick/var/build/aruco/build/Makefile",
-        require     => [ File["/srv/maverick/var/build/aruco/build"] ], # ensure we have all the dependencies satisfied
+        require     => [ File["/srv/maverick/var/build/aruco/build"], Exec["opencv-install"] ], # ensure we have all the dependencies satisfied
     } ->
     exec { "aruco-build":
         user        => "mav",
