@@ -47,6 +47,13 @@ class maverick_vision::gstreamer (
             $gst_plugins_good_src = "https://github.com/GStreamer/gst-plugins-good.git"
             $gst_plugins_good_revision = $gstreamer_version
         }
+        
+        # Work out libpython path
+        if $architecture == "armv7l" {
+            $libpython_path = "/usr/lib/arm-linux-gnueabihf"
+        } elsif $architecture == "amd64" {
+            $libpython_path = "/usr/lib/x86_64-linux-gnu"
+        }
 
         # Install necessary dependencies and compile
         ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm"])
@@ -185,7 +192,7 @@ class maverick_vision::gstreamer (
             user        => "mav",
             timeout     => 0,
             environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-            command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=/usr/lib/arm-linux-gnueabihf --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
+            command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=${libpython_path} --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
             creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpythonplugin.so",
             require     => [ Package["python-gobject-dev"], Oncevcsrepo["git-gstreamer_gst_python"], Exec["gstreamer_gst_plugins_base"] ]
