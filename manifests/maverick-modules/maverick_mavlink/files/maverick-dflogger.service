@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick Mavlink Dataflash Logger
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/dronekit-la/dataflash_logger -c /srv/maverick/data/config/mavlink/dataflash_logger.conf
+User=mav
+
+[Install]
+WantedBy=multi-user.target
