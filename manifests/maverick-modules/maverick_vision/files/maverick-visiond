@@ -148,7 +148,7 @@ class Streamer(object):
                 capsfilter.link(parse)
             queue = Gst.ElementFactory.make("queue", "queue")
             if self.format != self.encoder:
-                dec = Gst.ElementFactory.make("jpegdec", "jpegdec")
+                dec = Gst.ElementFactory.make("decodebin", "decodebin")
                 self.pipeline.add(dec)
                 if parse:
                     parse.link(dec)
@@ -189,11 +189,12 @@ class Streamer(object):
                 logger.info("Raspberry hardware encoder detected, using omxh264enc as h264 encoder")
                 self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
             # Try and detect encoder
+            self.h264enc = None
             try:
-                v4lencoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
-                if v4lencoder:
-                    logger.info("Odroid MFC hardware encoder detected, attempting to use "+v4lencoder+" as h264 encoder")
-                    self.h264enc = Gst.ElementFactory.make(v4lencoder, "odroid-h264-encode")
+                odroid264encoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
+                if odroid264encoder:
+                    logger.info("Odroid MFC hardware encoder detected, attempting to use "+odroid264encoder+" as h264 encoder")
+                    self.h264enc = Gst.ElementFactory.make(odroid264encoder, "odroid-h264-encode")
                     h264struct = Gst.Structure.new_empty("v4lencoder-extracontrols")
                     h264struct.encode = True
                     h264struct.h264_level = 10
@@ -202,6 +203,12 @@ class Streamer(object):
                     h264struct.frame_skip_enable = 1
                     h264struct.video_bitrate = 2000000
                     self.h264enc.set_property('extra-controls', h264struct)
+                # Determine vaapi encoder exists, but suppress output
+                with open(os.devnull, "w") as devnull:
+                    vaapi264encoder = subprocess.call(["gst-inspect-1.0", "vaapih264enc"], stdout=devnull)
+                if not vaapi264encoder:
+                    logger.info("VAAPI hardware encoder detected, attempting to use vaapi as h264 encoder")
+                    self.h264enc = Gst.ElementFactory.make("vaapih264enc", "vaapih264enc")
             except subprocess.CalledProcessError, e:
                 pass
             if not self.h264enc:
