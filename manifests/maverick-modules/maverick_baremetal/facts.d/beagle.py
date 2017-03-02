@@ -38,7 +38,9 @@ class Beagle(object):
         for line in f:
             if re.search("mmcblk0$", line):
                 self.data['rootdisksize'] = int(line.split()[2]) / 1024
-            if re.search("mmcblk0p1$", line):
+            else:
+                self.data['rootdisksize'] = None
+            if self.data['rootdisksize'] and re.search("mmcblk0p1$", line):
                 partsize = int(line.split()[2]) / 1024
                 try:
                     partpct = (self.data['rootdisksize'] / partsize) * 100
