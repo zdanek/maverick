@@ -169,6 +169,7 @@ if [ "$STATUS" == "true" ]; then
         fi
     done
     statusout+=$(status "Mavlink (Flight Controller)" $mavfc)
+    (systemctl status maverick-dflogger >/dev/null 2>&1); statusout+=$(status "Mavlink Logger (Flight Controller)" $?)
     (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)
     (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
     if [ "$environment" == "dev" ]; then

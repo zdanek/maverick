@@ -7,7 +7,7 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
-    $dflogger_port = 14560,
+    $dflogger_port = 14570,
     $dflogger_active = true,
 ) {
     
