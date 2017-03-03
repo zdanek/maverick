@@ -23,7 +23,7 @@ class maverick_dev::dronekit (
     exec { "vision_landing-compile":
         cwd         => "/srv/maverick/code/dronekit-apps/vision_landing/src",
         command     => "/usr/bin/cmake . && make && make install",
-        creates     => "/srv/maverick/code/dronekit-apps/vision_landing/tarck_targets",
+        creates     => "/srv/maverick/code/dronekit-apps/vision_landing/track_targets",
     } ->
     # Install systemd manifest
     file { "/etc/systemd/system/vision_landing.service":
