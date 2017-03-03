@@ -262,6 +262,11 @@ class maverick_vision::gstreamer (
                     unless      => "/bin/ls /etc/xdg/gstomx.conf",
                 }
             }
+    	} else {
+    	    # If we don't build gstreamer, we still need something for other manifest dependencies
+    	    file { "/srv/maverick/var/build/.install_flag_gstreamer":
+                ensure      => present,
+            }
     	}
 	
         # Export local typelib for gobject introspection
