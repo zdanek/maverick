@@ -163,7 +163,7 @@ if [ "$STATUS" == "true" ]; then
     echo
     mavfc=1
     for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
-        $(systemctl -a |grep "maverick-$mavtype@fc" >/dev/null 2>&1)
+        $(systemctl status "maverick-$mavtype@fc" >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
             mavfc=0
         fi
@@ -175,19 +175,14 @@ if [ "$STATUS" == "true" ]; then
     if [ "$environment" == "dev" ]; then
         statusout+='--------------------: \n'
         (systemctl status maverick-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
-        $(systemctl -a |grep maverick-mavlink-sitl >/dev/null 2>&1)
-        if [ $? -eq 0 ]; then
-            (systemctl status maverick-mavlink-sitl >/dev/null 2>&1); statusout+=$(status "Mavlink (SITL)" $?)
-        fi
         mavsitl=1
         for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
-            $(systemctl -a |grep "maverick-$mavtype@sitl" >/dev/null 2>&1)
+            $(systemctl status "maverick-$mavtype@sitl" >/dev/null 2>&1)
             if [ $? -eq 0 ]; then
                 mavsitl=0
             fi
         done
         statusout+=$(status "Mavlink (SITL)" $mavsitl)
-
         (systemctl status maverick-mavros-sitl >/dev/null 2>&1); statusout+=$(status "Mavros (SITL)" $?)
         (systemctl status maverick-cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
     fi

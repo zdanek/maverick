@@ -2,6 +2,9 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavproxy",
     $mavlink_active = true,
+    $mavros_active = true,
+    $dflogger_active = true,
+    $dflogger_port = 14570,
 ) {
 
     # Install a virtual environment for dronekit fc
@@ -94,4 +97,62 @@ class maverick_fc (
             active      => $mavlink_active,
         }
     }
+    
+    # Add a mavros service for FC link
+    if $mavros_active == true {
+        file { "/etc/systemd/system/maverick-mavros-fc.service":
+            content     => template("maverick_fc/maverick-mavros-fc.service.erb"),
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        service { "maverick-mavros-fc":
+            ensure      => running,
+            enable      => true,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
+        }
+    } else {
+        service { "maverick-mavros-fc":
+            ensure      => stopped,
+            enable      => false,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
+        }
+
+    }
+    
+    file { "/srv/maverick/data/config/mavlink/dataflash_logger.conf":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        content     => template("maverick_fc/dataflash_logger.conf.erb")
+    } ->
+    # Create a directory for logs
+    file { "/srv/maverick/data/logs/dataflash":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/etc/systemd/system/maverick-dflogger.service":
+        source      => "puppet:///modules/maverick_fc/maverick-dflogger.service",
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    }
+
+    if $dflogger_active {
+        service { "maverick-dflogger":
+            ensure      => running,
+            enable      => true,
+            require     => [ Exec["install-dronekit-la"], File["/etc/systemd/system/maverick-dflogger.service"] ],
+        }
+    } else {
+        service { "maverick-dflogger":
+            ensure      => stopped,
+            enable      => false,
+        }
+    }
+
 }

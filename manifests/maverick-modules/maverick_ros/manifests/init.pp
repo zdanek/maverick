@@ -3,8 +3,6 @@ class maverick_ros (
     $distribution = "kinetic",
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
-    $mavros_sitl_active = true,
-    $mavros_fc_active = true,
     $module_mavros = true,
     $module_opencv = false,
 ) {
@@ -200,50 +198,5 @@ class maverick_ros (
             require         => Exec["catkin_make"]
         }
     }  
-    
-    # If SITL is active, add a mavros service for sitl link
-    if defined("maverick_dev::sitl") and $mavros_sitl_active == true {
-        file { "/etc/systemd/system/maverick-mavros-sitl.service":
-            content     => template("maverick_ros/maverick-mavros-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        service { "maverick-mavros-sitl":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
-    } else {
-        service { "maverick-mavros-sitl":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"] ]
-        }
-    }
-    
-    # If FC is active, add a mavros service for FC link
-    if defined("maverick_fc") and $mavros_fc_active == true {
-        file { "/etc/systemd/system/maverick-mavros-fc.service":
-            content     => template("maverick_ros/maverick-mavros-fc.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        service { "maverick-mavros-fc":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
-    } else {
-        service { "maverick-mavros-fc":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
 
-    }
-    
 }

@@ -5,7 +5,8 @@ class maverick_dev::sitl (
     $mavlink_udpinaddress = "",
     $mavlink_udpinport = "",
     $mavlink_active = true,
-    $sitl_state = undef,
+    $mavros_active = true,
+    $sitl_active = true,
 ) {
     
     # Install a virtual environment for dronekit sitl
@@ -78,81 +79,35 @@ class maverick_dev::sitl (
         mode        => 755,
     }
     
-    ### make build is out of date, needs updating, but should be rarely used now
-    if getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "make" {
-        file { "/etc/systemd/system/maverick-sitl.service":
-            content     => template("maverick_dev/maverick-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ]
-        } ->
+    $ardupilot_vehicle = getvar("maverick_dev::ardupilot::ardupilot_vehicle")
+    if $ardupilot_vehicle == "copter" {
+        $ardupilot_type = "ArduCopter"
+    } elsif $ardupilot_vehicle == "plane" {
+        $ardupilot_type = "ArduPlane"
+    } elsif $ardupilot_vehicle == "rover" {
+        $ardupilot_type = "ArduRover"
+    } else {
+        $ardupilot_type = $ardupilot_vehicle
+    }
+    file { "/etc/systemd/system/maverick-sitl.service":
+        content     => template("maverick_dev/maverick-sitl.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => 644,
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ]
+    }
+    if $sitl_active {
         service { "maverick-sitl":
-            ensure      => $sitl_state,
+            ensure      => running,
             enable      => true,
-            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
-        file { "/srv/maverick/data/config/mavproxy-sitl.screen.conf":
-            ensure      => present,
-            owner       => "mav",
-            group       => "mav",
-            source      => "puppet:///modules/maverick_dev/mavproxy-sitl.screen.conf",
-            notify      => Service["mavproxy-sitl"]
-        } ->
-        file { "/srv/maverick/var/log/mavproxy-sitl":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-            mode        => 755,
-        } ->
-        file { "/srv/maverick/data/config/mavproxy-sitl.conf":
-            ensure      => present,
-            owner       => "mav",
-            group       => "mav",
-            replace     => false, # initialize but don't overwrite in the future
-            source      => "puppet:///modules/maverick_dev/mavproxy-sitl.conf",
-            notify      => Service["mavproxy-sitl"]
-        } ->
-        file { "/srv/maverick/software/maverick/bin/mavproxy-sitl.sh":
-            ensure      => link,
-            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/mavproxy-sitl.sh",
-        } ->
-        file { "/etc/systemd/system/mavproxy-sitl.service":
-            content     => template("maverick_dev/mavproxy-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["mavproxy-sitl"] ]
-        } ->
-        service { "mavproxy-sitl":
-            ensure      => $mavproxy_state,
-            enable      => true,
-            require       => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ],
-        }
-
-    } elsif getvar("maverick_dev::ardupilot::ardupilot_buildsystem") == "waf" {
-        $ardupilot_vehicle = getvar("maverick_dev::ardupilot::ardupilot_vehicle")
-        if $ardupilot_vehicle == "copter" {
-            $ardupilot_type = "ArduCopter"
-        } elsif $ardupilot_vehicle == "plane" {
-            $ardupilot_type = "ArduPlane"
-        } elsif $ardupilot_vehicle == "rover" {
-            $ardupilot_type = "ArduRover"
-        }
-
-        file { "/etc/systemd/system/maverick-sitl.service":
-            content     => template("maverick_dev/maverick-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ]
-        } ->
+    } else {
         service { "maverick-sitl":
-            ensure      => $sitl_state,
-            enable      => true,
-            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"] ],
+            ensure      => stopped,
+            enable      => false,
+            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
-
     }
 
     if $mavlink_proxy == "mavproxy" {
@@ -199,4 +154,27 @@ class maverick_dev::sitl (
         }
     }
 
+    # Add a mavros service for sitl link
+    if $mavros_active == true {
+        $distribution = getvar("maverick_ros::distribution")
+        file { "/etc/systemd/system/maverick-mavros-sitl.service":
+            content     => template("maverick_dev/maverick-mavros-sitl.service.erb"),
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        service { "maverick-mavros-sitl":
+            ensure      => running,
+            enable      => true,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
+        }
+    } else {
+        service { "maverick-mavros-sitl":
+            ensure      => stopped,
+            enable      => false,
+            require     => [ Exec["maverick-systemctl-daemon-reload"] ]
+        }
+    }
+    
 }

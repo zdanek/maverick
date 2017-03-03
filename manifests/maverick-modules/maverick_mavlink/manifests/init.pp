@@ -7,8 +7,6 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
-    $dflogger_port = 14570,
-    $dflogger_active = true,
 ) {
     
     $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
@@ -158,39 +156,6 @@ class maverick_mavlink (
             user        => "mav",
             cwd         => "/srv/maverick/var/build/dronekit-la",
             timeout     => 0,
-        } ->
-        file { "/srv/maverick/data/config/mavlink/dataflash_logger.conf":
-            owner       => "mav",
-            group       => "mav",
-            mode        => "644",
-            content     => template("maverick_mavlink/dataflash_logger.conf.erb")
-        } ->
-        # Create a directory for logs
-        file { "/srv/maverick/data/logs/dataflash":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-            mode        => "755",
-        } ->
-        file { "/etc/systemd/system/maverick-dflogger.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-dflogger.service",
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        }
-
-        if $dflogger_active {
-            service { "maverick-dflogger":
-                ensure      => running,
-                enable      => true,
-                require     => File["/etc/systemd/system/maverick-dflogger.service"],
-            }
-        } else {
-            service { "maverick-dflogger":
-                ensure      => stopped,
-                enable      => false,
-            }
         }
 
     }
