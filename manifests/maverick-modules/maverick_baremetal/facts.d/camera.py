@@ -5,7 +5,7 @@ import os, re, sys, subprocess, glob
 
 class Camera(object):
     def __init__(self):
-        self.data = {"ocam": "no", "picam": "no", "odroidmfc": "no"}
+        self.data = {"ocam": "no", "picam": "no", "odroidmfc": "no", "realsense": "no"}
         
     def camhw(self):
         os.chdir("/dev")
@@ -34,6 +34,8 @@ class Camera(object):
                             self.data['ocam'] = "yes"
                         if re.search('s5p-mfc-enc', val):
                             self.data['odroidmfc'] = "yes"
+                        if re.search('RealSense', val):
+                            self.data['realsense'] = "yes"
             except:
                 pass
     def runall(self):

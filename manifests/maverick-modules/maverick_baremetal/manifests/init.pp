@@ -33,4 +33,9 @@ class maverick_baremetal (
 		class { "maverick_baremetal::peripheral::picam": }
 	}
 	
+	# Setup realsense depth cameras
+	if ($camera_realsense == "yes") {
+		class { "maverick_baremetal::peripheral::realsense": }
+	}
+	
 }
