@@ -4,6 +4,7 @@ class maverick_vision (
     $opencv = true,
     $mjpg_streamer = false,
     $aruco = true,
+    $orbslam2 = false,
 ) {
 
     if $visiond == true {
@@ -24,6 +25,10 @@ class maverick_vision (
     
     if $aruco == true {
         class { "maverick_vision::aruco": }
+    }
+
+    if $orbslam2 == true {
+        class { "maverick_vision::orbslam2": }
     }
     
 }
