@@ -68,6 +68,26 @@ class maverick_baremetal::peripheral::realsense (
         gitsource   => "https://github.com/IntelRealSense/realsense_samples.git",
         dest        => "/srv/maverick/code/realsense/samples",
     }
+    # This doesn't work, for now
+    if 1 == 2 {
+        exec { "realsense-samples-prepbuild":
+            user        => "mav",
+            timeout     => 0,
+            environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
+            command     => "/usr/bin/cmake .",
+            cwd         => "/srv/maverick/code/realsense/samples",
+            creates     => "/srv/maverick/code/realsense/samples/Makefile",
+        } ->
+        exec { "realsense-samples-build":
+            user        => "mav",
+            timeout     => 0,
+            environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/librealsense/include:/srv/maverick/software/opencv/include:/srv/maverick/software/realsense-sdk/include", "LIBRARY_PATH=/srv/maverick/software/librealsense/lib:/srv/maverick/software/opencv/lib:/srv/maverick/software/realsense-sdk/lib"],
+            command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-samples.build.out 2>&1",
+            cwd         => "/srv/maverick/code/realsense/samples",
+            # creates     => "/srv/maverick/var/build/realsense-samples/sdk/src/core/pipeline/librealsense_pipeline.so",
+            require     => [ Exec["realsense-samples-prepbuild"], Exec["realsense-sdk-install"] ]
+        }
+    }
     
     # Clone realsense-sdk
     oncevcsrepo { "git-realsense-realsense_sdk":
@@ -96,7 +116,7 @@ class maverick_baremetal::peripheral::realsense (
         environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/librealsense/include:/srv/maverick/software/opencv/include", "LIBRARY_PATH=/srv/maverick/software/librealsense/lib:/srv/maverick/software/opencv/lib"],
         command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-sdk.build.out 2>&1",
         cwd         => "/srv/maverick/var/build/realsense-sdk/build",
-        # creates     => "/srv/maverick/var/build/realsense-sdk/build/utils/aruco_tracker",
+        creates     => "/srv/maverick/var/build/realsense-sdk/build/sdk/src/core/pipeline/librealsense_pipeline.so",
         require     => Exec["realsense-sdk-prepbuild"],
     } ->
     exec { "realsense-sdk-install":
@@ -104,7 +124,7 @@ class maverick_baremetal::peripheral::realsense (
         timeout     => 0,
         command     => "/usr/bin/make install >/srv/maverick/var/log/build/realsense-sdk.install.out 2>&1",
         cwd         => "/srv/maverick/var/build/realsense-sdk/build",
-        # creates     => "/srv/maverick/software/realsense-sdk/bin/aruco_tracker",
+        creates     => "/srv/maverick/software/realsense-sdk/bin/realsense_fps_counter_sample",
     }
     
 }
