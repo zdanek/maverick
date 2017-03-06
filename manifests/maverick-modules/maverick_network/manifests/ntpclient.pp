@@ -2,7 +2,7 @@ class maverick_network::ntpclient (
         $servers = ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org'],
     ) {
 
-    ### Setup NTP to point to the central IPA servers
+    ### Setup NTP to point to central ntp servers
     class {'::ntp':
         servers => $servers,
         restrict => ['127.0.0.1'],
