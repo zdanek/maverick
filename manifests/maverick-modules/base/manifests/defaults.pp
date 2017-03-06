@@ -7,6 +7,7 @@ class base::defaults {
     
     Exec	{ 
         path		=> '/usr/bin:/usr/sbin:/bin:/sbin',
+        user        => mav,
     }
     
     # Set default service provider to systemd, vast majority of companion systems use it
