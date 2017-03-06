@@ -1,4 +1,5 @@
 class maverick_baremetal::joule (
+    $remove_more_packages = true,
 ) {
     
     ### Install MRAA - Intel GPIO access library
@@ -7,12 +8,20 @@ class maverick_baremetal::joule (
         notify => Exec['apt_update']
     } ->
     package { ["libmraa1", "libmraa-dev", "mraa-tools", "python-mraa", "python3-mraa"]:
-        ensure      => installed
+        ensure      => installed,
+        require     => Exec['apt_update'],
     }
     
     # eMMC only has 16b, so remove some unnecessary packages if we've started from desktop
-    package { ["fonts-noto-cjk", "liboxideqtcore0", "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "ubuntu-docs", "gnome-user-guide", "snapd", "app-install-data", "libwebkit2gtk-4.0-37"]:
-        ensure      => purged
+    if $remove_more_packages == true {
+        package { [
+            "fonts-noto-cjk",  "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "ubuntu-docs", "gnome-user-guide", "snapd", "app-install-data", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
+            "chromium-browser", "openjdk-8-jre-headless", "libicu-dev", "liboxideqtcore0", "libboost1.58-dev", "sbcl", "python-samba", "samba-common", "samba-common-bin", "samba-libs",
+            "gfortran-5",
+            "adwaita-icon-theme", "hicolor-icon-theme", "humanity-icon-theme", "notify-osd-icons", "suru-icon-theme", "ubuntu-mobile-icons", "ubuntu-wallpapers", "ubuntu-wallpapers-xenial", "example-content",
+        ]:
+            ensure      => purged
+        }
     }
     
     # Install vaapi support
