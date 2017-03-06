@@ -307,6 +307,12 @@ class maverick_vision::gstreamer (
             group       => "root",
             content     => "export LD_LIBRARY_PATH=/srv/maverick/software/gstreamer/lib:\$LD_LIBRARY_PATH",
         }
+        file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
+            mode        => 644,
+            owner       => "root",
+            group       => "root",
+            content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/gstreamer",
+        }
     }
 
     # Punch some holes in the firewall for rtsp

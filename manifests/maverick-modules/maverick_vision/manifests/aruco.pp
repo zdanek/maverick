@@ -56,6 +56,12 @@ class maverick_vision::aruco (
         owner       => "root",
         group       => "root",
         content     => "export LD_LIBRARY_PATH=/srv/maverick/software/aruco/lib:\$LD_LIBRARY_PATH",
+    } ->
+    file { "/etc/profile.d/40-maverick-aruco-cmake.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/aruco",
     }
 
 }
