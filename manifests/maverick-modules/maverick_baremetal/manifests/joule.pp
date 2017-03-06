@@ -1,5 +1,5 @@
 class maverick_baremetal::joule (
-    $remove_more_packages = true,
+    $remove_more_packages = false,
 ) {
     
     ### Install MRAA - Intel GPIO access library
