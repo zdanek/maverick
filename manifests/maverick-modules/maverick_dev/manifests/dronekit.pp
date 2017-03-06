@@ -22,7 +22,7 @@ class maverick_dev::dronekit (
     # Compile vision_landing
     exec { "vision_landing-compile":
         user        => mav,
-        environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:/srv/maverick/software/aruco/lib", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco"],
+        environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco"],
         cwd         => "/srv/maverick/code/dronekit-apps/vision_landing/src",
         command     => "/usr/bin/cmake . && make && make install",
         creates     => "/srv/maverick/code/dronekit-apps/vision_landing/track_targets",
