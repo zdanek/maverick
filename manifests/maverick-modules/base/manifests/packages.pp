@@ -42,9 +42,9 @@ class base::packages {
 
     # Remove upstart as it breaks ubuntu which is now systemd
     # This is done in maverick shell script but make sure here
-    package { ["upstart", "unity-greeter"]:
-	    ensure		=> purged
-    }
+    #package { ["upstart", "unity-greeter"]:
+	#    ensure		=> purged
+    #}
 
     # Remove ModeManager which conflicts with APM/Pixhawk
     package { "modemmanager":
