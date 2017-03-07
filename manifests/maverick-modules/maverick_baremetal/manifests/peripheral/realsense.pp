@@ -44,7 +44,7 @@ class maverick_baremetal::peripheral::realsense (
     
     # Install and activate udev rules
     exec { "librealsense-cp-udevbin":
-        command     => "/bin/cp /srv/maverick/var/build/librealsense/config/usb-R200* /usr/local/bin",
+        command     => "/bin/cp /srv/maverick/var/build/librealsense/config/usb-R200* /usr/local/bin && chmod a+rx /usr/local/bin/usb-R200*",
         creates     => "/usr/local/bin/usb-R200-in",
     } ->
     exec { "librealsense-cp-udev":
