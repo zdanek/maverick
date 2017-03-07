@@ -19,7 +19,7 @@ class maverick_mavlink (
     ### cmavnode
     # Install cmavnode from gitsource
     if $cmavnode_install {
-        ensure_packages(["cmake", "libconfig++-dev", "libreadline-dev"])
+        ensure_packages(["libboost-all-dev", "cmake", "libconfig++-dev", "libreadline-dev"])
         oncevcsrepo { "git-cmavnode":
             gitsource   => $cmavnode_source,
             dest        => "/srv/maverick/var/build/cmavnode",
