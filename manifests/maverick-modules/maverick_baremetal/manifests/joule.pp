@@ -1,5 +1,5 @@
 class maverick_baremetal::joule (
-    $remove_more_packages = false,
+    $remove_more_packages = true,
 ) {
     
     ### Install MRAA - Intel GPIO access library
@@ -15,10 +15,11 @@ class maverick_baremetal::joule (
     # eMMC only has 16b, so remove some unnecessary packages if we've started from desktop
     if $remove_more_packages == true {
         package { [
-            "fonts-noto-cjk",  "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "ubuntu-docs", "gnome-user-guide", "snapd", "app-install-data", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
-            "chromium-browser", "openjdk-8-jre-headless", "libicu-dev", "liboxideqtcore0", "libboost1.58-dev", "sbcl", "python-samba", "samba-common", "samba-common-bin", "samba-libs",
-            "gfortran-5",
-            "adwaita-icon-theme", "hicolor-icon-theme", "humanity-icon-theme", "notify-osd-icons", "suru-icon-theme", "ubuntu-mobile-icons", "ubuntu-wallpapers", "ubuntu-wallpapers-xenial", "example-content",
+            "fonts-noto-cjk",  "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
+            "ubuntu-docs", "gnome-user-guide", "snapd", "openjdk-8-jre-headless", "openjdk-8-jre", "samba-common", "samba-common-bin", "samba-libs", "ubuntu-online-tour",
+            "aisleriot", "gnome-sudoku", "gnome-mahjongg", "gnome-mines", "imagemagick", "imagemagick-6.q16", "imagemagick-common", 
+            "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-pk-helper", "cups-ppdc", "cups-server-common",
+            "shotwell", "shotwell-common", "transmission-common", "transmission-gtk", "liboxideqtcore0", "libwebkit2gtk-4.0-37-gtk2", "fonts-nanum", 
         ]:
             ensure      => purged
         }
