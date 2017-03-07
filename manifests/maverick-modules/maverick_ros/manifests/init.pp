@@ -1,6 +1,8 @@
 class maverick_ros (
-    $installtype = "source",
+    $installtype = "",
     $distribution = "kinetic",
+    $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
+    $binarytype = "ros-kinetic-desktop-full", # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
@@ -46,6 +48,18 @@ class maverick_ros (
         }
     }
     
+    # Create symlink to usual vendor install directory
+    file { ["/opt", "/opt/ros"]:
+        ensure      => directory,
+        mode        => "755",
+        owner       => "root",
+        group       => "root",
+    } ->
+    file { "/opt/ros/${distribution}":
+        ensure      => link,
+        target      => "${installdir}/${distribution}",
+        force       => true,
+    } ->
     # Install ROS bootstrap from ros.org packages
     exec { "ros-repo":
         command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
@@ -76,7 +90,7 @@ class maverick_ros (
 
     # Install from ros repos
     if $_installtype == "native" {
-        package { ["ros-${distribution}-ros-base", "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros", "ros-${distribution}-vision-opencv"]:
+        package { [$binarytype, "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros"]:
             ensure      => installed,
             require     => [ Exec["ros-aptupdate"], Package["python-rosdep"] ],
         } ->
@@ -104,8 +118,9 @@ class maverick_ros (
                 group       => "mav",
                 mode        => 755,
             }
-            $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
             
+            $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
+
             # Initialize rosdep
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
@@ -119,12 +134,14 @@ class maverick_ros (
                 require         => Package["python-rosdep"]
             } ->
             exec { "catkin_rosinstall":
-                command         => "/usr/bin/rosinstall_generator ros_comm --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-ros_comm-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${distribution}-ros_comm-wet.rosinstall",
+                environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
+                command         => "/usr/bin/rosinstall_generator ${buildtype} --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-${buildtype}-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${distribution}-${buildtype}-wet.rosinstall",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${builddir}/src/.rosinstall"
             } ->
             exec { "catkin_make":
+                environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
                 command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
                 cwd             => "${builddir}",
                 user            => "mav",
@@ -187,19 +204,7 @@ class maverick_ros (
                 ensure      => present,
             }
         }
-        
-        # Create symlink to usual vendor install directory
-        file { ["/opt", "/opt/ros"]:
-            ensure      => directory,
-            mode        => "755",
-            owner       => "root",
-            group       => "root",
-        } ->
-        file { "/opt/ros/${distribution}":
-            ensure      => link,
-            target      => "${installdir}/${distribution}",
-            force       => true,
-        } ->
+
         file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
             mode        => 644,
