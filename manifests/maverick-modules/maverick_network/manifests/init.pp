@@ -157,6 +157,7 @@ class maverick_network (
         service { "connman.service":
             ensure      => undef,
             enable      => false,
+            require     => Class["maverick_network::wifibroadcast"],
         }
     } 
     
@@ -169,7 +170,8 @@ class maverick_network (
         } ->
         service { "NetworkManager-wait-online":
             ensure      => stopped,
-            enable      => false
+            enable      => false,
+            require     => Class["maverick_network::wifibroadcast"],
         } ->
         package { "network-manager":
             ensure      => absent, # remove but don't purge, so it can be restored later
@@ -195,6 +197,7 @@ class maverick_network (
         unless      => "/bin/grep -e '^timeout 5;' /etc/dhcp/dhclient.conf",
     }
     
+    # Define a service that unblocks radios with rfkill
     file { "/etc/systemd/system/rfkill-unblock.service":
         ensure      => present,
         source      => "puppet:///modules/maverick_network/rfkill-unblock.service",
@@ -240,12 +243,6 @@ class maverick_network (
         concat { "/etc/udev/rules.d/10-network-customnames.rules":
             ensure      => present,
         }
-	    ### Setup defaults that are added to each create_resources iteration
-	    #$def_defaults = {
-		#    'type'      => 'managed',
-	    #}
-	    ### Now convert the managed_interfaces hash into actual function calls
-		#create_resources("process_interface", $interfaces, $def_defaults)
 		create_resources("process_interface", $interfaces)
 	}
     
