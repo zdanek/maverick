@@ -176,20 +176,21 @@ class Streamer(object):
             queue = Gst.ElementFactory.make("queue", "queue")
             self.pipeline.add(queue)
             capsfilter.link(queue)
-            #vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
-            #self.pipeline.add(vconvert)
-            #queue.link(vconvert)
-            #self.source_attach = vconvert
-            self.source_attach = queue
+            vconvert = Gst.ElementFactory.make("autovideoconvert", "autovideoconvert")
+            self.pipeline.add(vconvert)
+            queue.link(vconvert)
+            self.source_attach = vconvert
 
         ### Encoding methods
         def encode_h264(self):
             logger.info("Attaching encoding 'h264'")
+            # Try and detect encoder
+            self.h264enc = None
+            # Detect Raspberry/OMX
             if Gst.ElementFactory.find("omxh264enc"):
                 logger.info("Raspberry hardware encoder detected, using omxh264enc as h264 encoder")
                 self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
-            # Try and detect encoder
-            self.h264enc = None
+            # Detect Odroid/MFC
             try:
                 odroid264encoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
                 if odroid264encoder:
@@ -203,6 +204,10 @@ class Streamer(object):
                     h264struct.frame_skip_enable = 1
                     h264struct.video_bitrate = 2000000
                     self.h264enc.set_property('extra-controls', h264struct)
+            except subprocess.CalledProcessError, e:
+                pass
+            # Detect Intel/VAAPI
+            try:
                 # Determine vaapi encoder exists, but suppress output
                 with open(os.devnull, "w") as devnull:
                     vaapi264encoder = subprocess.call(["gst-inspect-1.0", "vaapih264enc"], stdout=devnull, stderr=devnull)
@@ -211,6 +216,7 @@ class Streamer(object):
                     self.h264enc = Gst.ElementFactory.make("vaapih264enc", "vaapih264enc")
             except subprocess.CalledProcessError, e:
                 pass
+            # Otherwise use software encoder
             if not self.h264enc:
                 logger.info("No hardware encoder detected, using software x264 encoder")
                 self.h264enc = Gst.ElementFactory.make("x264enc", "x264-encode")
