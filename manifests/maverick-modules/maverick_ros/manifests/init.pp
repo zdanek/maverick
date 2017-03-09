@@ -55,6 +55,12 @@ class maverick_ros (
         owner       => "root",
         group       => "root",
     } ->
+    file { ["${installdir}", "${installdir}/${distribution}"]:
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
     file { "/opt/ros/${distribution}":
         ensure      => link,
         target      => "${installdir}/${distribution}",
@@ -75,11 +81,10 @@ class maverick_ros (
         command     => "/usr/bin/apt-get update",
         unless      => "/usr/bin/dpkg -l python-rosinstall"
     } ->
-    package { ["python-rosdep", "python-rosinstall", "python-rosinstall-generator"]:
+    package { ["python-rosdep"]:
         ensure      => installed,
         require     => Exec["ros-aptupdate"],
     }
-    ensure_packages(["build-essential"])
     $wstool_package = $::operatingsystem ? {
         'Ubuntu'        => 'python-wstool',
         'Debian'        => 'python-wstools',
@@ -92,7 +97,7 @@ class maverick_ros (
     if $_installtype == "native" {
         package { [$binarytype, "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros"]:
             ensure      => installed,
-            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"] ],
+            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"], File["/opt/ros/${distribution}"], ],
         } ->
         file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
@@ -100,18 +105,22 @@ class maverick_ros (
             owner       => "root",
             group       => "root",
             content     => "source /opt/ros/${distribution}/setup.bash",
+        } ->
+        # Initialize rosdep
+        exec { "rosdep-init":
+            command         => "/usr/bin/rosdep init",
+            creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
+        } ->
+        exec { "rosdep-update":
+            user            => "mav",
+            command         => "/usr/bin/rosdep update",
+            creates         => "/srv/maverick/.ros/rosdep/sources.cache",
         }
         
     # Build from source
     } elsif $_installtype == "source" {
 
         if $::install_flag_ros != True {
-            file { ["${installdir}", "${installdir}/${distribution}"]:
-                ensure      => directory,
-                owner       => "mav",
-                group       => "mav",
-                mode        => 755,
-            }
             file { "${builddir}":
                 ensure      => directory,
                 owner       => "mav",
@@ -120,12 +129,13 @@ class maverick_ros (
             }
             
             $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
+            ensure_packages(["build-essential", "python-rosinstall", "python-rosinstall-generator"])
 
             # Initialize rosdep
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
                 creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
-                require         => [ Package["python-rosdep"], Package["python-wstool"] ]
+                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"] ]
             } ->
             exec { "rosdep-update":
                 user            => "mav",
