@@ -14,6 +14,9 @@ class maverick_desktop (
             unless      => "/bin/systemctl get-default |grep graphical",
             command     => "/bin/systemctl set-default graphical.target",
         }
+        # Disable some unnecessary services
+        # package { ["deja-dup", "zeitgeist-datahub", "zeitgeist-core", "evolution-data-server", "evolution-data-server-common", "evolution-data-server-online-accounts"]
+        # Changed mind - if desktop is running then we probably don't care what random processes come with it.  Shut desktop down for flight anyway.
     } elsif $enable == false {
         exec { "stop-desktop-target":
             unless      => "/bin/systemctl status graphical.target |grep inactive",
