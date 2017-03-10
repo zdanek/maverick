@@ -13,7 +13,10 @@ class maverick_mavlink (
     
     # Create config directory for all mavlink configs
     file { "/srv/maverick/data/config/mavlink":
-        ensure      => directory
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
     }
     
     ### cmavnode

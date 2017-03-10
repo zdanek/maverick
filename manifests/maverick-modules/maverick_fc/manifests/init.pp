@@ -2,6 +2,7 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavproxy",
     $mavlink_active = true,
+    $mavlink_input = "/dev/ttyAMA0",
     $mavros_active = true,
     $dflogger_active = true,
     $dflogger_port = 14570,
@@ -64,7 +65,7 @@ class maverick_fc (
             active      => false
         } ->
         maverick_mavlink::mavproxy { "fc":
-            input       => "/dev/ttyAMA0",
+            input       => $mavlink_input,
             instance    => 2,
             startingudp => 14570,
             startingtcp => 5780,
@@ -78,7 +79,7 @@ class maverick_fc (
             active      => false
         } ->
         maverick_mavlink::cmavnode { "fc":
-            input       => "/dev/ttyAMA0",
+            input       => $mavlink_input,
             startingudp => 14570,
             startingtcp => 5780,
             active      => $mavlink_active,
@@ -91,7 +92,7 @@ class maverick_fc (
             active      => false
         } ->
         maverick_mavlink::mavlinkrouter { "fc":
-            input       => "/dev/ttyAMA0",
+            input       => $mavlink_input,
             startingudp => 14570,
             startingtcp => 5780,
             active      => $mavlink_active,
