@@ -1,27 +1,33 @@
 define maverick_mavlink::mavproxy (
-    $input = "",
+    $inputaddress = "",
     $instance = 0,
     $startingudp = 14560,
     $udpports = 5,
     $startingtcp = 5770,
     $tcpports = 5,
     $active = true,
+    $replaceconfig = true,
 ) {
+    if $active {
+        $notify = Service["maverick-mavproxy@${name}"]
+    } else {
+        $notify = undef
+    }
     file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false, # initialize but don't overwrite in the future
+        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavproxy.service.conf.erb"),
-        notify      => Service["maverick-mavproxy@${name}"],
+        notify      => $notify,
     }
     file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false,  # initialize but don't overwrite in the future
+        replace     => $replaceconfig,  # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavproxy.screen.conf.erb"),
-        notify      => Service["maverick-mavproxy@${name}"]
+        notify      => $notify,
     }
 
     if $active == true {

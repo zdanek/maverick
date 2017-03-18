@@ -1,12 +1,19 @@
 [General]
-tcp=<%= @startingtcp %>
 report-stats=false
+tcp-server-port=<%= @startingtcp %>
+
+<% if @inputtype == "tcp" -%>
+[TcpEndpoint tcpin]
+    Address=<%= @inputaddress %>
+    Port=<%= @inputport %>
+<% elsif @inputtype == "serial" %>
+[UartEndpoint serialin]
+    Device=<%= @inputaddress %>
+<% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
-[Endpoint <%= i -%>]
-    Type = UDP
+[UdpEndpoint <%= i -%>]
     Mode = Eavesdropping
     Address = 0.0.0.0
     Port = <%= @startingudp.to_i() + i %>
-    
 <% end %>

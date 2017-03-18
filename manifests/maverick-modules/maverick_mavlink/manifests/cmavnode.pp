@@ -1,39 +1,43 @@
 define maverick_mavlink::cmavnode (
-    $input = undef,
+    $inputaddress = undef,
     $udpinaddress = undef,
     $udpinport = undef,
     $startingudp = 14560,
     $udpports = 5,
     $startingtcp = 5770,
     $tcpports = 5,
-    $active = true,  
+    $active = true,
+    $replaceconfig = true,
 ) {
- 
+    if $active {
+        $notify = Service["maverick-cmavnode@${name}"]
+    } else {
+        $notify = undef
+    }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false, # initialize but don't overwrite in the future
+        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.conf.erb"),
-        notify      => Service["maverick-cmavnode@${name}"],
+        notify      => $notify,
     }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false, # initialize but don't overwrite in the future
+        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.service.conf.erb"),
-        notify      => Service["maverick-cmavnode@${name}"],
+        notify      => $notify,
     }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false,  # initialize but don't overwrite in the future
+        replace     => $replaceconfig,  # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.screen.conf.erb"),
-        notify      => Service["maverick-cmavnode@${name}"]
+        notify      => $notify,
     }
-    
 
     if $active == true {
     	service { "maverick-cmavnode@${name}":

@@ -1,9 +1,6 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavproxy",
-    $mavlink_in = "/dev/ttyAMA0",
-    $mavlink_udpinaddress = "",
-    $mavlink_udpinport = "",
     $mavlink_active = true,
     $mavros_active = true,
     $sitl_active = true,
@@ -115,10 +112,15 @@ class maverick_dev::sitl (
             active      => false
         } ->
         maverick_mavlink::mavlinkrouter { "sitl":
+            inputtype   => "tcp",
+            inputaddress => "127.0.0.1",
+            inputport   => "5760",
+            startingudp => 14560,
+            startingtcp => 5770,
             active      => false
         } ->
         maverick_mavlink::mavproxy { "sitl":
-            input       => "tcp:localhost:5760",
+            inputaddress => "tcp:localhost:5760",
             instance    => 1,
             startingudp => 14560,
             startingtcp => 5770,
@@ -126,15 +128,22 @@ class maverick_dev::sitl (
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "sitl":
+            inputaddress => "tcp:localhost:5760",
+            instance    => 1,
+            startingudp => 14560,
+            startingtcp => 5770,
             active      => false
         } ->
         maverick_mavlink::mavlinkrouter { "sitl":
+            inputtype   => "tcp",
+            inputaddress => "127.0.0.1",
+            inputport   => "5760",
+            startingudp => 14560,
+            startingtcp => 5770,
             active      => false
         } ->
         maverick_mavlink::cmavnode { "sitl":
-            # input       => "utcp:localhost:5760",
-            udpinaddress => $mavlink_udpinaddress,
-            udpinport   => $mavlink_udpinport,
+            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => 14560,
             startingtcp => 5770,
             active      => $mavlink_active,
@@ -144,10 +153,16 @@ class maverick_dev::sitl (
             active      => false
         } ->
         maverick_mavlink::mavproxy { "sitl":
+            inputaddress => "tcp:localhost:5760",
+            instance    => 1,
+            startingudp => 14560,
+            startingtcp => 5770,
             active      => false
         } ->
         maverick_mavlink::mavlinkrouter { "sitl":
-            input       => "udp:localhost:5501",
+            inputtype   => "tcp",
+            inputaddress => "127.0.0.1",
+            inputport   => "5760",
             startingudp => 14560,
             startingtcp => 5770,
             active      => $mavlink_active,

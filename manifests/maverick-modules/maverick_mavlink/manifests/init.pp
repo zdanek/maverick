@@ -82,7 +82,7 @@ class maverick_mavlink (
         exec { "mavlinkrouter-build":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && /srv/maverick/var/build/mavlinkrouter/configure CFLAGS='-g -O2' --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
+            command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlinkrouter/configure --with-dialect=ardupilotmega --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/mavlinkrouter",
             creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlink-routerd",
         }

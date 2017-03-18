@@ -1,27 +1,34 @@
 define maverick_mavlink::mavlinkrouter (
-    $input = "",
+    $inputtype = "serial",
+    $inputaddress = undef,
+    $inputport = undef,
     $startingudp = 14560,
     $udpports = 5,
     $startingtcp = 5770,
     $tcpports = 5,
-    $active = true,  
+    $active = true,
+    $replaceconfig = true,
 ) {
- 
+    if $active {
+        $notify = Service["maverick-mavlinkrouter@${name}"]
+    } else {
+        $notify = undef
+    }
     file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false, # initialize but don't overwrite in the future
+        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavlinkrouter.conf.erb"),
-        notify      => Service["maverick-mavlinkrouter@${name}"],
+        notify      => $notify,
     }
     file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        replace     => false, # initialize but don't overwrite in the future
+        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavlinkrouter.service.conf.erb"),
-        notify      => Service["maverick-mavlinkrouter@${name}"],
+        notify      => $notify,
     }
 
     if $active == true {
