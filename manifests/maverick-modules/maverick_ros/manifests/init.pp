@@ -2,7 +2,7 @@ class maverick_ros (
     $installtype = "",
     $distribution = "kinetic",
     $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
-    $binarytype = "ros-kinetic-desktop-full", # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full
+    $binarytype = "ros-kinetic-desktop", # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
