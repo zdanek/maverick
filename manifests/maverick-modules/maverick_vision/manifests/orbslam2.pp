@@ -1,7 +1,7 @@
 class maverick_vision::orbslam2 (
 ) {
     
-    ensure_packages(["libeigen3-dev", "libglew-dev"])
+    ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni-dev"])
     
     # Clone and Build pangolin
     oncevcsrepo { "git-pangolin":
@@ -53,6 +53,7 @@ class maverick_vision::orbslam2 (
     } ->
     exec { "compile-orbslam2":
         user        => "mav",
+        timeout     => 0,
         environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:/srv/maverick/software/pangolin/lib", "PATH=/srv/maverick/software/opencv/bin:/srv/maverick/software/pangolin/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/pangolin"],
         cwd         => "/srv/maverick/var/build/orbslam2",
         command     => "/srv/maverick/var/build/orbslam2/build.sh",
