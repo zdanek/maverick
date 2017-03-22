@@ -79,19 +79,25 @@ class maverick_mavlink (
 
     ### mavlinkrouter
     # Install mavlinkrouter from gitsource
-    if $mavlinkrouter_install and ! ("install_flag_mavlinkrouter" in $installflags) {
-        oncevcsrepo { "git-mavlinkrouter":
-            gitsource   => $mavlinkrouter_source,
-            dest        => "/srv/maverick/var/build/mavlinkrouter",
-            submodules  => true,
-        } ->
-        exec { "mavlinkrouter-build":
-            user        => "mav",
-            timeout     => 0,
-            command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlinkrouter/configure --with-dialect=ardupilotmega --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
-            cwd         => "/srv/maverick/var/build/mavlinkrouter",
-            creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlink-routerd",
-        } ->
+    if $mavlinkrouter_install {
+        if ! ("install_flag_mavlinkrouter" in $installflags) {
+            oncevcsrepo { "git-mavlinkrouter":
+                gitsource   => $mavlinkrouter_source,
+                dest        => "/srv/maverick/var/build/mavlinkrouter",
+                submodules  => true,
+            } ->
+            exec { "mavlinkrouter-build":
+                user        => "mav",
+                timeout     => 0,
+                command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlinkrouter/configure --with-dialect=ardupilotmega --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/mavlinkrouter",
+                creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlink-routerd",
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_mavlinkrouter":
+                ensure      => file,
+                owner       => "mav",
+            }
+        }
         file { "/etc/systemd/system/maverick-mavlinkrouter@.service":
             source      => "puppet:///modules/maverick_mavlink/maverick-mavlinkrouter@.service",
             owner       => "root",
@@ -102,10 +108,6 @@ class maverick_mavlink (
         file { "/srv/maverick/software/maverick/bin/mavlinkrouter.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlinkrouter.sh",
-        } ->
-        file { "/srv/maverick/var/build/.install_flag_mavlinkrouter":
-            ensure      => file,
-            owner       => "mav",
         }
     }
     
