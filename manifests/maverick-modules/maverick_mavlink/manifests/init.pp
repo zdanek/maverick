@@ -21,42 +21,48 @@ class maverick_mavlink (
     
     ### cmavnode
     # Install cmavnode from gitsource
-    if $cmavnode_install and ! ("install_flag_cmavnode" in $installflags) {
-        ensure_packages(["libboost-all-dev", "cmake", "libconfig++-dev", "libreadline-dev"])
-        oncevcsrepo { "git-cmavnode":
-            gitsource   => $cmavnode_source,
-            dest        => "/srv/maverick/var/build/cmavnode",
-            submodules  => true,
-        } ->
-        # Create build directory
-        file { "/srv/maverick/var/build/cmavnode/build":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-            mode        => 755,
-        }
-        exec { "cmavnode-prepbuild":
-            user        => "mav",
-            timeout     => 0,
-            command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/cmavnode ..",
-            cwd         => "/srv/maverick/var/build/cmavnode/build",
-            creates     => "/srv/maverick/var/build/cmavnode/build/Makefile",
-            require     => [ File["/srv/maverick/var/build/cmavnode/build"], Package["libreadline-dev"] ], # ensure we have all the dependencies satisfied
-        } ->
-        exec { "cmavnode-build":
-            user        => "mav",
-            timeout     => 0,
-            command     => "/usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/cmavnode.build.out 2>&1",
-            cwd         => "/srv/maverick/var/build/cmavnode/build",
-            creates     => "/srv/maverick/var/build/cmavnode/build/cmavnode",
-            require     => Exec["cmavnode-prepbuild"],
-        } ->
-        exec { "cmavnode-install":
-            user        => "mav",
-            timeout     => 0,
-            command     => "/usr/bin/make install >/srv/maverick/var/log/build/cmavnode.install.out 2>&1",
-            cwd         => "/srv/maverick/var/build/cmavnode/build",
-            creates     => "/srv/maverick/software/cmavnode/bin/cmavnode",
+    if $cmavnode_install {
+        if ! ("install_flag_cmavnode" in $installflags) {
+            ensure_packages(["libboost-all-dev", "cmake", "libconfig++-dev", "libreadline-dev"])
+            oncevcsrepo { "git-cmavnode":
+                gitsource   => $cmavnode_source,
+                dest        => "/srv/maverick/var/build/cmavnode",
+                submodules  => true,
+            } ->
+            # Create build directory
+            file { "/srv/maverick/var/build/cmavnode/build":
+                ensure      => directory,
+                owner       => "mav",
+                group       => "mav",
+                mode        => 755,
+            }
+            exec { "cmavnode-prepbuild":
+                user        => "mav",
+                timeout     => 0,
+                command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/cmavnode ..",
+                cwd         => "/srv/maverick/var/build/cmavnode/build",
+                creates     => "/srv/maverick/var/build/cmavnode/build/Makefile",
+                require     => [ File["/srv/maverick/var/build/cmavnode/build"], Package["libreadline-dev"] ], # ensure we have all the dependencies satisfied
+            } ->
+            exec { "cmavnode-build":
+                user        => "mav",
+                timeout     => 0,
+                command     => "/usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/cmavnode.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/cmavnode/build",
+                creates     => "/srv/maverick/var/build/cmavnode/build/cmavnode",
+                require     => Exec["cmavnode-prepbuild"],
+            } ->
+            exec { "cmavnode-install":
+                user        => "mav",
+                timeout     => 0,
+                command     => "/usr/bin/make install >/srv/maverick/var/log/build/cmavnode.install.out 2>&1",
+                cwd         => "/srv/maverick/var/build/cmavnode/build",
+                creates     => "/srv/maverick/software/cmavnode/bin/cmavnode",
+            }
+            file { "/srv/maverick/var/build/.install_flag_cmavnode":
+                ensure      => file,
+                owner       => "mav",
+            }
         }
         file { "/etc/systemd/system/maverick-cmavnode@.service":
             source      => "puppet:///modules/maverick_mavlink/maverick-cmavnode@.service",
@@ -68,10 +74,6 @@ class maverick_mavlink (
         file { "/srv/maverick/software/maverick/bin/cmavnode.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/cmavnode.sh",
-        }
-        file { "/srv/maverick/var/build/.install_flag_cmavnode":
-            ensure      => file,
-            owner       => "mav",
         }
     }
 
@@ -101,7 +103,7 @@ class maverick_mavlink (
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlinkrouter.sh",
         } ->
-        file { "/srv/maverick/var/build/.install_flag_malinkrouter":
+        file { "/srv/maverick/var/build/.install_flag_mavlinkrouter":
             ensure      => file,
             owner       => "mav",
         }
