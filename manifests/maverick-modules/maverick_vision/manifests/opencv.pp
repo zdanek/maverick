@@ -19,16 +19,11 @@ class maverick_vision::opencv (
     }
     
     # If ~/var/build/.install_flag_opencv exists, skip pulling source and compiling
-    if $::install_flag_opencv != True {
+    if ! ("install_flag_opencv" in $installflags) {
         # Pull opencv and opencv_contrib from git
         oncevcsrepo { "git-opencv":
             gitsource   => "https://github.com/opencv/opencv.git",
             dest        => "/srv/maverick/var/build/opencv",
-            revision    => $opencv_version,
-        } ->
-        oncevcsrepo { "git-opencv_contrib":
-            gitsource   => "https://github.com/opencv/opencv_contrib.git",
-            dest        => "/srv/maverick/var/build/opencv_contrib",
             revision    => $opencv_version,
         } ->
         # Create build directory
@@ -41,6 +36,11 @@ class maverick_vision::opencv (
         
         # Run cmake and generate build files
         if $contrib == true {
+            oncevcsrepo { "git-opencv_contrib":
+                gitsource   => "https://github.com/opencv/opencv_contrib.git",
+                dest        => "/srv/maverick/var/build/opencv_contrib",
+                revision    => $opencv_version,
+            }
             $contribstr = "-DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF"
         } else {
             $contribstr = ""

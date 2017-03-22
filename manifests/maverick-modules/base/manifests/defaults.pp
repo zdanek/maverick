@@ -1,8 +1,8 @@
 class base::defaults {
 
     Package {
-        ensure 	=> "installed",
-        allow_virtual => false,
+        ensure 	        => "installed",
+        allow_virtual   => false,
     }
     
     Exec	{ 
@@ -18,4 +18,9 @@ class base::defaults {
     # Activate puppetlabs-stdlib at the first opportunity
     class { "stdlib": }
 
+    File {
+        owner       => "mav",
+        group       => "mav",
+    }
+    
 }
