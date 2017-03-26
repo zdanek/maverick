@@ -19,5 +19,10 @@ class base::functions {
         refreshonly     => true,
     }
     
+    # Define an exec to do ldconfig, to reload ld.so.conf.d config
+    exec { "maverick-ldconfig":
+        command         => "/sbin/ldconfig",
+        refreshonly     => true,
+    }
 
 }

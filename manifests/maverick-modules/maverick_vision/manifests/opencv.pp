@@ -10,7 +10,7 @@ class maverick_vision::opencv (
     # as we want to access from both, so we install into global.
     
     # Install dependencies
-    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev"])
+    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "libgdal1-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
     ensure_packages(["libopenni2-dev"])
@@ -59,9 +59,9 @@ class maverick_vision::opencv (
         }
     
         if $architecture == "amd64" {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DENABLE_VFPV3=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
     
         if $raspberry_present == yes {
@@ -116,10 +116,14 @@ class maverick_vision::opencv (
         content     => "export PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH",
     } ->
     file { "/etc/profile.d/40-maverick-opencv-ldlibrarypath.sh":
+        ensure      => absent,
+    } ->
+    file { "/etc/ld.so.conf.d/maverick-opencv.conf":
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "export LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:\$LD_LIBRARY_PATH",
+        content     => "/srv/maverick/software/opencv/lib",
+        notify      => Exec["maverick-ldconfig"],
     } ->
     file { "/etc/profile.d/40-maverick-opencv-pythonpath.sh":
         mode        => 644,

@@ -43,35 +43,39 @@ class maverick_vision::aruco (
             cwd         => "/srv/maverick/var/build/aruco/build",
             creates     => "/srv/maverick/software/aruco/bin/aruco_tracker",
         } ->
-        file { "/etc/profile.d/60-maverick-aruco-path.sh":
-            mode        => 644,
-            owner       => "root",
-            group       => "root",
-            content     => "export PATH=/srv/maverick/software/aruco/bin:\$PATH",
-        } ->
-        file { "/etc/profile.d/60-maverick-aruco-pkgconfig.sh":
-            mode        => 644,
-            owner       => "root",
-            group       => "root",
-            content     => "export PKG_CONFIG_PATH=/srv/maverick/software/aruco/lib/pkgconfig:\$PKG_CONFIG_PATH",
-        } ->
-        file { "/etc/profile.d/40-maverick-aruco-ldlibrarypath.sh":
-            mode        => 644,
-            owner       => "root",
-            group       => "root",
-            content     => "export LD_LIBRARY_PATH=/srv/maverick/software/aruco/lib:\$LD_LIBRARY_PATH",
-        } ->
-        file { "/etc/profile.d/40-maverick-aruco-cmake.sh":
-            mode        => 644,
-            owner       => "root",
-            group       => "root",
-            content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/aruco",
-        }
-
         file { "/srv/maverick/var/build/.install_flag_aruco":
             ensure      => present,
             owner       => "mav",
         }
-       
     }
+
+    file { "/etc/profile.d/60-maverick-aruco-path.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export PATH=/srv/maverick/software/aruco/bin:\$PATH",
+    } ->
+    file { "/etc/profile.d/60-maverick-aruco-pkgconfig.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export PKG_CONFIG_PATH=/srv/maverick/software/aruco/lib/pkgconfig:\$PKG_CONFIG_PATH",
+    } ->
+    file { "/etc/profile.d/40-maverick-aruco-ldlibrarypath.sh":
+        ensure      => absent,
+    } ->
+    file { "/etc/ld.so.conf.d/maverick-aruco.conf":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "/srv/maverick/software/aruco/lib",
+        notify      => Exec["maverick-ldconfig"],
+    } ->
+    file { "/etc/profile.d/60-maverick-aruco-cmake.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/aruco",
+    }
+
 }

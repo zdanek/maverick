@@ -302,11 +302,15 @@ class maverick_vision::gstreamer (
             content     => "export PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
         }
         file { "/etc/profile.d/50-maverick-gstreamer-ldlibrarypath.sh":
+            ensure      => absent,
+        }
+        file { "/etc/ld.so.conf.d/maverick-gstreamer.conf":
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "export LD_LIBRARY_PATH=/srv/maverick/software/gstreamer/lib:\$LD_LIBRARY_PATH",
-        }
+            content     => "/srv/maverick/software/gstreamer/lib",
+            notify      => Exec["maverick-ldconfig"],
+        } ->
         file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
             mode        => 644,
             owner       => "root",
