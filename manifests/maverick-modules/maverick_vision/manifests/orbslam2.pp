@@ -45,40 +45,35 @@ class maverick_vision::orbslam2 (
         # Pull orb-slam2 from git mirror
         oncevcsrepo { "git-orbslam2":
             gitsource   => "https://github.com/raulmur/ORB_SLAM2.git",
-            dest        => "/srv/maverick/var/build/orbslam2",
+            dest        => "/srv/maverick/software/orb_slam2",
         } ->
         exec { "fix-orbslam2-build.sh":
             user        => "mav",
             command     => "/bin/sed -i -e 's/^make -j$/make -j 2/' build.sh",
-            cwd         => "/srv/maverick/var/build/orbslam2",
+            cwd         => "/srv/maverick/software/orb_slam2",
             onlyif      => "/bin/grep -e '^make -j$' build.sh",
         } ->
         exec { "compile-orbslam2":
             user        => "mav",
             timeout     => 0,
             environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:/srv/maverick/software/pangolin/lib", "PATH=/srv/maverick/software/opencv/bin:/srv/maverick/software/pangolin/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/pangolin"],
-            cwd         => "/srv/maverick/var/build/orbslam2",
-            command     => "/srv/maverick/var/build/orbslam2/build.sh",
-            creates     => "/srv/maverick/var/build/orbslam2/lib/libORB_SLAM2.so",
-            require     => Exec["pangolin-install"],
-        } ->
-        file { "/srv/maverick/software/orb_slam2":
-            owner       => mav,
-            group       => mav,
-            mode        => "755",
-            ensure      => directory,
-        } ->
-        exec { "install-orbslam2":
-            user        => "mav",
-            cwd         => "/srv/maverick/var/build/orbslam2",
-            command     => "/bin/cp -R lib include Vocabulary Examples /srv/maverick/software/orb_slam2",
+            cwd         => "/srv/maverick/software/orb_slam2",
+            command     => "/srv/maverick/software/orb_slam2/build.sh",
             creates     => "/srv/maverick/software/orb_slam2/lib/libORB_SLAM2.so",
+            require     => Exec["pangolin-install"],
         } ->
         file { "/srv/maverick/var/build/.install_flag_orbslam2":
             ensure      => file,
             owner       => "mav",
         }
-    
     }
     
+    file { "/etc/ld.so.conf.d/maverick-orbslam2.conf":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "/srv/maverick/software/orbslam2/lib\n/srv/maverick/software/pangolin/lib",
+        notify      => Exec["maverick-ldconfig"],
+    }
+
 }
