@@ -178,6 +178,12 @@ class maverick_mavlink (
                 owner       => "mav",
             }
         }
+    } else {
+        # This is only here for other manifests to use as a require
+        exec { "install-dronekit-la":
+            command     => "/bin/ls",
+            refreshonly => true,
+        }
     }
     
 }
