@@ -10,10 +10,9 @@ class maverick_vision::opencv (
     # as we want to access from both, so we install into global.
     
     # Install dependencies
-    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "libgdal1-dev"])
+    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "libgdal1-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
-    ensure_packages(["libopenni2-dev"])
     # ensure_packages(["qtbase5-dev"])
     if $architecture == "amd64" { # https://github.com/fnoop/maverick/issues/233
         ensure_packages(["libtbb-dev", "libtbb2"])
