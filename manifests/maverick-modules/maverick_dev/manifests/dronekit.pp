@@ -24,7 +24,7 @@ class maverick_dev::dronekit (
         user        => mav,
         environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco"],
         cwd         => "/srv/maverick/code/dronekit-apps/vision_landing/src",
-        command     => "/usr/bin/cmake . && make && make install",
+        command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv . && make && make install",
         creates     => "/srv/maverick/code/dronekit-apps/vision_landing/track_targets",
         require     => File["/srv/maverick/var/build/.install_flag_opencv"],
     } ->
