@@ -6,6 +6,7 @@ tcp-server-port=<%= @startingtcp %>
 [TcpEndpoint tcpin]
     Address=<%= @inputaddress %>
     Port=<%= @inputport %>
+    RetryTimeout=5
 <% elsif @inputtype == "serial" %>
 [UartEndpoint serialin]
     Device=<%= @inputaddress %>

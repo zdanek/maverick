@@ -1,4 +1,4 @@
-define maverick_mavlink::mavlinkrouter (
+define maverick_mavlink::mavlink_router (
     $inputtype = "serial",
     $inputaddress = undef,
     $inputport = undef,
@@ -10,34 +10,34 @@ define maverick_mavlink::mavlinkrouter (
     $replaceconfig = true,
 ) {
     if $active {
-        $notify = Service["maverick-mavlinkrouter@${name}"]
+        $notify = Service["maverick-mavlink-router@${name}"]
     } else {
         $notify = undef
     }
-    file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.conf":
+    file { "/srv/maverick/data/config/mavlink/mavlink-router-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
-        content     => template("maverick_mavlink/mavlinkrouter.conf.erb"),
+        content     => template("maverick_mavlink/mavlink-router.conf.erb"),
         notify      => $notify,
     }
-    file { "/srv/maverick/data/config/mavlink/mavlinkrouter-${name}.service.conf":
+    file { "/srv/maverick/data/config/mavlink/mavlink-router-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
-        content     => template("maverick_mavlink/mavlinkrouter.service.conf.erb"),
+        content     => template("maverick_mavlink/mavlink-router.service.conf.erb"),
         notify      => $notify,
     }
 
     if $active == true {
-    	service { "maverick-mavlinkrouter@${name}":
+    	service { "maverick-mavlink-router@${name}":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlinkrouter@.service"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]
         }
-        # Punch some holes in the firewall for mavlinkrouter
+        # Punch some holes in the firewall for mavlink-router
         if defined(Class["::maverick_security"]) {
             $endingudp = $startingudp + $udpports
             maverick_security::firewall::firerule { "mavlink-${name}-udp":
@@ -53,10 +53,10 @@ define maverick_mavlink::mavlinkrouter (
             }
         }
     } else {
-    	service { "maverick-mavlinkrouter@${name}":
+    	service { "maverick-mavlink-router@${name}":
             ensure      => stopped,
             enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlinkrouter@.service"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]
         }
     }
     

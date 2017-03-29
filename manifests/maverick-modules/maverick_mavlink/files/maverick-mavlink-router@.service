@@ -5,8 +5,8 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-EnvironmentFile=/srv/maverick/data/config/mavlink/mavlinkrouter-%I.service.conf
-ExecStart=/srv/maverick/software/maverick/bin/mavlinkrouter.sh %I
+EnvironmentFile=/srv/maverick/data/config/mavlink/mavlink-router-%I.service.conf
+ExecStart=/srv/maverick/software/maverick/bin/mavlink-router.sh %I
 User=mav
 
 [Install]

@@ -162,7 +162,7 @@ if [ "$STATUS" == "true" ]; then
     mavenv ${environment}
     echo
     mavfc=1
-    for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
+    for mavtype in "mavproxy" "cmavnode" "mavlink-router"; do
         $(systemctl status "maverick-$mavtype@fc" >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
             mavfc=0
@@ -176,7 +176,7 @@ if [ "$STATUS" == "true" ]; then
         statusout+='--------------------: \n'
         (systemctl status maverick-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
         mavsitl=1
-        for mavtype in "mavproxy" "cmavnode" "mavlinkrouter"; do
+        for mavtype in "mavproxy" "cmavnode" "mavlink-router"; do
             $(systemctl status "maverick-$mavtype@sitl" >/dev/null 2>&1)
             if [ $? -eq 0 ]; then
                 mavsitl=0

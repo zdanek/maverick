@@ -64,7 +64,7 @@ class maverick_fc (
             startingtcp => 5780,
             active      => false
         } ->
-        maverick_mavlink::mavlinkrouter { "fc":
+        maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
             inputaddress => $mavlink_input,
             startingudp => 14570,
@@ -86,7 +86,7 @@ class maverick_fc (
             startingtcp => 5780,
             active      => false,
         } ->
-        maverick_mavlink::mavlinkrouter { "fc":
+        maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
             inputaddress => $mavlink_input,
             startingudp => 14570,
@@ -99,7 +99,7 @@ class maverick_fc (
             startingtcp => 5780,
             active      => $mavlink_active,
         }
-    } elsif $mavlink_proxy == "mavlinkrouter" {
+    } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
             startingudp => 14570,
@@ -113,7 +113,7 @@ class maverick_fc (
             startingtcp => 5780,
             active      => false
         } ->
-        maverick_mavlink::mavlinkrouter { "fc":
+        maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
             inputaddress => $mavlink_input,
             startingudp => 14570,

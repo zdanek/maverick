@@ -1,8 +1,8 @@
 class maverick_mavlink (
     $cmavnode_install = true,
     $cmavnode_source = "https://github.com/MonashUAS/cmavnode.git",
-    $mavlinkrouter_install = true,
-    $mavlinkrouter_source = "https://github.com/01org/mavlink-router.git",
+    $mavlink_router_install = true,
+    $mavlink_router_source = "https://github.com/01org/mavlink-router.git",
     $mavproxy_install = true,
     $dronekit_install = true,
     $dronekit_la_install = true,
@@ -77,37 +77,37 @@ class maverick_mavlink (
         }
     }
 
-    ### mavlinkrouter
-    # Install mavlinkrouter from gitsource
-    if $mavlinkrouter_install {
-        if ! ("install_flag_mavlinkrouter" in $installflags) {
-            oncevcsrepo { "git-mavlinkrouter":
-                gitsource   => $mavlinkrouter_source,
-                dest        => "/srv/maverick/var/build/mavlinkrouter",
+    ### mavlink-router
+    # Install mavlink-router from gitsource
+    if $mavlink_router_install {
+        if ! ("install_flag_mavlink-router" in $installflags) {
+            oncevcsrepo { "git-mavlink-router":
+                gitsource   => $mavlink_router_source,
+                dest        => "/srv/maverick/var/build/mavlink-router",
                 submodules  => true,
             } ->
-            exec { "mavlinkrouter-build":
+            exec { "mavlink-router-build":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/srv/maverick/var/build/mavlinkrouter/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlinkrouter/configure --with-dialect=ardupilotmega --prefix=/srv/maverick/software/mavlinkrouter && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlinkrouter.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/mavlinkrouter",
-                creates     => "/srv/maverick/software/mavlinkrouter/bin/mavlink-routerd",
+                command     => "/srv/maverick/var/build/mavlink-router/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlink-router/configure --with-dialect=ardupilotmega --prefix=/srv/maverick/software/mavlink-router && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlink-router.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/mavlink-router",
+                creates     => "/srv/maverick/software/mavlink-router/bin/mavlink-routerd",
             } ->
-            file { "/srv/maverick/var/build/.install_flag_mavlinkrouter":
+            file { "/srv/maverick/var/build/.install_flag_mavlink-router":
                 ensure      => file,
                 owner       => "mav",
             }
         }
-        file { "/etc/systemd/system/maverick-mavlinkrouter@.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-mavlinkrouter@.service",
+        file { "/etc/systemd/system/maverick-mavlink-router@.service":
+            source      => "puppet:///modules/maverick_mavlink/maverick-mavlink-router@.service",
             owner       => "root",
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
-        file { "/srv/maverick/software/maverick/bin/mavlinkrouter.sh":
+        file { "/srv/maverick/software/maverick/bin/mavlink-router.sh":
             ensure      => link,
-            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlinkrouter.sh",
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlink-router.sh",
         }
     }
     

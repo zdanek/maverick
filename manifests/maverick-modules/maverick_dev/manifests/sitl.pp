@@ -111,7 +111,7 @@ class maverick_dev::sitl (
         maverick_mavlink::cmavnode { "sitl":
             active      => false
         } ->
-        maverick_mavlink::mavlinkrouter { "sitl":
+        maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
@@ -134,7 +134,7 @@ class maverick_dev::sitl (
             startingtcp => 5770,
             active      => false
         } ->
-        maverick_mavlink::mavlinkrouter { "sitl":
+        maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
@@ -148,7 +148,7 @@ class maverick_dev::sitl (
             startingtcp => 5770,
             active      => $mavlink_active,
         }
-    } elsif $mavlink_proxy == "mavlinkrouter" {
+    } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "sitl":
             active      => false
         } ->
@@ -159,7 +159,7 @@ class maverick_dev::sitl (
             startingtcp => 5770,
             active      => false
         } ->
-        maverick_mavlink::mavlinkrouter { "sitl":
+        maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
