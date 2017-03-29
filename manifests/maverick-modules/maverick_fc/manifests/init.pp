@@ -4,7 +4,7 @@ class maverick_fc (
     $mavlink_active = true,
     $mavlink_input = "/dev/ttyAMA0",
     $mavros_active = true,
-    $dflogger_active = true,
+    $dflogger_active = false,
     $dflogger_port = 14570,
 ) {
 

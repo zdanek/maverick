@@ -22,14 +22,6 @@ define maverick_mavlink::mavlink_router (
         content     => template("maverick_mavlink/mavlink-router.conf.erb"),
         notify      => $notify,
     }
-    file { "/srv/maverick/data/config/mavlink/mavlink-router-${name}.service.conf":
-        ensure      => present,
-        owner       => "mav",
-        group       => "mav",
-        replace     => $replaceconfig, # initialize but don't overwrite in the future if false
-        content     => template("maverick_mavlink/mavlink-router.service.conf.erb"),
-        notify      => $notify,
-    }
 
     if $active == true {
     	service { "maverick-mavlink-router@${name}":

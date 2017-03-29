@@ -104,10 +104,6 @@ class maverick_mavlink (
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        file { "/srv/maverick/software/maverick/bin/mavlink-router.sh":
-            ensure      => link,
-            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlink-router.sh",
         }
     }
     
