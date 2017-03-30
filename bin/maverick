@@ -43,6 +43,11 @@ usage () {
     echo " netinfo                                 Display network information"
     echo " self-update                             Update to latest maverick code"
     echo " configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
+    echo " start                                   Start Maverick service"
+    echo " stop                                    Stop Maverick service"
+    echo " restart                                 Restart Maverick service"
+    echo " enable                                  Enable Maverick service at boot"
+    echo " disable                                 Disable Maverick service at boot"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
@@ -86,10 +91,36 @@ do
             SELFUPDATE="true"
             shift
             ;;
+        start)
+            START="true"
+            shift
+            ;;
+        stop)
+            STOP="true"
+            shift
+            ;;
+        restart)
+            RESTART="true"
+            shift
+            ;;
+        enable)
+            ENABLE="true"
+            shift
+            ;;
+        disable)
+            DISABLE="true"
+            shift
+            ;;
         *)
-            echo "Error: argument not recognised"
-            echo
-            usage
+            # If stop or start action, grab the service name from next argument
+            if [ "${START}" == "true" -o "${STOP}" == "true" -o "${RESTART}" == "true" -o "${ENABLE}" == "true" -o "${DISABLE}" == "true" ]; then
+                SERVICE="${i#*}"
+                shift
+            else
+                echo "Error: argument not recognised"
+                echo
+                usage
+            fi
             ;;
     esac
 done
@@ -150,43 +181,137 @@ fi
 # If status set, action and then exit
 if [ "$STATUS" == "true" ]; then
     status () {
-        if [ $2 -eq 0 ]; then
-            echo "$1: ${green}Running${reset}\n"
+        if [ $3 -eq 0 ]; then
+            _status="${green}Running${reset}"
         else
-            echo "$1: ${red}Stopped${reset}\n"
+            _status="${red}Stopped${reset}"
         fi
+        if [ $4 -eq 0 ]; then
+            _atboot="${green}Enabled${reset}"
+        else
+            _atboot="${red}Disabled${reset}"
+        fi
+        echo "$1:$2:$_status | $_atboot\n"
     }
     if [ -e /srv/maverick/.environment ]; then
         environment=$(cat /srv/maverick/.environment)
     fi
     mavenv ${environment}
     echo
+    statusout+="Service:Description: Status | At Boot\n"
+    statusout+="------------:------------:------------------\n"
     mavfc=1
+    mavfcen=1
+    mavfcservice="<not set>"
     for mavtype in "mavproxy" "cmavnode" "mavlink-router"; do
-        $(systemctl status "maverick-$mavtype@fc" >/dev/null 2>&1)
+        $(systemctl is-enabled "maverick-$mavtype@fc" >/dev/null 2>&1)
         if [ $? -eq 0 ]; then
-            mavfc=0
+            $(systemctl status "maverick-$mavtype@fc" >/dev/null 2>&1)
+            if [ $? -eq 0 ]; then
+                mavfc=0
+            else
+                mavfc=1
+            fi
+            mavfcservice="$mavtype@fc"
+            mavfcen=0
         fi
     done
-    statusout+=$(status "Mavlink (Flight Controller)" $mavfc)
-    (systemctl status maverick-dflogger >/dev/null 2>&1); statusout+=$(status "Mavlink Logger (Flight Controller)" $?)
-    (systemctl status maverick-mavros-fc >/dev/null 2>&1); statusout+=$(status "Mavros (Flight Controller)" $?)
-    (systemctl status maverick-visiond >/dev/null 2>&1); statusout+=$(status "Maverick Vision" $?)
+    statusout+=$(status "${mavfcservice}" "Mavlink (FC)" $mavfc $mavfcen)
+    (systemctl status maverick-mavros-fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros-fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros-fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
+    (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Maverick Vision" $vis $visen)
     if [ "$environment" == "dev" ]; then
-        statusout+='--------------------: \n'
-        (systemctl status maverick-sitl >/dev/null 2>&1); statusout+=$(status "SITL" $?)
+        statusout+='------------:------------:------------------\n'
+        (systemctl status maverick-sitl >/dev/null 2>&1); sitl=$?; (systemctl is-enabled maverick-sitl >/dev/null 2>&1); sitlen=$?; statusout+=$(status "sitl" "SITL" $sitl $sitlen)
         mavsitl=1
+        mavsitlen=1
+        mavsitlservice="<not set>"
         for mavtype in "mavproxy" "cmavnode" "mavlink-router"; do
-            $(systemctl status "maverick-$mavtype@sitl" >/dev/null 2>&1)
+            $(systemctl is-enabled "maverick-$mavtype@sitl" >/dev/null 2>&1)
             if [ $? -eq 0 ]; then
-                mavsitl=0
+                $(systemctl status "maverick-$mavtype@sitl" >/dev/null 2>&1)
+                if [ $? -eq 0 ]; then
+                    mavsitl=0
+                else
+                    mavsitl=1
+                fi
+                mavsitlservice="$mavtype@sitl"
+                mavsitlen=0
             fi
         done
-        statusout+=$(status "Mavlink (SITL)" $mavsitl)
-        (systemctl status maverick-mavros-sitl >/dev/null 2>&1); statusout+=$(status "Mavros (SITL)" $?)
-        (systemctl status maverick-cloud9 >/dev/null 2>&1); statusout+=$(status "Cloud9 IDE" $?)
+        statusout+=$(status "${mavsitlservice}" "Mavlink (SITL)" $mavsitl $mavsitlen)
+        (systemctl status maverick-mavros-sitl >/dev/null 2>&1); mavrossitl=$?; (systemctl is-enabled maverick-mavros-sitl >/dev/null 2>&1); mavrossitlen=$?; statusout+=$(status "mavros-sitl" "Mavros (SITL)" $mavrossitl $mavrossitlen)
+        (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
     fi
-    echo -e $statusout | column -c 2 -s : -t
+    echo -e $statusout | column -c 3 -s : -t
+    echo
+    exit 0
+fi
+
+startservice() {
+    srvresult=$(sudo systemctl start "maverick-$1" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo " Start: ${green}Success${reset}"
+    else
+        echo " Start: ${red}Failure${reset}: $srvresult"
+    fi  
+}
+
+stopservice() {
+    srvresult=$(sudo systemctl stop "maverick-$1" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo " Stop: ${green}Success${reset}"
+    else
+        echo " Stop: ${red}Failure${reset}: $srvresult"
+    fi
+}
+
+# If start requested, action and then exit
+if [ "$START" == "true" ]; then
+    echo "Starting service: ${SERVICE}"
+    startservice "${SERVICE}"
+    echo
+    exit 0
+fi
+
+# If stop requested, action and then exit
+if [ "$STOP" == "true" ]; then
+    echo "Stopping service: ${SERVICE}"
+    stopservice ${SERVICE}
+    echo
+    exit 0
+fi
+
+# If restart requested, action stop then start
+if [ "$RESTART" == "true" ]; then
+    echo "Restarting service: ${SERVICE}"
+    stopservice ${SERVICE}
+    startservice ${SERVICE}
+    echo
+    exit 0
+fi
+
+# If enable requested, action and then exit
+if [ "$ENABLE" == "true" ]; then
+    echo "Enabling service: ${SERVICE}"
+    srvresult=$(sudo systemctl enable "maverick-${SERVICE}" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo " Enable: ${green}Success${reset}"
+    else
+        echo " Enable: ${red}Failure${reset}: $srvresult"
+    fi
+    echo
+    exit 0
+fi
+
+# If disable requested, action and then exit
+if [ "$DISABLE" == "true" ]; then
+    echo "Disabling service: ${SERVICE}"
+    srvresult=$(sudo systemctl disable "maverick-${SERVICE}" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo " Disable: ${green}Success${reset}"
+    else
+        echo " Disable: ${red}Failure${reset}: $srvresult"
+    fi
     echo
     exit 0
 fi
