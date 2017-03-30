@@ -48,6 +48,7 @@ usage () {
     echo " restart                                 Restart Maverick service"
     echo " enable                                  Enable Maverick service at boot"
     echo " disable                                 Disable Maverick service at boot"
+    echo " log                                     Display realtime log for Maverick service"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
@@ -111,9 +112,13 @@ do
             DISABLE="true"
             shift
             ;;
+        log)
+            LOG="true"
+            shift
+            ;;
         *)
             # If stop or start action, grab the service name from next argument
-            if [ "${START}" == "true" -o "${STOP}" == "true" -o "${RESTART}" == "true" -o "${ENABLE}" == "true" -o "${DISABLE}" == "true" ]; then
+            if [ "${START}" == "true" -o "${STOP}" == "true" -o "${RESTART}" == "true" -o "${ENABLE}" == "true" -o "${DISABLE}" == "true" -o "${LOG}" == "true" ]; then
                 SERVICE="${i#*}"
                 shift
             else
@@ -286,6 +291,14 @@ if [ "$RESTART" == "true" ]; then
     echo "Restarting service: ${SERVICE}"
     stopservice ${SERVICE}
     startservice ${SERVICE}
+    echo
+    exit 0
+fi
+
+# If log requested, action and then exit
+if [ "$LOG" == "true" ]; then
+    echo "Displaying service log: ${SERVICE}"
+    sudo journalctl -u maverick-${SERVICE} -f
     echo
     exit 0
 fi
