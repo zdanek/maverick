@@ -66,6 +66,11 @@ class maverick_ros (
         target      => "${installdir}/${distribution}",
         force       => true,
     } ->
+    file { "${installdir}/current":
+        ensure      => link,
+        target      => "${installdir}/${distribution}",
+        force       => true,
+    } ->
     # Install ROS bootstrap from ros.org packages
     exec { "ros-repo":
         command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
@@ -223,6 +228,30 @@ class maverick_ros (
             content     => "source /opt/ros/${distribution}/setup.bash",
             require         => File["/srv/maverick/var/build/.install_flag_ros"],
         }
-    }  
+
+    }
+    
+    # Install rosmaster systemd manifest.  Note it's not activated here, other modules will call the rosmaster define
+    file { "/etc/systemd/system/maverick-rosmaster@.service":
+        ensure          => present,
+        source          => "puppet:///modules/maverick_ros/maverick-rosmaster@.service",
+        owner           => "root",
+        group           => "root",
+        mode            => "644",
+    }
+    
+    # Create directory for ros config
+    file { "/srv/maverick/data/config/ros":
+        ensure          => directory,
+        owner           => "mav",
+        group           => "mav",
+        mode            => "755",
+    }
+
+    # Create a symlink to rosmaster launch script
+    file { "/srv/maverick/software/maverick/bin/rosmaster.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
+    }
 
 }

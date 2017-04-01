@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick ROS Master - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/rosmaster.sh %I
+User=mav
+
+[Install]
+WantedBy=multi-user.target

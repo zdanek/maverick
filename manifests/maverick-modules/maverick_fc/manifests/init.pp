@@ -3,6 +3,8 @@ class maverick_fc (
     $mavlink_proxy = "mavproxy",
     $mavlink_active = true,
     $mavlink_input = "/dev/ttyAMA0",
+    $rosmaster_active = true,
+    $rosmaster_port = "11313",
     $mavros_active = true,
     $dflogger_active = false,
     $dflogger_port = 14570,
@@ -177,6 +179,12 @@ class maverick_fc (
             ensure      => stopped,
             enable      => false,
         }
+    }
+    
+    # Add a ROS master for FC
+    maverick_ros::rosmaster { "fc":
+        active  => $rosmaster_active,
+        port    => $rosmaster_port,
     }
 
 }

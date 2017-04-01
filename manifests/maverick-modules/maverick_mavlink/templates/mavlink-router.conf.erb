@@ -1,6 +1,10 @@
 [General]
-report-stats=false
-tcp-server-port=<%= @startingtcp %>
+#Mavlink-router serves on this TCP port
+TcpServerPort=<%= @startingtcp %>
+ReportStats=false
+#Which mavlink dialect is being used. Can be `common`[default] or `ardupilotmega`
+MavlinkDialect=ardupilotmega
+
 
 <% if @inputtype == "tcp" -%>
 [TcpEndpoint tcpin]
