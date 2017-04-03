@@ -6,6 +6,7 @@ class maverick_fc (
     $rosmaster_active = true,
     $rosmaster_port = "11313",
     $mavros_active = true,
+    $mavlink_port = "5760",
     $dflogger_active = false,
     $dflogger_port = 14570,
 ) {
@@ -123,30 +124,7 @@ class maverick_fc (
             active      => $mavlink_active,
         }
     }
-    
-    # Add a mavros service for FC link
-    if $mavros_active == true {
-        file { "/etc/systemd/system/maverick-mavros-fc.service":
-            content     => template("maverick_fc/maverick-mavros-fc.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        service { "maverick-mavros-fc":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
-    } else {
-        service { "maverick-mavros-fc":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
 
-    }
-    
     file { "/srv/maverick/data/config/mavlink/dataflash_logger.conf":
         owner       => "mav",
         group       => "mav",
@@ -185,6 +163,11 @@ class maverick_fc (
     maverick_ros::rosmaster { "fc":
         active  => $rosmaster_active,
         port    => $rosmaster_port,
+    } ->
+    maverick_ros::mavros { "fc":
+        active              => $mavros_active,
+        rosmaster_port      => $rosmaster_port,
+        mavlink_port        => $mavlink_port,
     }
 
 }

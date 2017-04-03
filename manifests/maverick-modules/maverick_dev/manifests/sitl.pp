@@ -5,6 +5,7 @@ class maverick_dev::sitl (
     $rosmaster_active = true,
     $rosmaster_port = "11315",
     $mavros_active = true,
+    $mavlink_port = "5770",
     $sitl_active = true,
 ) {
     
@@ -171,33 +172,15 @@ class maverick_dev::sitl (
         }
     }
 
-    # Add a mavros service for sitl link
-    if $mavros_active == true {
-        $distribution = getvar("maverick_ros::distribution")
-        file { "/etc/systemd/system/maverick-mavros-sitl.service":
-            content     => template("maverick_dev/maverick-mavros-sitl.service.erb"),
-            owner       => "root",
-            group       => "root",
-            mode        => 644,
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        service { "maverick-mavros-sitl":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/profile.d/30-ros-env.sh"] ]
-        }
-    } else {
-        service { "maverick-mavros-sitl":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"] ]
-        }
-    }
-    
     # Add a ROS master for SITL
     maverick_ros::rosmaster { "sitl":
         active  => $rosmaster_active,
         port    => $rosmaster_port,
+    } ->
+    maverick_ros::mavros { "sitl":
+        active              => $mavros_active,
+        rosmaster_port      => $rosmaster_port,
+        mavlink_port        => $mavlink_port,
     }
 
 }

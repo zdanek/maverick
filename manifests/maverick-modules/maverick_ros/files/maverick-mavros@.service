@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick Mavros - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/mavros.sh %I
+User=mav
+
+[Install]
+WantedBy=multi-user.target

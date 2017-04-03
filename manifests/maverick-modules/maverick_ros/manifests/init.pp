@@ -238,8 +238,8 @@ class maverick_ros (
         owner           => "root",
         group           => "root",
         mode            => "644",
+        notify          => Exec["maverick-systemctl-daemon-reload"],
     }
-    
     # Create directory for ros config
     file { "/srv/maverick/data/config/ros":
         ensure          => directory,
@@ -247,11 +247,24 @@ class maverick_ros (
         group           => "mav",
         mode            => "755",
     }
-
     # Create a symlink to rosmaster launch script
     file { "/srv/maverick/software/maverick/bin/rosmaster.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
+    }
+
+    # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define
+    file { "/etc/systemd/system/maverick-mavros@.service":
+        source      => "puppet:///modules/maverick_ros/maverick-mavros@.service",
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    }
+    # Create a symlink to mavros launch script
+    file { "/srv/maverick/software/maverick/bin/mavros.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
     }
 
 }

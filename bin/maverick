@@ -223,7 +223,7 @@ if [ "$STATUS" == "true" ]; then
     done
     statusout+=$(status "${mavfcservice}" "Mavlink (FC)" $mavfc $mavfcen)
     (systemctl status maverick-rosmaster@fc >/dev/null 2>&1); rosmfc=$?; (systemctl is-enabled maverick-rosmaster@fc >/dev/null 2>&1); rosmfcen=$?; statusout+=$(status "rosmaster@fc" "ROS (FC)" $rosmfc $rosmfcen)
-    (systemctl status maverick-mavros-fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros-fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros-fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
+    (systemctl status maverick-mavros@fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros@fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros@fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
     (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Maverick Vision" $vis $visen)
     if [ "$environment" == "dev" ]; then
         statusout+='------------:------------:------------------\n'
@@ -246,7 +246,7 @@ if [ "$STATUS" == "true" ]; then
         done
         statusout+=$(status "${mavsitlservice}" "Mavlink (SITL)" $mavsitl $mavsitlen)
         (systemctl status maverick-rosmaster@sitl >/dev/null 2>&1); rosmsitl=$?; (systemctl is-enabled maverick-rosmaster@sitl >/dev/null 2>&1); rosmsitlen=$?; statusout+=$(status "rosmaster@sitl" "ROS (SITL)" $rosmsitl $rosmsitlen)
-        (systemctl status maverick-mavros-sitl >/dev/null 2>&1); mavrossitl=$?; (systemctl is-enabled maverick-mavros-sitl >/dev/null 2>&1); mavrossitlen=$?; statusout+=$(status "mavros-sitl" "Mavros (SITL)" $mavrossitl $mavrossitlen)
+        (systemctl status maverick-mavros@sitl >/dev/null 2>&1); mavrossitl=$?; (systemctl is-enabled maverick-mavros@sitl >/dev/null 2>&1); mavrossitlen=$?; statusout+=$(status "mavros@sitl" "Mavros (SITL)" $mavrossitl $mavrossitlen)
         (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
     fi
     echo -e $statusout | column -c 3 -s : -t
