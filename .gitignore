@@ -12,4 +12,9 @@ bin/mavproxy-sitl.sh
 bin/dev-sitl.sh
 bin/monitor-interface.sh
 bin/mavros.sh
+bin/cmavnode.sh
+bin/mavlink-router.sh
+bin/mavproxy.sh
+bin/rosmaster.sh
+bin/sitl.sh
 conf/local-nodes/
