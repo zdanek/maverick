@@ -1,1 +1,0 @@
-/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/sitl.sim_vehicle.sh
