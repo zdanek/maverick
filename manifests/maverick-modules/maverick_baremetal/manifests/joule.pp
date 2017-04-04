@@ -26,7 +26,8 @@ class maverick_baremetal::joule (
     }
     
     # Install vaapi support
-    ensure_packages(["i965-va-driver", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"])
+    ensure_packages(["i915-4.6.3-4.4.0-dkms", 
+    "i965-va-driver", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"])
     # Install GL support
     ensure_packages(["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"])
     # Install misc support
