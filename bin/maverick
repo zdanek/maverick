@@ -225,6 +225,7 @@ if [ "$STATUS" == "true" ]; then
     (systemctl status maverick-rosmaster@fc >/dev/null 2>&1); rosmfc=$?; (systemctl is-enabled maverick-rosmaster@fc >/dev/null 2>&1); rosmfcen=$?; statusout+=$(status "rosmaster@fc" "ROS (FC)" $rosmfc $rosmfcen)
     (systemctl status maverick-mavros@fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros@fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros@fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
     (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Maverick Vision" $vis $visen)
+    (systemctl status maverick-vision_landing >/dev/null 2>&1); visland=$?; (systemctl is-enabled maverick-vision_landing >/dev/null 2>&1); vislanden=$?; statusout+=$(status "vision_landing" "Vision Landing" $visland $vislanden)
     if [ "$environment" == "dev" ]; then
         statusout+='------------:------------:------------------\n'
         (systemctl status maverick-sitl >/dev/null 2>&1); sitl=$?; (systemctl is-enabled maverick-sitl >/dev/null 2>&1); sitlen=$?; statusout+=$(status "sitl" "SITL" $sitl $sitlen)

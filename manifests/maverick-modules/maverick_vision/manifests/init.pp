@@ -5,12 +5,13 @@ class maverick_vision (
     $mjpg_streamer = false,
     $aruco = true,
     $orbslam2 = false,
+    $vision_landing = true,
 ) {
 
     if $visiond == true {
         class { "maverick_vision::visiond": }
     }
-    
+
     if $gstreamer == true {
         class { "maverick_vision::gstreamer": }
     }
@@ -18,11 +19,11 @@ class maverick_vision (
     if $mjpg_streamer == true  {
         class { "maverick_vision::mjpg-streamer": }
     }
-    
+
     if $opencv == true {
         class { "maverick_vision::opencv": }
     }
-    
+
     if $aruco == true {
         class { "maverick_vision::aruco": }
     }
@@ -30,5 +31,9 @@ class maverick_vision (
     if $orbslam2 == true {
         class { "maverick_vision::orbslam2": }
     }
-    
+
+    if $vision_landing == true {
+        class { "maverick_vision::vision_landing": }
+    }
+
 }

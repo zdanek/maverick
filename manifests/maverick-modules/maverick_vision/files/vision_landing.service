@@ -1,9 +1,10 @@
 [Unit]
-Description=Vision Landing System
-After=maverick-mavproxy@fc.service
+Description=Maverick - Vision Landing System
+After=network-online.target
+Requires=network-online.target
 
 [Service]
-ExecStart=/srv/maverick/code/dronekit-apps/vision_landing/vision_landing
+ExecStart=/srv/maverick/software/vision_landing/vision_landing
 TimeoutStartSec=0
 User=mav
 
