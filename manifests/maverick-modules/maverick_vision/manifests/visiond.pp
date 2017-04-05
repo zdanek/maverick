@@ -1,6 +1,5 @@
 class maverick_vision::visiond (
-    $visiond_state = undef,
-    $visiond_enable = true,
+    $active = true,
 ) {
         
     # Setup standard packages for all platforms
@@ -50,10 +49,18 @@ class maverick_vision::visiond (
         ensure      => present,
         mode        => 644,
         content     => "[Service]\nEnvironment=\"PATH=/srv/maverick/software/gstreamer/bin:/usr/sbin:/usr/bin:/sbin:/bin\""
-    } ->
-    service { "maverick-visiond":
-        ensure      => $visiond_state,
-        enable      => $visiond_enable,
+    }
+    
+    if $active == true {
+        service { "maverick-visiond":
+            ensure      => running,
+            enable      => true,
+        }
+    } else {
+        service { "maverick-visiond":
+            ensure      => stopped,
+            enable      => false,
+        }
     }
     
 }
