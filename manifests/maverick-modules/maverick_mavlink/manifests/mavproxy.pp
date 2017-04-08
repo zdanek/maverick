@@ -1,5 +1,6 @@
 define maverick_mavlink::mavproxy (
     $inputaddress = "",
+    $inputbaud = undef,
     $instance = 0,
     $startingudp = 14560,
     $udpports = 5,

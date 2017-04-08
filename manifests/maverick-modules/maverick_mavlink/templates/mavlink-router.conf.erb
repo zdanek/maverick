@@ -5,15 +5,15 @@ ReportStats=false
 #Which mavlink dialect is being used. Can be `common`[default] or `ardupilotmega`
 MavlinkDialect=ardupilotmega
 
-
 <% if @inputtype == "tcp" -%>
 [TcpEndpoint tcpin]
     Address=<%= @inputaddress %>
     Port=<%= @inputport %>
     RetryTimeout=5
-<% elsif @inputtype == "serial" %>
+<% elsif @inputtype == "serial" -%>
 [UartEndpoint serialin]
     Device=<%= @inputaddress %>
+    Baud=<%= @inputbaud %>
 <% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>

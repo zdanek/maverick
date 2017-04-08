@@ -1,5 +1,6 @@
 define maverick_mavlink::cmavnode (
     $inputaddress = undef,
+    $inputbaud = 115200,
     $udpinaddress = undef,
     $udpinport = undef,
     $startingudp = 14560,
