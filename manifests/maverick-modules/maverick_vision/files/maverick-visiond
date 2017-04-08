@@ -13,8 +13,9 @@ import lockfile, signal, grp
 from daemon import runner
 
 gi.require_version('Gst', '1.0')
-#from gi.repository import GObject,GLib,Gst,GstRtspServer
-from gi.repository import GObject,GLib,Gst
+gi.require_version('GstRtspServer', '1.0')
+from gi.repository import GObject,GLib,Gst,GstRtspServer
+#from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
 Gst.init(None)
 
@@ -84,7 +85,26 @@ class Streamer(object):
                 self.output_rtsp()
             elif output == "wcast":
                 self.output_wcast(dest, port)
-                
+            
+            # Output the resulting pipeline construction to log
+            pipeline_iterator = Gst.Bin.iterate_elements(self.pipeline)
+            pipe_elements = []
+            while True:
+                res = Gst.Iterator.next(pipeline_iterator)
+                if res[1]:
+                    elemstr = res[1].name
+                    # Extract caps if capsfilter element
+                    if res[1].name == "capsfilter":
+                        elemstr += " '" + Gst.Caps.to_string(res[1].get_property('caps')) + "'"
+                    # Extract device if v4l2src element
+                    if res[1].name == "v4l2-source":
+                        elemstr += " " + res[1].get_property('device')
+                    # Add element to pipeline output
+                    pipe_elements.append(elemstr)
+                    # logger.debug("Element: "+str(res[1]))
+                if res[0] == Gst.IteratorResult.DONE:
+                    break
+            logger.info("Pipeline: \"" + " ! ".join(list(reversed(pipe_elements))) +"\"")
             self.bus()
             self.start() # start the pipeline
 
@@ -177,6 +197,8 @@ class Streamer(object):
             self.pipeline.add(queue)
             capsfilter.link(queue)
             vconvert = Gst.ElementFactory.make("autovideoconvert", "autovideoconvert")
+            if not vconvert:
+                vconvert = Gst.ElementFactory.make("videoconvert", "videoconvert")
             self.pipeline.add(vconvert)
             queue.link(vconvert)
             self.source_attach = vconvert
