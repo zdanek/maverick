@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick - Camera Streaming Daemon
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+ExecStart=/srv/maverick/software/camera-streaming-daemon/bin/camera-streaming-daemon
+TimeoutStartSec=0
+User=mav
+
+[Install]
+WantedBy=multi-user.target

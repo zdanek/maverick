@@ -15,7 +15,6 @@ from daemon import runner
 gi.require_version('Gst', '1.0')
 gi.require_version('GstRtspServer', '1.0')
 from gi.repository import GObject,GLib,Gst,GstRtspServer
-#from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
 Gst.init(None)
 
@@ -81,7 +80,7 @@ class Streamer(object):
             elif output == "dynudp":
                 self.output_dynudp()
             elif output == "rtsp":
-                self.output_rtsp()
+                self.output_rtsp(dest, port)
             elif output == "wcast":
                 self.output_wcast(dest, port)
             
@@ -104,8 +103,10 @@ class Streamer(object):
                 if res[0] == Gst.IteratorResult.DONE:
                     break
             logger.info("Pipeline: \"" + " ! ".join(list(reversed(pipe_elements))) +"\"")
+
+            # Start the pipeline
             self.bus()
-            self.start() # start the pipeline
+            self.start()
 
         ### Input methods
         def input_appsrc(self):
@@ -337,27 +338,33 @@ class Streamer(object):
             self.pipeline.add(sink)
             self.encode_attach.link(sink)
 
-        def output_rtsp(self):
-            ### THIS DOES NOT WORK YET ###
+        def output_rtsp(self, dest, port):
             logger.info("Attaching output 'rtsp'")
-            server = GstRtspServer.RTSPServer()
-            server.set_service('5554')
-            server.set_address('0.0.0.0')
-
+            self.rtspserver = GstRtspServer.RTSPServer()
+            self.rtspserver.set_address(dest)
+            self.rtspserver.set_service(str(port))
+            # self.server.connect("client-connected",self.client_connected)
+            
             #factory = GstRtspServer.RTSPMediaFactory()
             #factory.set_launch("( rpicamsrc name=src bitrate=0 quantisation-parameter=24 intra-refresh-type=cyclic metering-mode=matrix annotation-mode=13 preview=false  ! video/x-h264,profile=high,width=640,height=480,framerate=30/1 ! h264parse ! rtph264pay pt=96 name=pay0 )")
             #factory.set_shared(True)
             #factory.connect("media-configure", on_media_configure)
 
-            media = GstRtspServer.RTSPMedia()
-            media.take_pipeline(self.pipeline) # Attach the constructed pipeline to the new instance
-            media.create_stream(media, )
-            media.prepare()
-            logger.debug("rtsp status:" + str(media.get_status()))
+            self.rtspmedia = GstRtspServer.RTSPMedia()
+            self.rtspmedia.take_pipeline(self.pipeline) # Attach the constructed pipeline to the new instance
+            self.rtspmedia.collect_streams() # Find payloaders and create streams
+            self.rtspmedia.set_shared(True)
+            self.rtspmedia.prepare()
+            self.rtspmedia.set_transport_mode(GstRtspServer.RTSPTransportMode.PLAY)
 
-            #server.get_mount_points().add_factory("/stream", media)
-            server.attach(None)
-            logger.info("RTSP stream running at rtsp://<hostname>:5554/stream")
+            self.rtspmounts = self.rtspserver.get_mount_points()
+            #self.rtspmounts.add_factory('/video', self.rtspmedia)
+
+            self.rtspserver.attach(None)  
+
+            logger.debug("rtsp status:" + str(self.rtspmedia.get_status()))
+            logger.debug("rtsp streams:" + str(self.rtspmedia.n_streams()))
+            logger.info("RTSP stream running at rtsp://<hostname>:"+port+"/stream")
     
         ### Misc methods (glib introspection)
         def on_message(self, bus, message):
@@ -500,7 +507,8 @@ class App():
             logger.info("Creating stream object - camera:"+cameradev+", stream:"+streamtype+", pixelformat:"+pixelformat+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output'])
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, pixelformat, encoder, self.config['input'], cameradev, self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
-            logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
+            # logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
+            logger.critical('Error creating ' +streamtype+' stream:' + str(repr(e)))
             sys.exit(1)
 
         while True:

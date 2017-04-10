@@ -318,19 +318,5 @@ class maverick_vision::gstreamer (
             content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/gstreamer",
         }
     }
-
-    # Punch some holes in the firewall for rtsp
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "vision-rtsp-udp":
-            ports       => [5554],
-            ips         => hiera("all_ips"),
-            proto       => "udp", # allow both tcp and udp for rtsp and rtp
-        }
-        maverick_security::firewall::firerule { "vision-rtsp-tcp":
-            ports       => [5554],
-            ips         => hiera("all_ips"),
-            proto       => "tcp", # allow both tcp and udp for rtsp and rtp
-        }
-    }
     
 }
