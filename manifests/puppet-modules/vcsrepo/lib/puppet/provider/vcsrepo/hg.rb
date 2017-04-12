@@ -8,6 +8,7 @@ Puppet::Type.type(:vcsrepo).provide(:hg, :parent => Puppet::Provider::Vcsrepo) d
   has_features :reference_tracking, :ssh_identity, :user, :basic_auth
 
   def create
+    check_force
     if !@resource.value(:source)
       create_repository(@resource.value(:path))
     else
@@ -17,7 +18,13 @@ Puppet::Type.type(:vcsrepo).provide(:hg, :parent => Puppet::Provider::Vcsrepo) d
   end
 
   def working_copy_exists?
-    File.directory?(File.join(@resource.value(:path), '.hg'))
+    return false if not File.directory?(@resource.value(:path))
+    begin
+      hg_wrapper('status', @resource.value(:path))
+      return true
+    rescue Puppet::ExecutionFailure
+      return false
+    end
   end
 
   def exists?
@@ -79,6 +86,16 @@ Puppet::Type.type(:vcsrepo).provide(:hg, :parent => Puppet::Provider::Vcsrepo) d
     update_owner
   end
 
+  def source
+    at_path do
+      hg_wrapper('paths')[/^default = (.*)/, 1]
+    end
+  end
+
+  def source=(desired)
+    create # recreate
+  end
+
   private
 
   def create_repository(path)
@@ -122,7 +139,7 @@ Puppet::Type.type(:vcsrepo).provide(:hg, :parent => Puppet::Provider::Vcsrepo) d
     end
     if @resource.value(:user) and @resource.value(:user) != Facter['id'].value
       args.map! { |a| if a =~ /\s/ then "'#{a}'" else a end }  # Adds quotes to arguments with whitespaces.
-      Puppet::Util::Execution.execute("hg #{args.join(' ')}", :uid => @resource.value(:user), :failonfail => true)
+      Puppet::Util::Execution.execute("hg #{args.join(' ')}", :uid => @resource.value(:user), :failonfail => true, :combine => true)
     else
       hg(*args)
     end
