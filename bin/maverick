@@ -151,19 +151,22 @@ if [ "$SELFUPDATE" == "true" ]; then
         MAVERICK_BRANCH=stable
     fi
     # If config branch is different to current branch, change branch
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    CURRENT_BRANCH=$(cd /srv/maverick/software/maverick; git rev-parse --abbrev-ref HEAD)
     if [ $CURRENT_BRANCH != $MAVERICK_BRANCH ]; then
+        echo "Changing maverick branch from ${CURRENT_BRANCH} to ${MAVERICK_BRANCH}"
         # Unshallow if necessary
         if [ -e /srv/maverick/software/maverick/.git/shallow ]; then
-            cd /srv/maverick/software/maverick; git fetch --unshallow
+            echo "- Unshallow-ing git clone"
+            $(cd /srv/maverick/software/maverick; git fetch --unshallow)
         fi
         # Re-ref origin if necessary
-        ORIGIN=$(git config remote.origin.fetch |grep '*:refs')
-        if [ $? -eq 0 ]; then
-            git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+        $(cd /srv/maverick/software/maverick; git config remote.origin.fetch |grep '*:refs' >/dev/null 2>&1)
+        if [ $? -eq 1 ]; then
+            echo "- Changing origin refs for all remote branches"
+            $(cd /srv/maverick/software/maverick; git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*)
         fi
         # Checkout new branch
-        CHECKOUT=$(git checkout $MAVERICK_BRANCH)
+        CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git checkout $MAVERICK_BRANCH)
     fi
         
     # Finally, do a git pull to update code
