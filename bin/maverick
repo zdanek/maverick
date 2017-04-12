@@ -142,6 +142,31 @@ mavenv () {
 
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
+    # If git branch config file exists, source it
+    if [ -e /srv/maverick/data/config/maverick-branch.conf ]; then
+        source /srv/maverick/data/config/maverick-branch.conf
+    fi
+    # If git branch not set by now, set it to stable by default
+    if [ -z $MAVERICK_BRANCH ]; then
+        MAVERICK_BRANCH=stable
+    fi
+    # If config branch is different to current branch, change branch
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    if [ $CURRENT_BRANCH != $MAVERICK_BRANCH ]; then
+        # Unshallow if necessary
+        if [ -e /srv/maverick/software/maverick/.git/shallow ]; then
+            cd /srv/maverick/software/maverick; git fetch --unshallow
+        fi
+        # Re-ref origin if necessary
+        ORIGIN=$(git config remote.origin.fetch |grep '*:refs')
+        if [ $? -eq 0 ]; then
+            git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+        fi
+        # Checkout new branch
+        CHECKOUT=$(git checkout $MAVERICK_BRANCH)
+    fi
+        
+    # Finally, do a git pull to update code
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
         if [ $EUID -eq 0 ]; then
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"

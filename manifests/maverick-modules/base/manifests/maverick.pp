@@ -1,4 +1,6 @@
-class base::maverick {
+class base::maverick (
+    $maverick_branch = "stable",
+) {
    
    # Note: The mav user is setup in base::users
    
@@ -167,4 +169,10 @@ class base::maverick {
         require => Oncevcsrepo["git-maverick"],
     }
     
+    # Add maverick git branch config
+    file { "/srv/maverick/data/config/maverick-branch.conf":
+        owner   => "mav",
+        group   => "mav",
+        content => "MAVERICK_BRANCH=stable",
+    }
 }
