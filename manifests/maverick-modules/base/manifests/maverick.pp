@@ -116,6 +116,7 @@ class base::maverick (
     oncevcsrepo { "git-maverick":
         gitsource   => "https://github.com/fnoop/maverick.git",
         dest        => "/srv/maverick/software/maverick",
+	revision    => $maverick_branch,
     } ->
     exec { "gitfreeze-localconf":
         cwd         => "/srv/maverick/software/maverick",
