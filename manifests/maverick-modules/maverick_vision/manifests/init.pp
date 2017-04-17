@@ -9,6 +9,13 @@ class maverick_vision (
     $camera_streaming_daemon = true,
 ) {
 
+    file { "/srv/maverick/data/config/vision":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    }
+    
     if $visiond == true {
         class { "maverick_vision::visiond": }
     }

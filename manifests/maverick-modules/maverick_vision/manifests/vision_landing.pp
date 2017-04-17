@@ -21,8 +21,24 @@ class maverick_vision::vision_landing (
         source      => "puppet:///modules/maverick_vision/vision_landing.service",
         owner       => root,
         group       => root,
+    } ->
+    # Place a default config file
+    file { "/srv/maverick/data/config/vision/vision_landing.conf":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        content     => template("maverick_vision/vision_landing.conf.erb"),
+        replace     => false,
     }
     
+    # Create data and log directories
+    file { ["/srv/maverick/data/vision_landing", "/srv/maverick/var/log/vision_landing"]:
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+        ensure      => directory,
+    }
+
     # Activate or inactivate service
     if $active == true {
         service { "maverick-vision_landing":

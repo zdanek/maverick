@@ -4,7 +4,7 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-ExecStart=/srv/maverick/software/vision_landing/vision_landing
+ExecStart=/srv/maverick/software/vision_landing/vision_landing -c /srv/maverick/data/config/vision/vision_landing.conf
 TimeoutStartSec=0
 User=mav
 
