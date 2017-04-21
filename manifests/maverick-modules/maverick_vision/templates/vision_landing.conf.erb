@@ -17,7 +17,11 @@ calibration=raspicamv1-calibration-640x480.yml
 # Optional #
 ############
 ## Marker size mappings - map multiple marker IDs to different sizes - format marker_id:size - comma separated
-sizemapping=12:0.5,36:0.24,85:0.11,161:0.11,166:0.11,227:0.11
+sizemapping=12:0.5,36:0.24,161:0.12,227:0.08,166:0.06,85:0.04
+## Marker tracking history - number of frames that each marker is tracked for active marker transition
+markerhistory=15
+## Marker tracking threshold - percentage of frames in tracking history that marker must be detected to be activated
+markerthreshold=50
 ## Which fiducial marker dictionary, can be any dictionary supported by aruco code.  Comment out for default ARUCO_MIP_36h12
 # markerdict=TAG36h11
 ## Which fiducial marker, if not set will search for closest marker
