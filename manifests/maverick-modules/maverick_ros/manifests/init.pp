@@ -140,7 +140,7 @@ class maverick_ros (
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
                 creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
-                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"] ]
+                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"], Package["python-rosinstall-generator"] ]
             } ->
             exec { "rosdep-update":
                 user            => "mav",
