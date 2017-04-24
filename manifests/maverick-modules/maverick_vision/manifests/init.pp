@@ -17,9 +17,7 @@ class maverick_vision (
     }
     
     if $visiond == true {
-        class { "maverick_vision::visiond": 
-            require => Class["maverick_vision::gstreamer"],
-        }
+        class { "maverick_vision::visiond": }
     }
 
     if $gstreamer == true {
@@ -31,33 +29,23 @@ class maverick_vision (
     }
 
     if $opencv == true {
-        class { "maverick_vision::opencv": 
-            require => Class["maverick_vision::gstreamer"],
-        }
+        class { "maverick_vision::opencv": }
     }
 
     if $aruco == true {
-        class { "maverick_vision::aruco":
-            require => Class["maverick_vision::opencv"],
-        }
+        class { "maverick_vision::aruco": }
     }
 
     if $orb_slam2 == true {
-        class { "maverick_vision::orb_slam2": 
-            require => Class["maverick_vision::opencv"],
-        }
+        class { "maverick_vision::orb_slam2": }
     }
 
     if $vision_landing == true {
-        class { "maverick_vision::vision_landing": 
-            require => Class["maverick_vision::aruco"],
-        }
+        class { "maverick_vision::vision_landing": }
     }
 
     if $camera_streaming_daemon == true {
-        class { "maverick_vision::camera_streaming_daemon": 
-            require => Class["maverick_vision::gstreamer"],
-        }
+        class { "maverick_vision::camera_streaming_daemon": }
     }
 
 }

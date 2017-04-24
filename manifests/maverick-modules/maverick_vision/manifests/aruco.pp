@@ -3,6 +3,10 @@ class maverick_vision::aruco (
     $aruco_gitbranch = "2.0.20-git-fixed",
 ) {
 
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    require maverick_vision::opencv
+
     if ! ("install_flag_aruco" in $installflags) {
 
         # Pull aruco from git mirror

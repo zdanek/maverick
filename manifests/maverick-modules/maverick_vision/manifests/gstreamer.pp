@@ -32,7 +32,7 @@ class maverick_vision::gstreamer (
             }
         } else {
             package { "gstreamer1.0-plugins-good":
-                ensure      => present
+                ensure      => present,
             }
         }
 	} elsif $gstreamer_installtype == "source" {

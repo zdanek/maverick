@@ -5,6 +5,9 @@ class maverick_vision::opencv (
     $precompile_headers = false,
 ) {
     
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    
     # Compile opencv3, note this can take a while.
     # Note that we're deliberately not installing the python bindings into either sitl or fc python virtualenvs
     # as we want to access from both, so we install into global.

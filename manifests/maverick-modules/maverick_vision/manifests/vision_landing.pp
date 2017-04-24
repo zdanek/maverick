@@ -2,6 +2,11 @@ class maverick_vision::vision_landing (
     $active = false,
 ) {
 
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    require maverick_vision::opencv
+    require maverick_vision::aruco
+    
     # Install vision_landing
     oncevcsrepo { "git-vision_landing":
         gitsource   => "https://github.com/fnoop/vision_landing.git",
