@@ -125,7 +125,7 @@ class maverick_ros (
     # Build from source
     } elsif $_installtype == "source" {
 
-        if $::install_flag_ros != True {
+        if ! ("install_flag_ros" in $installflags) {
             file { "${builddir}":
                 ensure      => directory,
                 owner       => "mav",
