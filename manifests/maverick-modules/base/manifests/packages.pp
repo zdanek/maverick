@@ -74,4 +74,11 @@ class base::packages {
         unless      => "/usr/bin/pip show netifaces",
         require     => [ Package["python-pip"], Class["base::locale"] ]
     }
+    # Install python future, important base module for python 2.7
+    exec { "install-pyfuture":
+        command     => "/usr/bin/pip install future",
+        unless      => "/usr/bin/pip list |grep future",
+        require     => [ Package["python-pip"], Class["base::locale"] ]
+    }
+
 }
