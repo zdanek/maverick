@@ -136,7 +136,7 @@ class maverick_vision::opencv (
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/opencv",
+        content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:\$CMAKE_PREFIX_PATH",
     }
 
 }

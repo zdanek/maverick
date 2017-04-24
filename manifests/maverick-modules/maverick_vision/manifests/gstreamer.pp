@@ -315,7 +315,7 @@ class maverick_vision::gstreamer (
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/gstreamer",
+            content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/gstreamer:\$CMAKE_PREFIX_PATH",
         }
     }
     
