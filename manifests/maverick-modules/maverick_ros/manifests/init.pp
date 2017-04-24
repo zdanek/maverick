@@ -134,8 +134,11 @@ class maverick_ros (
             }
             
             $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
-            ensure_packages(["build-essential", "python-rosinstall", "python-rosinstall-generator"])
-
+            ensure_packages(["build-essential"])
+            # Install ros install packages
+            package {["python-rosinstall", "python-rosinstall-generator"]:
+                require         => Exec["ros-repo"]
+            } ->
             # Initialize rosdep
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
