@@ -23,6 +23,7 @@ class base::packages {
         "usbutils",
         "lsof",
         "tcpdump",
+        "whois",
     ])
 
     if $operatingsystem == "Ubuntu" {
