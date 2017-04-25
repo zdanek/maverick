@@ -4,6 +4,7 @@ class maverick_fc (
     $mavlink_active = true,
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_baud = 115200,
+    $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11313",
     $mavros_active = true,
@@ -170,15 +171,18 @@ class maverick_fc (
         }
     }
     
-    # Add a ROS master for FC
-    maverick_ros::rosmaster { "fc":
-        active  => $rosmaster_active,
-        port    => $rosmaster_port,
-    } ->
-    maverick_ros::mavros { "fc":
-        active              => $mavros_active,
-        rosmaster_port      => $rosmaster_port,
-        mavlink_port        => $mavlink_port,
+    # maverick_fc::ros_instance allows ros to be completely optional
+    if $ros_instance == true {
+        # Add a ROS master for FC
+        maverick_ros::rosmaster { "fc":
+            active  => $rosmaster_active,
+            port    => $rosmaster_port,
+        } ->
+        maverick_ros::mavros { "fc":
+            active              => $mavros_active,
+            rosmaster_port      => $rosmaster_port,
+            mavlink_port        => $mavlink_port,
+        }
     }
-
+    
 }

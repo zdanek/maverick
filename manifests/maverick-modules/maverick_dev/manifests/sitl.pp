@@ -2,6 +2,7 @@ class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavproxy",
     $mavlink_active = true,
+    $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11315",
     $mavros_active = true,
@@ -173,15 +174,18 @@ class maverick_dev::sitl (
         }
     }
 
-    # Add a ROS master for SITL
-    maverick_ros::rosmaster { "sitl":
-        active  => $rosmaster_active,
-        port    => $rosmaster_port,
-    } ->
-    maverick_ros::mavros { "sitl":
-        active              => $mavros_active,
-        rosmaster_port      => $rosmaster_port,
-        mavlink_port        => $mavlink_port,
+    # maverick_dev::sitl::ros_instance allows ros to be completely optional
+    if $ros_instance == true {
+        # Add a ROS master for SITL
+        maverick_ros::rosmaster { "sitl":
+            active  => $rosmaster_active,
+            port    => $rosmaster_port,
+        } ->
+        maverick_ros::mavros { "sitl":
+            active              => $mavros_active,
+            rosmaster_port      => $rosmaster_port,
+            mavlink_port        => $mavlink_port,
+        }
     }
-
+    
 }
