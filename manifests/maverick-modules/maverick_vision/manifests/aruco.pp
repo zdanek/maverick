@@ -3,10 +3,6 @@ class maverick_vision::aruco (
     $aruco_gitbranch = "2.0.20-git-fixed",
 ) {
 
-    # Ensure gstreamer resources are applied before this class
-    require maverick_vision::gstreamer
-    require maverick_vision::opencv
-
     if ! ("install_flag_aruco" in $installflags) {
 
         # Pull aruco from git mirror
@@ -30,7 +26,7 @@ class maverick_vision::aruco (
             command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib ..",
             cwd         => "/srv/maverick/var/build/aruco/build",
             creates     => "/srv/maverick/var/build/aruco/build/Makefile",
-            require     => [ File["/srv/maverick/var/build/aruco/build"], File["/srv/maverick/var/build/.install_flag_opencv"] ], # ensure we have all the dependencies satisfied
+            require     => [ Class["maverick_vision::gstreamer"], Class["maverick_vision::opencv"], File["/srv/maverick/var/build/aruco/build"], File["/srv/maverick/var/build/.install_flag_opencv"] ], # ensure we have all the dependencies satisfied
         } ->
         exec { "aruco-build":
             user        => "mav",

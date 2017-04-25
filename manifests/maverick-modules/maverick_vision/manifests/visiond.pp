@@ -2,9 +2,6 @@ class maverick_vision::visiond (
     $active = true,
 ) {
 
-    # Ensure gstreamer resources are applied before this class
-    require maverick_vision::gstreamer
-
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
@@ -58,11 +55,13 @@ class maverick_vision::visiond (
         service { "maverick-visiond":
             ensure      => running,
             enable      => true,
+            require     => Class["maverick_vision::gstreamer"],
         }
     } else {
         service { "maverick-visiond":
             ensure      => stopped,
             enable      => false,
+            require     => Class["maverick_vision::gstreamer"],
         }
     }
     

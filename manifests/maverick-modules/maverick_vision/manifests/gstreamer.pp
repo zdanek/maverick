@@ -35,6 +35,10 @@ class maverick_vision::gstreamer (
                 ensure      => present,
             }
         }
+        
+        # Create a blank exec as a resource for other manifests to use as a dependency
+        # exec { "gstreamer-installed": }
+
 	} elsif $gstreamer_installtype == "source" {
         # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
         if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
@@ -317,6 +321,9 @@ class maverick_vision::gstreamer (
             group       => "root",
             content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/gstreamer:\$CMAKE_PREFIX_PATH",
         }
+
+        # Create a blank exec as a resource for other manifests to use as a dependency
+        # exec { "gstreamer-installed": }
     }
     
 }
