@@ -51,6 +51,7 @@ class maverick_fc (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
+        require     => Package["libxml2-dev", "libxslt1-dev"],
     }
         
     file { "/srv/maverick/var/log/mavlink-fc":
