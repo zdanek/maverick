@@ -71,7 +71,7 @@ class base::packages {
     }
     exec { "install-netifaces":
         command     => "/usr/bin/pip install netifaces",
-        unless      => "/usr/bin/pip show netifaces",
+        unless      => "/usr/bin/pip list |grep netifaces",
         require     => [ Package["python-pip"], Class["base::locale"] ]
     }
     # Install python future, important base module for python 2.7
