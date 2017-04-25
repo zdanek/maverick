@@ -56,7 +56,7 @@ class maverick_dev::sitl (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
-        require     => Package["libxml2-dev", "libxslt1-dev"],
+        require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
     }
         
     # This is needed for sitl run

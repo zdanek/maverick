@@ -111,12 +111,12 @@ class maverick_mavlink (
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
     if $mavproxy_install {
-        ensure_packages(["libxml2-dev", "libxslt1-dev"])
+        ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
         install_python_module { 'pip-mavproxy-global':
             pkgname     => 'mavproxy',
             ensure      => present,
             timeout     => 0,
-            require     => Package["libxml2-dev", "libxslt1-dev"],
+            require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
         }
         file { "/etc/systemd/system/maverick-mavproxy@.service":
             source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
