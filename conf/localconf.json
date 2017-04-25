@@ -6,8 +6,8 @@
 // https://fnoop.github.io/maverick/#/modules/intro
 {
 	// Set passwords
-	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain from /etc/shadow)
-	// "base::users::root_password": "", // Set root user encrypted password here (obtain from /etc/shadow)
+	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain using: mkpasswd  -m sha-512 -s)
+	// "base::users::root_password": "", // Set root user encrypted password here (obtain as above)
 	
 	// Set defaults for wifi.  If set, any wifi interface detected will be automatically activated with these settings.
 	// These setting can be overridden in the per-interface settings.
