@@ -16,6 +16,9 @@
     "all_ips": [
     ],
 
+	"git_username": 	"",
+	"git_email":		"",
+	
     "wifi_ssid": "",
     "wifi_passphrase": "",
 
