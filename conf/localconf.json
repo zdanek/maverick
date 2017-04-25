@@ -1,5 +1,9 @@
 // These are local config settings.  Because they can include sensitive information like usernames and passwords, this file
 //  is excluded from ever being committed back to git.
+//
+// Any manifest parameter can be added here, what follows is a sampling of common useful settings.
+// More info and settings can be found here:
+// https://fnoop.github.io/maverick/#/modules/intro
 {
 	// Set passwords
 	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain from /etc/shadow)
