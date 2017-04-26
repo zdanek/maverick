@@ -16,10 +16,6 @@
 	// "wifi_passphrase":	false, // unencrypted wifi passphrase, strongly recommended to use psk below instead
 	// "wifi_psk": 		"averylonggeneratedkey", // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
 
-	// Set defaults for git.  These don't need to be set but if they are will be used.
-	// "git_username": 	"",
-	// "git_email":		"",
-	
 	// See https://fnoop.github.io/maverick/#/modules-network for more info
 	// Note a fallback generic eth0 and wlan0 config is always created in addition to these settings
 	/*
