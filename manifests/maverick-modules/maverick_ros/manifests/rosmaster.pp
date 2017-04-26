@@ -8,7 +8,8 @@ define maverick_ros::rosmaster (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        content     => template("maverick_ros/rosmaster.conf.erb")
+        content     => template("maverick_ros/rosmaster.conf.erb"),
+        notify      => Service["maverick-rosmaster@${name}"],
     }
 
     if $active == true {

@@ -6,7 +6,7 @@ class maverick_fc (
     $mavlink_baud = 115200,
     $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = "11313",
+    $rosmaster_port = "11311",
     $mavros_active = true,
     $mavlink_port = "5760",
     $dflogger_active = false,

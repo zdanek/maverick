@@ -9,7 +9,8 @@ define maverick_ros::mavros (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        content     => template("maverick_ros/mavros.conf.erb")
+        content     => template("maverick_ros/mavros.conf.erb"),
+        notify      => Service["maverick-mavros@${name}"],
     }
     
     if $active == true {

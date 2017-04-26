@@ -4,7 +4,7 @@ class maverick_dev::sitl (
     $mavlink_active = true,
     $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = "11315",
+    $rosmaster_port = "11313",
     $mavros_active = true,
     $mavlink_port = "5770",
     $sitl_active = true,
