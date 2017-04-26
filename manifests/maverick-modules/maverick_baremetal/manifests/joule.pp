@@ -18,11 +18,15 @@ class maverick_baremetal::joule (
             "fonts-noto-cjk",  "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
             "ubuntu-docs", "gnome-user-guide", "snapd", "openjdk-8-jre-headless", "openjdk-8-jre", "samba-common", "samba-common-bin", "samba-libs", "ubuntu-online-tour",
             "aisleriot", "gnome-sudoku", "gnome-mahjongg", "gnome-mines", "imagemagick", "imagemagick-6.q16", "imagemagick-common", 
-            "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-pk-helper", "cups-ppdc", "cups-server-common",
+            "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-ppdc", "cups-server-common",
             "shotwell", "shotwell-common", "transmission-common", "transmission-gtk", "libwebkit2gtk-4.0-37-gtk2", "fonts-nanum", 
         ]:
             ensure      => purged
         }
+    }
+    # Ensure control center is still installed
+    package { "unity-control-center":
+        ensure      => installed
     }
     
     # Install vaapi support

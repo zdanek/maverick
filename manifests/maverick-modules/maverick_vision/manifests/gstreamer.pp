@@ -67,9 +67,9 @@ class maverick_vision::gstreamer (
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
-            package { ["gstreamer*", "libgstreamer*", "python-gst-1.0"]:
-                ensure      => absent,
-            } ->
+            #package { ["gstreamer*", "libgstreamer*", "python-gst-1.0"]:
+            #    ensure      => absent,
+            #} ->
     
             file { "/srv/maverick/var/build/gstreamer":
                 ensure      => directory,
