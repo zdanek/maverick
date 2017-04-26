@@ -22,14 +22,14 @@
 	"maverick_network::interfaces": {
         "wman0": {
             "type": "wireless",
-            "macaddress": "00:c2:c6:e2:45:xx",
+            "macaddress": "00:c2:c6:e2:45:xx", // put your wifi mac address here, can be obtained from 'maverick netinfo'
             "ssid": "MyCustomSSID",
             "psk": "anotherverylonggeneratedkey" // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
         },
         "wap0": {
             "type": "wireless",
             "mode": "ap", // HostAP mode
-            "macaddress": "00:c2:c6:e2:45:xx",
+            "macaddress": "00:c2:c6:e2:45:xx", // put your wifi mac address here, can be obtained from 'maverick netinfo'
             "ssid": "Maverick", // Defaults to Maverick if not set
             "psk": "anotherverylonggeneratedkey" // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'.  Defaults to 'ifeeltheneed' if not set.
         }
