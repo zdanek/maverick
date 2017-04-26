@@ -1,6 +1,5 @@
 class base::maverick (
     $maverick_branch = "stable",
-    $desktop_suspend = false,
 ) {
    
    # Note: The mav user is setup in base::users
@@ -173,15 +172,6 @@ class base::maverick (
         group   => "mav",
         mode    => "644",
         content => "enabled=False",
-    }
-    
-    # Disable suspend for mav user
-    if $desktop_suspend == false {
-        exec { "mav_suspend":
-            command     => "/usr/bin/dbus-launch gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0",
-            unless      => "/usr/bin/gsettings get org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout |grep -e '^0$'",
-            user        => "mav",
-        }
     }
     
 }
