@@ -159,4 +159,17 @@ class base::maverick (
         content => "MAVERICK_BRANCH=stable",
         replace => false,
     }
+    
+    # Ensure desktop config directory exists and prevent auto directory creation
+    file { "/srv/maverick/.config":
+        owner   => "mav",
+        group   => "mav",
+        mode    => "755",
+    } ->
+    file { "/srv/maverick/.config/user-dirs.conf":
+        owner   => "mav",
+        group   => "mav",
+        mode    => "644",
+        content => "enabled=False",
+    }
 }
