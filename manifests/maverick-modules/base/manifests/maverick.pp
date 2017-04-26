@@ -166,6 +166,7 @@ class base::maverick (
         owner   => "mav",
         group   => "mav",
         mode    => "755",
+        ensure  => directory,
     } ->
     file { "/srv/maverick/.config/user-dirs.conf":
         owner   => "mav",
