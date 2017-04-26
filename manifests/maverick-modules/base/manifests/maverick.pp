@@ -85,31 +85,13 @@ class base::maverick (
     
     # Setup git for the mav user
     include git
-    $git_username = hiera('git_username')
-    if $git_username {
-        git::config { 'user.name':
-            value       => $git_username,
-            user        => "mav",
-            require     => File["/srv/maverick"]
-        }
-    } 
-    $git_email = hiera('git_email')
-    if $git_email {
-        git::config { 'user.email':
-            value       => $git_email,
-            user        => "mav",
-            require     => File["/srv/maverick"]
-        }
-    }
-    git::config { 'credential.helper':
-        value       => 'cache --timeout=86400',
-        user        => "mav",
-        require     => File["/srv/maverick"]
-    }
-    git::config { 'push.default':
-        value       => "simple",
-        user        => "mav",
-        require     => File["/srv/maverick"]
+    # Lay down a default .gitconfig for mav user, don't overwrite modifications in the future
+    file { "/srv/maverick/.gitconfig":
+        source          => "puppet:///modules/base/mav_gitconfig",
+        owner           => "mav",
+        group           => "mav",
+        mode            => "644",
+        replace         => false,
     }
 
     # Pull maverick into it's final resting place
