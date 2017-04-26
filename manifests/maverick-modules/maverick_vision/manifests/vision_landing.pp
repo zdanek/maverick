@@ -19,7 +19,7 @@ class maverick_vision::vision_landing (
         cwd         => "/srv/maverick/software/vision_landing/src",
         command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv . && make && make install",
         creates     => "/srv/maverick/software/vision_landing/track_targets",
-        require     => [ File["/srv/maverick/var/build/.install_flag_opencv"], File["/srv/maverick/var/build/.install_flag_aruco"] ],
+        require     => [ Class["maverick_vision::opencv"], Class["maverick_vision::aruco"] ],
     } ->
     # Install systemd manifest
     file { "/etc/systemd/system/maverick-vision_landing.service":

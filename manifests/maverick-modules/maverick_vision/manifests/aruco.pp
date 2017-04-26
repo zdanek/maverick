@@ -42,13 +42,14 @@ class maverick_vision::aruco (
             command     => "/usr/bin/make install >/srv/maverick/var/log/build/aruco.install.out 2>&1",
             cwd         => "/srv/maverick/var/build/aruco/build",
             creates     => "/srv/maverick/software/aruco/bin/aruco_tracker",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_aruco":
+            ensure      => present,
+            owner       => "mav",
         }
+
     }
 
-    file { "/srv/maverick/var/build/.install_flag_aruco":
-        ensure      => present,
-        owner       => "mav",
-    }
 
     file { "/etc/profile.d/60-maverick-aruco-path.sh":
         mode        => 644,
