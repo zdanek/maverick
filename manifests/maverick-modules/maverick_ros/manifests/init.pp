@@ -72,21 +72,22 @@ class maverick_ros (
         force       => true,
     } ->
     # Install ROS bootstrap from ros.org packages
-    exec { "ros-repo":
-        command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
-        creates     => "/etc/apt/sources.list.d/ros-latest.list",
-    } ->
     exec { "ros-repo-key":
         command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
         unless      => "/usr/bin/apt-key list |/bin/grep B01FA116",
     } ->
+    exec { "ros-repo":
+        command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
+        creates     => "/etc/apt/sources.list.d/ros-latest.list",
+        notify      => Exec["maverick-aptget-update"],
+    } ->
     exec { "ros-aptupdate":
         command     => "/usr/bin/apt-get update",
-        unless      => "/usr/bin/apt-cache show python-rosinstall"
+        unless      => "/bin/ls /var/lib/apt/lists/*ros.org*"
     } ->
     package { ["python-rosdep"]:
         ensure      => installed,
-        require     => Exec["ros-aptupdate"],
+        require     => [Exec["maverick-aptget-update"], Exec["ros-aptupdate"]],
     }
     $wstool_package = $::operatingsystem ? {
         'Ubuntu'        => 'python-wstool',
