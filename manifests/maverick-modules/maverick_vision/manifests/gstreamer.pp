@@ -220,7 +220,7 @@ class maverick_vision::gstreamer (
     
             # Install vaapi for joule platform
             if $joule_present {
-                ensure_packages(["libdrm-dev", "libudev-dev", "libva1", "libva-dev", "libxrandr-dev"])
+                ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
                 oncevcsrepo { "git-gstreamer_vaapi":
                     gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
                     dest        => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
