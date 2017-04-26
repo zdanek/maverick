@@ -77,13 +77,12 @@ class maverick_ros (
         creates     => "/etc/apt/sources.list.d/ros-latest.list",
     } ->
     exec { "ros-repo-key":
-        #command     => "/usr/bin/wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -",
         command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
         unless      => "/usr/bin/apt-key list |/bin/grep B01FA116",
     } ->
     exec { "ros-aptupdate":
         command     => "/usr/bin/apt-get update",
-        unless      => "/usr/bin/dpkg -l python-rosinstall"
+        unless      => "/usr/bin/apt-cache show python-rosinstall"
     } ->
     package { ["python-rosdep"]:
         ensure      => installed,

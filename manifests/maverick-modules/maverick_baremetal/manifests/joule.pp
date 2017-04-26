@@ -26,13 +26,34 @@ class maverick_baremetal::joule (
     }
     
     # Install vaapi support
-    ensure_packages(["i915-4.6.3-4.4.0-dkms", 
-    "i965-va-driver", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"])
+    exec { "01org-gfx-repo-key":
+        command         => "/usr/bin/wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-4 -O - | apt-key add -",
+        unless          => "/usr/bin/apt-key list |/bin/grep 39B88DE4",
+        notify      => Exec["maverick-aptget-update"],
+    } ->
+    file { "/etc/apt/sources.list.d/01org-graphics.list":
+        content     => "deb https://download.01.org/gfx/ubuntu/16.04/main xenial main",
+        notify      => Exec["maverick-aptget-update"],
+    } ->
+    # Do an explicit apt update here just to be sure    
+    exec { "01org-gfx-aptupdate":
+        command     => "/usr/bin/apt-get update",
+        unless      => "/usr/bin/apt-cache show i915-4.6.3-4.4.0-dkms"
+    } ->
+    package { ["i915-4.6.3-4.4.0-dkms", "i965-va-driver", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"]:
+        ensure          => latest,
+    } ->
     # Install GL support
-    ensure_packages(["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"])
+    package { ["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"]:
+        ensure          => latest,
+    } ->
     # Install misc support
-    ensure_packages(["intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2"])
+    package { ["intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2"]:
+        ensure          => latest,
+    } ->
     # Yes this is wierd, but it's needed for intel graphics updater
-    ensure_packages(["fonts-ancient-scripts", "ttf-ancient-fonts" ])
+    package { ["fonts-ancient-scripts", "ttf-ancient-fonts" ]:
+        ensure          => latest,
+    }
 
 }
