@@ -3,10 +3,11 @@ define maverick_mavlink::cmavnode (
     $inputbaud = 115200,
     $udpinaddress = undef,
     $udpinport = undef,
-    $startingudp = 14560,
-    $udpports = 5,
+    $startingudp = 14570,
+    $udpports = 3,
+    $udpinports = 3,
     $startingtcp = 5770,
-    $tcpports = 5,
+    $tcpports = 3,
     $active = true,
     $replaceconfig = true,
 ) {
@@ -48,7 +49,7 @@ define maverick_mavlink::cmavnode (
         }
         # Punch some holes in the firewall for cmavnode
         if defined(Class["::maverick_security"]) {
-            $endingudp = $startingudp + $udpports
+            $endingudp = $startingudp + $udpports + $udpinports
             maverick_security::firewall::firerule { "mavlink-${name}-udp":
                 ports       => ["${startingudp}-${endingudp}"],
                 ips         => hiera("all_ips"),

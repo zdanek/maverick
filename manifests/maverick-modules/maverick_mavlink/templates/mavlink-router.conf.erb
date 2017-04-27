@@ -18,7 +18,13 @@ MavlinkDialect=ardupilotmega
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
 [UdpEndpoint <%= i -%>]
+    Mode = Normal
+    Address = 127.0.0.1
+    Port = <%= @startingudp.to_i() + i %>
+<% end %>
+<% (0..(@udpinports.to_i()-1)).each do |i| -%>
+[UdpEndpoint <%= i -%>]
     Mode = Eavesdropping
     Address = 0.0.0.0
-    Port = <%= @startingudp.to_i() + i %>
+    Port = <%= (@startingudp.to_i() + @udpports.to_i()) + i %>
 <% end %>

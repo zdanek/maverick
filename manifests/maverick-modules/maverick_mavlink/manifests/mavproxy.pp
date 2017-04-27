@@ -2,10 +2,11 @@ define maverick_mavlink::mavproxy (
     $inputaddress = "",
     $inputbaud = undef,
     $instance = 0,
-    $startingudp = 14560,
-    $udpports = 5,
+    $startingudp = 14570,
+    $udpports = 3,
+    $udpinports = 3,
     $startingtcp = 5770,
-    $tcpports = 5,
+    $tcpports = 3,
     $active = true,
     $replaceconfig = true,
 ) {
@@ -39,7 +40,7 @@ define maverick_mavlink::mavproxy (
         }
         # Punch some holes in the firewall for mavproxy
         if defined(Class["::maverick_security"]) {
-            $endingudp = $startingudp + $udpports
+            $endingudp = $startingudp + $udpports + $udpinports
             maverick_security::firewall::firerule { "mavlink-${name}-udp":
                 ports       => ["${startingudp}-${endingudp}"],
                 ips         => hiera("all_ips"),

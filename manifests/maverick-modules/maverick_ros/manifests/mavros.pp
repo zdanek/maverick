@@ -1,6 +1,6 @@
 define maverick_ros::mavros (
     $rosmaster_port = "11311",
-    $mavlink_port = "5760",
+    $mavlink_port = "5770",
     $active = true,
 ) {
     
