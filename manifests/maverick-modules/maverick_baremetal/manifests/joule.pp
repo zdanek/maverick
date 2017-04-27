@@ -63,47 +63,53 @@ class maverick_baremetal::joule (
     ### Install beignet/opencl
     # Install dependencies
     ensure_packages(["cmake", "pkg-config", "ocl-icd-dev", "libegl1-mesa-dev", "ocl-icd-opencl-dev", "libdrm-dev", "libxfixes-dev", "libxext-dev", "llvm-3.6-dev", "clang-3.6", "libclang-3.6-dev", "libtinfo-dev", "libedit-dev", "zlib1g-dev", "clinfo"])
-    # Clone and Build beignet
-    oncevcsrepo { "git-beignet":
-        gitsource   => "https://github.com/intel/beignet.git",
-        dest        => "/srv/maverick/var/build/beignet",
-        revision    => "Release_v1.3.1",
-    } ->
-    # Create build directory
-    file { "/srv/maverick/var/build/beignet/build":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => 755,
-    } ->
-    file { ["/etc/OpenCL", "/etc/OpenCL/vendors"]:
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    exec { "beignet-prepbuild":
-        user        => "mav",
-        timeout     => 0,
-        command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/beignet .. >/srv/maverick/var/log/build/beignet.cmake.out 2>&1",
-        cwd         => "/srv/maverick/var/build/beignet/build",
-        creates     => "/srv/maverick/var/build/beignet/build/Makefile",
-        require     => [ Package["ocl-icd-dev"], Package["libclang-3.6-dev"] ],
-    } ->
-    exec { "beignet-build":
-        user        => "mav",
-        timeout     => 0,
-        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/beignet.build.out 2>&1",
-        cwd         => "/srv/maverick/var/build/beignet/build",
-        creates     => "/srv/maverick/var/build/beignet/build/src/libcl.so",
-        require     => Exec["beignet-prepbuild"],
-    } ->
-    exec { "beignet-install":
-        user        => "mav",
-        timeout     => 0,
-        command     => "/usr/bin/make install >/srv/maverick/var/log/build/beignet.install.out 2>&1",
-        cwd         => "/srv/maverick/var/build/beignet/build",
-        creates     => "/srv/maverick/software/beignet/lib/beignet/libcl.so",
+    if ! ("install_flag_beignet" in $installflags) {
+        # Clone and Build beignet
+        oncevcsrepo { "git-beignet":
+            gitsource   => "https://github.com/intel/beignet.git",
+            dest        => "/srv/maverick/var/build/beignet",
+            revision    => "Release_v1.3.1",
+        } ->
+        # Create build directory
+        file { "/srv/maverick/var/build/beignet/build":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => 755,
+        } ->
+        file { ["/etc/OpenCL", "/etc/OpenCL/vendors"]:
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
+        exec { "beignet-prepbuild":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/beignet .. >/srv/maverick/var/log/build/beignet.cmake.out 2>&1",
+            cwd         => "/srv/maverick/var/build/beignet/build",
+            creates     => "/srv/maverick/var/build/beignet/build/Makefile",
+            require     => [ Package["ocl-icd-dev"], Package["libclang-3.6-dev"] ],
+        } ->
+        exec { "beignet-build":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/beignet.build.out 2>&1",
+            cwd         => "/srv/maverick/var/build/beignet/build",
+            creates     => "/srv/maverick/var/build/beignet/build/src/libcl.so",
+            require     => Exec["beignet-prepbuild"],
+        } ->
+        exec { "beignet-install":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make install >/srv/maverick/var/log/build/beignet.install.out 2>&1",
+            cwd         => "/srv/maverick/var/build/beignet/build",
+            creates     => "/srv/maverick/software/beignet/lib/beignet/libcl.so",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_beignet":
+            ensure      => file,
+            owner       => "mav",
+        }
     }
 
 }
