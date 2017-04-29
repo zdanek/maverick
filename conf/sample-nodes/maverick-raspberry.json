@@ -22,21 +22,22 @@
 	// "maverick_desktop::enable": false, // Desktop depends on type of raspbian used
 
 	// Flight Controller (fc) mavlink setup
-	"maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	"maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
+	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	// "maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
 	"maverick_fc::mavlink_input": "/dev/ttyAMA0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	"maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
-	"maverick_fc::rosmaster_active": true, // Whether ROS master for fc is active or not
-	"maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
+	// "maverick_fc::rosmaster_active": true, // Whether ROS master for fc is active or not
+	// "maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
 	
 	// Dev SITL mavlink setup - note this requires dev environment to be active
-	"maverick_dev::sitl::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	"maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
-	"maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
-	"maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
-	"maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	// "maverick_dev::sitl::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	// "maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
+	// "maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
+	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
+	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 	
-	"maverick_dev::ardupilot::armeabi_packages": true, // Set to true to install packages that allow px4 firmware to be compiled and uploaded to fc
+	// "maverick_vision::visiond::active": true,
+	// "maverick_vision::vision_landing::active": false,
 	
 	// Add classes here
 	"classes":		[

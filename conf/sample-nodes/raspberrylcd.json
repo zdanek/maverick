@@ -1,10 +1,9 @@
 {
+
+	"maverick_baremetal::raspberry::init::spi": true
+
 	"classes" : [
 		"maverick_baremetal::raspberry::lcd-spotpear35"
-	],
-	
-	"hostname": "raspberrylcd",
-	"fqdn":     "raspberrylcd.home",
-	
-	"maverick_baremetal::raspberry::init::spi": true
+	]
+
 }
