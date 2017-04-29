@@ -1,11 +1,5 @@
 // These are defaults for the dev environment.
 {
-	// "maverick_dev::sitl": true,
-	// "maverick_dev::sitl_fwtype": "copter",
-	// "maverick_cloud9::enabled": true,
-    // "maverick_cloud9::webport": 6789,
-    // "maverick_cloud9::basepath": "/srv/maverick",
-
 	"classes": [
 		"maverick_security",
 		"maverick_mavlink",
