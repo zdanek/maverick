@@ -21,7 +21,7 @@
 	},
 	*/
 	
-	// "maverick_desktop::enable": true, // Desktop is enabled by default
+	"maverick_desktop::enable": true, // Desktop is enabled by default
 
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
@@ -44,7 +44,7 @@
 	// Add classes here
 	"classes":		[
 		// "maverick_network",
-	    // "maverick_desktop"
+	    "maverick_desktop"
 	]
 	
 }
