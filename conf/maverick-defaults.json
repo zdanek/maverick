@@ -21,6 +21,7 @@
 	
     "wifi_ssid": "",
     "wifi_passphrase": "",
+    "wifi_psk": "",
 
     "maverick_network::interfaces": {
         "eth0": {},
