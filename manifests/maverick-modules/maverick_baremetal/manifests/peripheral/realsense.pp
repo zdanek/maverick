@@ -63,6 +63,15 @@ class maverick_baremetal::peripheral::realsense (
         refreshonly     => true
     }
 
+    # Install cmake path    
+    file { "/etc/profile.d/70-maverick-librealsense-cmake.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense/lib/cmake",
+    }
+
+
     # Clone examples source from github
     file { "/srv/maverick/code/realsense":
         ensure          => directory,
