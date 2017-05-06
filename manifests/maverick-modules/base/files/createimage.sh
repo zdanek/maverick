@@ -53,15 +53,32 @@ fi
 
 echo "Checking partition:"
 #fsck -y /dev/${srcpath}
+
+# Calculate blocks/sectors etc necessary for resizing
 totalblocks=$(tune2fs -l /dev/$srcpath |grep 'Block count' |awk '{print $3}')
 freeblocks=$(tune2fs -l /dev/$srcpath |grep 'Free blocks' |awk '{print $3}')
+blocksize=$(tune2fs -l /dev/$srcpath |grep 'Block size' |awk '{print $3}')
 usedblocks=$(expr ${totalblocks} - ${freeblocks})
-echo "Total blocks: ${totalblocks}, Used blocks: ${usedblocks}, Free blocks: ${freeblocks}"
 newblocks=$(echo "${usedblocks} + ( ${usedblocks} / 10 )" |bc)
-echo "New size of resized partition = Used blocks (${usedblocks}) + 10% = ${newblocks}"
-echo "Resizing partition filesystem"
-echo "resize2fs /dev/$srcpath ${newblocks}"
-startsector=$(fdisk -l /dev/mmcblk0 |grep mmcblk0p2 |awk {'print $2'})
+startsector=$(fdisk -l /dev/${srcdisk} |grep ${srcpath} |awk {'print $2'})
+endsector=$(fdisk -l /dev/${srcdisk} |grep ${srcpath} |awk {'print $3'})
+sectorsize=$(fdisk -l /dev/${srcdisk} |grep 'Sector size' |awk {'print $4'})
+newsectors=$(echo "${newblocks} * ( ${blocksize} / ${sectorsize} )" |bc)
+newendsector=$(echo "${startsector} + ${newsectors}" |bc)
+echo "Total blocks: ${totalblocks}, Used blocks: ${usedblocks}, Free blocks: ${freeblocks}"
+echo "New size of resized filesystem = Used blocks (${usedblocks}) + 10% = ${newblocks}"
+echo
+echo "Current size of partition: Start=${startsector}s, End=${endsector}s"
+echo "New size of resized partition = Start=${startsector}s, End=${newsectors}s"
 
+# Resize the filesystem first
+echo "Resizing partition filesystem"
+resize2fs -fp /dev/$srcpath ${newblocks}
+
+# Then resize the partition
 echo "Resizing partition"
-echo "parted -s /dev/$srcdisk unit s resizepart $srcpart $newblocks yes"
+parted /dev/$srcdisk unit s resizepart $srcpart $newendsector yes
+
+# Finally, backup the disk to an image file
+echo "Creating image file ${dstfile} from resized disk ${srcdisk}"
+dd if=/dev/${srcdisk} of=${dstile} bs=512 count=${newendsector} conv=noerror,sync status=progress
