@@ -1,6 +1,6 @@
 [Unit]
 Description=Maverick ROS Master - %I
-After=maverick-mavproxy@%I.service maverick-mavlink-router@%I.service maverick-cmavnode@%I.service
+After=maverick-mavproxy@fc.service maverick-mavproxy@sitl.service maverick-mavlink-router@fc.service maverick-mavlink-router@sitl.service maverick-cmavnode@fc.service maverick-cmavnode@sitl.service
 Requires=network-online.target
 
 [Service]
