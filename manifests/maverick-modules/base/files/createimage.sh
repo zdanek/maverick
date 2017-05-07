@@ -68,17 +68,27 @@ newendsector=$(echo "${startsector} + ${newsectors}" |bc)
 echo "Total blocks: ${totalblocks}, Used blocks: ${usedblocks}, Free blocks: ${freeblocks}"
 echo "New size of resized filesystem = Used blocks (${usedblocks}) + 10% = ${newblocks}"
 echo
-echo "Current size of partition: Start=${startsector}s, End=${endsector}s"
-echo "New size of resized partition = Start=${startsector}s, End=${newsectors}s"
 
 # Resize the filesystem first
 echo "Resizing partition filesystem"
 resize2fs -fp /dev/$srcpath ${newblocks}
+
+echo
+echo "Current size of partition: Start=${startsector}s, End=${endsector}s"
+echo "New size of resized partition = Start=${startsector}s, End=${newsectors}s"
+echo
 
 # Then resize the partition
 echo "Resizing partition"
 parted /dev/$srcdisk unit s resizepart $srcpart $newendsector yes
 
 # Finally, backup the disk to an image file
+echo
 echo "Creating image file ${dstfile} from resized disk ${srcdisk}"
-dd if=/dev/${srcdisk} of=${dstile} bs=512 count=${newendsector} conv=noerror,sync status=progress
+dd if=/dev/${srcdisk} of=${dstfile} bs=${sectorsize} count=${newendsector} conv=noerror,sync status=progress
+echo
+echo "Syncing kernel buffers"
+sync
+echo
+echo "Done!"
+echo
