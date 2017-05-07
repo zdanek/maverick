@@ -34,6 +34,13 @@ rm -rf /root/.cache /root/.gnupg
 # Remove build directories (leave install flags in place)
 rm -rf /srv/maverick/var/build/*
 
+# Remove tmp data
+rm -rf /var/tmp/*
+rm -rf /tmp/*
+
+# Delete puppet client data
+rm -rf /var/lib/puppet
+
 # Clean up maverick user data
 # Note: MUST rerun maverick configure again after removing these files, to restore defaults.
 # Otherwise odd behaviour will happen.
@@ -52,6 +59,11 @@ rm -f /srv/maverick/data/vision_landing/*
 rm -f /srv/maverick/var/log/mavlink-fc/* /srv/maverick/var/log/mavlink-sitl/*
 rm -rf /srv/maverick/var/log/sitl/*
 rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
+
+# Remove maverick config
+find /srv/maverick/config -type f -delete
+rm /srv/maverick/software/maverick/conf/localconf.json
+rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
 
 # Create generic EFI boot
 mkdir /boot/efi/EFI/BOOT
