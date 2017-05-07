@@ -2,6 +2,18 @@ class maverick_baremetal::joule (
     $remove_more_packages = true,
 ) {
     
+    # Expand rootfs
+    if $rootpart_expanded == "False" and $rootpart_device {
+        warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
+        file { "/fsexpand":
+            content     => template("maverick_baremetal/fsexpand.erb"),
+            mode        => "755",
+        } ->
+        file { "/.fsexpand":
+            ensure      => present,
+        }
+    }
+    
     ### Install MRAA - Intel GPIO access library
     class { "apt": }
     apt::ppa { 'ppa:mraa/mraa': 
