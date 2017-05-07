@@ -48,5 +48,8 @@ except:
 print "rootpart_expanded="+str(data['rootpart_expanded'])
 print "rootpart_device="+str(data['rootpart_device'])
 print "rootpart_partition="+str(data['rootpart_partition'])
-print "rootpart_partno="+str(data['rootpart_partition'][-1])
+try:
+    print "rootpart_partno="+str(data['rootpart_partition'][-1])
+except:
+    print "rootpart_partno="
 print "rootfs_expanded="+str(data['rootfs_expanded'])
