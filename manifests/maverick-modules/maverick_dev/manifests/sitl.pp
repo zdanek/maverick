@@ -1,6 +1,6 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavlink_proxy = "mavproxy",
+    $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_startingtcp = 5780,
     $mavlink_startingudp = 14580,

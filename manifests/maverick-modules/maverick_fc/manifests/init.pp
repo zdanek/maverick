@@ -1,6 +1,6 @@
 class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavlink_proxy = "mavproxy",
+    $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_baud = 115200,
