@@ -24,18 +24,18 @@ case "$1" in
 			fdisk /dev/<%= @rootpart_device -%> <<EOF &>> /srv/maverick/var/log/resize.log
 p
 d
-<%= @rootpart_partno -%>
+<%= @rootpart_partno %>
 n
 p
-<%= @rootpart_partno -%>
+<%= @rootpart_partno %>
 $part_start
 $part_finish
 p
 w
 EOF
-        rm -fr /.fsexpand
-        sync
-		reboot
+            rm -fr /.fsexpand
+            sync
+	        reboot
 		else
 			# ok, we already resized!
  			log_daemon_msg "Resizing /" &&

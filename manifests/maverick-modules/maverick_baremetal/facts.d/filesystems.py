@@ -29,7 +29,7 @@ try:
     rootsize = float(data['filesystems']['/']['size'])
     partsize = float(data['partitions'][rootpart])
     disksize = None
-    data['rootpart_partiton'] = rootpart
+    data['rootpart_partition'] = rootpart
     for disk in data['disks']:
         if disk in rootpart:
             data['rootpart_device'] = disk
@@ -47,6 +47,6 @@ except:
 # Finally, print the data out in the format expected of a fact provider
 print "rootpart_expanded="+str(data['rootpart_expanded'])
 print "rootpart_device="+str(data['rootpart_device'])
-print "rootpart_partiton="+str(data['rootpart_partiton'])
-print "rootpart_partno="+str(data['rootpart_partiton'][-1])
+print "rootpart_partition="+str(data['rootpart_partition'])
+print "rootpart_partno="+str(data['rootpart_partition'][-1])
 print "rootfs_expanded="+str(data['rootfs_expanded'])

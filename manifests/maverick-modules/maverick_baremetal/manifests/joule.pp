@@ -3,7 +3,7 @@ class maverick_baremetal::joule (
 ) {
     
     # Expand rootfs
-    if $rootpart_expanded == "False" and $rootpart_device {
+    if $rootpart_expanded == "False" and $rootpart_device and $rootpart_partition and $rootpart_partno {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
         file { "/fsexpand":
             content     => template("maverick_baremetal/fsexpand.erb"),
@@ -11,6 +11,12 @@ class maverick_baremetal::joule (
         } ->
         file { "/.fsexpand":
             ensure      => present,
+        } ->
+        file { "/etc/rc.local":
+            source      => "puppet:///modules/maverick_baremetal/rc.local",
+            mode        => "755",
+            owner       => "root",
+            group       => "root",
         }
     }
     
