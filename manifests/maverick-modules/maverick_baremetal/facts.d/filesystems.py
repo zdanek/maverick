@@ -2,7 +2,7 @@
 import os, re, sys, subprocess
 
 # Gather partition data
-data = {'partitions': {}, 'filesystems': {}}
+data = {'partitions': {}, 'filesystems': {}, 'disks': []}
 f = open('/proc/partitions', 'r')
 for line in f:
     partfrags = line.split()
@@ -17,17 +17,23 @@ for line in fsdata.split('\n'):
     if fsfrags and fsfrags[0] != 'Filesystem' and len(fsfrags) == 6:
         data['filesystems'][fsfrags[5]] = { "size": fsfrags[1], "partition": fsfrags[0] }
 
+# Gatther disk data
+diskdata = subprocess.check_output(["/bin/lsblk","-dn"])
+for line in diskdata.split('\n'):
+    diskfrags = line.split()
+    if diskfrags: data['disks'].append(diskfrags[0])
+
 # Work out root filesystem expanded status
 try:
     rootpart = data['filesystems']['/']['partition'].replace("/dev/","")
     rootsize = float(data['filesystems']['/']['size'])
     partsize = float(data['partitions'][rootpart])
-    try:
-        disksize = float(data['partitions']['mmcblk0'])
-        data['rootpart_device'] = "mmcblk0"
-    except:
-        disksize = float(data['partitions']['mmcblk1'])
-        data['rootpart_device'] = "mmcblk1"
+    disksize = None
+    data['rootpart_partiiton'] = rootpart
+    for disk in data['disks']:
+        if disk in rootpart:
+            data['rootpart_device'] = disk
+            disksize = float(data['partitions'][disk])
     part_ratio = (rootsize / partsize) * 100
     disk_ratio = (partsize / disksize) * 100
     data['rootpart_expanded'] = True if disk_ratio > 95 else False
@@ -35,9 +41,11 @@ try:
 except:
     data['rootpart_expanded'] = False
     data['rootpart_device'] = False
+    data['rootpart_partition'] = False
     data['rootfs_expanded'] = False
     
 # Finally, print the data out in the format expected of a fact provider
 print "rootpart_expanded="+str(data['rootpart_expanded'])
 print "rootpart_device="+str(data['rootpart_device'])
+print "rootpart_partiiton="+str(data['rootpart_partiiton'])
 print "rootfs_expanded="+str(data['rootfs_expanded'])
