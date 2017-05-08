@@ -9,10 +9,9 @@ psk=$(wpa_passphrase $ssid $passphrase |grep -e '\spsk=' |awk -F= {'print $2'})
 sed -i -e "s/ssid\":\s\"MySSID\"/ssid\":    \"$ssid\"/" /srv/maverick/software/maverick/conf/localconf.json
 sed -i -e "s/psk\":\s\"averylonggeneratedkey\"/psk\":    \"$psk\"/" /srv/maverick/software/maverick/conf/localconf.json
 
-# If we detect just a single mac address then use it to set wman0
-nomacs=$(maverick netinfo |grep 'MAC Address' |awk {'print $3'} |wc -l)
-if [ $nomacs == "1" ]; then
-    mac=$(ip a |grep 'link/ether' |awk {'print $2'})
+# If we detect wlan0 (default interface) mac address, use it to define wman0
+mac=$(ip link show wlan0 |grep link/ether |awk {'print $2'})
+if [ "x${mac}" != "x" ]; then
     sed -i -e "s/macaddress\":\s\"xx:xx:xx:xx:xx:xx\"/macaddress\": \"$mac\"/" /srv/maverick/software/maverick/conf/localconf.json
 fi
 
