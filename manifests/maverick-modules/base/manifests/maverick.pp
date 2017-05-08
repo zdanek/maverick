@@ -151,6 +151,11 @@ class base::maverick (
         target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/maverick-netinfo",
         require => Oncevcsrepo["git-maverick"],
     }
+    file { "/srv/maverick/software/maverick/bin/wifi-setup":
+        ensure  => link,
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/wifi-setup",
+        require => Oncevcsrepo["git-maverick"],
+    }
     
     # Add maverick git branch config
     file { "/srv/maverick/data/config/maverick-branch.conf":
