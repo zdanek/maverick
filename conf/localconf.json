@@ -11,10 +11,10 @@
 	
 	// Set defaults for wifi.  If set, any wifi interface detected will be automatically activated with these settings.
 	// These setting can be overridden in the per-interface settings.
-	// "wifi_ssid":	"MySSID",
+	"wifi_ssid":	"MySSID",
 	// "wifi_passtype": 	"wpa2",
 	// "wifi_passphrase":	false, // unencrypted wifi passphrase, strongly recommended to use psk below instead
-	// "wifi_psk":	"averylonggeneratedkey", // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
+	"wifi_psk":	"averylonggeneratedkey", // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
 
 	// See https://fnoop.github.io/maverick/#/modules-network for more info
 	// Note a fallback generic eth0 and wlan0 config is always created in addition to these settings
@@ -22,7 +22,7 @@
         	"wman0": {
         	    "type":	"wireless",
         	    "macaddress": "xx:xx:xx:xx:xx:xx", // put your wifi mac address here, can be obtained from 'maverick netinfo'
-        	    "ssid":	"MyCustomSSID",
+        	    "ssid":	"MySSID",
         	    "psk":	"averylonggeneratedkey" // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
         	}
 	},
