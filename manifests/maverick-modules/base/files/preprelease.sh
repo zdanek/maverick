@@ -64,6 +64,8 @@ rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
 find /srv/maverick/data/config -type f -delete
 rm /srv/maverick/software/maverick/conf/localconf.json
 rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
+# Restore localconf.json
+cd /srv/maverick/software/maverick; git checkout conf/localconf.json
 
 # Create generic EFI boot
 mkdir /boot/efi/EFI/BOOT
