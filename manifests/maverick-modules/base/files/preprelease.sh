@@ -61,7 +61,7 @@ rm -rf /srv/maverick/var/log/sitl/*
 rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
 
 # Remove maverick config
-find /srv/maverick/config -type f -delete
+find /srv/maverick/data/config -type f -delete
 rm /srv/maverick/software/maverick/conf/localconf.json
 rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
 
