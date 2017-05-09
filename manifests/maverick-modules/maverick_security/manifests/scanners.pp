@@ -3,11 +3,11 @@ class maverick_security::scanners (
     $clamav = false,
     ) {
 
-    if $clamav == true {
+    if $rkhunter == true {
         class { "::rkhunter": }
     }
 
-    if $rkhunter == true {
+    if $clamav == true {
         class { "::clamav":
             manage_clamd        => true,
             manage_freshclam    => true,
@@ -22,15 +22,23 @@ class maverick_security::scanners (
             },
         }
     } else {
-        class { "::clamav":
-            manage_clamd        => true,
-            manage_freshclam    => true,
-            manage_user         => true,
-            clamd_service_ensure    => 'stopped',
-            clamd_service_enable    => false,
-            freshclam_service_ensure => 'stopped',
-            freshclam_service_enable => false,
+        #class { "::clamav":
+        #    manage_clamd        => false,
+        #    manage_freshclam    => false,
+        #    manage_user         => false,
+        #    clamd_service_ensure    => 'stopped',
+        #    clamd_service_enable    => false,
+        #    freshclam_service_ensure => 'stopped',
+        #    freshclam_service_enable => false,
+        #}
+        service { ["clamav-freshclam", "clamd"]:
+            ensure      => stopped,
+            enable      => false,
+        } ->
+        package { ["clamav", "clamav-base", "clamav-freshclam"]:
+            ensure      => purged,
         }
+        
     }
     
 }
