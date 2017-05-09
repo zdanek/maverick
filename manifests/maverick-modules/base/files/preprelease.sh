@@ -7,7 +7,7 @@
 # It must be run as root, otherwise it will fail dismally.
 
 # Clean packages and cache
-apt autoremove --purge -y
+apt-get autoremove --purge -y
 apt-get clean
 
 # Clean as much of /var/log as possible
