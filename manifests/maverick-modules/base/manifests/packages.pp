@@ -4,6 +4,11 @@ class base::packages {
     package { "sonic-pi":
 	    ensure		=> purged
     }
+    
+    # Remove some stuff that definitely doesn't belong in a robotics build
+    package { ["kodi", "kodi-bin", "kodi-data", "libreoffice", "ubuntu-mate-libreoffice-draw-icons", "libreoffice-base-core", "libreoffice-common", "libreoffice-core"]:
+        ensure      => purged
+    }
 
     # These packages are installed by default for all installs.  
     # Be careful of what is put here, usually packages should be put in more specific manifests
