@@ -2,7 +2,8 @@
 import os, re, sys, subprocess
 
 # Gather partition data
-data = {'partitions': {}, 'filesystems': {}, 'disks': []}
+data = {'partitions': {}, 'blockdevices': {}, 'filesystems': {}, 'disks': []}
+
 f = open('/proc/partitions', 'r')
 for line in f:
     partfrags = line.split()
@@ -10,12 +11,21 @@ for line in f:
         data['partitions'][partfrags[3]] = partfrags[2]
 f.close()
 
+fsdata = subprocess.check_output(["/bin/lsblk", "-nl"])
+for line in fsdata.split('\n'):
+    partfrags = line.split()
+    if partfrags and len(partfrags) == 7 and partfrags[5] == "part":
+        data['blockdevices'][partfrags[6]] = partfrags[0]
+
 # Gather filesystem data
 fsdata = subprocess.check_output(["/bin/df"])
 for line in fsdata.split('\n'):
     fsfrags = line.split()
     if fsfrags and fsfrags[0] != 'Filesystem' and len(fsfrags) == 6:
-        data['filesystems'][fsfrags[5]] = { "size": fsfrags[1], "partition": fsfrags[0] }
+        try:
+            data['filesystems'][fsfrags[5]] = { "size": fsfrags[1], "partition": data['blockdevices'][fsfrags[5]] }
+        except:
+            data['filesystems'][fsfrags[5]] = { "size": fsfrags[1], "partition": fsfrags[0] }
 
 # Gatther disk data
 diskdata = subprocess.check_output(["/bin/lsblk","-dn"])
@@ -25,7 +35,7 @@ for line in diskdata.split('\n'):
 
 # Work out root filesystem expanded status
 try:
-    rootpart = data['filesystems']['/']['partition'].replace("/dev/","")
+    rootpart = data['blockdevices']['/']
     rootsize = float(data['filesystems']['/']['size'])
     partsize = float(data['partitions'][rootpart])
     disksize = None
