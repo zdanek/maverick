@@ -1,6 +1,6 @@
 [Unit]
 Description=Maverick Mavros - %I
-After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service
+After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-sitl.service
 
 
 [Service]
