@@ -6,6 +6,9 @@
 #  so it's not found and run by accident, as it deletes all user data.
 # It must be run as root, otherwise it will fail dismally.
 
+# First stop maverick services
+systemctl stop maverick-*
+
 # Clean packages and cache
 apt-get autoremove --purge -y
 apt-get clean
@@ -61,6 +64,8 @@ rm -f /srv/maverick/data/vision_landing/*
 #rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
 #rm -f /srv/maverick/var/log/maverick/*
 find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
+rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
+rm -f /srv/maverick/var/run/*
 
 # Remove maverick config
 find /srv/maverick/data/config -type f -delete
