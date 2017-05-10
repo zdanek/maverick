@@ -60,7 +60,7 @@ rm -f /srv/maverick/data/vision_landing/*
 #rm -rf /srv/maverick/var/log/sitl/*
 #rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
 #rm -f /srv/maverick/var/log/maverick/*
-find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -delete
+find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
 
 # Remove maverick config
 find /srv/maverick/data/config -type f -delete
