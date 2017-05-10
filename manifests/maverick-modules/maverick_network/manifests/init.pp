@@ -174,9 +174,9 @@ class maverick_network (
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
         }
-        #package { "network-manager":
-        #    ensure      => absent, # remove but don't purge, so it can be restored later
-        #}
+        package { "network-manager":
+            ensure      => absent, # remove but don't purge, so it can be restored later
+        }
     }
     
     # Hack ifup-wait-all-auto.service to have a shorter timeout period as this hangs the boot process until all interfaces are up.  We don't want this.
