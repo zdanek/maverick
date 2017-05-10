@@ -2,6 +2,7 @@ define maverick_ros::mavros (
     $rosmaster_port = "11311",
     $mavlink_port = "5770",
     $active = true,
+    $mavros_startup_delay = 10,
 ) {
     
     file { "/srv/maverick/data/config/ros/mavros-${name}.conf":

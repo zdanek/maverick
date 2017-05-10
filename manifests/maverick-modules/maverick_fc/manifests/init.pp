@@ -10,6 +10,7 @@ class maverick_fc (
     $rosmaster_active = true,
     $rosmaster_port = "11311",
     $mavros_active = true,
+    $mavros_startup_delay = 10,
     $mavlink_port = "5770",
     $dflogger_active = false,
     $dflogger_port = 14570,
@@ -184,6 +185,7 @@ class maverick_fc (
             active              => $mavros_active,
             rosmaster_port      => $rosmaster_port,
             mavlink_port        => $mavlink_port,
+            mavros_startup_delay => $mavros_startup_delay,
         }
     }
     

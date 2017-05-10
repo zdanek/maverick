@@ -8,6 +8,7 @@ class maverick_dev::sitl (
     $rosmaster_active = true,
     $rosmaster_port = "11313",
     $mavros_active = true,
+    $mavros_startup_delay = 10,
     $mavlink_port = 5780,
     $sitl_active = true,
 ) {
@@ -187,6 +188,7 @@ class maverick_dev::sitl (
             active              => $mavros_active,
             rosmaster_port      => $rosmaster_port,
             mavlink_port        => $mavlink_port,
+            mavros_startup_delay => $mavros_startup_delay,
         }
     }
     
