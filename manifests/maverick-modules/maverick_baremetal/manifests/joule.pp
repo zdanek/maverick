@@ -33,7 +33,7 @@ class maverick_baremetal::joule (
     # eMMC only has 16b, so remove some unnecessary packages if we've started from desktop
     if $remove_more_packages == true {
         package { [
-            "fonts-noto-cjk",  "firefox", "thunderbird", "libreoffice-core", "libreoffice-common", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
+            "fonts-noto-cjk",  "firefox", "thunderbird", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
             "ubuntu-docs", "gnome-user-guide", "snapd", "openjdk-8-jre-headless", "openjdk-8-jre", "samba-common", "samba-common-bin", "samba-libs", "ubuntu-online-tour",
             "aisleriot", "gnome-sudoku", "gnome-mahjongg", "gnome-mines", "imagemagick", "imagemagick-6.q16", "imagemagick-common", 
             "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-ppdc", "cups-server-common",
