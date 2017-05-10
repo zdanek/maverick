@@ -262,12 +262,6 @@ class maverick_ros (
         owner       => "mav",
         group       => "mav",
     }
-    file { ["/srv/maverick/var/log/mavros", "/srv/maverick/var/log/mavros/fc", "/srv/maverick/var/log/mavros/sitl"]:
-        ensure      => directory,
-        mode        => "755",
-        owner       => "mav",
-        group       => "mav",
-    }
 
     # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define
     file { "/etc/systemd/system/maverick-mavros@.service":
