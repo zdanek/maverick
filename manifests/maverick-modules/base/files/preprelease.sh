@@ -56,9 +56,11 @@ rm -rf /srv/maverick/.ros/log/*
 # Clean up maverick data
 find /srv/maverick/data/logs -type f -delete
 rm -f /srv/maverick/data/vision_landing/*
-rm -f /srv/maverick/var/log/mavlink-fc/* /srv/maverick/var/log/mavlink-sitl/*
-rm -rf /srv/maverick/var/log/sitl/*
-rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
+#rm -f /srv/maverick/var/log/mavlink-fc/* /srv/maverick/var/log/mavlink-sitl/*
+#rm -rf /srv/maverick/var/log/sitl/*
+#rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
+#rm -f /srv/maverick/var/log/maverick/*
+find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -delete
 
 # Remove maverick config
 find /srv/maverick/data/config -type f -delete
@@ -68,5 +70,7 @@ rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
 cd /srv/maverick/software/maverick; git checkout conf/localconf.json
 
 # Create generic EFI boot
-mkdir /boot/efi/EFI/BOOT
-cp /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/BOOT/bootx64.efi
+if [ -e /boot/efi ]; then
+    mkdir /boot/efi/EFI/BOOT
+    cp /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/BOOT/bootx64.efi
+fi
