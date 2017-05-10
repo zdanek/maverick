@@ -1,5 +1,6 @@
 class maverick_baremetal::joule (
     $remove_more_packages = true,
+    $ipu4_blacklist = true,
 ) {
     
     # Expand rootfs
@@ -127,6 +128,21 @@ class maverick_baremetal::joule (
         file { "/srv/maverick/var/build/.install_flag_beignet":
             ensure      => file,
             owner       => "mav",
+        }
+    }
+    
+    # Blacklist the ipu4 stuff, it's buggy and messy
+    if $ipu4_blacklist == true {
+        file { "/etc/modprobe.d/blacklist-ipu4.conf":
+            ensure      => file,
+            source      => "puppet:///modules/maverick_baremetal/blacklist-ipu4.conf",
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+        }
+    } else {
+        file { "/etc/modprobe.d/blacklist-ipu4.conf":
+            ensure      => absent,
         }
     }
 
