@@ -4,74 +4,8 @@ class base::maverick (
    
    # Note: The mav user is setup in base::users
    
-    file { "/srv":
+   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/data/config", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run"]:
         ensure  => directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick":
-        ensure  => directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/software":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/code":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data/logs":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/build":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/log":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/log/build":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/run":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data/config":
-        ensure	=> directory,
         owner   => "mav",
         group   => "mav",
         mode    => 755

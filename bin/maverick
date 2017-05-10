@@ -461,19 +461,26 @@ else
 fi
 echo
 
+DT=$(date +"%Y-%m-%d-%H-%M")
+# If installed maverick exists use that logpath, otherwise use /var/tmp
+if [ -e /srv/maverick/var/log/maverick ]; then
+    LOGPATH=/srv/maverick/var/log/maverick
+else
+    LOGPATH=/var/tmp
+fi
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
+        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
+        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
+        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests
+        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else
