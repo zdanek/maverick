@@ -1,109 +1,86 @@
-## About Maverick?
-Maverick is a system for creating, installing, configuring, updating and maintaining UAV companion computers, with a high level of automation, consistency and reliability, minimizing risk.
-
-The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
-
-### Why Maverick?
-UAVs, as flight vehicles that share a busy airspace and are autonomous to varying degrees, are becoming more regulated and licensed globally and as such require better and more thorough engineering.  Companion Computers are often used in conjunction with dedicated Flight Controllers to influence partially or entirely the characteristics of flight, and should be subject to the same rigours of engineering and development as any complex system in a critical environment.
-
-Maverick applies Configuration Management to the problem of building and maintaining Companion Computers, drawing on decades of engineering experience to bring increased reliability and reduced risk to this important technology.  Configuration Management is a tried and tested engineering process and is almost completely ubiquitous in aerospace, space and military engineering.
-
-UAV Companion Computers also suffer from a lack of collaborative development, unlike flight controller development.  Software for companion computers is usually distributed in the form of modified vendor OS images or adhoc scripts.  These are simple to download and install, but are difficult or clumsy to create and collaborate on, and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce logic and images for that platform.
-
-Instead of creating, distributing and maintaining separate logic and large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevant.
-
-Maverick provides easy to install OS images for convenience, but can be entirely installed from a few K of github code.  When new features are developed using Maverick, existing installs can be updated quickly and safely with a single command without any disruption to data or running services.
-
-It is hoped by largely automating and reducing complex system installation and configuration to a simple install, this will help reduce the barriers to entry for prospective UAV developers, who can quickly get started with a full development stack at their disposal.
-
-### What does it do?
-Lots!  And lots more planned!
-- Configures the computer hardware and peripherals
-- Configures network interfaces, addresses, services, wireless setup
-- Hardens security, configures firewall, antivirus, intrusion detection, reactive brute-force defences
-- Configures flight controller proxy and dronekit environment
-- Compiles/installs gstreamer and opencv software, aruco fiducial marker software, FPV intelligent daemon
-- Dev environment installs and configures browser IDE (Cloud9), Ardupilot SITL, proxy, dronekit environment
-- Installs and configures ROS and Mavros
-
-Even though Maverick enables a rich set of functionality out of the box, the main goal of the project is actually to provide a framework for automated system configuration, rather than the features themselves.
-
-### How does it work?
-At the heart of Maverick is the tried and tested Configuration Management system Puppet.  Puppet is a system that abstracts the configuration of a system into declarative code, and is widely used in complex computing environments to automate computer configuration in a secure, repeatable manner that reduces risk and increases reliability.  Maverick can be used to create and install companion systems, but can also be used to update an existing system.  Maverick can be re-run any number of times and will only make changes where necessary to bring the system into the configured state.
-
-The declarative code files are called manifests and are arranged in modules.  They effectively form building blocks that can be put together to create system blueprints.  Each module and manifest can have parameters applied through configuration files that adapt the way the declarative code is applied.  This makes a very flexible and efficient method of describing and building systems.
-
-### Hardware support
-Maverick is designed to be cross platform and hardware agnostic. Initially it is being developed and tested on the following platforms:
-- Beaglebone Black (Debian and Ubuntu)
-- Raspberry Pi (3, 2 Model B, A+, Raspbian and Ubuntu)
-- ODROID (XU3/XU4, Ubuntu)
-
-Support will be added for more hardware in the future, eg:
-- Nvidia TX1
-- Intel Edison/Joule
-- Up Board/Squared
-
-Maverick will detect the base hardware platform and apply default settings as necessary. Further base and peripheral config is available by specifying config parameters and including new modules.
-
-### OS support
-Like hardware support, Maverick is designed to be software agnostic. Currently most of the support is Debian/Ubuntu based, but the underlying Configuration Management system (Puppet) that does most of the heavy lifting is completely cross platform and has providers for almost every OS.
-Currently it supports:
-- Raspbian (Raspberry Pi official debian based OS)
-- Odroid Ubuntu (Official ubuntu OS for Odroid XU3/4)
-- Beaglebone Black Ubuntu
-
-It has also been lightly tested with:
-- Ubuntu for Raspberry
-- Odroid XU4 Ubuntu + Experimental 4.9 kernel
-
-### Environments
-Maverick can place the system in one of several modes, or environments.  
-- *Bootstrap:* The initial environment which sets up core hardware and OS, including expanding the filesystem to fill the available space which is often necessary to complete configuration of other environments.
-- *Flight:* is the safest and quickest environment to implement.  It has less unnecessary/development software installed and running that might interfere with critical flight services.
-- *Development:* adds useful software and services for development, including a separate python/dronekit virtualenv, browser based IDE (Cloud9) with edit access to all Maverick code and software, complete Ardupilot SITL build, separate mavlink proxy and ROS instances.
-
-
-   | Bootstrap | Flight | Development
---- | :---: | :---: | :---:
-Hardware | x | x | x
-OS | x | x | x
-Network |  | x | x
-Mavlink Proxy |  | x | x
-Dronekit |  | x | x
-Vision |  | x | x
-ROS |  | x | x
-SITL |  |  | x
-SITL Mavlink Proxy |  |  | x
-SITL ROS |  |  |  x
-Web IDE |  |  |  x
-
-______
-
 ## Installation
 There are two ways to get started with Maverick:  
-[Download OS Images](#os-images)  
+[Download OS Images](#os-Images)  (Much faster!)  
   *_or_*  
-[Run Maverick](#run-Maverick)  
+[Bootstrap Maverick](#bootstrap-Maverick)  (More fun!)
 
-### OS images
-This is how most SBC vendors provide software and is the process most people are used to.  
-Once the image is downloaded, this method is much faster to get started with than a fresh install running Maverick.  
-- Download an .iso, flash to SD card and boot from the <a href="/#/download">download page</a>.
+---
 
-### Run Maverick
+### OS Images
 
-!> Warning: This can take a LONG time depending on the environment.  A full development install on a slow computer like a Raspberry Pi can take over 12 hours.
+Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-Maverick can be run from any new or existing OS installation.  The provided OS images are simply a fresh vendor OS with Maverick run and are provided for convenience, as initial Maverick runs can take a long time due to compiling and installing lots of software.  Once the initial Maverick run is complete, the system should be in exactly the same state as if installed from OS image.  
-- First update the OS, download Maverick and do a bootstrap run and reboot:
+- [Raspberry Pi (All models)](http://46.101.21.208/maverick-1.0.raspberry.img.xz)
+- [Odroid XU3/XU4](http://46.101.21.208/maverick-1.0.odroidxu4.img.xz)
+- [Intel Joule](http://46.101.21.208/maverick-1.0.joule.iso)
+
+These initial images require a 16Gb or larger SD card.  Future images will be more streamlined and fit on an 8Gb SD card.
+
+The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
+
+#### Joule Instructions
+Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and is not supported by this initial image - subsequent releases will support the 550.  Flashing onboard MMC is more tricky than booting from an SD card, so this initial image uses a Clonezilla flashing mechanism.
+- Write the ISO file to a 16Gb SD card (like the one that comes with the Joule) and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
+- Reboot, take the SD card out and boot to the newly flashed OS
+- Login as 'mav' user (default password is 'wingman')
+- Run 'wifi-setup' to setup wireless networking so you can connect to it, as there is no onboard ethernet
+- Reboot again to activate the new network settings
+- [Get Started](#get-Started)
+
+####  Raspberry/Odroid Instructions
+Getting Maverick working on the Raspberry or Odroid is straight forward.
+- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
+- Boot from the SD card
+- (Optionally) Run 'wifi-setup' to setup wireless networking
+- [Get Started](#get-Started)
+
+#### Get Started
+If the installation and network setup was successful, you should now be able to connect over ssh:  
+Joule: `ssh maverick-joule.local`  
+Raspberry: `ssh maverick-raspberry.local`  
+Odroid: `ssh maverick-odroidxu4.local`  
+
+You can also connect to the Web IDE from any web browser:  
+Joule: http://maverick-joule.local:6789/  
+Raspberry: http://maverick-raspberry.local:6789/  
+Odroid: http://maverick-odroidxu4.local:6789/  
+
+The Web IDE has a browser based SSH client which is open at the bottom of the window by default and logged in to the mav user, and is a very convenient tool for quick command line access.
+
+**Note: The username is 'mav' and the default password is 'wingman' for both ssh and web access.**
+
+After logging in, it's strongly recommended to firstly update and configure Maverick, in particular this will expand the root filesystem to fill the SD card you are using:
+```
+maverick self-update
+maverick configure
+reboot
+```
+When you reboot, it will resize the partitions and filesystems for you.
+
+See what Maverick services are running:  
+`maverick status`
+
+See more things you can do with the `maverick` command:  
+[maverick Usage](#usage)
+
+---
+
+### Bootstrap Maverick
+
+!> Warning: This can take a LONG time depending on the hardware and speed of internet connection.  A full development install on a slow computer like a Raspberry Pi can take over 12 hours.  A full development install on a faster computer like an Intel Joule will typically take 1-2 hours.
+
+- Maverick can be run from any new or existing OS installation.
+- The provided OS images are simply a fresh vendor OS with Maverick run and are provided for convenience, as initial Maverick runs can take a long time due to compiling and installing lots of software.
+- Once the initial Maverick run is complete, the system should be in exactly the same state as if installed from OS image.
+
+First update the OS, download Maverick and do a bootstrap run and reboot:
 ```
 sudo apt-get update && sudo apt-get -y upgrade
 sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
 cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot
 ```
-- Then login as the 'mav' user (default password is 'wingman') and run Maverick with an end-state environment, eg. for flight/production environment:
+Next, login as the 'mav' user (default password is 'wingman') and run Maverick with an end-state environment, eg. for flight/production environment:
 ```
 maverick --env=flight configure
 ```
@@ -111,11 +88,11 @@ Or for development environment:
 ```
 maverick --env=dev configure
 ```
-
+Maverick will then calculate what needs to be done on the system and perform the changes, based on the configuration and underlying code.  This process can take a long time - between 1 and 24 hours depending on the speed of the hardware and network.  It provides output as it goes along but when doing large components (like compiling a large piece of software) it can appear to pause for a while.
 ______
 
 ## Usage
-Maverick has a single main command: `maverick`.  It takes one mandatory argument which is a command.
+Maverick has a single main command: `maverick`.  It takes one mandatory argument which is a command.  If you run it without an argument, it will display a (hopefully) helpful usage screen.
 
 ### Self Update
 self-update command updates Maverick itself.  If new features, bugfixes etc have been developed then this downloads the new code from github and self updates.  Note in order to take advantage of the new code, `maverick configure` must be run.
@@ -138,7 +115,7 @@ maverick configure --dryrun --env=dev
 
 ### Status/Info
 Maverick gives some useful info/status:
-- Status of running Maverick related services:
+- Status of running Maverick services:
 ```
 maverick status
 ```
@@ -150,6 +127,138 @@ maverick info
 ```
 maverick netinfo
 ```
+
+### Start/Stop/Restart
+Maverick services (lefthand most column in `maverick status` output) can be easily started and stopped.  Note that Maverick services are implemented using systemd services with a 'maverick-' prefix, so the 'visiond' Maverick service is equivalent to 'maverick-visiond' systemd service (eg. `sudo systemctl status maverick-visiond`):
+- Start service
+```
+maverick start <service>
+```
+eg.
+```
+maverick status
+maverick start mavros@sitl
+maverick status
+```
+- Stop service
+```
+maverick stop <service>
+```
+eg.
+```
+maverick status
+maverick start visiond
+maverick status
+```
+- Restart service is a convenience shortcut to stop and start a service:
+```
+maverick restart visiond
+```
+
+### Log
+While a lot of service output is logged to /srv/maverick/var/log, as the services are controlled through systemd some output is (only) available from the system journal.  Maverick provides a shortcut to view the latest live output for a service journal (equivalent to `sudo journalctl -u maverick-<service>`):
+```
+maverick log <service>
+```
+eg.
+```
+maverick status mavproxy@fc
+```
+
+### Enable/Disable
+As well as starting and stopping services, Maverick can also set the services state at boot, which is called enabling and disabling as with systemd.  The difference between start and enable is that start starts the service immediately, whereas enable does not start the service immediately, but marks it to be started at boot time.  Most Maverick services are configured to start and enable, or stop and disable.
+```
+maverick enable visiond
+```
+```
+maverick disable visiond
+```
+
+## About Maverick?
+Maverick is a system for creating, installing, configuring, updating and maintaining UAV Companion Computers, with a high level of automation, consistency and reliability, minimizing risk.
+
+The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
+
+### Why Maverick?
+UAVs, as flight vehicles that share a busy airspace and are autonomous to varying degrees, are becoming more regulated and licensed globally and as such require better and more thorough engineering.  Companion Computers are often used in conjunction with dedicated Flight Controllers to influence partially or entirely the characteristics of flight, and should be subject to the same rigours of engineering and development as any complex system in a critical environment.
+
+Maverick applies Configuration Management to the problem of building and maintaining Companion Computers, drawing on decades of engineering experience to bring increased reliability and reduced risk to this important technology.  Configuration Management is a tried and tested engineering process and is almost completely ubiquitous in aerospace and military engineering.
+
+UAV Companion Computers also suffer from a lack of collaborative development, unlike flight controller development.  Software for Companion Computers is usually distributed in the form of modified vendor OS images or adhoc scripts.  These are simple to download and install, but are difficult or clumsy to create and collaborate on, and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce logic and images for that platform.
+
+Instead of creating, distributing and maintaining separate logic and large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevant.
+
+Maverick provides easy to install OS images for convenience, but can be entirely installed from a few K of github code.  When new features are developed using Maverick, existing installs can be updated quickly and safely with a single command without any disruption to data or running services.
+
+It is hoped by largely automating and reducing complex system installation and configuration to a simple install, this will help reduce the barriers to entry for prospective UAV developers, who can quickly get started with a full development stack at their disposal.
+
+### What does it do?
+Lots!  And lots more planned!
+- Configures the computer hardware and peripherals
+- Configures network interfaces, addresses, services, wireless setup
+- Hardens security, configures firewall, antivirus, intrusion detection, reactive brute-force defences
+- Configures flight controller proxy (Mavproxy, mavlink-router, cmavnode), Dronekit and MavROS environment
+- Compiles/installs Gstreamer and OpenCV software, Aruco fiducial marker software, FPV intelligent vision daemon, ROS, Cloud9 IDE
+- Dev environment installs and configures browser IDE (Cloud9), Ardupilot SITL, proxy, dronekit environment
+
+Even though Maverick enables a rich set of functionality out of the box, the main goal of the project is actually to provide a framework for automated system configuration, rather than the features themselves.  The actual functionality of the platform is just beginning, and is at a very early stage.
+
+### How does it work?
+At the heart of Maverick is the tried and tested Configuration Management system Puppet.  Puppet is a system that abstracts the configuration of a system into declarative code, and is widely used in complex computing environments to automate computer configuration in a secure, repeatable manner that reduces risk and increases reliability.  Maverick can be used to create and install companion systems, but can also be used to update an existing system.  Maverick can be re-run any number of times and will only make changes where necessary to bring the system into the configured state.
+
+The declarative code files are called manifests and are arranged in modules.  They effectively form building blocks that can be put together to create system blueprints.  Each module and manifest can have parameters applied through configuration files that adapt the way the declarative code is applied.  This makes a very flexible and efficient method of describing and building systems.  The assembled 'blueprints' can be simply saved as a single configuration file and reapplied any number of times to produce perfect clones.
+
+### Hardware support
+Maverick is designed to be cross platform and hardware agnostic. Initially it is being developed and tested on the following platforms:
+- Beaglebone Black (Debian and Ubuntu)
+- Raspberry Pi (3, 2 Model B, A+, Raspbian and Ubuntu)
+- ODROID (XU3/XU4, Ubuntu)
+- Intel Joule
+
+Support will be added for more hardware in the future, eg:
+- Nvidia TX1/TX2
+- Intel Edison
+- Up Board/Squared
+
+Maverick will detect the base hardware platform and attached peripherals and apply software and default settings as necessary. Further base and peripheral config is available by specifying config parameters and including new modules.
+
+### OS support
+Like hardware support, Maverick is designed to be software agnostic. Currently most of the support is Debian/Ubuntu based, but the underlying Configuration Management system (Puppet) that does most of the heavy lifting is completely cross platform and has providers for almost every OS.
+Currently it supports:
+- Raspbian (Raspberry Pi official debian based OS)
+- Odroid Ubuntu (Official ubuntu OS for Odroid XU3/4) + Experimental 4.9 kernel
+- Beaglebone Black Ubuntu
+- Ubuntu for Joule
+
+It has also been lightly tested with:
+- Ubuntu for Raspberry
+
+### Environments
+Maverick can place the system in one of several modes, or environments.  
+- *Bootstrap:* The initial environment which sets up core hardware and OS, including expanding the filesystem to fill the available space which is often necessary to complete configuration of other environments.
+- *Flight:* is the safest and quickest environment to implement.  It has less unnecessary/development software installed and running that might interfere with critical flight services.
+- *Development:* adds useful software and services for development, including a separate python/dronekit virtualenv, browser based IDE (Cloud9) with edit access to all Maverick code and software, complete Ardupilot SITL build, separate mavlink proxy and ROS instances.
+
+
+   | Bootstrap | Flight | Development
+--- | :---: | :---: | :---:
+Hardware | x | x | x
+OS | x | x | x
+Network |  | x | x
+Mavlink Proxy |  | x | x
+Dronekit |  | x | x
+Vision |  | x | x
+ROS |  | x | x
+MAVROS |  | x | x
+SITL |  |  | x
+SITL Mavlink Proxy |  |  | x
+SITL ROS |  |  |  x
+SITL MAVROS |  |  |  x
+Web IDE |  | x |  x
+
+______
+
+
 
 ## Configuration
 
@@ -204,7 +313,7 @@ The simplest way to configure Maverick is to use the local config file: /srv/mav
 For example, this is a simple config :
 ```json
 {
-  "maverick-desktop::enable": true,
+  "maverick_desktop::enable": true,
   "maverick_network::interfaces": {
     "wman0": {
       "type": "wireless",
@@ -236,11 +345,11 @@ This turns on desktop environment (disabled by default), sets up one managed net
 ### Local node config
 Another way to configure Maverick is to place a pre-configured json file into /srv/maverick/software/maverick/conf/local-nodes directory named after the hostname.  This is a great way of quickly rebuilding computers to a known configuration, or cloning computers to identical configurations (eg. for a swarm).  So for example:
 ```
-cp /var/tmp/fnoop-raspberry.json /srv/maverick/software/maverick/conf/local-nodes
-hostname fnoop-raspberry
+cp /var/tmp/swarm-raspberry.json /srv/maverick/software/maverick/conf/local-nodes
+hostname swarm-raspberry
 maverick configure
 ```
-Maverick looks for a file in the local-nodes directory with the same name as the hostname, and if present adds it with a higher specificity than the localconf.json descibed in the previous section ([Local Configuration(/#/#local-configuration)]).
+Maverick looks for a file in the local-nodes directory with the same name as the hostname, and if present adds it with a lower specificity than the localconf.json descibed in the previous section ([Local Configuration(/#/#local-configuration)]), so the localconf.json entries will always take priority.
 
 All these json config files have the same syntax and scope, so a good workflow is to make changes in localconf.json and when happy with the changes to save these to a local-node file.  A library of local-node files can be easily built up and activated by just changing the hostname to whatever config is required.
 
@@ -254,3 +363,4 @@ cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot
 maverick --env=flight configure
 ```
+The sample-nodes files that start with 'maverick-' (eg. maverick-joule.json, maverick-raspberry.json, maverick-droidxu4.json) are the actual configs used to produce the downloadable OS images.

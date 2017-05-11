@@ -1,13 +1,15 @@
 ![alt text](media/maverick-logo.svg)  
 > Companion Computer System
 
-- Automate building, installation, configuration, updates and maintenance
-- Create repeatable consistent, reliable, secure systems
+- Automate installing, configuring, and maintaining Companion Computers
+- Create repeatable, consistent, reliable, secure systems
 - Hardware and OS agnostic
-- Ready-to-fly images for popular SBCs (Raspberry, Odroid)
-- Multiple environments - flight, development
-- Rich functionality of the the box
+- Ready-to-fly images for popular SBCs (Raspberry, Odroid, Joule)
 - Open Source - GPLv3
+- Rich functionality of the the box
+- Mavlink Proxies, ROS, MAVROS, Simulators (SITL, Gazebo)
+- Web IDE, Development Environment, Cross-Compile Firmware
+- Computer Vision, Video Streaming, Vision Landing
 
 [What is Maverick?](#about-maverick)
 [Quick Start](#installation)
