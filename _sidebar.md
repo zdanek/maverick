@@ -1,5 +1,5 @@
-- [Home](/)
-- [Download](/download)
+- [Quick Start](/#installation)
+- [About](/about)
 
 - Modules
   - [Overview](/modules/intro)
