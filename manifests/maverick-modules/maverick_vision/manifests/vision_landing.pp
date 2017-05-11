@@ -2,6 +2,11 @@ class maverick_vision::vision_landing (
     $active = false,
 ) {
 
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    require maverick_vision::opencv
+    require maverick_vision::aruco
+    
     # Install vision_landing
     oncevcsrepo { "git-vision_landing":
         gitsource   => "https://github.com/fnoop/vision_landing.git",
@@ -14,7 +19,7 @@ class maverick_vision::vision_landing (
         cwd         => "/srv/maverick/software/vision_landing/src",
         command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv . && make && make install",
         creates     => "/srv/maverick/software/vision_landing/track_targets",
-        require     => [ File["/srv/maverick/var/build/.install_flag_opencv"], File["/srv/maverick/var/build/.install_flag_aruco"] ],
+        require     => [ Class["maverick_vision::opencv"], Class["maverick_vision::aruco"] ],
     } ->
     # Install systemd manifest
     file { "/etc/systemd/system/maverick-vision_landing.service":

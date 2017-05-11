@@ -18,6 +18,7 @@ class maverick_network (
     class { "maverick_network::wifibroadcast": }
     
     # Ensure wpa_supplicant isn't running
+    # Note NetworkManager seems to start this regardless of wpa_supplicant enabled state
     service { "wpa_supplicant":
         ensure      => stopped,
         enable      => false,
@@ -172,7 +173,7 @@ class maverick_network (
             ensure      => stopped,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
-        } ->
+        }
         package { "network-manager":
             ensure      => absent, # remove but don't purge, so it can be restored later
         }
@@ -211,7 +212,7 @@ class maverick_network (
         enable      => true,
     }
     
-    # If wireless auth defaults are set in localconf.json, configure it 
+    # If wireless auth defaults are set in config, configure it 
     # Retrieve wireless auth data from hiera
     $wifi_ssid = hiera('wifi_ssid')
     $wifi_passphrase = hiera('wifi_passphrase')

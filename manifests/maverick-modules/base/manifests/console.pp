@@ -19,6 +19,9 @@ class base::console {
     file { "/etc/update-motd.d/00-header":
         ensure      => absent
     }
+    file { "/etc/legal":
+        ensure      => absent
+    }
     
     ### Colored Profile
     file { "/etc/profile.d/colorprompt.sh":

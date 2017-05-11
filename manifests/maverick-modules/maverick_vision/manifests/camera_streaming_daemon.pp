@@ -4,6 +4,9 @@ class maverick_vision::camera_streaming_daemon (
     $active = false,
 ) {
 
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    
     if ! ("install_flag_camera-streaming-daemon" in $installflags) {
         ensure_packages(["libavahi-common-dev", "libavahi-core-dev", "libavahi-glib-dev", "libavahi-client-dev"])
         oncevcsrepo { "git-camera-streaming-daemon":
@@ -18,7 +21,7 @@ class maverick_vision::camera_streaming_daemon (
             command     => "/srv/maverick/var/build/camera-streaming-daemon/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-streaming-daemon/configure --prefix=/srv/maverick/software/camera-streaming-daemon && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-streaming-daemon.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/camera-streaming-daemon",
             creates     => "/srv/maverick/software/camera-streaming-daemon/bin/camera-streaming-daemon",
-            require     => Package["libavahi-common-dev"],
+            require     => [ Package["libavahi-common-dev"], Class["maverick_vision::gstreamer"] ],
         } ->
         file { "/srv/maverick/var/build/.install_flag_camera-streaming-daemon":
             ensure      => file,

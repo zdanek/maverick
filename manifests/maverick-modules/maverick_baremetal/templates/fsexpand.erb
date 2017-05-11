@@ -1,0 +1,56 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          fsexpand
+# Required-Start:    $remote_fs $all
+# Required-Stop:
+# Default-Start:     2 3 4 5 S
+# Default-Stop:
+# Short-Description: Expand root filesystem on boot
+### END INIT INFO
+
+# Note: This was hacked from odroid aafirstboot, to be more generic
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+case "$1" in
+    start)
+		if [ -f /.fsexpand ]; then
+			part_start=`fdisk -l | grep /dev/<%= @rootpart_partition -%> | awk '{print $2}'`
+			part_finish=$((`fdisk -l /dev/<%= @rootpart_device -%> | grep Disk | grep sectors | awk '{printf $7}'` - 1024))
+			
+			fdisk /dev/<%= @rootpart_device -%> <<EOF &>> /srv/maverick/var/log/resize.log
+p
+d
+<%= @rootpart_partno %>
+n
+p
+<%= @rootpart_partno %>
+$part_start
+$part_finish
+p
+w
+EOF
+            rm -fr /.fsexpand
+            sync
+	        reboot
+		else
+			# ok, we already resized!
+ 			log_daemon_msg "Resizing /" &&
+			resize2fs /dev/<%= @rootpart_partition -%> &&
+			rm -fr /fsexpand
+		fi
+	;;
+    restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+        ;;
+    stop)
+        ;;
+    *)
+        echo "Usage: $0 start|stop" >&2
+        exit 3
+        ;;
+esac

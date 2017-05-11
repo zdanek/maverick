@@ -1,41 +1,57 @@
 // These are local config settings.  Because they can include sensitive information like usernames and passwords, this file
 //  is excluded from ever being committed back to git.
+//
+// Any manifest parameter can be added here, what follows is a sampling of common useful settings.
+// More info and settings can be found here:
+// https://fnoop.github.io/maverick/#/modules/intro
 {
 	// Set passwords
-	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain from /etc/shadow)
-	// "base::users::root_password": "", // Set root user encrypted password here (obtain from /etc/shadow)
+	// "base::users::mav_password": "", // Set mav user encrypted password here (obtain using: mkpasswd  -m sha-512 -s)
+	// "base::users::root_password": "", // Set root user encrypted password here (obtain as above)
 	
 	// Set defaults for wifi.  If set, any wifi interface detected will be automatically activated with these settings.
-	"wifi_ssid": 		"",
-	"wifi_passtype": 	"wpa2",
-	"wifi_passphrase":	false, // unencrypted wifi passphrase, recommended to use psk below instead
-	"wifi_psk": 		"", // must be encrypted psk created using 'wpa_passphrase myssid mypassphrase'
+	// These setting can be overridden in the per-interface settings.
+	"wifi_ssid":	"MySSID",
+	// "wifi_passtype": 	"wpa2",
+	// "wifi_passphrase":	false, // unencrypted wifi passphrase, strongly recommended to use psk below instead
+	"wifi_psk":	"averylonggeneratedkey", // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
 
-	// Set defaults for git.  These don't need to be set but if they are will be used.
-	"git_username": 	"",
-	"git_email":		"",
+	// See https://fnoop.github.io/maverick/#/modules-network for more info
+	// Note a fallback generic eth0 and wlan0 config is always created in addition to these settings
+	"maverick_network::interfaces": {
+        	"wman0": {
+        	    "type":	"wireless",
+        	    "macaddress": "xx:xx:xx:xx:xx:xx", // put your wifi mac address here, can be obtained from 'maverick netinfo'
+        	    "ssid":	"MySSID",
+        	    "psk":	"averylonggeneratedkey" // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
+        	}
+	},
+
+	// "maverick_desktop::enable": true, // Desktop is disabled by default
+
+	// Flight Controller (fc) mavlink setup
+	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	// "maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
+	// "maverick_fc::mavlink_input": "/dev/ttyS1", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
+	// "maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
+	// "maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
+	// "maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
 	
-	// "maverick-network::ethernet::eth0_mode": "static",
-	// "maverick-network::ethernet::eth0_address": "192.168.1.50",
-	// "maverick-network::ethernet::eth0_netmask": "255.255.255.0",
-	// "maverick-network::ethernet::eth0_gateway": "192.168.1.254",
-	// "maverick-network::wireless::wlan0_mode": "static",
-	// "maverick-network::wireless::wlan0_address": "192.168.1.51",
-	// "maverick-network::wireless::wlan0_netmask": "255.255.255.0",
-	// "maverick-network::wireless::wlan0_gateway": "192.168.1.254",
-	// "maverick-network::wireless::wlan0_ssid": "",
-	// "maverick-network::wireless::wlan0_psk": "", // must be encrypted psk created using 'wpa_passphrase myssid mypassphrase'.  Overrides wifi_psk above for specific interface
-
-	// "maverick-desktop::enable": true,
-
-	// "maverick-baremetal::raspberry::init::gpumem": 256,
-	// "maverick-baremetal::raspberry::init::overclock": "High",
-	// "maverick-baremetal::raspberry::init::spi": true, // required for lcd screens
-	// "maverick-baremetal::raspberry::init::serialconsole": true,
+	// Dev SITL mavlink setup - note this requires dev environment to be active
+	// "maverick_dev::sitl::mavlink_proxy": "mavlink-router", // Default mavlink proxy type to use
+	// "maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
+	// "maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
+	// "maverick_dev::sitl::rosmaster_active": false, // Whether ROS master for sitl is active or not
+	// "maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	
+	// "maverick_dev::ardupilot::armeabi_packages": false, // Set to true to install packages that allow px4 firmware to be compiled and uploaded to fc
+	
+	// "maverick_vision::visiond::active": true, // Whether visiond is active or not
+	// "maverick_vision::vision_landing::active": false, // Whether vision_landing is active or not
 	
 	// Add classes here
 	"classes":		[
-		// "maverick-network"
+		// "maverick_network" // CAUTION: Read what this does before enabling: https://fnoop.github.io/maverick/#/modules-network
 	]
 	
 }

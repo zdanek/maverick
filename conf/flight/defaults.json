@@ -1,10 +1,19 @@
 // These are defaults for the flight environment.
 {
+	// Turn SITL services off for flight mode
+	"maverick_dev::sitl::sitl_active": false, // Whether SITL is active or not
+	"maverick_dev::sitl::mavlink_active": false, // Whether mavlink proxy is active or not
+	"maverick_dev::sitl::rosmaster_active": false, // Whether ROS master for sitl is active or not
+	"maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+
 	"classes": [
 		"maverick_security",
 		"maverick_mavlink",
 		"maverick_vision",
 		"maverick_fc",
-		"maverick_ros"
+		"maverick_ros",
+		"maverick_dev",
+		"maverick_cloud9"
 	]
+	
 }

@@ -1,10 +1,10 @@
 // These are defaults for the dev environment.
 {
-	// "maverick_dev::sitl": true,
-	// "maverick_dev::sitl_fwtype": "copter",
-	// "maverick_cloud9::enabled": true,
-    // "maverick_cloud9::webport": 6789,
-    // "maverick_cloud9::basepath": "/srv/maverick",
+	// Turn SITL services on for dev mode
+	"maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
+	"maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
+	"maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
+	"maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
 	"classes": [
 		"maverick_security",

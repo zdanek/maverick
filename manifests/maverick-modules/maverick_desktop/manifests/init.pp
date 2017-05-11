@@ -1,5 +1,6 @@
 class maverick_desktop (
     $enable = false,
+    $desktop_suspend = false,
 ) {
     
     ### Desktop is disabled by default and must be specifically enabled
@@ -26,6 +27,15 @@ class maverick_desktop (
         exec { "disable-desktop-target":
             unless      => "/bin/systemctl get-default |grep multi-user;",
             command     => "/bin/systemctl set-default multi-user.target",
+        }
+    }
+        
+    # Disable suspend for mav user
+    if $enable == true and $desktop_suspend == false {
+        exec { "mav_suspend":
+            command     => "/usr/bin/dbus-launch gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0",
+            unless      => "/usr/bin/gsettings get org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout |grep -e '^0$'",
+            user        => "mav",
         }
     }
     

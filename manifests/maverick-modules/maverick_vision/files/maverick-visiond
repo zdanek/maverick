@@ -13,8 +13,9 @@ import lockfile, signal, grp
 from daemon import runner
 
 gi.require_version('Gst', '1.0')
-gi.require_version('GstRtspServer', '1.0')
-from gi.repository import GObject,GLib,Gst,GstRtspServer
+#gi.require_version('GstRtspServer', '1.0')
+#from gi.repository import GObject,GLib,Gst,GstRtspServer
+from gi.repository import GObject,GLib,Gst
 GObject.threads_init()
 Gst.init(None)
 
@@ -409,8 +410,8 @@ class Streamer(object):
 class App():
     def __init__(self):
         self.stdin_path = '/dev/null'
-        self.stdout_path = '/srv/maverick/var/log/maverick-visiond.daemon.log'
-        self.stderr_path = '/srv/maverick/var/log/maverick-visiond.daemon.log'
+        self.stdout_path = '/srv/maverick/var/log/vision/maverick-visiond.daemon.log'
+        self.stderr_path = '/srv/maverick/var/log/vision/maverick-visiond.daemon.log'
         self.pidfile_path = '/srv/maverick/var/run/maverick-visiond.pid'
         self.pidfile_timeout = 5
 
@@ -418,7 +419,7 @@ class App():
         logger.info("Starting maverick-visiond")
 
         # Get config
-        self.config = self.config_parse("/srv/maverick/data/config/maverick-visiond.conf")
+        self.config = self.config_parse("/srv/maverick/data/config/vision/maverick-visiond.conf")
 
         # If on/off switch is off, exit
         if self.config['enable'].lower() == 'false':
@@ -631,7 +632,7 @@ if __name__ == "__main__":
     logger = logging.getLogger("DaemonLog")
     logger.setLevel(logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    handler = logging.FileHandler("/srv/maverick/var/log/maverick-visiond.log")
+    handler = logging.FileHandler("/srv/maverick/var/log/vision/maverick-visiond.log")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     

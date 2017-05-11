@@ -4,6 +4,11 @@ class base::packages {
     package { "sonic-pi":
 	    ensure		=> purged
     }
+    
+    # Remove some stuff that definitely doesn't belong in a robotics build
+    package { ["kodi", "kodi-bin", "kodi-data", "libreoffice", "ubuntu-mate-libreoffice-draw-icons", "libreoffice-base-core", "libreoffice-common", "libreoffice-core"]:
+        ensure      => purged
+    }
 
     # These packages are installed by default for all installs.  
     # Be careful of what is put here, usually packages should be put in more specific manifests
@@ -23,6 +28,7 @@ class base::packages {
         "usbutils",
         "lsof",
         "tcpdump",
+        "whois",
     ])
 
     if $operatingsystem == "Ubuntu" {
@@ -71,7 +77,14 @@ class base::packages {
     }
     exec { "install-netifaces":
         command     => "/usr/bin/pip install netifaces",
-        unless      => "/usr/bin/pip show netifaces",
+        unless      => "/usr/bin/pip list |grep netifaces",
         require     => [ Package["python-pip"], Class["base::locale"] ]
     }
+    # Install python future, important base module for python 2.7
+    exec { "install-pyfuture":
+        command     => "/usr/bin/pip install future",
+        unless      => "/usr/bin/pip list |grep future",
+        require     => [ Package["python-pip"], Class["base::locale"] ]
+    }
+
 }

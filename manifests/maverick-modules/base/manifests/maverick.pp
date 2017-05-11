@@ -4,74 +4,8 @@ class base::maverick (
    
    # Note: The mav user is setup in base::users
    
-    file { "/srv":
+   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/data/config", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run"]:
         ensure  => directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick":
-        ensure  => directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/software":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/code":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data/logs":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/build":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/log":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/log/build":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/var/run":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => 755
-    }
-    file { "/srv/maverick/data/config":
-        ensure	=> directory,
         owner   => "mav",
         group   => "mav",
         mode    => 755
@@ -85,31 +19,13 @@ class base::maverick (
     
     # Setup git for the mav user
     include git
-    $git_username = hiera('git_username')
-    if $git_username {
-        git::config { 'user.name':
-            value       => $git_username,
-            user        => "mav",
-            require     => File["/srv/maverick"]
-        }
-    } 
-    $git_email = hiera('git_email')
-    if $git_email {
-        git::config { 'user.email':
-            value       => $git_email,
-            user        => "mav",
-            require     => File["/srv/maverick"]
-        }
-    }
-    git::config { 'credential.helper':
-        value       => 'cache --timeout=86400',
-        user        => "mav",
-        require     => File["/srv/maverick"]
-    }
-    git::config { 'push.default':
-        value       => "simple",
-        user        => "mav",
-        require     => File["/srv/maverick"]
+    # Lay down a default .gitconfig for mav user, don't overwrite modifications in the future
+    file { "/srv/maverick/.gitconfig":
+        source          => "puppet:///modules/base/mav_gitconfig",
+        owner           => "mav",
+        group           => "mav",
+        mode            => "644",
+        replace         => false,
     }
 
     # Pull maverick into it's final resting place
@@ -169,6 +85,11 @@ class base::maverick (
         target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/maverick-netinfo",
         require => Oncevcsrepo["git-maverick"],
     }
+    file { "/srv/maverick/software/maverick/bin/wifi-setup":
+        ensure  => link,
+        target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/wifi-setup",
+        require => Oncevcsrepo["git-maverick"],
+    }
     
     # Add maverick git branch config
     file { "/srv/maverick/data/config/maverick-branch.conf":
@@ -177,4 +98,19 @@ class base::maverick (
         content => "MAVERICK_BRANCH=stable",
         replace => false,
     }
+    
+    # Ensure desktop config directory exists and prevent auto directory creation
+    file { "/srv/maverick/.config":
+        owner   => "mav",
+        group   => "mav",
+        mode    => "755",
+        ensure  => directory,
+    } ->
+    file { "/srv/maverick/.config/user-dirs.conf":
+        owner   => "mav",
+        group   => "mav",
+        mode    => "644",
+        content => "enabled=False",
+    }
+    
 }

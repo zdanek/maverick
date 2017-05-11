@@ -25,15 +25,17 @@ class base::services {
     # If in flight mode as opposed to dev mode, specifically disable dev mode.  We do it here because
     #  if dev module isn't included it can't disable itself.
     # If you include dev module in flight mode (which is never intended by design), you will probably get a class clash here.
+    # Rethink: https://github.com/fnoop/maverick/issues/359
+    # Add maverick_dev into flight env but turn everything off
     if $environment == "flight" {
-        service { "maverick-cloud9":
-            ensure      => stopped,
-            enable      => false,
-        }
-        service { "maverick-dev-sitl":
-            ensure      => stopped,
-            enable      => false,
-        }
+        #service { "maverick-cloud9":
+        #    ensure      => stopped,
+        #    enable      => false,
+        #}
+        #service { "maverick-dev-sitl":
+        #    ensure      => stopped,
+        #    enable      => false,
+        #}
         #service { "maverick-mavros-sitl":
         #    ensure      => stopped,
         #    enable      => false,

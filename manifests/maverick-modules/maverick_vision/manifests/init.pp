@@ -6,7 +6,7 @@ class maverick_vision (
     $aruco = true,
     $orb_slam2 = false,
     $vision_landing = true,
-    $camera_streaming_daemon = true,
+    $camera_streaming_daemon = false,
 ) {
 
     file { "/srv/maverick/data/config/vision":
@@ -47,5 +47,5 @@ class maverick_vision (
     if $camera_streaming_daemon == true {
         class { "maverick_vision::camera_streaming_daemon": }
     }
-    
+
 }

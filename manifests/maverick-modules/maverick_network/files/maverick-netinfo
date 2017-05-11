@@ -91,5 +91,8 @@ for _if in ifs:
     print
 
 gateways = netifaces.gateways()
-defaultgw = gateways['default'][netifaces.AF_INET][0]
+try:
+    defaultgw = gateways['default'][netifaces.AF_INET][0]
+except:
+    defaultgw = "<n/a>"
 print twocols(ctrls['bold']+"Default Gateway"+ctrls['reset'], '\t'+defaultgw)

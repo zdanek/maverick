@@ -1,11 +1,15 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $mavlink_proxy = "mavproxy",
+    $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
+    $mavlink_startingtcp = 5780,
+    $mavlink_startingudp = 14580,
+    $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = "11315",
+    $rosmaster_port = "11313",
     $mavros_active = true,
-    $mavlink_port = "5770",
+    $mavros_startup_delay = 10,
+    $mavlink_port = 5780,
     $sitl_active = true,
 ) {
     
@@ -56,6 +60,7 @@ class maverick_dev::sitl (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
+        require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
     }
         
     # This is needed for sitl run
@@ -118,37 +123,37 @@ class maverick_dev::sitl (
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => false
         } ->
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => false
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => false
         } ->
         maverick_mavlink::cmavnode { "sitl":
             inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
@@ -158,29 +163,33 @@ class maverick_dev::sitl (
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => false
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
-            startingudp => 14560,
-            startingtcp => 5770,
+            startingudp => $mavlink_startingudp,
+            startingtcp => $mavlink_startingtcp,
             active      => $mavlink_active,
         }
     }
 
-    # Add a ROS master for SITL
-    maverick_ros::rosmaster { "sitl":
-        active  => $rosmaster_active,
-        port    => $rosmaster_port,
-    } ->
-    maverick_ros::mavros { "sitl":
-        active              => $mavros_active,
-        rosmaster_port      => $rosmaster_port,
-        mavlink_port        => $mavlink_port,
+    # maverick_dev::sitl::ros_instance allows ros to be completely optional
+    if $ros_instance == true {
+        # Add a ROS master for SITL
+        maverick_ros::rosmaster { "sitl":
+            active  => $rosmaster_active,
+            port    => $rosmaster_port,
+        } ->
+        maverick_ros::mavros { "sitl":
+            active              => $mavros_active,
+            rosmaster_port      => $rosmaster_port,
+            mavlink_port        => $mavlink_port,
+            mavros_startup_delay => $mavros_startup_delay,
+        }
     }
-
+    
 }

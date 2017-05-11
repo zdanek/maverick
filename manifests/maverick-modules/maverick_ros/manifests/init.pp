@@ -72,23 +72,22 @@ class maverick_ros (
         force       => true,
     } ->
     # Install ROS bootstrap from ros.org packages
-    exec { "ros-repo":
-        command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
-        creates     => "/etc/apt/sources.list.d/ros-latest.list",
-        require     => Class["maverick_vision::opencv"],
-    } ->
     exec { "ros-repo-key":
-        #command     => "/usr/bin/wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | apt-key add -",
         command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
         unless      => "/usr/bin/apt-key list |/bin/grep B01FA116",
     } ->
+    exec { "ros-repo":
+        command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
+        creates     => "/etc/apt/sources.list.d/ros-latest.list",
+        notify      => Exec["maverick-aptget-update"],
+    } ->
     exec { "ros-aptupdate":
         command     => "/usr/bin/apt-get update",
-        unless      => "/usr/bin/dpkg -l python-rosinstall"
+        unless      => "/bin/ls /var/lib/apt/lists/*ros.org*"
     } ->
     package { ["python-rosdep"]:
         ensure      => installed,
-        require     => Exec["ros-aptupdate"],
+        require     => [Exec["maverick-aptget-update"], Exec["ros-aptupdate"]],
     }
     $wstool_package = $::operatingsystem ? {
         'Ubuntu'        => 'python-wstool',
@@ -134,13 +133,16 @@ class maverick_ros (
             }
             
             $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
-            ensure_packages(["build-essential", "python-rosinstall", "python-rosinstall-generator"])
-
+            ensure_packages(["build-essential"])
+            # Install ros install packages
+            package {["python-rosinstall", "python-rosinstall-generator"]:
+                require         => Exec["ros-repo"]
+            } ->
             # Initialize rosdep
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
                 creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
-                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"] ]
+                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"], Package["python-rosinstall-generator"] ]
             } ->
             exec { "rosdep-update":
                 user            => "mav",
@@ -251,6 +253,14 @@ class maverick_ros (
     file { "/srv/maverick/software/maverick/bin/rosmaster.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
+    }
+    
+    # Create log directories
+    file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc", "/srv/maverick/var/log/ros/sitl"]:
+        ensure      => directory,
+        mode        => "755",
+        owner       => "mav",
+        group       => "mav",
     }
 
     # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define

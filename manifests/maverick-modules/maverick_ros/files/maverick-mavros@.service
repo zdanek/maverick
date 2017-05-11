@@ -1,7 +1,7 @@
 [Unit]
 Description=Maverick Mavros - %I
-After=network-online.target
-Requires=network-online.target
+After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-sitl.service
+
 
 [Service]
 TimeoutStartSec=0

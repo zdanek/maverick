@@ -1,7 +1,7 @@
 class maverick_vision::visiond (
     $active = true,
 ) {
-        
+
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
@@ -11,12 +11,20 @@ class maverick_vision::visiond (
         ensure      => present,
     }
      
+    # Create log directory
+    file { "/srv/maverick/var/log/vision":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+        ensure      => "directory",
+    }
+    
     # Link maverick-visiond into central bin directory
     file { "/srv/maverick/software/maverick/bin/maverick-visiond":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/maverick-visiond",
     }
-    file { "/srv/maverick/data/config/maverick-visiond.conf":
+    file { "/srv/maverick/data/config/vision/maverick-visiond.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -55,11 +63,13 @@ class maverick_vision::visiond (
         service { "maverick-visiond":
             ensure      => running,
             enable      => true,
+            require     => Class["maverick_vision::gstreamer"],
         }
     } else {
         service { "maverick-visiond":
             ensure      => stopped,
             enable      => false,
+            require     => Class["maverick_vision::gstreamer"],
         }
     }
     

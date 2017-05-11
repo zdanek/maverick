@@ -32,9 +32,13 @@ class maverick_vision::gstreamer (
             }
         } else {
             package { "gstreamer1.0-plugins-good":
-                ensure      => present
+                ensure      => present,
             }
         }
+        
+        # Create a blank exec as a resource for other manifests to use as a dependency
+        # exec { "gstreamer-installed": }
+
 	} elsif $gstreamer_installtype == "source" {
         # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
         if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
@@ -63,9 +67,9 @@ class maverick_vision::gstreamer (
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
-            package { ["gstreamer*", "libgstreamer*", "python-gst-1.0"]:
-                ensure      => absent,
-            } ->
+            #package { ["gstreamer*", "libgstreamer*", "python-gst-1.0"]:
+            #    ensure      => absent,
+            #} ->
     
             file { "/srv/maverick/var/build/gstreamer":
                 ensure      => directory,
@@ -215,8 +219,8 @@ class maverick_vision::gstreamer (
             }
     
             # Install vaapi for joule platform
-            if $joule_present {
-                ensure_packages(["libdrm-dev", "libudev-dev", "libva1", "libva-dev"])
+            if $joule_present == "yes" {
+                ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
                 oncevcsrepo { "git-gstreamer_vaapi":
                     gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
                     dest        => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
@@ -317,6 +321,9 @@ class maverick_vision::gstreamer (
             group       => "root",
             content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/gstreamer:\$CMAKE_PREFIX_PATH",
         }
+
+        # Create a blank exec as a resource for other manifests to use as a dependency
+        # exec { "gstreamer-installed": }
     }
     
 }

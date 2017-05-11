@@ -5,6 +5,9 @@ class maverick_vision::opencv (
     $precompile_headers = false,
 ) {
     
+    # Ensure gstreamer resources are applied before this class
+    require maverick_vision::gstreamer
+    
     # Compile opencv3, note this can take a while.
     # Note that we're deliberately not installing the python bindings into either sitl or fc python virtualenvs
     # as we want to access from both, so we install into global.
@@ -77,7 +80,7 @@ class maverick_vision::opencv (
             command     => $_command,
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => "/srv/maverick/var/build/opencv/build/Makefile",
-            require     => [ Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libeigen3-dev", "libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "python-numpy", "python3-numpy"] ], # ensure we have all the dependencies satisfied
+            require     => [ Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "libgdal1-dev", "liblapacke-dev", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev"] ], # ensure we have all the dependencies satisfied
         } ->
         exec { "opencv-build":
             user        => "mav",

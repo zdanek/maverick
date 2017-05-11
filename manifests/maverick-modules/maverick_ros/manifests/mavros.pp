@@ -1,7 +1,8 @@
 define maverick_ros::mavros (
     $rosmaster_port = "11311",
-    $mavlink_port = "5760",
+    $mavlink_port = "5770",
     $active = true,
+    $mavros_startup_delay = 10,
 ) {
     
     file { "/srv/maverick/data/config/ros/mavros-${name}.conf":
@@ -9,7 +10,8 @@ define maverick_ros::mavros (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        content     => template("maverick_ros/mavros.conf.erb")
+        content     => template("maverick_ros/mavros.conf.erb"),
+        notify      => Service["maverick-mavros@${name}"],
     }
     
     if $active == true {

@@ -16,8 +16,12 @@
     "all_ips": [
     ],
 
+	"git_username": 	"",
+	"git_email":		"",
+	
     "wifi_ssid": "",
     "wifi_passphrase": "",
+    "wifi_psk": "",
 
     "maverick_network::interfaces": {
         "eth0": {},

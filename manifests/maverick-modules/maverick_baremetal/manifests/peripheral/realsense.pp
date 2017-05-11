@@ -41,7 +41,6 @@ class maverick_baremetal::peripheral::realsense (
             cwd         => "/srv/maverick/var/build/librealsense/build",
             creates     => "/srv/maverick/software/librealsense/lib/librealsense.so",
         } ->
-        
         # Install and activate udev rules
         exec { "librealsense-cp-udevbin":
             command     => "/bin/cp /srv/maverick/var/build/librealsense/config/usb-R200* /usr/local/bin && chmod a+rx /usr/local/bin/usb-R200*",
@@ -49,7 +48,7 @@ class maverick_baremetal::peripheral::realsense (
         } ->
         exec { "librealsense-cp-udev":
             command     => "/bin/cp /srv/maverick/var/build/librealsense/config/99-realsense-libusb.rules /etc/udev/rules.d",
-            creates     => "/etc/udev/rules.d/99-realsense-libusb.rules",
+            unless      => "/bin/grep '/usr/local/bin/usb' /etc/udev/rules.d/99-realsense-libusb.rules",
             notify      => Exec["librealsense-udev-control"],
         } ->
         exec { "librealsense-udev-control":
@@ -61,7 +60,15 @@ class maverick_baremetal::peripheral::realsense (
             owner           => "mav",
         }
     }
-    
+
+    # Install cmake path    
+    file { "/etc/profile.d/70-maverick-librealsense-cmake.sh":
+        mode        => 644,
+        owner       => "root",
+        group       => "root",
+        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense/lib/cmake",
+    }
+
     # Clone examples source from github
     file { "/srv/maverick/code/realsense":
         ensure          => directory,
