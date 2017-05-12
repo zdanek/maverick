@@ -297,7 +297,7 @@ class maverick_vision::gstreamer (
             mode        => 644,
             owner       => "root",
             group       => "root",
-            content     => "export GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0:\$GST_PLUGIN_PATH",
+            content     => "export GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0; export GST_PLUGIN_SYSTEM_PATH=\$GST_PLUGIN_PATH",
         }
         file { "/etc/profile.d/50-maverick-gstreamer-pythonpath.sh":
             mode        => 644,
