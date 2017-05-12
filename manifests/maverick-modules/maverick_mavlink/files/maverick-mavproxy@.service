@@ -1,6 +1,6 @@
 [Unit]
 Description=Maverick Mavproxy - %I
-After=network-online.target
+After=network-online.target maverick-sitl.service
 Requires=network-online.target
 
 [Service]
