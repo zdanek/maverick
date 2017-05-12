@@ -640,7 +640,17 @@ if __name__ == "__main__":
     app = App()
     daemon_runner = runner.DaemonRunner(app)
     daemon_runner.daemon_context.files_preserve=[handler.stream]
-    daemon_runner.do_action()
-    
+    try:
+        daemon_runner.do_action()
+    except runner.DaemonRunnerStopFailureError as Error:
+        print " - visiond not running, cannot stop"
+        # If stop action, just ignore the error and exit
+        if daemon_runner.action == "stop":
+            sys.exit(0)
+        elif daemon_runner.action == "restart":
+            print " - starting visiond"
+            daemon_runner.action = "start"
+            daemon_runner.do_action()
+            
     # logger.info("Stopping maverick-visiond")
     print "Stopped maverick-visiond daemon"
