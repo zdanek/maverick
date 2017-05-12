@@ -488,8 +488,11 @@ class App():
             if self.config['format']:
                 streamtype = self.config['format']
         except:
+            if re.search("C920", self.card):
+                logger.info("Logitech C920 detected, forcing H264 passthrough")
+                streamtype = 'h264'
             # format not set, carry on and try to autodetect
-            if self.check_format('yuv'):
+            elif self.check_format('yuv'):
                 logger.info('Camera YUV stream available, using yuv stream')
                 streamtype = 'yuv'
             # Otherwise, check for an mjpeg->h264 encoder pipeline.
@@ -505,7 +508,7 @@ class App():
             sys.exit(1)
 
         # If encoder set in config use it, otherwise set to h264
-        encoder  = None
+        encoder = None
         try:
             if self.config['encoder']:
                 encoder = self.config['encoder']
@@ -550,6 +553,8 @@ class App():
         ioctl(self.vd, v4l2.VIDIOC_QUERYCAP, cp) 
         logger.debug("driver: "+cp.driver)
         logger.debug("card: "+cp.card)
+        self.driver = cp.driver
+        self.card = cp.card
         
         # Log controls available
         queryctrl = v4l2.v4l2_queryctrl(v4l2.V4L2_CID_BASE)
