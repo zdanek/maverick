@@ -1,5 +1,6 @@
 class maverick_dev::sitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
+    $jsbsim_source = "http://github.com/tridge/jsbsim.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_startingtcp = 5780,
@@ -94,6 +95,44 @@ class maverick_dev::sitl (
     } else {
         $ardupilot_type = $ardupilot_vehicle
     }
+    
+    # If SITL plane, compile jsbsim and install service
+    if $ardupilot_vehicle == "plane" {
+        oncevcsrepo { "git-jsbsim":
+            gitsource   => $jsbsim_source,
+            dest        => "/srv/maverick/var/build/jsbsim",
+        }
+        ensure_packages(["libexpat1-dev"])
+        exec { "jsbsim-autogen":
+            command     => "/srv/maverick/var/build/jsbsim/autogen.sh --enable-libraries --prefix=/srv/maverick/software/jsbsim --exec-prefix=/srv/maverick/software/jsbsim",
+            cwd         => "/srv/maverick/var/build/jsbsim",
+            creates     => "/srv/maverick/var/build/jsbsim/Makefile",
+            user        => "mav",
+        } ->
+        exec { "jsbsim-make":
+            command     => "/usr/bin/make",
+            cwd         => "/srv/maverick/var/build/jsbsim",
+            creates     => "/srv/maverick/var/build/jsbsim/src/JSBSim",
+            user        => "mav",
+        } ->
+        exec { "jsbsim-makeinstall":
+            command     => "/usr/bin/make install",
+            cwd         => "/srv/maverick/var/build/jsbsim",
+            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
+            user        => "mav",
+        } ->
+        file { "/srv/maverick/software/jsbsim/bin":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        exec { "jsbsim-cpbin":
+            command     => "/bin/cp /srv/maverick/var/build/jsbsim/src/JSBSim /srv/maverick/software/jsbsim/bin",
+            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
+        }
+        
+    }
+    
     file { "/etc/systemd/system/maverick-sitl.service":
         content     => template("maverick_dev/maverick-sitl.service.erb"),
         owner       => "root",

@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/bin/bash -c 'cd /srv/maverick/var/log/sitl; source /srv/maverick/.virtualenvs/sitl/bin/activate; /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N --no-mavproxy -v <%= @ardupilot_type %> --use-dir=/srv/maverick/var/log/sitl'
+ExecStart=/bin/bash -c 'cd /srv/maverick/var/log/sitl; source /srv/maverick/.virtualenvs/sitl/bin/activate; <% if @ardupilot_type == "ArduPlane" -%>PATH=/srv/maverick/software/jsbsim/bin:$PATH <% end -%>/srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -N --no-mavproxy -v <%= @ardupilot_type %> --use-dir=/srv/maverick/var/log/sitl'
 User=mav
 
 [Install]
