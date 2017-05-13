@@ -97,7 +97,7 @@ class maverick_dev::sitl (
     }
     
     # If SITL plane, compile jsbsim and install service
-    if $ardupilot_vehicle == "plane" {
+    if $ardupilot_vehicle == "plane" and ! ("install_flag_jsbsim" in $installflags) {
         oncevcsrepo { "git-jsbsim":
             gitsource   => $jsbsim_source,
             dest        => "/srv/maverick/var/build/jsbsim",
@@ -129,6 +129,12 @@ class maverick_dev::sitl (
         exec { "jsbsim-cpbin":
             command     => "/bin/cp /srv/maverick/var/build/jsbsim/src/JSBSim /srv/maverick/software/jsbsim/bin",
             creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_jsbsim":
+            ensure      => file,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "644",
         }
         
     }
