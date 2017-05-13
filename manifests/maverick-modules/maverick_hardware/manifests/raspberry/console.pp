@@ -1,4 +1,4 @@
-class maverick_baremetal::raspberry::console (
+class maverick_hardware::raspberry::console (
     $width = 800,
     $height = 600
 ) {

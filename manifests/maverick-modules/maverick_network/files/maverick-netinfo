@@ -8,7 +8,7 @@ import pyric.pyw as pyw  # iw functionality
 # Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
 sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/facts.d')
-sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_baremetal/facts.d')
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_hardware/facts.d')
 sys.path.insert(0, '/usr/local/examples')
 from udevnet import Udevnet
 udevnet = Udevnet()

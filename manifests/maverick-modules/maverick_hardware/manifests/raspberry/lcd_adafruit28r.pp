@@ -1,4 +1,4 @@
-class maverick_baremetal::raspberry::lcd_adafruit28r (
+class maverick_hardware::raspberry::lcd_adafruit28r (
     ) {
     
     # Add module for touchscreen overlay to boot
@@ -36,7 +36,7 @@ class maverick_baremetal::raspberry::lcd_adafruit28r (
     
     # Set console font
     file { "/etc/default/console-setup":
-	source      => 'puppet:///modules/maverick_baremetal/console-setup',
+	source      => 'puppet:///modules/maverick_hardware/console-setup',
 	mode        => 644,
         owner       => 'root',
         group       => 'root',
@@ -49,10 +49,10 @@ class maverick_baremetal::raspberry::lcd_adafruit28r (
     }
     
     # Install fbcp (framebuffer copying) to output GPU accelerated graphics to TFT screen
-    class { "maverick_baremetal::raspberry::fbcp": }
+    class { "maverick_hardware::raspberry::fbcp": }
         
     # Alter console hdmi resolution to match the LCD, so framebuffer copy doesn't have to scale
-    class { "maverick_baremetal::raspberry::console":
+    class { "maverick_hardware::raspberry::console":
         width       => 320,
         height      => 240,
     }

@@ -1,9 +1,9 @@
 {
 
-	"maverick_baremetal::raspberry::init::spi": true
+	"maverick_hardware::raspberry::init::spi": true
 
 	"classes" : [
-		"maverick_baremetal::raspberry::lcd-spotpear35"
+		"maverick_hardware::raspberry::lcd-spotpear35"
 	]
 
 }

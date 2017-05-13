@@ -1,4 +1,4 @@
-class maverick_baremetal::joule (
+class maverick_hardware::joule (
     $remove_more_packages = true,
     $ipu4_blacklist = true,
 ) {
@@ -7,14 +7,14 @@ class maverick_baremetal::joule (
     if $rootpart_expanded == "False" and $rootpart_device and $rootpart_partition and $rootpart_partno {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
         file { "/fsexpand":
-            content     => template("maverick_baremetal/fsexpand.erb"),
+            content     => template("maverick_hardware/fsexpand.erb"),
             mode        => "755",
         } ->
         file { "/.fsexpand":
             ensure      => present,
         } ->
         file { "/etc/rc.local":
-            source      => "puppet:///modules/maverick_baremetal/rc.local",
+            source      => "puppet:///modules/maverick_hardware/rc.local",
             mode        => "755",
             owner       => "root",
             group       => "root",
@@ -135,7 +135,7 @@ class maverick_baremetal::joule (
     if $ipu4_blacklist == true {
         file { "/etc/modprobe.d/blacklist-ipu4.conf":
             ensure      => file,
-            source      => "puppet:///modules/maverick_baremetal/blacklist-ipu4.conf",
+            source      => "puppet:///modules/maverick_hardware/blacklist-ipu4.conf",
             mode        => "644",
             owner       => "root",
             group       => "root",

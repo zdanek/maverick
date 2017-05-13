@@ -1,4 +1,4 @@
-class maverick_baremetal::peripheral::realsense (
+class maverick_hardware::peripheral::realsense (
 ) {
 
     ensure_packages(["libglfw3", "libglfw3-dev", "libusb-1.0-0", "libusb-1.0-0-dev", "pkg-config", "libssl-dev", "liblz4-dev", "liblog4cxx-dev"])

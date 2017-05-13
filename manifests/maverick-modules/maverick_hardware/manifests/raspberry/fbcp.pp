@@ -1,4 +1,4 @@
-class maverick_baremetal::raspberry::fbcp (
+class maverick_hardware::raspberry::fbcp (
 ) {
     
     ensure_packages(["libbsd-dev", "cmake"])

@@ -1,4 +1,4 @@
-class maverick_baremetal::odroid::kernel3x {
+class maverick_hardware::odroid::kernel3x {
     
     if $::odroid_kernel3x_backups == "yes" and $::odroid_kernel_current =~ /^4/ {
         warning("Kernel 3.x backup files, restoring 3.x kernel.  A full shutdown and poweroff is necessary before rebooting to restored kernel.")

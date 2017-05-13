@@ -1,4 +1,4 @@
-class maverick_baremetal::raspberry::lcd_spotpear35 (
+class maverick_hardware::raspberry::lcd_spotpear35 (
     ) {
     
     # This used to be very painful, now all of the necessary kernel support is in raspbian
@@ -50,7 +50,7 @@ class maverick_baremetal::raspberry::lcd_spotpear35 (
     
     # Set console font
     file { "/etc/default/console-setup":
-	source      => 'puppet:///modules/maverick_baremetal/console-setup',
+	source      => 'puppet:///modules/maverick_hardware/console-setup',
 	mode        => 644,
         owner       => 'root',
         group       => 'root',
@@ -63,10 +63,10 @@ class maverick_baremetal::raspberry::lcd_spotpear35 (
     }
     
     # Install fbcp (framebuffer copying) to output GPU accelerated graphics to TFT screen
-    class { "maverick_baremetal::raspberry::fbcp": }
+    class { "maverick_hardware::raspberry::fbcp": }
         
     # Alter console hdmi resolution to match the LCD, so framebuffer copy doesn't have to scale
-    class { "maverick_baremetal::raspberry::console":
+    class { "maverick_hardware::raspberry::console":
         width       => 480,
         height      => 320,
     }

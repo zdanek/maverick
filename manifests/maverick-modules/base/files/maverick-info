@@ -2,7 +2,7 @@
 
 import os, sys
 # Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
-sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_baremetal/facts.d')
+sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/maverick_hardware/facts.d')
 sys.path.insert(0, '/srv/maverick/software/maverick/manifests/maverick-modules/base/facts.d')
 sys.dont_write_bytecode = True # This is to prevent .pyc files in facts.d directory
 

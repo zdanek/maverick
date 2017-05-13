@@ -69,7 +69,7 @@ class base {
     ### Physical setup
     } else {
         $servertype = "Physical Computer"
-        class { "maverick_baremetal": }
+        class { "maverick_hardware": }
     }
     
     ### NOTE: Hiera will also include classes, depending on hierarchy.

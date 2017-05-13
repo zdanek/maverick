@@ -1,4 +1,4 @@
-class maverick_baremetal::odroid (
+class maverick_hardware::odroid (
     $governor_atboot = "performance",
     $kernel4x = false,
 ) {
@@ -15,7 +15,7 @@ class maverick_baremetal::odroid (
     if $rootpart_expanded == "False" and $rootpart_device {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
         file { "/aafirstboot":
-            content     => template("maverick_baremetal/aafirstboot.erb"),
+            content     => template("maverick_hardware/aafirstboot.erb"),
             mode        => "755",
         } ->
         file { "/.first_boot":
@@ -80,11 +80,11 @@ class maverick_baremetal::odroid (
     }
     
     if $kernel4x == true and $::odroid_kernel_install_flag == "no" {
-        class { "maverick_baremetal::odroid::kernel4x": }
+        class { "maverick_hardware::odroid::kernel4x": }
     } elsif $kernel4x == true and $::odroid_kernel_install_flag == "yes" {
         # do nothing
     } else {
-        class { "maverick_baremetal::odroid::kernel3x": }
+        class { "maverick_hardware::odroid::kernel3x": }
     }
     
 }

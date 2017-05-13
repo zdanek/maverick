@@ -1,4 +1,4 @@
-class maverick_baremetal::peripheral::ocam (
+class maverick_hardware::peripheral::ocam (
 ) {
     
     # Add ocam software from git
