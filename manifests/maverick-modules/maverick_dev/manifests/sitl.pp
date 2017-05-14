@@ -101,6 +101,10 @@ class maverick_dev::sitl (
         $ardupilot_type = "ArduPlane"
     } elsif $ardupilot_vehicle == "rover" {
         $ardupilot_type = "APMrover2"
+    } elsif $ardupilot_vehicle == "sub" {
+        $ardupilot_type = "ArduSub"
+    } elsif $ardupilot_vehicle == "antennatracker" {
+        $ardupilot_type = "AntennaTracker"
     } else {
         $ardupilot_type = $ardupilot_vehicle
     }

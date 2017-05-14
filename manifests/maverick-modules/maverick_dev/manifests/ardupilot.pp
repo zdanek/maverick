@@ -82,6 +82,10 @@ class maverick_dev::ardupilot (
             $ardupilot_type = "ArduPlane"
         } elsif $ardupilot_vehicle == "rover" {
             $ardupilot_type = "ArduRover"
+        } elsif $ardupilot_vehicle == "sub" {
+            $ardupilot_type = "ArduSub"
+        } elsif $ardupilot_vehicle == "antennatracker" {
+            $ardupilot_type = "AntennaTracker"
         }
         fwbuildmake { "sitl_${ardupilot_vehicle}": 
             require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
