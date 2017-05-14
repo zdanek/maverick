@@ -118,18 +118,18 @@ class maverick_mavlink (
     if $mavproxy_install and $mavproxy_type == "pip" {
         ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
         install_python_module { 'pip-mavproxy-global':
-            pkgname     => 'MAVProxy',
+            pkgname     => 'mavproxy',
             ensure      => present,
             timeout     => 0,
             require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
-        }
+        } ->
         file { "/etc/systemd/system/maverick-mavproxy@.service":
             source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
             owner       => "root",
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
-        }
+        } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavproxy.sh",
@@ -170,7 +170,7 @@ class maverick_mavlink (
             group       => "root",
             mode        => 644,
             notify      => Exec["maverick-systemctl-daemon-reload"],
-        }
+        } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavproxy.sh",
@@ -184,6 +184,7 @@ class maverick_mavlink (
         dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
         submodules  => true,
         require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
+        force       => true,
     } ->
     install_python_module { "mav-flask":
         pkgname     => "Flask",
@@ -208,7 +209,7 @@ class maverick_mavlink (
     file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
         owner       => "mav",
         mode        => "644",
-    }
+    } ->
     file { "/srv/maverick/data/config/mavlink/cesium":
         ensure      => directory,
         owner       => "mav",
