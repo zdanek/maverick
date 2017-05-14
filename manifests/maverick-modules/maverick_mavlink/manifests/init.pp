@@ -23,6 +23,13 @@ class maverick_mavlink (
         group       => "mav",
         mode        => "755",
     }
+    # Create data directory for mavlink
+    file { "/srv/maverick/data/mavlink":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    }
     
     ### cmavnode
     # Install cmavnode from gitsource

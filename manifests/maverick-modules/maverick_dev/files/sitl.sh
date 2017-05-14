@@ -14,8 +14,8 @@ VEHICLE_TYPE=ArduCopter # This should normally be overridden by sitl-vehicle.con
 [ ! -r /srv/maverick/data/config/mavlink/sitl.conf ] || . /srv/maverick/data/config/mavlink/sitl.conf
 [ ! -r /srv/maverick/data/config/mavlink/sitl-vehicle.conf ] || . /srv/maverick/data/config/mavlink/sitl-vehicle.conf
 
-cd /srv/maverick/var/log/sitl;
-source /srv/maverick/.virtualenvs/sitl/bin/activate;
+cd /srv/maverick/data/mavlink/sitl
+source /srv/maverick/.virtualenvs/sitl/bin/activate
 
 # If jsbsim is installed, set the path
 if [ -e /srv/maverick/software/jsbsim/bin ]; then
@@ -53,4 +53,4 @@ else
     _TRACKER_LOCATION=""
 fi
 
-/srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/var/log/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION &
+/srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION >/srv/maverick/var/log/sitl/sitl.log &

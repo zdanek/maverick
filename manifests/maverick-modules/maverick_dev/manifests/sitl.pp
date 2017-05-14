@@ -81,6 +81,12 @@ class maverick_dev::sitl (
         group       => "mav",
         mode        => 755,
     } ->
+    file { "/srv/maverick/data/mavlink/sitl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => 755,
+    } ->
     file { "/srv/maverick/var/log/mavlink-sitl":
         ensure      => directory,
         owner       => "mav",
@@ -94,7 +100,7 @@ class maverick_dev::sitl (
     } elsif $ardupilot_vehicle == "plane" {
         $ardupilot_type = "ArduPlane"
     } elsif $ardupilot_vehicle == "rover" {
-        $ardupilot_type = "ArduRover"
+        $ardupilot_type = "APMrover2"
     } else {
         $ardupilot_type = $ardupilot_vehicle
     }
@@ -158,6 +164,7 @@ class maverick_dev::sitl (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
+        notify      => Service["maverick-sitl"],
     } ->
     file { "/etc/systemd/system/maverick-sitl.service":
         content     => template("maverick_dev/maverick-sitl.service.erb"),
