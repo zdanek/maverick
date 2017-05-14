@@ -1,15 +1,21 @@
 #!/usr/bin/env python
 import subprocess
 
+pips = ["global", "sitl", "fc"]
+pippaths = {"global": "/usr/bin/pip", "sitl": "/srv/maverick/.virtualenvs/sitl/bin/pip", "fc": "/srv/maverick/.virtualenvs/fc/bin/pip"}
 modules = {}
-for vpip in ["/usr/bin/pip", "/srv/maverick/.virtualenvs/sitl/bin/pip", "/srv/maverick/.virtualenvs/fc/bin/pip"]:
+for vpip in pips:
+    modules[vpip] = {}
+    
+for vpip in pips:
     try:
-        pipoutput = subprocess.Popen([vpip, "freeze"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        pips = pipoutput.communicate()[0].split()
-        for pip in pips:
-            [package,version] = pip.split("==")
-            modules[package.lower()] = version
-    except:
+        pipoutput = subprocess.Popen([pippaths[vpip], "freeze"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _pips = pipoutput.communicate()[0].split()
+        for _pip in _pips:
+            [package,version] = _pip.split("==")
+            modules[vpip][package.lower()] = version
+    except Exception,e:
         pass
 
-print "python_modules="+str(modules)
+for vpip in pips:
+    print "python_modules_"+vpip+"="+str(modules[vpip])

@@ -47,6 +47,7 @@ class maverick_dev::sitl (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
+        env         => "sitl",
     }
     install_python_module { 'pip-dronekit-sitl-sitl':
         pkgname     => 'dronekit-sitl',
@@ -54,6 +55,7 @@ class maverick_dev::sitl (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
+        env         => "sitl",
     }
     install_python_module { 'pip-mavproxy-sitl':
         pkgname     => 'mavproxy',
@@ -62,6 +64,7 @@ class maverick_dev::sitl (
         owner       => 'mav',
         timeout     => 0,
         require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
+        env         => "sitl",
     }
         
     # This is needed for sitl run

@@ -48,6 +48,7 @@ class maverick_fc (
         ensure      => present,
         owner       => 'mav',
         timeout     => 0,
+        env         => "fc",
     }
     install_python_module { 'pip-mavproxy-fc':
         pkgname     => 'MAVProxy',
@@ -56,6 +57,7 @@ class maverick_fc (
         owner       => 'mav',
         timeout     => 0,
         require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
+        env         => "fc",
     }
         
     file { "/srv/maverick/var/log/mavlink-fc":

@@ -7,12 +7,13 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef) {
-  if $::python_modules {
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global") {
+  $python_modules = getvar("python_modules_${env}")
+  if $python_modules {
     case $ensure {
       'present': {
         unless downcase($pkgname) in $python_modules {
-            warning("Installing pip: ${pkgname}")
+            notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => $pkgname,
                 ensure => 'present',
