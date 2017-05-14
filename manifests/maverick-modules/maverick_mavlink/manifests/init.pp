@@ -179,12 +179,15 @@ class maverick_mavlink (
 
     ## Install mavcesium dependencies and services
     # Overlay mavcesium master ontop of mavproxy installed version
+    exec { "remove-mavproxy-mavcesium":
+        command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
+        unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
+        require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
+    } ->
     oncevcsrepo { "git-mavcesium":
         gitsource   => $mavcesium_source,
         dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
         submodules  => true,
-        require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
-        force       => true,
     } ->
     install_python_module { "mav-flask":
         pkgname     => "Flask",
