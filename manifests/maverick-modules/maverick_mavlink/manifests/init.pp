@@ -192,6 +192,11 @@ class maverick_mavlink (
         timeout     => 0,
     } ->
     install_python_module { "mav-twisted":
+        pkgname     => "twisted",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "mav-autobahn":
         pkgname     => "autobahn",
         ensure      => present,
         timeout     => 0,
