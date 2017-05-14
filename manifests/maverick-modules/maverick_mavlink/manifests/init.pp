@@ -4,9 +4,14 @@ class maverick_mavlink (
     $mavlink_router_install = true,
     $mavlink_router_source = "https://github.com/01org/mavlink-router.git",
     $mavproxy_install = true,
+    $mavproxy_source = "https://github.com/ArduPilot/MAVProxy.git",
+    $mavproxy_type = "pip",
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
+    $mavcesium_apikey = "",
+    $mavcesium_ports = [6790],
+    $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
 ) {
     
     $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
@@ -110,10 +115,10 @@ class maverick_mavlink (
     
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
-    if $mavproxy_install {
+    if $mavproxy_install and $mavproxy_type == "pip" {
         ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
         install_python_module { 'pip-mavproxy-global':
-            pkgname     => 'mavproxy',
+            pkgname     => 'MAVProxy',
             ensure      => present,
             timeout     => 0,
             require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
@@ -131,6 +136,101 @@ class maverick_mavlink (
         }
     }
 
+    # Install mavproxy from source
+    if $mavproxy_install and $mavproxy_type == "source" {
+        ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
+        if ! ("install_flag_mavproxy" in $installflags) {
+            # First uninstall pip mavproxy, to remove any conflicts
+            install_python_module { 'mavproxy':
+                pkgname     => 'mavproxy',
+                ensure      => 'absent',
+            } ->
+            oncevcsrepo { "git-mavproxy":
+                gitsource   => $mavproxy_source,
+                dest        => "/srv/maverick/var/build/mavproxy",
+                submodules  => true,
+            } ->
+            exec { "mavproxy-build":
+                command     => "/usr/bin/python setup.py build install --user",
+                cwd         => "/srv/maverick/var/build/mavproxy",
+                user        => "root",
+                timeout     => 0,
+                #creates     => "",
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_mavproxy":
+                ensure      => file,
+                owner       => "mav",
+                group       => "mav",
+                mode        => "644",
+            }
+        }
+        file { "/etc/systemd/system/maverick-mavproxy@.service":
+            source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
+        file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavproxy.sh",
+        }
+    }
+
+    ## Install mavcesium dependencies and services
+    # Overlay mavcesium master ontop of mavproxy installed version
+    oncevcsrepo { "git-mavcesium":
+        gitsource   => $mavcesium_source,
+        dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
+        submodules  => true,
+        require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
+    } ->
+    install_python_module { "mav-flask":
+        pkgname     => "Flask",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "mav-twisted":
+        pkgname     => "autobahn",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "mav-configparser":
+        pkgname     => "configparser",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/api_keys.txt":
+        content     => "{\"bing\": \"${mavcesium_apikey}\"}",
+        mode        => "644",
+        owner       => "mav",
+    } ->
+    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
+        owner       => "mav",
+        mode        => "644",
+    }
+    file { "/srv/maverick/data/config/mavlink/cesium":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/data/config/mavlink/cesium/api_keys.txt":
+        ensure      => link,
+        target      => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/api_keys.txt",
+    } ->
+    file { "/srv/maverick/data/config/mavlink/cesium/mavcesium_default.ini":
+        ensure      => link,
+        target      => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini",
+    }
+    
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "mavcesium":
+            ports       => $mavcesium_ports,
+            ips         => hiera("all_ips"),
+            proto       => "tcp"
+        }
+    }
     
     # Install dronekit globally (not in virtualenv) from pip
     if $dronekit_install {
