@@ -142,6 +142,23 @@ class maverick_dev::sitl (
         
     }
     
+    file { "/srv/maverick/software/maverick/bin/sitl.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/sitl.sh",
+    } ->
+    file { "/srv/maverick/data/config/mavlink/sitl.conf":
+        source      => "puppet:///modules/maverick_dev/sitl.conf",
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        replace     => false,
+    } ->
+    file { "/srv/maverick/data/config/mavlink/sitl-vehicle.conf":
+        content     => "VEHICLE_TYPE=${ardupilot_type}",
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+    } ->
     file { "/etc/systemd/system/maverick-sitl.service":
         content     => template("maverick_dev/maverick-sitl.service.erb"),
         owner       => "root",
