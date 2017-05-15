@@ -216,6 +216,10 @@ class maverick_mavlink (
         ensure      => present,
         timeout     => 0,
     } ->
+    exec { "rm-configparser-dingleberry":
+        command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
+        onlyif      => "/bin/ls /usr/local/lib/python2.7/dist-packages/configparser/__init__.py",
+    } ->
     file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
         owner       => "mav",
         mode        => "644",
