@@ -6,7 +6,7 @@ import os,re,subprocess
 
 # Define main data container
 gitfiles = []
-finddirs = subprocess.Popen(["find", "/srv/maverick", "-type", "d", "-name", ".git"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+finddirs = subprocess.Popen(["find", "/srv/maverick", "/usr/local", "-type", "d", "-name", ".git"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 gitdirs = finddirs.communicate()[0].split()
 for gitdir in gitdirs:
     gitfiles.append(gitdir)
