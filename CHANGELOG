@@ -9,4 +9,6 @@
  - Logitech C920 camera automatic configuration
  - Add JSBSim/Plane to SITL
  - Initial MavCesium support
-
+ - ArduSub, ArduRover, AntennaTracker SITL support
+ - SITL config file
+ 
