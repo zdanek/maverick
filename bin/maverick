@@ -143,8 +143,8 @@ mavenv () {
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
     # If git branch config file exists, source it
-    if [ -e /srv/maverick/data/config/maverick-branch.conf ]; then
-        source /srv/maverick/data/config/maverick-branch.conf
+    if [ -e /srv/maverick/data/config/maverick/maverick-branch.conf ]; then
+        source /srv/maverick/data/config/maverick/maverick-branch.conf
     fi
     # If git branch not set by now, set it to stable by default
     if [ -z $MAVERICK_BRANCH ]; then

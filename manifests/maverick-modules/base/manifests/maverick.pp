@@ -91,8 +91,13 @@ class base::maverick (
         require => Oncevcsrepo["git-maverick"],
     }
     
+    # Remove old branch file
+    exec { "move-oldbranchfile":
+        command     => "/bin/mv /srv/maverick/data/config/maverick-branch.conf /srv/maverick/data/config/maverick",
+        onlyif      => "/bin/ls /srv/maverick/data/config/maverick-branch.conf",
+    } ->
     # Add maverick git branch config
-    file { "/srv/maverick/data/config/maverick-branch.conf":
+    file { "/srv/maverick/data/config/maverick/maverick-branch.conf":
         owner   => "mav",
         group   => "mav",
         content => "MAVERICK_BRANCH=stable",

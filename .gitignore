@@ -18,3 +18,4 @@ bin/mavproxy.sh
 bin/rosmaster.sh
 bin/sitl.sh
 conf/local-nodes/
+conf/maverick-branch.conf
