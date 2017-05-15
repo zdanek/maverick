@@ -12,9 +12,9 @@ define maverick_mavlink::cmavnode (
     $replaceconfig = true,
 ) {
     if $active {
-        $notify = Service["maverick-cmavnode@${name}"]
+        $service_notify = Service["maverick-cmavnode@${name}"]
     } else {
-        $notify = undef
+        $service_notify = undef
     }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.conf":
         ensure      => present,
@@ -22,7 +22,7 @@ define maverick_mavlink::cmavnode (
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.service.conf":
         ensure      => present,
@@ -30,7 +30,7 @@ define maverick_mavlink::cmavnode (
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.service.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
     file { "/srv/maverick/data/config/mavlink/cmavnode-${name}.screen.conf":
         ensure      => present,
@@ -38,7 +38,7 @@ define maverick_mavlink::cmavnode (
         group       => "mav",
         replace     => $replaceconfig,  # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/cmavnode.screen.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
 
     if $active == true {

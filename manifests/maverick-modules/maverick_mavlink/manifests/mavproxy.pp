@@ -11,9 +11,9 @@ define maverick_mavlink::mavproxy (
     $replaceconfig = true,
 ) {
     if $active {
-        $notify = Service["maverick-mavproxy@${name}"]
+        $service_notify = Service["maverick-mavproxy@${name}"]
     } else {
-        $notify = undef
+        $service_notify = undef
     }
     file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.service.conf":
         ensure      => present,
@@ -21,7 +21,7 @@ define maverick_mavlink::mavproxy (
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavproxy.service.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
     file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.screen.conf":
         ensure      => present,
@@ -29,7 +29,7 @@ define maverick_mavlink::mavproxy (
         group       => "mav",
         replace     => $replaceconfig,  # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavproxy.screen.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
 
     if $active == true {

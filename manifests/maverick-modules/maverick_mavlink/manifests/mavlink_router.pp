@@ -12,9 +12,9 @@ define maverick_mavlink::mavlink_router (
     $replaceconfig = true,
 ) {
     if $active {
-        $notify = Service["maverick-mavlink-router@${name}"]
+        $service_notify = Service["maverick-mavlink-router@${name}"]
     } else {
-        $notify = undef
+        $service_notify = undef
     }
     file { "/srv/maverick/data/config/mavlink/mavlink-router-${name}.conf":
         ensure      => present,
@@ -22,7 +22,7 @@ define maverick_mavlink::mavlink_router (
         group       => "mav",
         replace     => $replaceconfig, # initialize but don't overwrite in the future if false
         content     => template("maverick_mavlink/mavlink-router.conf.erb"),
-        notify      => $notify,
+        notify      => $service_notify,
     }
 
     if $active == true {
