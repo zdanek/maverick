@@ -51,6 +51,7 @@ class Streamer(object):
         
         # Next choose the encoder
         if encoder == format:
+            self.encode_attach = self.source_attach
             pass
         elif encoder == "h264":
             self.encode_h264()
@@ -137,6 +138,7 @@ class Streamer(object):
         capsfilter.set_property('caps', Gst.Caps.from_string(self.capstring))
         self.pipeline.add(capsfilter)
         self.source.link(capsfilter)
+        """
         # Try and construct a parse element.
         parse = Gst.ElementFactory.make("h264parse", "h264parse")
         if parse:
@@ -155,6 +157,8 @@ class Streamer(object):
             logger.debug('Attaching h264pay direct to capsfilter')
             capsfilter.link(h264pay)
         self.source_attach = h264pay
+        """
+        self.source_attach = capsfilter
 
     def stream_mjpeg(self):
         logger.info("Attaching stream 'mjpeg'")
@@ -490,7 +494,7 @@ class App():
         except:
             if re.search("C920", self.card):
                 logger.info("Logitech C920 detected, forcing H264 passthrough")
-                streamtype = 'h264'
+                streamtype = 'h264'                                                                     
             # format not set, carry on and try to autodetect
             elif self.check_format('yuv'):
                 logger.info('Camera YUV stream available, using yuv stream')
