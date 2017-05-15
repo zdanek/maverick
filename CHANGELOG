@@ -8,3 +8,5 @@
  - Various bugfixes
  - Logitech C920 camera automatic configuration
  - Add JSBSim/Plane to SITL
+ - Initial MavCesium support
+
