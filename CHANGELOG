@@ -4,7 +4,7 @@
  - OS Images released: Intel Joule, Odroid XU3/XU4, Raspbery Pi (all models)
  - Additional platforms supported: Beaglebone Black
 
-## [2017-05-xx] 1.1 Release
+## [2017-05-15] 1.0.1 Release
  - Various bugfixes
  - Logitech C920 camera automatic configuration
  - Add JSBSim/Plane to SITL
