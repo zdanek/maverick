@@ -38,7 +38,7 @@ class maverick_dev::ardupilot (
 
     # Define function to build ardupilot firmwares using new waf system
     define fwbuildwaf ($build, $board) {
-        if ! ("${board}/bin/ardu${build}" in $waffiles) {
+        if ! ("${board}/bin/ardu${build}" in $waffiles or "${board}/bin/${build}" in $waffiles) {
             warning("Ardupilot Firmware: ${build} will be compiled and can take a while, please be patient")
             exec { "ardupilotfw_${board}_${build}":
                 user        => "mav",

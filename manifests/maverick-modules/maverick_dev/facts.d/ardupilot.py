@@ -33,11 +33,7 @@ for root, dirs, files in os.walk("/srv/maverick/code/ardupilot/build"):
         dirs = root.split("/")
         trpath = "/".join(dirs[-2::])
         file = os.path.join(trpath, file)
-        if re.search("bin/arducopter", file):
-            waffiles.append(file)
-        if re.search("bin/arduplane", file):
-            waffiles.append(file)
-        if re.search("bin/ardurover", file):
+        if re.search("bin/", file):
             waffiles.append(file)
 
 # Finally, print the data out in the format expected of a fact provider
