@@ -1,10 +1,18 @@
 class maverick_cloud9 (
-    $enabled = true,
+    $cloud9_active = true,
     $webport = "6789",
     $basepath = "/srv/maverick",
 ) {
     if $cloud9_installed == "no" {
         warning("Cloud9 will be compiled and can take a long time, please be patient..")
+    }
+    
+    if $cloud9_active == true {
+        $_ensure = running
+        $_enable = true
+    } else {
+        $_ensure = stopped
+        $_enable = false
     }
     
     # Install system ncurses first, so cloud9 doesn't have to compile it
@@ -47,8 +55,8 @@ class maverick_cloud9 (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     service { "maverick-cloud9":
-        ensure      => running,
-        enable      => true
+        ensure      => $_ensure,
+        enable      => $_enable,
     }
     
     if defined(Class["::maverick_security"]) {
