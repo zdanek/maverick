@@ -9,8 +9,8 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
-    $mavcesium_apikey = "",
-    $mavcesium_ports = [6790],
+    $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
+    $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
 ) {
     
@@ -216,14 +216,10 @@ class maverick_mavlink (
         ensure      => present,
         timeout     => 0,
     } ->
-    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/api_keys.txt":
-        content     => "{\"bing\": \"${mavcesium_apikey}\"}",
-        mode        => "644",
-        owner       => "mav",
-    } ->
     file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
         owner       => "mav",
         mode        => "644",
+        content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
     } ->
     file { "/srv/maverick/data/config/mavlink/cesium":
         ensure      => directory,
@@ -231,18 +227,15 @@ class maverick_mavlink (
         group       => "mav",
         mode        => "755",
     } ->
-    file { "/srv/maverick/data/config/mavlink/cesium/api_keys.txt":
-        ensure      => link,
-        target      => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/api_keys.txt",
-    } ->
-    file { "/srv/maverick/data/config/mavlink/cesium/mavcesium_default.ini":
-        ensure      => link,
-        target      => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini",
+    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/templates/index.html":
+        ensure      => present,
+        mode        => "644",
+        source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
     }
     
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "mavcesium":
-            ports       => $mavcesium_ports,
+            ports       => $mavcesium_port,
             ips         => hiera("all_ips"),
             proto       => "tcp"
         }
