@@ -43,6 +43,11 @@ class base::maverick (
         ensure      => link,
         target      => "/srv/maverick/software/maverick/conf",
     }
+    file { "/srv/maverick/data/config/maverick/localconf.json":
+        mode        => 644,
+        owner       => "mav",
+        group       => "mav",
+    } ->
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,
         mode        => 644,
