@@ -19,6 +19,8 @@ class Odroid(object):
                 self.data['model'] = val
                 if re.search('ODROID', val) or re.search('EXYNOS', val):
                     self.data['present'] = 'yes'
+                if re.search('SAMSUNG EXYNOS', val):
+                    self.data['model'] = "Odroid XU4"
             elif key == "Revision": 
                 self.data['revision'] = val
             elif key == "Serial": 
