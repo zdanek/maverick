@@ -146,6 +146,9 @@ if [ "$SELFUPDATE" == "true" ]; then
     if [ -e /srv/maverick/data/config/maverick/maverick-branch.conf ]; then
         source /srv/maverick/data/config/maverick/maverick-branch.conf
     fi
+    if [ -e /srv/maverick/data/config/maverick-branch.conf ]; then
+        source /srv/maverick/data/config/maverick-branch.conf
+    fi
     # If git branch not set by now, set it to stable by default
     if [ -z $MAVERICK_BRANCH ]; then
         MAVERICK_BRANCH=stable

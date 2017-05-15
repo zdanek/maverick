@@ -43,6 +43,9 @@ rm -rf /tmp/*
 
 # Delete puppet client data
 rm -rf /var/lib/puppet
+# Delete other var/lib data
+rm -f /var/lib/dhcp/*
+rm -rf /var/lib/dhcpcd5/*
 
 # Clean up maverick user data
 # Note: MUST rerun maverick configure again after removing these files, to restore defaults.
