@@ -122,11 +122,19 @@ class maverick_hardware::raspberry (
             onlyif      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
         }
+        service { "serial-getty@ttyAMA0":
+            ensure      => stopped,
+            enable      => false,
+        }
     } else {
         exec { "raspberry-serial":
             command     => "/usr/bin/raspi-config nonint do_serial 0",
             unless      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
+        }
+        service { "serial-getty@ttyAMA0":
+            ensure      => running,
+            enable      => true,
         }
     }
     
