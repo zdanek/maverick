@@ -19,7 +19,7 @@ if hash tput 2>/dev/null; then
 fi
 
 echo
-echo "${bgb}${bold}Maverick - UAV Companion Computer Automation${reset}"
+echo "${bgb}${bold}Maverick - UAV Companion Computer System${reset}"
 echo
 
 # Check that we're root or mav user
