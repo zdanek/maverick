@@ -26,25 +26,25 @@ class base {
     ### Bootstrap puppet
     class { "maverick_puppet::client":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::packages"],
+        require => Class["base::defaults", "base::packages", "base::locale"],
     }
     
     ### Before we do anything, set our IP in /etc/hosts
     class { "base::hostip":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::packages", "maverick_puppet::client"],
+        require => Class["base::defaults", "base::locale", "maverick_puppet::client"],
     }
     
     ### Setup base system users
     class { "base::users":
         stage	=> "bootstrap",
-        require		=> Class["base::defaults", "base::packages"],
+        require		=> Class["base::defaults", "base::locale"],
     }
     
     ### Setup base maverick environment
     class { "base::maverick":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::packages"],
+        require => Class["base::defaults", "base::locale"],
     }
 
     ###################################

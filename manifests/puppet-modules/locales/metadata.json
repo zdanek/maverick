@@ -1,18 +1,31 @@
 {
   "name": "saz-locales",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "author": "saz",
   "summary": "Manage locales on Linux",
-  "license": "Apache License, Version 2.0",
+  "license": "Apache-2.0",
   "source": "https://github.com/saz/puppet-locales.git",
   "project_page": "https://github.com/saz/puppet-locales",
   "issues_url": "https://github.com/saz/puppet-locales/issues",
+  "dependencies": [
+  
+  ],
+  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "Debian"
     },
     {
       "operatingsystem": "Ubuntu"
+    },
+    {
+      "operatingsystem": "openSUSE"
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "CentOS"
     }
   ],
   "requirements": [
@@ -25,11 +38,5 @@
       "version_requirement": "3.x"
     }
   ],
-  "description": "Manage locales on Linux",
-  "types": [
-  
-  ],
-  "dependencies": [
-  
-  ]
+  "description": "Manage locales on Linux"
 }
