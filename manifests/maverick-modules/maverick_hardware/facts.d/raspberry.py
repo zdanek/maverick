@@ -10,6 +10,7 @@ class Raspberry(object):
         
     def cpudata(self):
         # Interrogate cpuinfo as the main source of hardware info for the raspberry
+        # Table info is here: http://elinux.org/RPi_HardwareHistory
         revdata = {
             'Beta': ['Q1 2012', 'B (Beta)', '?', 256, 'Beta Board'],
             '0002':	['Q1 2012', 'B', '1.0', 256, ''],
@@ -27,10 +28,21 @@ class Raspberry(object):
             '0011': ['Q2 2014', 'Compute Module', '1.0', 512, '(Mfg by Sony)'],
             '0012': ['Q4 2014', 'A+', '1.0', 256, '(Mfg by Sony)'],
             '0013': ['Q1 2015', 'B+', '1.2', 512, '?'],
+            '0014': ['Q2 2014', 'Compute Module', '1.0', 512, '(Mfg by Embest)'],
+            '0015': ['?', 'A+', '1.1', 512, '(Mfg by Embest)'],
+            'a01040': ['Unknown', '2 Model B', '1.0', 1024, '(Mfg by Sony)'],
             'a01041': ['Q1 2015', '2 Model B', '1.1', 1024, '(Mfg by Sony)'],
-            'a21041': ['Q1 2015', '2 Model B', '1.1', 1024, '(Mfg by Embest, China)'],
+            'a21041': ['Q1 2015', '2 Model B', '1.1', 1024, '(Mfg by Embest)'],
+            '900021': ['Q3 2016', 'A+', '1.1', 512, '(Mfg by Sony)'],
+            '900032': ['Q2 2016?', 'B+', '1.2', 512, '(Mfg by Sony)'],
             '900092': ['Q4 2015', 'Zero', '1.2', 512, '(Mfg by Sony)'],
-            'a02082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony)']
+            '900093': ['Q4 2016', 'Zero', '1.3', 512, '(Mfg by Sony)'],
+            '920093': ['Q4 2016?', 'Zero', '1.3', 512, '(Mfg by Embest)'],
+            '9000c1': ['Q1 2017', 'Zero W', '1.1', 512, '(Mfg by Sony)'],
+            'a02082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony)'],
+            'a020a0': ['Q1 2017', 'Compute Module 3 (and CM3 Lite)', '1.0', 1024, '(Mfg by Sony)'],
+            'a22082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Embest)'],
+            'a32082': ['Q4 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony Japan)']
         }
         count = 0
         f = open('/proc/cpuinfo', 'r')
