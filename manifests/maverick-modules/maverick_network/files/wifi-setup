@@ -3,9 +3,9 @@
 # Simple script to setup wifi details for maverick default install from images
 read -p "Enter Wifi SSID: " ssid
 read -s -p "Enter Wifi Passphrase: " passphrase
-echo "$ssid : $passphrase"
+echo
 psk=$(wpa_passphrase "$ssid" "$passphrase" |grep -e '\spsk=' |awk -F= {'print $2'})
-echo "psk: $psk"
+
 sed -i -e "s/ssid\":\s\"MySSID\"/ssid\":    \"$ssid\"/" /srv/maverick/software/maverick/conf/localconf.json
 sed -i -e "s/psk\":\s\"averylonggeneratedkey\"/psk\":    \"$psk\"/" /srv/maverick/software/maverick/conf/localconf.json
 
