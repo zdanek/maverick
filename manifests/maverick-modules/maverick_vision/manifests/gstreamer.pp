@@ -53,7 +53,7 @@ class maverick_vision::gstreamer (
         }
         
         # Work out libpython path
-        if $architecture == "armv7l" {
+        if $architecture == "armv7l" or $architecture == "armv6l" {
             $libpython_path = "/usr/lib/arm-linux-gnueabihf"
         } elsif $architecture == "amd64" {
             $libpython_path = "/usr/lib/x86_64-linux-gnu"

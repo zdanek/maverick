@@ -23,7 +23,7 @@ class maverick_ros (
     # First try and determine build type based on OS and architecture
     } else {
         if ($distribution == "kinetic") {
-            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "amd64" or $architecture == "i386")) or
+            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "armv6l" or $architecture == "amd64" or $architecture == "i386")) or
                     ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
                     ($operatingsystem == "Debian" and $lsbdistcodename == "jessie" and ($architecture == "amd64" or $architecture == "arm64"))
             ) {
@@ -32,7 +32,7 @@ class maverick_ros (
                 $_installtype = "source"
             }
         } elsif $distribution == "jade" {
-            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and $architecture == "armv7l") or
+            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and ($architecture == "armv7l" or $architecture == "armv6l")) or
                     ($operatingsystem == "Ubuntu" and ($lsbdistcodename =="trusty" or $lsbdistcodename == "utopic" or $lsbdistcodename == "vivid") and ($architecture == "amd64" or $architecture == "i386"))
             ) {
                 $_installtype = "native"
