@@ -18,6 +18,8 @@ class maverick_cloud9 (
     # Install system ncurses first, so cloud9 doesn't have to compile it
     ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
 
+    ensure_packages(["npm", "nodejs"])
+    
     oncevcsrepo { "git-cloud9":
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",
@@ -30,6 +32,7 @@ class maverick_cloud9 (
         timeout		=> 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
+        require     => Package["nodejs"],
     } ->
     file { "/srv/maverick/.c9/user.settings":
         ensure      => present,
