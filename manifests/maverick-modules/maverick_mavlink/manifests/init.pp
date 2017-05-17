@@ -9,6 +9,7 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
+    $mavcesium_install = true,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
@@ -185,70 +186,72 @@ class maverick_mavlink (
     }
 
     ## Install mavcesium dependencies and services
-    # Overlay mavcesium master ontop of mavproxy installed version
-    package { "libffi-dev":
-        ensure      => installed,
-    } ->
-    exec { "remove-mavproxy-mavcesium":
-        command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
-        unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
-        require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
-    } ->
-    oncevcsrepo { "git-mavcesium":
-        gitsource   => $mavcesium_source,
-        dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
-        submodules  => true,
-    } ->
-    install_python_module { "mav-flask":
-        pkgname     => "Flask",
-        ensure      => latest,
-    } ->
-    install_python_module { "mav-twisted":
-        pkgname     => "twisted",
-        ensure      => present,
-    } ->
-    install_python_module { "mav-autobahn":
-        pkgname     => "autobahn",
-        ensure      => present,
-    } ->
-    install_python_module { "mav-configparser":
-        pkgname     => "configparser",
-        ensure      => latest,
-    } ->
-    install_python_module { "mav-pyopenssl":
-        pkgname     => "pyopenssl",
-        ensure      => latest,
-    } ->
-    install_python_module { "mav-service-identity":
-        pkgname     => "service-identity",
-        ensure      => present,
-    } ->
-    exec { "rm-configparser-dingleberry":
-        command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
-        onlyif      => "/bin/ls /usr/local/lib/python2.7/dist-packages/configparser/__init__.py",
-    } ->
-    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
-        owner       => "mav",
-        mode        => "644",
-        content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
-    } ->
-    file { "/srv/maverick/data/config/mavlink/cesium":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/templates/index.html":
-        ensure      => present,
-        mode        => "644",
-        source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
-    }
-    
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "mavcesium":
-            ports       => $mavcesium_port,
-            ips         => hiera("all_ips"),
-            proto       => "tcp"
+    if $mavcesium_install == true {
+        # Overlay mavcesium master ontop of mavproxy installed version
+        package { "libffi-dev":
+            ensure      => installed,
+        } ->
+        exec { "remove-mavproxy-mavcesium":
+            command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
+            unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
+            require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
+        } ->
+        oncevcsrepo { "git-mavcesium":
+            gitsource   => $mavcesium_source,
+            dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
+            submodules  => true,
+        } ->
+        install_python_module { "mav-flask":
+            pkgname     => "Flask",
+            ensure      => latest,
+        } ->
+        install_python_module { "mav-twisted":
+            pkgname     => "twisted",
+            ensure      => present,
+        } ->
+        install_python_module { "mav-autobahn":
+            pkgname     => "autobahn",
+            ensure      => present,
+        } ->
+        install_python_module { "mav-configparser":
+            pkgname     => "configparser",
+            ensure      => latest,
+        } ->
+        install_python_module { "mav-pyopenssl":
+            pkgname     => "pyopenssl",
+            ensure      => latest,
+        } ->
+        install_python_module { "mav-service-identity":
+            pkgname     => "service-identity",
+            ensure      => present,
+        } ->
+        exec { "rm-configparser-dingleberry":
+            command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
+            onlyif      => "/bin/ls /usr/local/lib/python2.7/dist-packages/configparser/__init__.py",
+        } ->
+        file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
+            owner       => "mav",
+            mode        => "644",
+            content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
+        } ->
+        file { "/srv/maverick/data/config/mavlink/cesium":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
+        file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/templates/index.html":
+            ensure      => present,
+            mode        => "644",
+            source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
+        }
+        
+        if defined(Class["::maverick_security"]) {
+            maverick_security::firewall::firerule { "mavcesium":
+                ports       => $mavcesium_port,
+                ips         => hiera("all_ips"),
+                proto       => "tcp"
+            }
         }
     }
     
