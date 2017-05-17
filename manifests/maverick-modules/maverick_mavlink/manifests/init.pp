@@ -219,9 +219,9 @@ class maverick_mavlink (
         pkgname     => "pyopenssl",
         ensure      => latest,
     } ->
-    install_python_module { "mav-service_identity":
-        pkgname     => "service_identity",
-        ensure      => latest,
+    install_python_module { "mav-service-identity":
+        pkgname     => "service-identity",
+        ensure      => present,
     } ->
     exec { "rm-configparser-dingleberry":
         command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",

@@ -15,7 +15,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
         unless downcase($pkgname) in $python_modules {
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
-                pkgname => $pkgname,
+                pkgname => "${pkgname}",
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -26,7 +26,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
       'latest': {
         if downcase($pkgname) in $python_modules {
             python::pip { $title:
-                pkgname => $pkgname,
+                pkgname => "${pkgname}",
                 ensure => 'latest',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -36,7 +36,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
         } else {
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
-                pkgname => $pkgname,
+                pkgname => "${pkgname}",
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -47,7 +47,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
       'absent': {
         if downcase($pkgname) in $python_modules {
           python::pip { $title:
-            pkgname => $pkgname,
+            pkgname => "${pkgname}",
             ensure => 'absent'
           }
         }
