@@ -2,7 +2,7 @@
 import subprocess
 
 pips = ["global", "sitl", "fc"]
-pippaths = {"global": "/usr/bin/pip", "sitl": "/srv/maverick/.virtualenvs/sitl/bin/pip", "fc": "/srv/maverick/.virtualenvs/fc/bin/pip"}
+pippaths = {"global": "pip", "sitl": "/srv/maverick/.virtualenvs/sitl/bin/pip", "fc": "/srv/maverick/.virtualenvs/fc/bin/pip"}
 modules = {}
 for vpip in pips:
     modules[vpip] = {}
