@@ -22,12 +22,6 @@ class maverick_dev::ardupilot (
         ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi"])
     }
     
-    # Waf build requires python future
-    install_python_module { 'pip-future':
-        pkgname     => 'future',
-        ensure      => present,
-    }
-    
     # If a custom ardupilot repo is specified, configure the upstream automagically
     exec { "ardupilot_setupstream":
         command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",

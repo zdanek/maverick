@@ -186,6 +186,9 @@ class maverick_mavlink (
 
     ## Install mavcesium dependencies and services
     # Overlay mavcesium master ontop of mavproxy installed version
+    package { "libffi-dev":
+        ensure      => installed,
+    } ->
     exec { "remove-mavproxy-mavcesium":
         command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
         unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
@@ -198,23 +201,27 @@ class maverick_mavlink (
     } ->
     install_python_module { "mav-flask":
         pkgname     => "Flask",
-        ensure      => present,
-        timeout     => 0,
+        ensure      => latest,
     } ->
     install_python_module { "mav-twisted":
         pkgname     => "twisted",
         ensure      => present,
-        timeout     => 0,
     } ->
     install_python_module { "mav-autobahn":
         pkgname     => "autobahn",
         ensure      => present,
-        timeout     => 0,
     } ->
     install_python_module { "mav-configparser":
         pkgname     => "configparser",
-        ensure      => present,
-        timeout     => 0,
+        ensure      => latest,
+    } ->
+    install_python_module { "mav-pyopenssl":
+        pkgname     => "pyopenssl",
+        ensure      => latest,
+    } ->
+    install_python_module { "mav-service_identity":
+        pkgname     => "service_identity",
+        ensure      => latest,
     } ->
     exec { "rm-configparser-dingleberry":
         command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
