@@ -40,12 +40,12 @@ class maverick_vision::camera_streaming_daemon (
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "vision-rtsp-udp":
             ports       => [$rtsp_port],
-            ips         => hiera("all_ips"),
+            ips         => hiera("firewall_ips"),
             proto       => "udp", # allow both tcp and udp for rtsp and rtp
         }
         maverick_security::firewall::firerule { "vision-rtsp-tcp":
             ports       => [$rtsp_port],
-            ips         => hiera("all_ips"),
+            ips         => hiera("firewall_ips"),
             proto       => "tcp", # allow both tcp and udp for rtsp and rtp
         }
     }

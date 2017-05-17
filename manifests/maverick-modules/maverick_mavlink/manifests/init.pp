@@ -249,7 +249,7 @@ class maverick_mavlink (
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "mavcesium":
                 ports       => $mavcesium_port,
-                ips         => hiera("all_ips"),
+                ips         => hiera("firewall_ips"),
                 proto       => "tcp"
             }
         }

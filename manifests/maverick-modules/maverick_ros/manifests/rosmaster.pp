@@ -22,7 +22,7 @@ define maverick_ros::rosmaster (
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "rosmaster-${name}":
                 ports       => ["${port}"],
-                ips         => hiera("all_ips"),
+                ips         => hiera("firewall_ips"),
                 proto       => "tcp"
             }
         }

@@ -13,7 +13,7 @@
     //  so be careful what is put in here.
     // These should be IPs, not CIDR ranges, as some logic won't handle CIDR syntax.
     // If all_ips is left blank, ALL IPs will be allowed for configured rules.
-    "all_ips": [
+    "firewall_ips": [
     ],
 
 	"git_username": 	"",
