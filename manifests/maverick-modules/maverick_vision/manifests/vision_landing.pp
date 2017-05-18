@@ -37,7 +37,7 @@ class maverick_vision::vision_landing (
     }
     
     # Create data and log directories
-    file { ["/srv/maverick/data/vision", "/srv/maverick/data/vision/vision_landing", "/srv/maverick/var/log/vision/vision_landing", "/srv/maverick/var/log/vision/vision_landing"]:
+    file { ["/srv/maverick/data/vision", "/srv/maverick/data/vision/vision_landing", "/srv/maverick/var/log/vision", "/srv/maverick/var/log/vision/vision_landing"]:
         owner       => "mav",
         group       => "mav",
         mode        => "755",
