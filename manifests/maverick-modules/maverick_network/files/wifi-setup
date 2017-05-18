@@ -4,20 +4,23 @@
 read -p "Enter Wifi SSID: " ssid
 read -s -p "Enter Wifi Passphrase: " passphrase
 echo
-psk=$(wpa_passphrase "$ssid" "$passphrase" |grep -e '\spsk=' |awk -F= {'print $2'})
+psk=$(wpa_passphrase $ssid $passphrase |grep -e '\spsk=' |awk -F= {'print $2'})
 
 sed -i -e "s/ssid\":\s\"MySSID\"/ssid\":    \"$ssid\"/" /srv/maverick/software/maverick/conf/localconf.json
 sed -i -e "s/psk\":\s\"averylonggeneratedkey\"/psk\":    \"$psk\"/" /srv/maverick/software/maverick/conf/localconf.json
 
+sudo sed -i -e "s/wpa-ssid MySSID/wpa-ssid $ssid/" /etc/network/interfaces
+sudo sed -i -e "s/wpa-psk  averylonggeneratedkey/wpa-psk $psk/" /etc/network/interfaces
+
 # If we detect wlan0 (default interface) mac address, use it to define wman0
-mac=$(ip link show wlan0 |grep link/ether |awk {'print $2'})
+mac=$(ip link show wlan0 2>/dev/null|grep link/ether |awk {'print $2'})
 if [ "x${mac}" != "x" ]; then
     sed -i -e "s/macaddress\":\s\"xx:xx:xx:xx:xx:xx\"/macaddress\": \"$mac\"/" /srv/maverick/software/maverick/conf/localconf.json
 fi
 
 echo
-echo "Updated config, running configure"
-maverick configure
+echo "Updated config, restarting networking.. (If you do not see 'Done' below shortly, reset the power)"
+nohup sudo systemctl restart networking >/dev/null 2>&1
 
 echo
 echo "Done"
