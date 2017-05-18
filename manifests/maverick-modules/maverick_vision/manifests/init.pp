@@ -9,7 +9,7 @@ class maverick_vision (
     $camera_streaming_daemon = false,
 ) {
 
-    file { "/srv/maverick/data/config/vision":
+    file { ["/srv/maverick/data/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

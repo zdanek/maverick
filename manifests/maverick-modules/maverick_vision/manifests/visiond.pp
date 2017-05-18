@@ -11,14 +11,6 @@ class maverick_vision::visiond (
         ensure      => present,
     }
      
-    # Create log directory
-    file { "/srv/maverick/var/log/vision":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-        ensure      => "directory",
-    }
-    
     # Link maverick-visiond into central bin directory
     file { "/srv/maverick/software/maverick/bin/maverick-visiond":
         ensure      => link,
