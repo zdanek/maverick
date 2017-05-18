@@ -1,7 +1,21 @@
 class maverick_hardware::joule (
     $remove_more_packages = true,
     $ipu4_blacklist = true,
+    $serialconsole = false,
 ) {
+    
+    # Control serial console, disable by default to clear the way for mavlink connection
+    if $serialconsole == false {
+        service {"serial-getty@ttyS1":
+            ensure  => stopped,
+            enable  => false
+        }
+    } else {
+        service { "serial-getty@ttyS1":
+            ensure  => running,
+            enable  => true
+        }
+    }
     
     # Expand rootfs
     if $rootpart_expanded == "False" and $rootpart_device and $rootpart_partition and $rootpart_partno {
