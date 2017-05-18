@@ -10,6 +10,7 @@ class maverick_hardware::raspberry (
     $xgl = false,
     $v4l2 = true,
     $overpower_usb = false,
+    $auto_login = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     ) {
 
@@ -44,6 +45,20 @@ class maverick_hardware::raspberry (
         command     => "/usr/bin/raspi-config nonint do_memory_split ${gpumem}",
         unless      => "/bin/grep 'gpu_mem=${gpumem}' /boot/config.txt",
         require     => Package["raspi-config"]
+    }
+    
+    if $auto_login == false {
+        file { "/etc/systemd/system/getty.target.wants/getty@tty1.service":
+            ensure  => link,
+            target  => "/lib/systemd/system/getty@.service",
+            force   => true,
+        }
+    } else {
+        file { "/etc/systemd/system/getty.target.wants/getty@tty1.service":
+            ensure  => link,
+            target  => "/etc/systemd/system/autologin@.service",
+            force   => true,
+        }
     }
     
     confval{ "rpi-enableuart":
