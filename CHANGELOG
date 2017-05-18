@@ -1,8 +1,11 @@
 # Maverick Changelog
 
-## [2017-05-10] Initial Release
- - OS Images released: Intel Joule, Odroid XU3/XU4, Raspbery Pi (all models)
- - Additional platforms supported: Beaglebone Black
+## [2017-05-18] 1.0.2 Release
+ - Various bugfixes
+ - Much improved support for Raspberry Pi Zero and Zero W - fixed MAVCesium and Cloud9
+ - Improved wifi-setup to faster and more immediate
+ - Fixed locales
+ - Initial Documentation published and tested for this release
 
 ## [2017-05-15] 1.0.1 Release
  - Various bugfixes
@@ -12,3 +15,6 @@
  - ArduSub, ArduRover, AntennaTracker SITL support
  - SITL config file
  
+## [2017-05-10] Initial Release
+ - OS Images released: Intel Joule, Odroid XU3/XU4, Raspbery Pi (all models)
+ - Additional platforms supported: Beaglebone Black
