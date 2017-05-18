@@ -5,5 +5,5 @@ Maverick is a system for creating, maintaining and controlling UAV Companion Com
 
 Please see <a href='https://fnoop.github.io/maverick/' target="maverick_docs">the documentation</a> for more info and how to install it.
 
-<img src="https://fnoop.github.io/maverick/media/maverick-architecture.jpg" width="100%">
+<img src="https://fnoop.github.io/maverick/media/maverick-architecture.svg" width="100%">
 <img src="https://fnoop.github.io/maverick/media/maverick-snapshots.jpg" width="100%">
