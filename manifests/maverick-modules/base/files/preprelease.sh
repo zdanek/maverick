@@ -53,6 +53,7 @@ rm -rf /var/lib/dhcpcd5/*
 rm /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/*
+rm -f /srv/maverick/.c9/metadata/tab*
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
 gst-inspect-1.0 # restore gstreameer .cache
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
