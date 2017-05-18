@@ -1,16 +1,16 @@
-## About Maverick?
-Maverick is a system for creating, installing, configuring, updating and maintaining UAV Companion Computers, with a high level of automation, consistency and reliability, minimizing risk.
+## What is Maverick?
+Maverick is a system for creating, maintaining and controlling UAV Companion Computers.  The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol, specifically ArduPilot.
 
-The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol.
+<img src="media/maverick-snapshots.jpg" width="100%">
 
 ### Why Maverick?
 UAVs, as flight vehicles that share a busy airspace and are autonomous to varying degrees, are becoming more regulated and licensed globally and as such require better and more thorough engineering.  Companion Computers are often used in conjunction with dedicated Flight Controllers to influence partially or entirely the characteristics of flight, and should be subject to the same rigours of engineering and development as any complex system in a critical environment.
 
-Maverick applies Configuration Management to the problem of building and maintaining Companion Computers, drawing on decades of engineering experience to bring increased reliability and reduced risk to this important technology.  Configuration Management is a tried and tested engineering process and is almost completely ubiquitous in aerospace and military engineering.
+Maverick brings Automation and Configuration Management to the problem of building and maintaining Companion Computers, drawing on decades of engineering experience to bring increased reliability and reduced risk to this important technology.  Configuration Management is a tried and tested engineering process and is ubiquitous in aerospace and military engineering.
 
-UAV Companion Computers also suffer from a lack of collaborative development, unlike flight controller development.  Software for Companion Computers is usually distributed in the form of modified vendor OS images or adhoc scripts.  These are simple to download and install, but are difficult or clumsy to create and collaborate on, and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce logic and images for that platform.
+UAV Companion Computers also suffer from a lack of collaborative development, unlike flight controller development.  Software for Companion Computers is usually distributed in the form of modified vendor OS images or adhoc scripts.  These are simple to download and install, but are difficult or clumsy to create and collaborate on developing, and are not upgradable.  If new features are developed, a new image must be released and end-users must download the entire new image and reinstall from scratch.  Each type of hardware or OS typically requires a new effort to produce logic and images for that platform.
 
-Instead of creating, distributing and maintaining separate logic and large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and git workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevant.
+Instead of creating, distributing and maintaining separate logic and large complete OS images and package repositories for each different type of computer and OS, Maverick allows agile, collaborative development of companion computers through more familiar coding and github workflow, and is OS and hardware agnostic. The same environment is created on any supported computer, on any supported OS, so the underlying platform becomes largely irrelevant.
 
 Maverick provides easy to install OS images for convenience, but can be entirely installed from a few K of github code.  When new features are developed using Maverick, existing installs can be updated quickly and safely with a single command without any disruption to data or running services.
 
@@ -21,7 +21,7 @@ Lots!  And lots more planned!
 - Configures the computer hardware and peripherals
 - Configures network interfaces, addresses, services, wireless setup
 - Hardens security, configures firewall, antivirus, intrusion detection, reactive brute-force defences
-- Configures flight controller proxy (Mavproxy, mavlink-router, cmavnode), Dronekit and MavROS environment
+- Configures flight controller proxy (MAVProxy, mavlink-router, cmavnode), Dronekit and MAVROS environment
 - Compiles/installs Gstreamer and OpenCV software, Aruco fiducial marker software, FPV intelligent vision daemon, ROS, Cloud9 IDE
 - Dev environment installs and configures browser IDE (Cloud9), Ardupilot SITL, proxy, dronekit environment
 
@@ -34,12 +34,12 @@ The declarative code files are called manifests and are arranged in modules.  Th
 
 ### Hardware support
 Maverick is designed to be cross platform and hardware agnostic. Initially it is being developed and tested on the following platforms:
-- Beaglebone Black (Debian and Ubuntu)
 - Raspberry Pi (3, 2 Model B, A+, Raspbian and Ubuntu)
 - ODROID (XU3/XU4, Ubuntu)
 - Intel Joule
+- Beaglebone Black (Debian and Ubuntu)
 
-Support will be added for more hardware in the future, eg:
+Support will hopefully be added for more hardware in the future, eg:
 - Nvidia TX1/TX2
 - Intel Edison
 - Up Board/Squared

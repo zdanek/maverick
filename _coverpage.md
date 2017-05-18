@@ -11,8 +11,8 @@
 - Web IDE, Development Environment, Cross-Compile Firmware
 - Computer Vision, Video Streaming, Vision Landing
 
-[What is Maverick?](#about-maverick)
-[Quick Start](#installation)
+[What is Maverick?](/about)
+[Quick Start](/#installation)
 
 <!-- background image
 ![](_media/bg.png) -->

@@ -50,10 +50,10 @@ The Web IDE has a browser based SSH client which is open at the bottom of the wi
 **Note: The username is 'mav' and the default password is 'wingman' for both ssh and web access.**
 
 After logging in, it's strongly recommended to firstly update and configure Maverick, in particular this will expand the root filesystem to fill the SD card you are using:
-```
+```bash
 maverick self-update
 maverick configure
-reboot
+sudo reboot
 ```
 When you reboot, it will resize the partitions and filesystems for you.
 
@@ -77,20 +77,16 @@ See more things you can do with the `maverick` command:
 - Once the initial Maverick run is complete, the system should be in exactly the same state as if installed from OS image.
 
 First update the OS, download Maverick and do a bootstrap run and reboot:
-```
-sudo apt-get update && sudo apt-get -y upgrade
+```bash
+$ sudo apt-get update && sudo apt-get -y upgrade
 sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
 cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot
 ```
-Next, login as the 'mav' user (default password is 'wingman') and run Maverick with an end-state environment, eg. for flight/production environment:
-```
-maverick --env=flight configure
-```
-Or for development environment:
-```
-maverick --env=dev configure
-```
+Next, login as the 'mav' user (default password is 'wingman') and run Maverick with an end-state environment:  
+For flight/production environment: `maverick --env=flight configure`  
+Or for development environment: `maverick --env=dev configure`
+
 Maverick will then calculate what needs to be done on the system and perform the changes, based on the configuration and underlying code.  This process can take a long time - between 1 and 24 hours depending on the speed of the hardware and network.  It provides output as it goes along but when doing large components (like compiling a large piece of software) it can appear to pause for a while.
 ______
 
@@ -182,26 +178,35 @@ maverick disable visiond
 ## Layout and Config
 
 ### Layout
-Maverick has a simple layout and is consistent across all platforms.  Almost everything under Maverick control lives in /srv/maverick.  The exceptions to this are various config and manifests that need to live within OS system paths, for example /etc/systemd for service manifests and /etc/profile.d for various environment variables.  
+Maverick has a simple layout and is consistent across all platforms.  As part of the bootstrap, Maverick creates a 'mav' OS user which all services run under, and almost everything under Maverick control lives in the mav user home directory - /srv/maverick.  The exceptions to this are various config and manifests that need to live within OS system paths, for example /etc/systemd for service manifests and /etc/profile.d for various environment variables.  
 
-Within /srv/maverick (which is the home directory for mav user), there are four main areas:
+Within /srv/maverick (the home directory for mav user), there are four main areas:
  - code : all coding, from ardupilot to dronecode to python to sample code
  - data : contains maverick and app config, app data, video output etc
  - software : all compiled and installed maverick software components, including maverick itself
  - var : all temporary or runtime files, logs, build areas
 
-** Note: The '~' in Linux means the current user home directory, so ~/ in the Maverick 'mav' user is ~/software/maverick **
+** Note: The '~' in Linux means the current user home directory, so ~/ in the Maverick 'mav' user is /srv/maverick/ **
 
-These areas are designed such that the ~/code and ~/data directories will contain files that you might care about and will want to backup.  The ~/software directory and all the components within are installed as part of maverick install, do not need to be backed up and should not be altered.  The ~/var directory does not need to be backed up and contains temporary files created by various software components or running processes.
+These areas are designed so that the ~/code and ~/data directories will contain files that you will want to backup.  The ~/software directory and all the components within are installed as part of maverick install, do not need to be backed up and should not be altered.  The ~/var directory does not need to be backed up and contains temporary files created by various software components or running processes.
 
 ### Maverick Config
-There are numerous methods of changing maverick config, and the config itself is extensive and complex.  The underlying mechanisms and various config options are explored further in [About](/about#about-maverick) and [Modules](/#/modules/intro).  However, to get started a single config file can be used:  
-*~/data/config/maverick/localconf.json*
+There are numerous methods of changing maverick config, and the config itself is extensive and complex.  The underlying mechanisms and various config options are explored further in [About](/about#about-maverick) and [Modules](/modules/intro).  However, to get started a single config file can be used: **~/data/config/maverick/localconf.json**.
 
 #### localconf.json
-This file can be used to set any parameter within the Maverick manifests.  It contains some basic sample config entries to get you started, but any class::parameter setting can be used here.  This file is 'frozen' from git and can never be committed back, so is a good place to put settings like passwords and wifi access details.  A helper utility 'wifi-setup' will help you setup wifi settings within localconf.json more easily.
+This file can be used to set any parameter within the Maverick manifests.  It contains some basic sample config entries to get you started, but any class::parameter setting can be used here.  This file is 'frozen' from git and can never be committed back, so is a good place to put settings like passwords and wifi access details.  A helper utility 'wifi-setup' will help you setup wifi settings within localconf.json more easily.  If any settings are changed, added or removed in localconf.json, `maverick configure` needs to be run to activate these changes.
 
 #### Maverick code branch
-The `maverick self-update` command updates the Maverick software itself from github, which is the primary mechanism for updating Maverick.  By default it updates from the 'stable' branch, which contains the latest code that has had at least some testing and review.  The config file *~/data/config/maverick-branch.conf* contains the github branch that Maverick will use to update.  Simply change this from 'stable' to 'master' and run `maverick self-update` to switch to the latest development code.
+The `maverick self-update` command updates the Maverick software itself from github, which is the primary mechanism for updating Maverick.  By default it updates from the 'stable' branch, which contains the latest code that has had at least some testing and review.  The config file *~/data/config/maverick-branch.conf* contains the github branch that Maverick will use to update.  Simply change this from 'stable' to 'master' and run `maverick self-update` to switch to the latest development code.  Unless you want to test changes to Maverick under development, it is strongly recommended to leave this as stable.
 
 ### App Config
+
+#### Controlled config
+'Controlled config' is where the config for an app or component is controlled by Maverick.  The config is controlled by changing/adding/deleting parameters in localconf.json and running `maverick configure`.  Maverick then calculates the influence of the parameters and generates the config.  It is important to note that in most cases if the generated config is changed manually it will be overwritten by Maverick the next time a configure run is performed.
+
+Why have Controlled Config?  In some circumstances, the config for an app or component can be quite complex and difficult to setup, or once set is unlikely to be changed much.  Maverick tries to automate as much as possible for the end user and automating configuration is part of this process.  In addition, controlling config through localconf parameters allows the possibility of complete automation for building or cloning companion computers, all with consistent and repeatable settings.
+
+#### Uncontrolled config
+Uncontrolled config are traditional config files for apps or components that are not controlled by Maverick and can be altered by traditional editing.  In most cases default config files are provided by Maverick into ~/data/config, from which point on they are left for the end user to change as they wish.  This makes more sense where the user will want to quickly and easily alter settings, for example camera resolution.
+
+All config settings are described in details in the [Modules](/modules/intro) documentation.
