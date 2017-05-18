@@ -25,6 +25,8 @@ Lots!  And lots more planned!
 - Compiles/installs Gstreamer and OpenCV software, Aruco fiducial marker software, FPV intelligent vision daemon, ROS, Cloud9 IDE
 - Dev environment installs and configures browser IDE (Cloud9), Ardupilot SITL, proxy, dronekit environment
 
+<img src="media/maverick-architecture.svg" width="100%">
+
 Even though Maverick enables a rich set of functionality out of the box, the main goal of the project is actually to provide a framework for automated system configuration, rather than the features themselves.  The actual functionality of the platform is just beginning, and is at a very early stage.
 
 ### How does it work?
