@@ -38,4 +38,9 @@ class maverick_hardware (
 		class { "maverick_hardware::peripheral::realsense": }
 	}
 	
+	# Setup Seek thermal cameras
+	if ($seekthermal_present == "yes") {
+		class { "maverick_hardware::peripheral::seekthermal": }
+	}
+	
 }
