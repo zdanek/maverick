@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/usr/bin/node /srv/maverick/software/cloud9/server.js -p <%= @webport %> -l 0.0.0.0 -w <%= @basepath %> --packed --cache -a mav:wingman
+ExecStart=/usr/bin/nodejs /srv/maverick/software/cloud9/server.js -p <%= @webport %> -l 0.0.0.0 -w <%= @basepath %> --packed --cache -a mav:wingman
 User=mav
 
 [Install]
