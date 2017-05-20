@@ -1,10 +1,5 @@
 class base::packages {
 
-    # Remove large packages that come with raspbian as otherwise we don't have enough space to continue
-    package { "sonic-pi":
-	    ensure		=> purged
-    }
-    
     # Remove some stuff that definitely doesn't belong in a robotics build
     package { ["kodi", "kodi-bin", "kodi-data", "libreoffice", "ubuntu-mate-libreoffice-draw-icons", "libreoffice-base-core", "libreoffice-common", "libreoffice-core"]:
         ensure      => purged
