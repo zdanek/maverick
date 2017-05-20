@@ -29,6 +29,7 @@ class base::packages {
         "lsof",
         "tcpdump",
         "whois",
+        "debian-goodies",
     ])
 
     if $operatingsystem == "Ubuntu" {

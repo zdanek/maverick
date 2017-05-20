@@ -12,6 +12,7 @@ class maverick_hardware::raspberry (
     $overpower_usb = false,
     $auto_login = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
+    $remove_extrapackages = true,
     ) {
 
     # https://github.com/fnoop/maverick/issues/234
@@ -22,6 +23,14 @@ class maverick_hardware::raspberry (
         ensure      => absent
     }
     
+    # Remove large packages to save space
+    if $remove_extrapackages == true {
+        package { ["wolfram-engine", "freepats", "realvnc-vnc-server", "scratch", "nuscratch"]:
+            ensure  => asbent,
+        }
+    }
+    
+    # Install raspberry supporting utils
     ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
     # Install wiringpi through pip as it's not always available through apt
     install_python_module { 'pip-wiringpi':
