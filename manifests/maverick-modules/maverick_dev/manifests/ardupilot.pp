@@ -18,8 +18,10 @@ class maverick_dev::ardupilot (
         submodules  => true,
     }
     ensure_packages(["make", "gawk", "g++", "zip", "genromfs", "python-empy"])
-    if $armeabi_packages {
-        ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi"])
+    if $armeabi_packages == true {
+        ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "libnewlib-arm-none-eabi", "libstdc++-arm-none-eabi-newlib"], {'ensure'=>'present'})
+    } else {
+        ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "libnewlib-arm-none-eabi", "libstdc++-arm-none-eabi-newlib"], {'ensure'=>'purged'})
     }
     
     # If a custom ardupilot repo is specified, configure the upstream automagically
