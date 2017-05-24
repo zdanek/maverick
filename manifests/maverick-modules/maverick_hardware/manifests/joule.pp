@@ -56,7 +56,7 @@ class maverick_hardware::joule (
         ]:
             ensure      => purged
         }
-        package { ["chromium-browser", "liboxideqtcore0", "pepperflashplugin-nonfree", "proj-data", "example-content", "ubuntu-touch-sounds", "fonts-lato", "hplip-data"]:
+        package { ["chromium-browser", "liboxideqtcore0", "pepperflashplugin-nonfree", "example-content", "ubuntu-touch-sounds", "fonts-lato", "hplip-data"]:
             ensure      => purged
         }
     }
