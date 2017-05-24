@@ -8,7 +8,27 @@ class maverick_vision::gstreamer (
         ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
-    	}
+            # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
+            file { "/srv/maverick/var/build/gstreamer":
+                ensure      => directory,
+                owner       => "mav",
+                group       => "mav",
+                mode        => "755",
+            } ->
+            oncevcsrepo { "git-gstreamer_gst_rtsp_server":
+                gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
+                dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                revision    => "1.4.4",
+            } ->
+            exec { "gstreamer_gst_rtsp_server":
+                timeout     => 0,
+                environment => ["PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig"],
+                command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --libdir=/usr/lib/arm-linux-gnueabihf --disable-gtk-doc --prefix=/usr && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                creates     => "/usr/local/lib/libgstrtspserver-1.0.so",
+                require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"] ]
+            }
+        }
         # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
         if $odroid_present == "yes" and $camera_odroidmfc == "yes" and 1 == 2 {
             ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
