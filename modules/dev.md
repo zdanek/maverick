@@ -30,8 +30,8 @@ To change the vehicle type, set localconf parameter:
 All the main vehicle types are supported: copter, plane, sub, rover, antennatracker.  Note that changing the vehicle type here also determines which vehicle type is loaded into SITL, and will involve re-compiling the firmware for the vehicle type (which is done automatically).
 ### Compile/Upload to Flight Controller
 It is possible (and straight forward) to use Maverick on a companion computer to cross compile firmware for an actual Flight Controller hardware, and to upload the firmware.  
-To do this for the px4/pixhawk and associated boards (eg. Pixracer, Cube/Pixhawk2, Pixhawk3 etc), Maverick installs the Arm EABI compiler toolchain.  To disable/remove this toolchains, set localconf parameter:  
-`"maverick_dev::ardupilot::armeabi_packages": false`  
+To do this for the px4/pixhawk and associated boards (eg. Pixracer, Cube/Pixhawk2, Pixhawk3 etc), Maverick needs to install the Arm EABI compiler toolchain.  To enable this toolchain which is disabled by default, set localconf parameter:  
+`"maverick_dev::ardupilot::armeabi_packages": true`
 
 In order to cross compile and upload the firmware for a Pixhawk, simply plug the Pixhawk into the USB port of the companion computer, and type:
 ```bash
