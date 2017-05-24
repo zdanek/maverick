@@ -1,0 +1,23 @@
+# Config file for vision_seek
+
+# FPS - Kludge factor for gstreamer filesink interpolation
+FPS=
+
+# Scale output image size by multiple
+SCALE=
+
+# Apply opencv colormap: http://docs.opencv.org/3.2.0/d3/d50/group__imgproc__colormap.html
+# Note this has to be integer value relating to enum, not the enum itself
+COLORMAP=
+
+# Rotate output image in degrees, only possible values are 90,180,270
+ROTATE=
+
+# Camtype is seek or seekpro
+CAMTYPE=
+
+# Opencv/Gstreamer output pipeline, eg:
+# OUTPUT="appsrc ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_seek/vision_seek.avi"
+# OUTPUT="appsrc ! autovideoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false"
+# OUTPUT="window"
+OUTPUT=

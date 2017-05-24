@@ -6,6 +6,7 @@ class maverick_vision (
     $aruco = true,
     $orb_slam2 = false,
     $vision_landing = true,
+    $vision_seek = true,
     $camera_streaming_daemon = false,
 ) {
 
@@ -48,4 +49,8 @@ class maverick_vision (
         class { "maverick_vision::camera_streaming_daemon": }
     }
 
+    if ($seekthermal_present == "yes") {
+        class { "maverick_vision::vision_seek": }
+    }
+    
 }

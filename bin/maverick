@@ -288,6 +288,7 @@ if [ "$STATUS" == "true" ]; then
     statusout+='------------:------------:------------------\n'
     (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
     (systemctl status maverick-vision_landing >/dev/null 2>&1); visland=$?; (systemctl is-enabled maverick-vision_landing >/dev/null 2>&1); vislanden=$?; statusout+=$(status "vision_landing" "Vision Landing" $visland $vislanden)
+    (systemctl status maverick-vision_seek >/dev/null 2>&1); seek=$?; (systemctl is-enabled maverick-vision_seek >/dev/null 2>&1); seeken=$?; statusout+=$(status "vision_seek" "Seek Thermal Vision" $seek $seeken)
 
     echo -e $statusout | column -c 3 -s : -t
     echo

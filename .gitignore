@@ -16,6 +16,7 @@ bin/cmavnode.sh
 bin/mavlink-router.sh
 bin/mavproxy.sh
 bin/rosmaster.sh
+bin/vision_seek.sh
 bin/sitl.sh
 conf/local-nodes/
 conf/maverick-branch.conf
