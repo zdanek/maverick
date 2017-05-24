@@ -1,5 +1,12 @@
 # Maverick Changelog
 
+## [2017-05-24] 1.0.3 Release
+ - Various bugfixes
+ - Streamline Raspberry build to fix on 8Gb SD card
+ - More fixes for Raspberry Pi Zero/W - disable autologin and recompile OpenCV for armv6l, fix Cloud9 IDE
+ - Improve docs including pretty pictures
+ - Add support for Seek Thermal camera and vision_seek daemon/service
+
 ## [2017-05-18] 1.0.2 Release
  - Various bugfixes
  - Much improved support for Raspberry Pi Zero and Zero W - fixed MAVCesium and Cloud9
