@@ -45,7 +45,7 @@ class maverick_hardware::joule (
         require     => Exec['apt_update'],
     }
     
-    # eMMC only has 16b, so remove some unnecessary packages if we've started from desktop
+    # 550 eMMC only has 8Gb, so remove some unnecessary packages if we've started from desktop
     if $remove_more_packages == true {
         package { [
             "fonts-noto-cjk",  "firefox", "thunderbird", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
@@ -54,6 +54,9 @@ class maverick_hardware::joule (
             "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-ppdc", "cups-server-common",
             "shotwell", "shotwell-common", "transmission-common", "transmission-gtk", "libwebkit2gtk-4.0-37-gtk2", "fonts-nanum", 
         ]:
+            ensure      => purged
+        }
+        package { ["chromium-browser", "liboxideqtcore0", "pepperflashplugin-nonfree", "proj-data", "example-content", "ubuntu-touch-sounds", "fonts-lato", "hplip-data"]:
             ensure      => purged
         }
     }
@@ -88,9 +91,9 @@ class maverick_hardware::joule (
     package { ["intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2"]:
         ensure          => latest,
     } ->
-    # Yes this is wierd, but it's needed for intel graphics updater
+    # Yes this is wierd, but it's needed for intel graphics updater.  Remove.
     package { ["fonts-ancient-scripts", "ttf-ancient-fonts" ]:
-        ensure          => latest,
+        ensure          => purged,
     }
 
     ### Install beignet/opencl

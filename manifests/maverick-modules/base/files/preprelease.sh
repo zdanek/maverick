@@ -38,7 +38,7 @@ rm -rf /root/.cache /root/.gnupg
 rm -rf /srv/maverick/var/build/*
 
 # Remove tmp data
-rm -rf /var/tmp/*
+rm -rf /var/tmp/* /var/crash/* /var/backup/* 
 rm -rf /tmp/*
 
 # Delete puppet client data
@@ -52,10 +52,9 @@ rm -rf /var/lib/dhcpcd5/*
 # Otherwise odd behaviour will happen.
 rm /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
-rm -rf /srv/maverick/.c9/metadata/workspace/*
-rm -f /srv/maverick/.c9/metadata/tab*
+rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp /srv/maverick/.c9/node /srv/maverick/.c9/node_modules /srv/maverick/.c9/lib
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
-gst-inspect-1.0 # restore gstreameer .cache
+su - -c gst-inspect-1.0 mav # restore gstreamer .cache
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
 rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
@@ -63,10 +62,6 @@ rm -rf /srv/maverick/.ros/log/*
 # Clean up maverick data
 find /srv/maverick/data/logs -type f -delete
 rm -f /srv/maverick/data/vision_landing/*
-#rm -f /srv/maverick/var/log/mavlink-fc/* /srv/maverick/var/log/mavlink-sitl/*
-#rm -rf /srv/maverick/var/log/sitl/*
-#rm -f /srv/maverick/var/log/vision/* /srv/maverick/var/log/vision_landing/*
-#rm -f /srv/maverick/var/log/maverick/*
 find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
