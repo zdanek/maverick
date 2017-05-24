@@ -7,7 +7,7 @@ class maverick_dev::ardupilot (
     $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
     $ardupilot_vehicle = "copter", # copter, plane or rover
     $sitl, # passed from init.pp
-    $armeabi_packages = true, # needed to cross-compile firmware for actual FC boards
+    $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
 ) {
     
     # Install ardupilot from git
