@@ -1,5 +1,5 @@
 class maverick_vision::visiond (
-    $active = true,
+    $active = false,
 ) {
 
     # Setup standard packages for all platforms
