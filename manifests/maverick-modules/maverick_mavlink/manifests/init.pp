@@ -13,6 +13,7 @@ class maverick_mavlink (
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
+    $cuav_install = false,
 ) {
     
     $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
@@ -119,7 +120,6 @@ class maverick_mavlink (
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
     }
-    
     
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
@@ -253,6 +253,21 @@ class maverick_mavlink (
                 proto       => "tcp"
             }
         }
+    }
+    
+    # Install cuav
+    if $cuav_install == true {
+        ensure_packages(["libdc1394-22-dev", "libjpeg-turbo8-dev", "python-wxgtk3.0"])
+        install_python_module { "pip-gooey":
+            pkgname     => "gooey",
+            ensure      => "present",
+            timeout     => 0,
+        }
+        #install_python_module { "pip-cuav":
+        #    pkgname     => "cuav",
+        #    ensure      => "present",
+        #    timeout     => 0,
+        #}
     }
     
     # Install dronekit globally (not in virtualenv) from pip
