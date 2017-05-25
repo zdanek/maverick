@@ -26,23 +26,24 @@ class maverick_vision::camera_streaming_daemon (
         file { "/srv/maverick/var/build/.install_flag_camera-streaming-daemon":
             ensure      => file,
             owner       => "mav",
+        } ->
+        file { "/srv/maverick/data/config/vision/csd.conf":
+            source      => "puppet:///modules/maverick_vision/csd.conf",
+            owner       => "mav",
+            group       => "mav",
+            mode        => "644",
+            replace     => false,
+        } ->
+        file { "/etc/systemd/system/maverick-csd.service":
+            source      => "puppet:///modules/maverick_vision/csd.service",
+            owner       => "root",
+            group       => "root",
+            mode        => 644,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+            before      => Service["maverick-csd"],
         }
     }
-    file { "/srv/maverick/data/config/vision/csd.conf":
-        source      => "puppet:///modules/maverick_vision/csd.conf",
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        replace     => false,
-    } ->
-    file { "/etc/systemd/system/maverick-csd.service":
-        source      => "puppet:///modules/maverick_vision/csd.service",
-        owner       => "root",
-        group       => "root",
-        mode        => 644,
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    }
-    
+
     # Punch some holes in the firewall for rtsp
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "vision-rtsp-udp":
