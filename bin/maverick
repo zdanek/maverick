@@ -36,6 +36,7 @@ usage () {
     echo "Options"
     echo " --env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
     echo " --dryrun                                  Configure dry run - just show what would be done"
+    echo " --module=<module>                         Only make changes to module <module>"
     echo
     echo "Commands"
     echo " status                                  Show current running status"
@@ -70,6 +71,10 @@ do
             ;;
         --dryrun)
             DRYRUN="--noop"
+            shift
+            ;;
+        --module=*)
+            MODULE="${i#*=}"
             shift
             ;;
         configure)
@@ -470,6 +475,12 @@ else
     echo "${bgbl}${bold}${blue}Dry run requested, running configure in a readonly/nondestructive mode${reset}"
     RUNMODE="--noop"
 fi
+if [ ! -z $MODULE ]; then
+    echo "${bgbl}${bold}${blue}Module specified, restricting configure to ${MODULE}${reset}"
+    TAGS="--tags ${MODULE}"
+else
+    TAGS=""
+fi
 echo
 
 DT=$(date +"%Y-%m-%d-%H-%M")
@@ -481,17 +492,17 @@ else
 fi
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment ${ENV} $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else
