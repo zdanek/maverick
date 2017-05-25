@@ -4,7 +4,10 @@ class maverick_dev::sitl (
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_startingtcp = 5780,
+    $tcpports = 3,
     $mavlink_startingudp = 14580,
+    $udpports = 3,
+    $udpinports = 3,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11313",
@@ -194,20 +197,33 @@ class maverick_dev::sitl (
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "sitl":
             active      => false,
+            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
+            startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
+            startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
+            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
             active      => $mavlink_active,
             notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
         }
@@ -216,41 +232,63 @@ class maverick_dev::sitl (
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
-            active      => false
+            tcpports    => $tcpports,
+            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
-            active      => false
+            tcpports    => $tcpports,
+            active      => false,
         } ->
         maverick_mavlink::cmavnode { "sitl":
             inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
             active      => $mavlink_active,
             notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "sitl":
-            active      => false
+            active      => false,
+            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
+            startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
+            startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
+            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
         } ->
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
             instance    => 1,
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
-            active      => false
+            tcpports    => $tcpports,
+            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => "5760",
             startingudp => $mavlink_startingudp,
+            udpports    => $udpports,
+            udpinports  => $udpinports,
             startingtcp => $mavlink_startingtcp,
+            tcpports    => $tcpports,
             active      => $mavlink_active,
             notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
         }
