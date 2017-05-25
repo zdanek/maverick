@@ -1,10 +1,15 @@
 class maverick_hardware::odroid (
     $governor_atboot = "performance",
     $kernel4x = false,
+    $remove_more_packages = true,
 ) {
 
     ensure_packages(["axel", "whiptail"])
 
+    if $remove_more_packages == true {
+        ensure_packages(["chromium-browser", "thunderbird", "fonts-noto-cjk", "openjdk-8-jre-headless", "gnome-user-guide"], {'ensure'=>'purged'})
+    }
+    
     # Add odroid-utility repo from git, contains useful scripts
     oncevcsrepo { "git-odroid-utility":
         gitsource   => "https://github.com/mdrjr/odroid-utility.git",
