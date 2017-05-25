@@ -261,7 +261,6 @@ if [ "$STATUS" == "true" ]; then
     statusout+=$(status "${mavfcservice}" "Mavlink (FC)" $mavfc $mavfcen)
     (systemctl status maverick-rosmaster@fc >/dev/null 2>&1); rosmfc=$?; (systemctl is-enabled maverick-rosmaster@fc >/dev/null 2>&1); rosmfcen=$?; statusout+=$(status "rosmaster@fc" "ROS (FC)" $rosmfc $rosmfcen)
     (systemctl status maverick-mavros@fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros@fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros@fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
-    (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Maverick Vision" $vis $visen)
     if [ "$environment" == "dev" ]; then
         statusout+='------------:------------:------------------\n'
         (systemctl status maverick-sitl >/dev/null 2>&1); sitl=$?; (systemctl is-enabled maverick-sitl >/dev/null 2>&1); sitlen=$?; statusout+=$(status "sitl" "SITL" $sitl $sitlen)
@@ -287,6 +286,8 @@ if [ "$STATUS" == "true" ]; then
     fi
     statusout+='------------:------------:------------------\n'
     (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
+    (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Vision Daemon" $vis $visen)
+    (systemctl status maverick-csd >/dev/null 2>&1); csd=$?; (systemctl is-enabled maverick-csd >/dev/null 2>&1); csden=$?; statusout+=$(status "csd" "Camera Streaming Daemon" $csd $csden)
     (systemctl status maverick-vision_landing >/dev/null 2>&1); visland=$?; (systemctl is-enabled maverick-vision_landing >/dev/null 2>&1); vislanden=$?; statusout+=$(status "vision_landing" "Vision Landing" $visland $vislanden)
     (systemctl status maverick-vision_seek >/dev/null 2>&1); seek=$?; (systemctl is-enabled maverick-vision_seek >/dev/null 2>&1); seeken=$?; statusout+=$(status "vision_seek" "Seek Thermal Vision" $seek $seeken)
 

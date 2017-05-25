@@ -7,7 +7,7 @@ class maverick_vision (
     $orb_slam2 = false,
     $vision_landing = true,
     $vision_seek = true,
-    $camera_streaming_daemon = false,
+    $camera_streaming_daemon = true,
 ) {
 
     file { ["/srv/maverick/data/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:

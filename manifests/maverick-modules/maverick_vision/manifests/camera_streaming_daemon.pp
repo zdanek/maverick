@@ -17,10 +17,10 @@ class maverick_vision::camera_streaming_daemon (
         exec { "camera-streaming-daemon-build":
             user        => "mav",
             timeout     => 0,
-            environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig"],
-            command     => "/srv/maverick/var/build/camera-streaming-daemon/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-streaming-daemon/configure --prefix=/srv/maverick/software/camera-streaming-daemon && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-streaming-daemon.build.out 2>&1",
+            environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig"],
+            command     => "/srv/maverick/var/build/camera-streaming-daemon/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-streaming-daemon/configure --disable-systemd --prefix=/srv/maverick/software/camera-streaming-daemon && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-streaming-daemon.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/camera-streaming-daemon",
-            creates     => "/srv/maverick/software/camera-streaming-daemon/bin/camera-streaming-daemon",
+            creates     => "/srv/maverick/software/camera-streaming-daemon/bin/csd",
             require     => [ Package["libavahi-common-dev"], Class["maverick_vision::gstreamer"] ],
         } ->
         file { "/srv/maverick/var/build/.install_flag_camera-streaming-daemon":
@@ -28,8 +28,15 @@ class maverick_vision::camera_streaming_daemon (
             owner       => "mav",
         }
     }
-    file { "/etc/systemd/system/maverick-camera-streaming-daemon.service":
-        source      => "puppet:///modules/maverick_vision/camera-streaming-daemon.service",
+    file { "/srv/maverick/data/config/vision/csd.conf":
+        source      => "puppet:///modules/maverick_vision/csd.conf",
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        replace     => false,
+    } ->
+    file { "/etc/systemd/system/maverick-csd.service":
+        source      => "puppet:///modules/maverick_vision/csd.service",
         owner       => "root",
         group       => "root",
         mode        => 644,

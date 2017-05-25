@@ -25,7 +25,7 @@ class maverick_vision::gstreamer (
                 environment => ["PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig"],
                 command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --libdir=/usr/lib/arm-linux-gnueabihf --disable-gtk-doc --prefix=/usr && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-                creates     => "/usr/local/lib/libgstrtspserver-1.0.so",
+                creates     => "/usr/lib/arm-linux-gnueabihf/libgstrtspserver-1.0.so",
                 require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"] ]
             }
         }
