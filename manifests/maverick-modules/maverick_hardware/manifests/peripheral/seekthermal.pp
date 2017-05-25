@@ -23,7 +23,7 @@ class maverick_hardware::peripheral::seekthermal (
             exec { "libseek-thermal-compile":
                 user        => "mav",
                 timeout     => 0,
-                environment => ["CXXFLAGS=-I/srv/maverick/software/opencv/include", "LDFLAGS=-L/srv/maverick/software/opencv/lib -R/srv/maverick/software/opencv/lib", "PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig"],
+                environment => ["CXXFLAGS=-I/srv/maverick/software/opencv/include", "LDFLAGS=-L/srv/maverick/software/opencv/lib -Wl,-rpath=/srv/maverick/software/opencv/lib", "PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig"],
                 command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/libseek-thermal.build.log 2>&1",
                 cwd         => "/srv/maverick/var/build/libseek-thermal",
                 creates     => "/srv/maverick/var/build/libseek-thermal/lib/libseek.so",
