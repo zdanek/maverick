@@ -28,7 +28,33 @@ UDPin | SITL | 14583 | <font color='gray'>available</font>
 UDPin | SITL | 14584 | <font color='gray'>available</font>
 UDPin | SITL | 14585 | <font color='gray'>available</font>
 
+The number of ports for each endpoint type can be set for each proxy type and instance.  Each proxy type has an 'instance generator' which is used by other modules to create a proxy instance.  So for example the maverick_fc module creates an instance of maverick_mavlink::mavproxy, or maverick_mavlink::mavlink_router or maverick_mavlink::cmavnode depending on which proxy type is selected.  Each proxy type takes parameters:  
+- *startingtcp*: The starting tcp port - maverick_fc starts at 5770 by default, maverick_sitl starts at 5780.
+- *tcpports*: The number of tcpports, default is 3.  So maverick_fc would create tcp endpoints for 5770,5771,5772.  Note that not all proxy types support multiple tcp endpoints so this may be silently ignored - MAVProxy is currently the only proxy that supports multiple tcp endpoints.  As tcp endpoints can support multiple connections this does not restrict usage.
+- *startingudp*: The starting udp port - maverick_fc starts at 14570 by default, maverick_sitl starts at 14580.
+- *udpports*:  The number of udp ports, default is 3.  So maverick_fc would create udp endpoints for 14570,14571,14572.
+- *udpinports*:  The number of udpin ports, default is 3.  Note that udpinports start sequentially after udpports, so if there are 3 udpports, the udpinports for maverick_fc would start at 14573 and also create 14574,14575 by default.
 
+These parameters have to be set in the class/module creating the proxy instance, so for the Flight Controller proxy, the localconf parameters would be:  
+```puppet
+"maverick_fc::mavlink_proxy": "mavproxy",
+"maverick_fc::mavlink_startingtcp": 5770,
+"maverick_fc::mavlink_tcpports": 3,
+"maverick_fc::mavlink_startingudp": 14570,
+"maverick_fc::mavlink_udpports": 3,
+"maverick_fc::mavlink_udpinports": 3,
+```
+For SITL, the localconf parameters would be:
+```puppet
+"maverick_dev::sitl::mavlink_proxy": "mavlink-router",
+"maverick_dev::sitl::mavlink_startingtcp": 5780,
+"maverick_dev::sitl::mavlink_tcpports": 3,
+"maverick_dev::sitl::mavlink_startingudp": 14580,
+"maverick_dev::sitl::mavlink_udpports": 3,
+"maverick_dev::sitl::mavlink_udpinports": 3,
+```
+
+Note that firewall rules are automatically generated for the correct number of tcp and udp ports depending on these settings.
 
 ## Proxy Types
 The *mavlink* module installs and configures mavlink-related software and libraries, but also provides instances of these software for other modules.  For example, it provides 'cmavnode', 'mavlink-router' and 'mavproxy' components that are called from the maverick_dev and maverick_fc modules to provide mavlink proxy services for the SITL (dev) and FC (flight) environments.
