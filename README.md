@@ -94,84 +94,61 @@ ______
 Maverick has a single main command: `maverick`.  It takes one mandatory argument which is a command.  If you run it without an argument, it will display a (hopefully) helpful usage screen.
 
 ### Self Update
-self-update command updates Maverick itself.  If new features, bugfixes etc have been developed then this downloads the new code from github and self updates.  Note in order to take advantage of the new code, `maverick configure` must be run.
-```
-maverick self-update
-```
+self-update command updates Maverick itself.  If new features, bugfixes etc have been developed then this downloads the new code from github and self updates.  Note in order to take advantage of the new code, `maverick configure` must be run.  
+`maverick self-update`
 
 ### Configure
-The main action of maverick is to apply the combination of code and configuration to the system, mainly through the Configuration Management system (Puppet).  Initial runs can take hours to complete as it compiles code, applies configuration, sets up services etc.  Subsequent runs can take as little as a minute to complete if there are no or only very small updates to apply.  Even if there are no apparent updates, every time Maverick is run it scans the entire system to ensure it complies with the state described in the code and given configuration.
-```
-maverick configure
-```
-There are two optional parameters for configure:
+The main action of maverick is to apply the combination of code and configuration to the system, mainly through the Configuration Management system (Puppet).  Initial runs can take hours to complete as it compiles code, applies configuration, sets up services etc.  Subsequent runs can take as little as a minute to complete if there are no or only very small updates to apply.  Even if there are no apparent updates, every time Maverick is run it scans the entire system to ensure it complies with the state described in the code and given configuration.  
+`maverick configure`
+
+There are three optional parameters for configure:
 - --dryrun: this shows what changes would be applied to the system without actually applying them
 - --env: this changes the system to a new environment.  Currently defined environments are _bootstrap_, _flight_ or _dev_.
-eg.
-```
-maverick configure --dryrun --env=dev
-```
+- --module: this restricts the configure to a single module, any other changes will be ignored.  Modules are as named in ~/software/maverick/manifests/maverick-modules: *maverick_network*, *maverick_fc*, *maverick_vision* etc, eg.:  
+
+`maverick configure --dryrun --env=dev --module=maverick_vision`
 
 ### Status/Info
 Maverick gives some useful info/status:
-- Status of running Maverick services:
-```
-maverick status
-```
-- System info:
-```
-maverick info
-```
-- Network info:
-```
-maverick netinfo
-```
+- Status of running Maverick services:  
+`maverick status`
+- System info:  
+`maverick info`
+- Network info:  
+`maverick netinfo`
 
 ### Start/Stop/Restart
 Maverick services (lefthand most column in `maverick status` output) can be easily started and stopped.  Note that Maverick services are implemented using systemd services with a 'maverick-' prefix, so the 'visiond' Maverick service is equivalent to 'maverick-visiond' systemd service (eg. `sudo systemctl status maverick-visiond`):
-- Start service
-```
-maverick start <service>
-```
+- Start service  
+`maverick start <service>`
 eg.
-```
+```bash
 maverick status
 maverick start mavros@sitl
 maverick status
 ```
-- Stop service
-```
-maverick stop <service>
-```
+- Stop service  
+`maverick stop <service>`
 eg.
-```
+```bash
 maverick status
 maverick start visiond
 maverick status
 ```
-- Restart service is a convenience shortcut to stop and start a service:
-```
-maverick restart visiond
-```
+- Restart service is a convenience shortcut to stop and start a service:  
+`maverick restart visiond`
 
 ### Log
-While a lot of service output is logged to /srv/maverick/var/log, as the services are controlled through systemd some output is (only) available from the system journal.  Maverick provides a shortcut to view the latest live output for a service journal (equivalent to `sudo journalctl -u maverick-<service>`):
-```
-maverick log <service>
-```
-eg.
-```
-maverick status mavproxy@fc
-```
+While a lot of service output is logged to /srv/maverick/var/log, as the services are controlled through systemd some output is (only) available from the system journal.  Maverick provides a shortcut to view the latest live output for a service journal (equivalent to `sudo journalctl -u maverick-<service>`):  
+`maverick log <service>`  
+ eg.  
+`maverick log mavproxy@fc`
 
 ### Enable/Disable
-As well as starting and stopping services, Maverick can also set the services state at boot, which is called enabling and disabling as with systemd.  The difference between start and enable is that start starts the service immediately, whereas enable does not start the service immediately, but marks it to be started at boot time.  Most Maverick services are configured to start and enable, or stop and disable.
-```
-maverick enable visiond
-```
-```
-maverick disable visiond
-```
+As well as starting and stopping services, Maverick can also set the services state at boot, which is called enabling and disabling as with systemd.  The difference between start and enable is that start starts the service immediately, whereas enable does not start the service immediately, but marks it to be started at boot time.  Most Maverick services are configured to start and enable, or stop and disable.  
+`maverick enable visiond`  
+ or
+`maverick disable visiond`  
 
 ---
 
