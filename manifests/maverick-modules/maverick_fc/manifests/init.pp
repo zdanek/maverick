@@ -5,10 +5,10 @@ class maverick_fc (
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_baud = 115200,
     $mavlink_startingtcp = 5770,
-    $tcpports = 3,
+    $mavlink_tcpports = 3,
     $mavlink_startingudp = 14570,
-    $udpports = 3,
-    $udpinports = 3,
+    $mavlink_udpports = 3,
+    $mavlink_udpinports = 3,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11311",
@@ -76,10 +76,10 @@ class maverick_fc (
             inputaddress => $mavlink_input,
             inputbaud   => $mavlink_baud,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
@@ -87,10 +87,10 @@ class maverick_fc (
             inputbaud   => $mavlink_baud,
             inputaddress => $mavlink_input,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
@@ -98,10 +98,10 @@ class maverick_fc (
             inputbaud   => $mavlink_baud,
             instance    => 2,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "cmavnode" {
@@ -110,10 +110,10 @@ class maverick_fc (
             inputbaud   => $mavlink_baud,
             instance    => 2,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
@@ -121,20 +121,20 @@ class maverick_fc (
             inputaddress => $mavlink_input,
             inputbaud   => $mavlink_baud,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
             inputbaud   => $mavlink_baud,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
@@ -142,10 +142,10 @@ class maverick_fc (
             inputaddress => $mavlink_input,
             inputbaud   => $mavlink_baud,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
@@ -153,10 +153,10 @@ class maverick_fc (
             inputbaud   => $mavlink_baud,
             instance    => 2,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
@@ -164,10 +164,10 @@ class maverick_fc (
             inputaddress => $mavlink_input,
             inputbaud   => $mavlink_baud,
             startingudp => $mavlink_startingudp,
-            udpports    => $udpports,
-            udpinports  => $udpinports,
+            udpports    => $mavlink_udpports,
+            udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
-            tcpports    => $tcpports,
+            tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
         }
     }
