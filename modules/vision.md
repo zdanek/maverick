@@ -1,13 +1,15 @@
 # Vision Module
-Vision is an important (and fun) part of UAVs.  Maverick contains good basic support for the standard elements of Computer Vision and Video functionality.
+Vision is an important (and fun) part of UAVs.  Maverick contains good basic support for the standard elements of Computer Vision and Video functionality:
 
-- **Gstreamer**: Industry standard software for capturing, transcoding and transmitting video
-- **OpenCV**: Industry standard software for Computer Vision
+- [**Gstreamer**](/modules/vision#gstreamer): Industry standard software for capturing, transcoding and transmitting video
+- [**OpenCV**](/modules/vision#opencv): Industry standard software for Computer Vision
 - **Aruco**: Fiducial Tag library, for recognising tags/markers in video
-- **Orb_Slam2**: Fast library for performing monocular and stereo SLAM
-- **Visiond**: A dynamic service that detects camera and encoding hardware, and automatically generates a gstreamer pipeline to transmit the video over the network - eg. wifi.  Very useful for FPV, it will in the future be useful for transmitting CV and other video
-- **Vision_landing**: Software that uses tags/markers (Aruco) as landing patterns, and controls Precision Landing in ArduCopter
-- **Wifibroadcast**: Innovative software that uses monitor/inject mode of compatible wifi adapters to provide connection-less wifi video with graceful degradation, similar to traditional analogue FPV.
+- [**Orb_Slam2**](/modules/vision#orb_slam2): Fast library for performing monocular and stereo SLAM
+- [**Visiond**](/modules/vision#visiond): A dynamic service that detects camera and encoding hardware, and automatically generates a gstreamer pipeline to transmit the video over the network - eg. wifi.  Very useful for FPV, it will in the future be useful for transmitting CV and other video
+- [**Vision_seek**](/modules/vision#vision_seek): Similar to visiond, a daemon for streaming/saving video stream from a Seek Thermal imaging device.
+- [**Vision_landing**](/modules/vision#vision_landing): Software that uses tags/markers (Aruco) as landing patterns, and controls Precision Landing in ArduCopter
+- [**Camera-streaming-daemon**](/modules/vision#camera-streaming-daemon): RTSP Video server with service discovery publishing.
+- [**Wifibroadcast**](/modules/vision#wifibroadcast): Innovative software that uses monitor/inject mode of compatible wifi adapters to provide connection-less wifi video with graceful degradation, similar to traditional analogue FPV.
 
 One key advantage of Maverick is that wherever possible it provides the same versions of software across all platforms.  This is very useful for porting code and functionality across platforms, as the underlying components often vary widely in their APIs/features.  As of Maverick 1.0, the component versions are:  
 - Gstreamer: **1.10.4**
@@ -37,20 +39,43 @@ There are two compile options which rarely need to be changed:
 
 OpenCV is installed into ~/software/opencv and the necessary supporting environment is automatically set.
 
+### Orb_slam2
+Orb_slam2 is not installed by default, as it takes a lot of resource and is really an experimental/academic project - of limited real-world use.  To enable it, set localconf parameter:  
+`"maverick_vision::orb_slam2": true`  
+
 ### Visiond
-Visiond is a Maverick-specific (python-based) daemon that attempts to automate the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in ~/data/config/vision/maverick-visiond.conf that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
+Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in ~/data/config/vision/maverick-visiond.conf that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
 `maverick restart visiond`
 This service is started by default.
 
+### Vision_seek
+Vision_seek is a service similar to visiond, for the Seek Thermal Compact and CompactPro thermal image cameras.  It captures the thermal data, transcodes and processes the data into a format suitable for visualisation, and then streams or saves the images or video to the network or file.  A nice simple setup is to plug the Seek camera directly into the USB port of a Raspberry Pi Zero (W).  
+<img src="media/raspberryzw-seek.jpg" width="100%">
+There is a config file in ~/data/config/vision/vision_seek.conf that allows a simple way to alter settings - to activate the changes,  restart the service:  
+`maverick restart vision_seek`  
+This service is not started by default.  To start it:  
+`maverick start vision_seek`  
+To enable it by default on boot, set a localconf parameter:  
+`"maverick_vision::vision_seek::active": true`  
+
+<img src="media/thermal-lunch.jpg" width="50%">  
+
 ### Vision_landing
-vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense components to create a system that analyses video in realtime for landing markers (Aruco/April fiducial markers, or tags) and uses these markers to estimate the position and distance of the landing marker compared to the UAV and passes this data to the flight controller.  The flight controller applies corrections according to the attitude of the UAV to work out what needs to be done to land on the marker.
+vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense components to create a system that analyses video in realtime for landing markers (Aruco/April fiducial markers, or tags) and uses these markers to estimate the position and distance of the landing marker compared to the UAV and passes this data to the flight controller to achieve Precision Landing.  The flight controller applies corrections according to the attitude of the UAV to work out what needs to be done to land directly on the marker.  A well tuned setup can achieve reliable accuracy to within a couple of centimeters.  
+
+<img src="media/precland1.png" width="100%">
 
 It is a work in progress (as is the support for vision based landing in ArduPilot) - the main project page is https://github.com/fnoop/vision_landing.
 
 Like visiond, it has a dynamic config in ~/data/config/vision/vision_landing.conf, and to activate any config changes, restart the service:  
-`maverick restart vision_landing`
-This servce is not started by default, as it contends for camera usage with visiond.  To use it, first turn off visiond (`maverick stop visiond`).
+`maverick restart vision_landing`  
+This service is not started by default, as it contends for camera usage with visiond.  To use it, first turn off visiond (`maverick stop visiond`).  It can be started a boot by setting a localconf parameter:  
+`"maverick_vision::vision_landing::active": true`  
 
-### Orb_slam2
-Orb_slam2 is not installed by default, as it takes a lot of resource and is really an experimental/academic project - of limited real-world use.  To enable it, set localconf parameter:  
-`"maverick_vision::orb_slam2": true`  
+### camera-streaming-daemon
+camera-streaming-daemon is an open-source project from Intel (https://github.com/01org/camera-streaming-daemon).  It is still early stages for the project, but it has great promise for an improvement in the method that realtime digital video is normally implemented on UAVs.  Instead of the normal method of providing a gstreamer pipeline and endpoint to send data to, camera-streaming-daemon (csd) provides an RTSP server with multiple endpoints to connect to if there are multiple cameras or streams available, and publishes these streams over the network using Zeroconf/Avahi.  
+camera-streaming-daemon is not yet the default over visiond (although it is intended to be when more mature), so it can be started simply by calling the csd service (after stopping visiond, which would contend for the video resource):  
+`maverick stop visiond`  
+`maverick start csd`  
+To start at boot, set a localconf parameter:  
+`"maverick_vision::camera_streaming_daemon::active": true`  
