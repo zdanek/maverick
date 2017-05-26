@@ -9,24 +9,32 @@ class maverick_vision::gstreamer (
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
             # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
-            file { "/srv/maverick/var/build/gstreamer":
-                ensure      => directory,
-                owner       => "mav",
-                group       => "mav",
-                mode        => "755",
-            } ->
-            oncevcsrepo { "git-gstreamer_gst_rtsp_server":
-                gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-                revision    => "1.4.4",
-            } ->
-            exec { "gstreamer_gst_rtsp_server":
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --libdir=/usr/lib/arm-linux-gnueabihf --disable-gtk-doc --prefix=/usr && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-                creates     => "/usr/lib/arm-linux-gnueabihf/libgstrtspserver-1.0.so",
-                require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"] ]
+            if ! ("install_flag_gst-rtsp-server" in $installflags) {
+                file { "/srv/maverick/var/build/gstreamer":
+                    ensure      => directory,
+                    owner       => "mav",
+                    group       => "mav",
+                    mode        => "755",
+                } ->
+                oncevcsrepo { "git-gstreamer_gst_rtsp_server":
+                    gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                    revision    => "1.4.4",
+                } ->
+                exec { "gstreamer_gst_rtsp_server":
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --libdir=/usr/lib/arm-linux-gnueabihf --disable-gtk-doc --prefix=/usr && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                    creates     => "/usr/lib/arm-linux-gnueabihf/libgstrtspserver-1.0.so",
+                    require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"] ]
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_gst-rtsp-server":
+                    ensure      => present,
+                    owner       => "mav",
+                    group       => "mav",
+                    mode        => "644",
+                }
             }
         }
         # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
