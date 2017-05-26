@@ -1,4 +1,5 @@
 class maverick_vision::vision_seek (
+    $active = false,
 ) {
     
     # Temp location/copy of files
@@ -57,4 +58,17 @@ class maverick_vision::vision_seek (
         notify  => Exec["maverick-systemctl-daemon-reload"],
     }
     
+    # Activate or inactivate service
+    if $active == true {
+        service { "maverick-vision_seek":
+            ensure  => running,
+            enable  => true,
+            require => Exec["compile-vision_seek"]
+        }
+    } else {
+        service { "maverick-vision_seek":
+            ensure  => stopped,
+            enable  => false
+        }
+    }
 }
