@@ -18,6 +18,13 @@ class maverick_desktop (
         # Disable some unnecessary services
         # package { ["deja-dup", "zeitgeist-datahub", "zeitgeist-core", "evolution-data-server", "evolution-data-server-common", "evolution-data-server-online-accounts"]
         # Changed mind - if desktop is running then we probably don't care what random processes come with it.  Shut desktop down for flight anyway.
+
+        # Enable grub splash, which ensures graphical tty7 is displayed by default
+        exec { "grub-splash":
+            command     => "/bin/sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"/' /etc/default/grub; /usr/sbin/update-grub",
+            onlyif      => "/bin/grep 'GRUB_CMDLINE_LINUX_DEFAULT=\"\"' /etc/default/grub",
+        }
+        
     } elsif $enable == false {
         exec { "stop-desktop-target":
             unless      => "/bin/systemctl status graphical.target |grep inactive",
@@ -27,6 +34,12 @@ class maverick_desktop (
         exec { "disable-desktop-target":
             unless      => "/bin/systemctl get-default |grep multi-user;",
             command     => "/bin/systemctl set-default multi-user.target",
+        }
+
+        # Disable grub splash, which ensures tty1 is displayed by default on console at boot, otherwise we get a blank screen
+        exec { "grub-splash":
+            command     => "/bin/sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/' /etc/default/grub; /usr/sbin/update-grub; /bin/chvt 1",
+            onlyif      => "/bin/grep 'GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"' /etc/default/grub",
         }
     }
         
