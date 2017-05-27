@@ -46,9 +46,11 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
       }
       'absent': {
         if downcase($pkgname) in $python_modules {
-          python::pip { $title:
+          python::pip { "${pkgname}":
             pkgname => "${pkgname}",
-            ensure => 'absent'
+            ensure => absent,
+            owner   => $owner,
+            timeout => $timeout
           }
         }
       }

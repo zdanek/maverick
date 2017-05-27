@@ -9,7 +9,7 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
-    $mavcesium_install = true,
+    $mavcesium_install = false,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
@@ -147,16 +147,18 @@ class maverick_mavlink (
     # Install mavproxy from source
     if $mavproxy_install and $mavproxy_type == "source" {
         ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
-        if ! ("install_flag_mavproxy" in $installflags) {
-            # First uninstall pip mavproxy, to remove any conflicts
-            install_python_module { 'mavproxy':
-                pkgname     => 'mavproxy',
-                ensure      => 'absent',
-            } ->
+        # First uninstall pip mavproxy, to remove any conflicts
+        install_python_module { 'pip-mavproxy-global':
+            pkgname     => 'MAVProxy',
+            ensure      => absent,
+            timeout     => 0,
+        }
+        if ! ("install_flag_mavproxys" in $installflags) {
             oncevcsrepo { "git-mavproxy":
                 gitsource   => $mavproxy_source,
                 dest        => "/srv/maverick/var/build/mavproxy",
                 submodules  => true,
+                require     => Install_python_module["pip-mavproxy-global"],
             } ->
             exec { "mavproxy-build":
                 command     => "/usr/bin/python setup.py build install --user",
