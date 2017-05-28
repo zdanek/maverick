@@ -68,7 +68,7 @@ class base::packages {
     # Python::pip doesn't seem to work here, use exec instead
     exec { "upgrade-pip":
         command     => "pip install --upgrade pip==9.0.1",
-        unless      => "pip show pip |grep Version |grep 9.0.1",
+        unless      => "pip --version |grep Version |grep 9.0.1",
         path        => ["/usr/local/bin", "/usr/bin", "/bin"],
     } ->
     #exec { "install-pyric":
