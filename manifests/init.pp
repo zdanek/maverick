@@ -7,12 +7,12 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global") {
-  $python_modules = getvar("::python_modules_${env}")
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global", $version=undef) {
+  $module_version = $python_modules[$env][$pkgname]
   if $python_modules {
     case $ensure {
       'present': {
-        unless downcase($pkgname) in $python_modules {
+        unless $pkgname in $python_modules[$env] {
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
@@ -23,8 +23,9 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             }
         }
       }
-      'latest': {
-        if downcase($pkgname) in $python_modules {
+      'atleast': {
+        if versioncmp($version, $module_version) > 0 {
+            notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 ensure => 'latest',
@@ -33,19 +34,10 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--upgrade",
             }
-        } else {
-            notice("Installing pip: ${pkgname}")
-            python::pip { $title:
-                pkgname => "${pkgname}",
-                ensure => 'present',
-                virtualenv => $virtualenv,
-                owner => $owner,
-                timeout => $timeout
-            }
         }
       }
       'absent': {
-        if downcase($pkgname) in $python_modules {
+        if $pkgname in $python_modules {
           python::pip { "${pkgname}":
             pkgname => "${pkgname}",
             ensure => absent,

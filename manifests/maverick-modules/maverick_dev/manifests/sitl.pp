@@ -61,7 +61,7 @@ class maverick_dev::sitl (
         env         => "sitl",
     }
     install_python_module { 'pip-mavproxy-sitl':
-        pkgname     => 'mavproxy',
+        pkgname     => 'MAVProxy',
         virtualenv  => '/srv/maverick/.virtualenvs/sitl',
         ensure      => present,
         owner       => 'mav',

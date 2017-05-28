@@ -126,8 +126,9 @@ class maverick_mavlink (
     if $mavproxy_install and $mavproxy_type == "pip" {
         ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
         install_python_module { 'pip-mavproxy-global':
-            pkgname     => 'mavproxy',
-            ensure      => present,
+            pkgname     => 'MAVProxy',
+            ensure      => atleast,
+            version     => "1.6.1",
             timeout     => 0,
             require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
         } ->
