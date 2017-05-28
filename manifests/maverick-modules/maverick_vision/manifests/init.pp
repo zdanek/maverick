@@ -49,7 +49,7 @@ class maverick_vision (
         class { "maverick_vision::camera_streaming_daemon": }
     }
 
-    if $seekthermal_present == "yes" or $vision_seek == true {
+    if $seekthermal_present == "yes" or getvar("maverick_hardware::seekthermal_install") == true or $vision_seek == true {
         class { "maverick_vision::vision_seek": }
     }
     
