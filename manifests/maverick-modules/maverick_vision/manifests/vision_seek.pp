@@ -39,7 +39,6 @@ class maverick_vision::vision_seek (
         service { "maverick-vision_seek":
             ensure  => running,
             enable  => true,
-            require => Exec["compile-vision_seek"]
         }
     } else {
         service { "maverick-vision_seek":
