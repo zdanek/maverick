@@ -50,15 +50,30 @@ This service is started by default.
 
 ### Vision_seek
 Vision_seek is a service similar to visiond, for the Seek Thermal Compact and CompactPro thermal image cameras.  It captures the thermal data, transcodes and processes the data into a format suitable for visualisation, and then streams or saves the images or video to the network or file.  A nice simple setup is to plug the Seek camera directly into the USB port of a Raspberry Pi Zero (W).  
-<img src="media/raspberryzw-seek.jpg" width="100%">
+<img src="media/seekthermal-pic.jpg" width="100%">
 There is a config file in ~/data/config/vision/vision_seek.conf that allows a simple way to alter settings - to activate the changes,  restart the service:  
 `maverick restart vision_seek`  
 This service is not started by default.  To start it:  
 `maverick start vision_seek`  
 To enable it by default on boot, set a localconf parameter:  
 `"maverick_vision::vision_seek::active": true`  
+Note that the hardware support for the Seek Thermal camera is automatically applied during a configure run if the camera is plugged in and detected.  To force this support to be installed if building a platform that the Seek is likely to be used with, set localconf parameter:  
+`"maverick_hardware::seekthermal_install": true`  
 
-<img src="media/thermal-lunch.jpg" width="50%">  
+Image of lunch, without dead pixel correction applied:  
+<img src="media/thermal-lunch.jpg" width="50%">
+
+Image of Intel Joule before and after some hard work (running Maverick vision_landing):  
+<img src="media/joule-thermal.jpg" width="50%">  
+
+Flat Field Correction (FFC):  
+To create an FFC image that can be applied to vision_seek to improve image quality, first run the camera for a while to warm it up, then cover the lens with something thermally consistent (eg. a book, or DVD cover) and run:  
+`~/software/libseek-thermal/bin/seek_create_flat_field -c seek ~/data/config/vision/seek_ffc.png`  
+Then set the *FFC* setting in *~/data/config/vision/vision_seek.conf* to point to this file:  
+`FFC=/srv/maverick/data/config/vision/seek_ffc.png`  
+If FFC is set in the config file, vision_seek will automatically apply it.  
+More information about this FFC procedure and other aspects of the vision_seek can be found in the github project of the main supporting library:  
+https://github.com/maartenvds/libseek-thermal
 
 ### Vision_landing
 vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense components to create a system that analyses video in realtime for landing markers (Aruco/April fiducial markers, or tags) and uses these markers to estimate the position and distance of the landing marker compared to the UAV and passes this data to the flight controller to achieve Precision Landing.  The flight controller applies corrections according to the attitude of the UAV to work out what needs to be done to land directly on the marker.  A well tuned setup can achieve reliable accuracy to within a couple of centimeters.  
