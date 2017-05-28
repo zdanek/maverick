@@ -9,7 +9,7 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
-    $mavcesium_install = false,
+    $mavcesium_install = true,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
@@ -206,27 +206,33 @@ class maverick_mavlink (
         } ->
         install_python_module { "mav-flask":
             pkgname     => "Flask",
-            ensure      => latest,
+            ensure      => atleast,
+            version     => "0.12.2",
         } ->
         install_python_module { "mav-twisted":
-            pkgname     => "twisted",
-            ensure      => present,
+            pkgname     => "Twisted",
+            ensure      => atleast,
+            version     => "16.0.0"
         } ->
         install_python_module { "mav-autobahn":
             pkgname     => "autobahn",
-            ensure      => present,
+            ensure      => atleast,
+            version     => "0.10.3",
         } ->
         install_python_module { "mav-configparser":
             pkgname     => "configparser",
-            ensure      => latest,
+            ensure      => atleast,
+            version     => "3.5.0",
         } ->
         install_python_module { "mav-pyopenssl":
-            pkgname     => "pyopenssl",
-            ensure      => latest,
+            pkgname     => "pyOpenSSL",
+            ensure      => atleast,
+            version     => "17.0.0",
         } ->
         install_python_module { "mav-service-identity":
             pkgname     => "service-identity",
-            ensure      => present,
+            ensure      => atleast,
+            version     => "16.0.0",
         } ->
         exec { "rm-configparser-dingleberry":
             command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
