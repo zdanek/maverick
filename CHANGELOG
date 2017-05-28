@@ -1,5 +1,15 @@
 # Maverick Changelog
 
+## [2017-05-28] 1.0.4 Release
+ - Various bugfixes and doc updates
+ - Improved Seek Thermal vision_seek quality and service
+ - Refactor python/pip handling to deal with versions
+ - Huge speed improvement in configure runs
+ - Make number of mavlink proxy endpoints configurable
+ - Add localconf parameters to force hardware installs
+ - Add Intel camera-streaming-daemon install and configuration, not default yet
+ - Streamline all builds and prebuilt images to fit on 8Gb SD/eMMC
+
 ## [2017-05-24] 1.0.3 Release
  - Various bugfixes
  - Streamline Raspberry build to fix on 8Gb SD card
