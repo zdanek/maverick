@@ -268,15 +268,21 @@ class maverick_mavlink (
     if $cuav_install == true {
         ensure_packages(["libdc1394-22-dev", "libjpeg-turbo8-dev", "python-wxgtk3.0"])
         install_python_module { "pip-gooey":
-            pkgname     => "gooey",
-            ensure      => "present",
+            pkgname     => "Gooey",
+            ensure      => present,
             timeout     => 0,
+        } ->
+        install_python_module { "pip-numpy":
+            pkgname     => "numpy",
+            ensure      => present,
+            timeout     => 0,
+        } ->
+        install_python_module { "pip-cuav":
+            pkgname     => "cuav",
+            ensure      => present,
+            timeout     => 0,
+            require     => Class["maverick_vision::opencv"],
         }
-        #install_python_module { "pip-cuav":
-        #    pkgname     => "cuav",
-        #    ensure      => "present",
-        #    timeout     => 0,
-        #}
     }
     
     # Install dronekit globally (not in virtualenv) from pip
