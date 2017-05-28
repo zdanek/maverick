@@ -494,7 +494,7 @@ if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
         puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
@@ -502,7 +502,7 @@ elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
         puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else
