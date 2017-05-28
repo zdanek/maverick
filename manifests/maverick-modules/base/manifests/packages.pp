@@ -71,24 +71,36 @@ class base::packages {
         unless      => "pip show pip |grep Version |grep 9.0.1",
         path        => ["/usr/local/bin", "/usr/bin", "/bin"],
     } ->
-    exec { "install-pyric":
-        command     => "pip install PyRIC",
-        unless      => "pip list |grep PyRIC",
-        require     => [ Class["python"], Class["locales"] ],
-        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+    #exec { "install-pyric":
+    #    command     => "pip install PyRIC",
+#        unless      => "pip list |grep PyRIC",
+#        require     => [ Class["python"], Class["locales"] ],
+#        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+#    } ->
+    install_python_module { 'pip-pyric':
+        pkgname     => 'PyRIC',
+        ensure      => present,
     } ->
-    exec { "install-netifaces":
-        command     => "pip install netifaces",
-        unless      => "pip list |grep netifaces",
-        require     => [ Class["python"], Class["locales"] ],
-        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+    install_python_module { 'pip-netifaces':
+        pkgname     => 'netifaces',
+        ensure      => present,
     } ->
-    # Install python future, important base module for python 2.7
-    exec { "install-pyfuture":
-        command     => "pip install future",
-        unless      => "pip list |grep future",
-        require     => [ Class["python"], Class["locales"] ],
-        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+    install_python_module { 'pip-pyfuture':
+        pkgname     => 'future',
+        ensure      => present,
     }
+#    exec { "install-netifaces":
+#        command     => "pip install netifaces",
+#        unless      => "pip list |grep netifaces",
+#        require     => [ Class["python"], Class["locales"] ],
+#        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+#    } ->
+    # Install python future, important base module for python 2.7
+    #exec { "install-pyfuture":
+    #    command     => "pip install future",
+    #    unless      => "pip list |grep future",
+    #    require     => [ Class["python"], Class["locales"] ],
+    #    path        => ["/usr/local/bin", "/usr/bin", "/bin"],
+    #}
 
 }
