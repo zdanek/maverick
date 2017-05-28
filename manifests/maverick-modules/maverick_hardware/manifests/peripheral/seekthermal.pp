@@ -1,5 +1,7 @@
 class maverick_hardware::peripheral::seekthermal (
     $libseek_thermal = true,
+    $libseek_thermal_source = "https://github.com/maartenvds/libseek-thermal.git",
+    $libseek_thermal_revision = "master",
     $libseek = false,
 ) {
     
@@ -16,9 +18,9 @@ class maverick_hardware::peripheral::seekthermal (
         ensure_packages(["libusb-1.0-0-dev", "libboost-program-options-dev"])
         if ! ("install_flag_libseek-thermal" in $installflags) {
             oncevcsrepo { "git-libseek-thermal":
-                gitsource   => "https://github.com/maartenvds/libseek-thermal.git",
+                gitsource   => $libseek_thermal_source,
                 dest        => "/srv/maverick/var/build/libseek-thermal",
-                revision    => "development",
+                revision    => $libseek_thermal_revision,
             } ->
             exec { "libseek-thermal-compile":
                 user        => "mav",

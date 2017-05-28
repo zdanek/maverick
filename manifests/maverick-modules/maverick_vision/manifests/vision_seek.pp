@@ -9,30 +9,6 @@ class maverick_vision::vision_seek (
         group   => "mav",
         mode    => "755",
     } ->
-    file { "/srv/maverick/software/vision_seek/args.hxx":
-        ensure  => present,
-        source  => "puppet:///modules/maverick_vision/args.hxx",
-        owner   => "mav",
-        group   => "mav",
-    } ->
-    file { "/srv/maverick/software/vision_seek/vision_seek.cpp":
-        ensure  => present,
-        source  => "puppet:///modules/maverick_vision/vision_seek.cpp",
-        owner   => "mav",
-        group   => "mav",
-    } ->
-    file { "/srv/maverick/software/vision_seek/Makefile":
-        ensure  => present,
-        source  => "puppet:///modules/maverick_vision/Makefile.vision_seek",
-        owner   => "mav",
-        group   => "mav",
-    } ->
-    exec { "compile-vision_seek":
-        environment => ["PKG_CONFIG_PATH=/srv/maverick/software/libseek-thermal/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
-        command     => "/usr/bin/make",
-        cwd         => "/srv/maverick/software/vision_seek",
-        creates     => "/srv/maverick/software/vision_seek/vision_seek",
-    } ->
     file { "/srv/maverick/software/maverick/bin/vision_seek.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/vision_seek.sh",
