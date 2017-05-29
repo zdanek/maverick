@@ -66,7 +66,7 @@ class maverick_hardware::peripheral::realsense (
         mode        => 644,
         owner       => "root",
         group       => "root",
-        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense/lib/cmake",
+        content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense",
     }
 
     # Clone examples source from github
