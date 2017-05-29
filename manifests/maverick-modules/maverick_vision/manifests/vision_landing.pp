@@ -1,5 +1,7 @@
 class maverick_vision::vision_landing (
     $active = false,
+    $vision_landing_source = "https://github.com/fnoop/vision_landing.git",
+    $vision_landing_revision = "master",
 ) {
 
     # Ensure gstreamer resources are applied before this class
@@ -9,13 +11,14 @@ class maverick_vision::vision_landing (
     
     # Install vision_landing
     oncevcsrepo { "git-vision_landing":
-        gitsource   => "https://github.com/fnoop/vision_landing.git",
+        gitsource   => $vision_landing_source,
         dest        => "/srv/maverick/software/vision_landing",
+        revision    => $vision_landing_revision,
     } ->
     # Compile vision_landing
     exec { "vision_landing-compile":
         user        => mav,
-        environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco"],
+        environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco:/srv/maverick/software/librealsense],
         cwd         => "/srv/maverick/software/vision_landing/src",
         command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv . && make && make install",
         creates     => "/srv/maverick/software/vision_landing/track_targets",
