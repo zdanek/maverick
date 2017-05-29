@@ -48,4 +48,4 @@ else
 fi
 
 # Call vision_seek with configured arguments
-/srv/maverick/software/libseek_thermal/bin/seek_viewer $_FPS $_SCALE $_COLORMAP $_ROTATE $_CAMTYPE $FFC -o "$OUTPUT"
+/srv/maverick/software/libseek-thermal/bin/seek_viewer $_FPS $_SCALE $_COLORMAP $_ROTATE $_CAMTYPE $FFC -o "$OUTPUT"
