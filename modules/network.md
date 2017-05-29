@@ -4,6 +4,24 @@ Networking is a complex subject and the setup and configuration of networking is
 
 Maverick, by default, disables these Managers and uses the very simple but reliable Debian/Ubuntu networking model of configuring a single file - */etc/network/interfaces*.  This has proved to be simpler and more reliable to manage, particularly from the automated manifests that Maverick uses.
 
+### Quick Start Wifi
+For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is only useful when Maverick is first installed or image first booted as it relies on having the sample data in place to find and replace.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).
+### PSKs - Pre Shared Keys
+In the documentation below about how to setup network interfaces, wifi passphrases are represented by 'psk'.  A PSK (Pre Shared Key) is an encrypted form of the wifi passphrase, and the unencrypted passphrase form is not used anywhere for better security.  A PSK is generated from a combination of the SSID and the passphrase and can be easily generated from Maverick:  
+`wpa_passphrase <SSID> <passphrase>`  
+ eg.  
+ `wpa_passphrase Maverick ifeeltheneed`  
+ From the output of this, extract the value of the 'psk' field and use this as the psk value as the localconf parameter:  
+ ```json
+ network={
+	ssid="Maverick"
+	#psk="ifeeltheneed"
+	psk=8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d
+}
+```
+So from the above, the localconf parameter to set the AP psk would be:
+`"psk": "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d"`
+
 ## Network Interfaces
 Any number of network interfaces can be defined in localconf, with a variety of parameters that change how each interface is configured.  The chosen model is to specify the MAC address and an interface name for each interface, so they are easy to identify.  For example, a simple wifi interface for normal connectivity might be defined:  
 ```
@@ -83,14 +101,17 @@ The example above to setup an AP interface is quite simple.  There are additiona
     "mode": "ap",
     "macaddress": "00:c2:c2:ff:32:xx",
     "ssid": "Maverick",
+    "psk": "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d",
     "driver": "nl80211",
     "channel": 1,
     "hw_mode": "g",
     "disable_broadcast_ssid": false,
+    "apaddress": "192.168.10.1",
     "dhcp_range": "192.168.10.10,192.168.10.50",
     "dhcp_leasetime": "24h"
 }
 ```
+Note that the parameter to set the IP address for AP mode is 'apaddress' instead of 'ipaddress'.
 
 ## Network components
 ### Avahi
