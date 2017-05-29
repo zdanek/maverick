@@ -1,6 +1,7 @@
 define maverick_network::interface_ap (
     $macaddress = undef,
     $ssid = "Maverick",
+    $psk = "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d",
     $driver = "nl80211",
     $channel = 1,
     $hw_mode = "g",

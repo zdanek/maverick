@@ -18,12 +18,12 @@ auth_algs=1
 #1 - wpa only
 #2 - wpa2 only
 #3 - both
-wpa=3
+wpa=2
 #sets wpa passphrase required by the clients to authenticate themselves on the network
-wpa_passphrase=ifeeltheneed
+wpa_psk=<%= @psk %>
 #sets wpa key management
 wpa_key_mgmt=WPA-PSK
 #sets encryption used by WPA
-wpa_pairwise=TKIP
+wpa_pairwise=TKIP CCMP
 #sets encryption used by WPA2
 rsn_pairwise=CCMP

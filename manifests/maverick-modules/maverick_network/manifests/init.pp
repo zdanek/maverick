@@ -259,6 +259,12 @@ class maverick_network (
 	    $ssid = undef,
 	    $psk = undef,
 	    $dhcp_range = undef,
+        $driver  = "nl80211",
+        $channel = undef,
+        $hw_mode = "g",
+        $disable_broadcast_ssid = false,
+        $dhcp_range = "192.168.10.10,192.168.10.50",
+        $dhcp_leasetime = "24h",
 	) {
 	    # If the mac address is specified, then set the interface name statically in udev
     	if $macaddress {
@@ -290,10 +296,20 @@ class maverick_network (
 		        addressing  => "master",
 		        macaddress  => $macaddress,
 		        ipaddress   => $apaddress,
+		        gateway     => $gateway,
+		        nameservers => $nameservers,
 		    }
 		    # Then setup the AP
 		    maverick_network::interface_ap { $name:
 		        macaddress  => $macaddress,
+		        ssid        => $ssid,
+		        psk         => $psk,
+                driver      => $driver,
+                channel     => $channel,
+                hw_mode     => $hw_mode,
+                disable_broadcast_ssid => $disable_broadcast_ssid,
+                dhcp_range  => $dhcp_range,
+                dhcp_leasetime => $dhcp_leasetime,
 		    }
 		}
 		# If not defined as monitor mode, ensure monitor disabled for this interface
