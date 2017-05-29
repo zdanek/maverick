@@ -1,6 +1,6 @@
 # Maverick Changelog
 
-## [2017-05-28] 1.0.4 Release
+## [2017-05-29] 1.0.4 Release
  - Various bugfixes and doc updates
  - Improved Seek Thermal vision_seek quality and service
  - Refactor python/pip handling to deal with versions
@@ -9,6 +9,7 @@
  - Add localconf parameters to force hardware installs
  - Add Intel camera-streaming-daemon install and configuration, not default yet
  - Streamline all builds and prebuilt images to fit on 8Gb SD/eMMC
+ - Improve and correct maverick_network AP parameters, documentation
 
 ## [2017-05-24] 1.0.3 Release
  - Various bugfixes
