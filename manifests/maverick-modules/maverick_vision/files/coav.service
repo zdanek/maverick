@@ -5,7 +5,7 @@ After=maverick-mavproxy@fc.service maverick-mavproxy@sitl.service maverick-mavli
 
 [Service]
 EnvironmentFile=/srv/maverick/data/config/vision/coav.conf
-ExecStart=/srv/maverick/software/collision_avoidance/bin/coav-control -d $DETECTOR -a $STRATEGY -s $SENSOR
+ExecStart=/srv/maverick/software/collision_avoidance/bin/coav-control -d $DETECTOR -a $AVOIDANCE -s $SENSOR -p $PORT
 TimeoutStartSec=0
 User=mav
 
