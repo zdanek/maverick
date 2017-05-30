@@ -10,6 +10,7 @@ Vision is an important (and fun) part of UAVs.  Maverick contains good basic sup
 - [**Vision_landing**](/modules/vision#vision_landing): Software that uses tags/markers (Aruco) as landing patterns, and controls Precision Landing in ArduCopter
 - [**Camera-streaming-daemon**](/modules/vision#camera-streaming-daemon): RTSP Video server with service discovery publishing.
 - [**Wifibroadcast**](/modules/vision#wifibroadcast): Innovative software that uses monitor/inject mode of compatible wifi adapters to provide connection-less wifi video with graceful degradation, similar to traditional analogue FPV.
+- [**Collision-avoidance-library**](/modules/vision#collision-avoidance-library): Intel RealSense Collision Avoidance Library is a library/tool for investigating collision avoidance strategies.  It uses Intel RealSense cameras for depth perception and allows different detection methods and avoidance strategies.
 
 One key advantage of Maverick is that wherever possible it provides the same versions of software across all platforms.  This is very useful for porting code and functionality across platforms, as the underlying components often vary widely in their APIs/features.  As of Maverick 1.0, the component versions are:  
 - Gstreamer: **1.10.4**
@@ -87,10 +88,20 @@ Like visiond, it has a dynamic config in ~/data/config/vision/vision_landing.con
 This service is not started by default, as it contends for camera usage with visiond.  To use it, first turn off visiond (`maverick stop visiond`).  It can be started a boot by setting a localconf parameter:  
 `"maverick_vision::vision_landing::active": true`  
 
-### camera-streaming-daemon
+### Camera-streaming-daemon
 camera-streaming-daemon is an open-source project from Intel (https://github.com/01org/camera-streaming-daemon).  It is still early stages for the project, but it has great promise for an improvement in the method that realtime digital video is normally implemented on UAVs.  Instead of the normal method of providing a gstreamer pipeline and endpoint to send data to, camera-streaming-daemon (csd) provides an RTSP server with multiple endpoints to connect to if there are multiple cameras or streams available, and publishes these streams over the network using Zeroconf/Avahi.  
 camera-streaming-daemon is not yet the default over visiond (although it is intended to be when more mature), so it can be started simply by calling the csd service (after stopping visiond, which would contend for the video resource):  
 `maverick stop visiond`  
 `maverick start csd`  
 To start at boot, set a localconf parameter:  
 `"maverick_vision::camera_streaming_daemon::active": true`  
+
+### Collision-avoidance-library
+Intel RealSense Collision Avoidance Library is a library/tool for investigating collision avoidance strategies.  It uses Intel RealSense cameras for depth perception and allows different detection methods and avoidance strategies.  It is not intended to be an end-user service but more a system for developers to investigate collision avoidance.  Further information can be found here:  
+https://github.com/01org/collision-avoidance-library/wiki  
+Maverick provides collision-avoidance-library as a pre-installed and pre-configured vision component.  It is not installed by default, to install it set a localconf parameter:  
+`"maverick_vision::collision_avoidance": true`  
+The coav-tool is controlled by maverick service *coav*, so to start and stop the service:  
+`maverick start coav`  
+`maverick stop coav`  
+To configure it, alter configuration file *~/data/config/vision/coav.conf* and restart to activate the changes: `maverick restart coav`.  
