@@ -295,6 +295,7 @@ if [ "$STATUS" == "true" ]; then
     (systemctl status maverick-csd >/dev/null 2>&1); csd=$?; (systemctl is-enabled maverick-csd >/dev/null 2>&1); csden=$?; statusout+=$(status "csd" "Camera Streaming Daemon" $csd $csden)
     (systemctl status maverick-vision_landing >/dev/null 2>&1); visland=$?; (systemctl is-enabled maverick-vision_landing >/dev/null 2>&1); vislanden=$?; statusout+=$(status "vision_landing" "Vision Landing" $visland $vislanden)
     (systemctl status maverick-vision_seek >/dev/null 2>&1); seek=$?; (systemctl is-enabled maverick-vision_seek >/dev/null 2>&1); seeken=$?; statusout+=$(status "vision_seek" "Seek Thermal Vision" $seek $seeken)
+    (systemctl status maverick-coav >/dev/null 2>&1); coav=$?; (systemctl is-enabled maverick-coav >/dev/null 2>&1); coaven=$?; statusout+=$(status "coav" "Collision Avoidance" $coav $coaven)
 
     echo -e $statusout | column -c 3 -s : -t
     echo

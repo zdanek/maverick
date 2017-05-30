@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick - Collision Avoidance Library Tool
+Requires=network-online.target
+After=maverick-mavproxy@fc.service maverick-mavproxy@sitl.service maverick-mavlink-router@fc.service maverick-mavlink-router@sitl.service maverick-cmavnode@fc.service maverick-cmavnode@sitl.service
+
+[Service]
+EnvironmentFile=/srv/maverick/data/config/vision/coav.conf
+ExecStart=/srv/maverick/software/collision_avoidance/bin/coav-control -d $DETECTOR -a $STRATEGY -s $SENSOR
+TimeoutStartSec=0
+User=mav
+
+[Install]
+WantedBy=multi-user.target
