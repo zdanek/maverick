@@ -28,10 +28,13 @@ class maverick_hardware::raspberry (
         package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "java-common", "libservlet2.5-java"]:
             ensure  => purged,
         }
-        exec { "raspberry-remove-java":
-            command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk openjdk-8-jre openjdk-7-jdk openjdk-7-jre",
-            onlyif      => "/usr/bin/dpkg -s openjdk-8-jdk || /usr/bin/dpkg -s openjdk-7-jdk",
+        if ! getvar("maverick_intelligence::tensorflow") {
+            exec { "raspberry-remove-java":
+                command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk openjdk-8-jre openjdk-7-jdk openjdk-7-jre",
+                onlyif      => "/usr/bin/dpkg -s openjdk-8-jdk || /usr/bin/dpkg -s openjdk-7-jdk",
+            }
         }
+        
     }
     
     # Install raspberry supporting utils

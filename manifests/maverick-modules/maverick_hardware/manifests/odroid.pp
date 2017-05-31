@@ -7,7 +7,12 @@ class maverick_hardware::odroid (
     ensure_packages(["axel", "whiptail"])
 
     if $remove_more_packages == true {
-        ensure_packages(["chromium-browser", "thunderbird", "fonts-noto-cjk", "openjdk-8-jre-headless", "gnome-user-guide"], {'ensure'=>'purged'})
+        ensure_packages(["chromium-browser", "thunderbird", "fonts-noto-cjk", "gnome-user-guide"], {'ensure'=>'purged'})
+        if ! getvar("maverick_intelligence::tensorflow") {
+            package { ["openjdk-8-jre-headless", "openjdk-8-jre"]:
+                ensure      => purged
+            }
+        }
     }
     
     # Add odroid-utility repo from git, contains useful scripts

@@ -49,7 +49,7 @@ class maverick_hardware::joule (
     if $remove_more_packages == true {
         package { [
             "fonts-noto-cjk",  "firefox", "thunderbird", "mythes-en-au", "mythes-en-us", "libmythes-1.2-0",
-            "ubuntu-docs", "gnome-user-guide", "snapd", "openjdk-8-jre-headless", "openjdk-8-jre", "samba-common", "samba-common-bin", "samba-libs", "ubuntu-online-tour",
+            "ubuntu-docs", "gnome-user-guide", "snapd", "samba-common", "samba-common-bin", "samba-libs", "ubuntu-online-tour",
             "aisleriot", "gnome-sudoku", "gnome-mahjongg", "gnome-mines", "imagemagick", "imagemagick-6.q16", "imagemagick-common", 
             "cups-browsed", "cups-bsd", "cups-client", "cups-common", "cups-ppdc", "cups-server-common",
             "shotwell", "shotwell-common", "transmission-common", "transmission-gtk", "libwebkit2gtk-4.0-37-gtk2", "fonts-nanum", 
@@ -58,6 +58,11 @@ class maverick_hardware::joule (
         }
         package { ["chromium-browser", "liboxideqtcore0", "pepperflashplugin-nonfree", "example-content", "ubuntu-touch-sounds", "fonts-lato", "hplip-data"]:
             ensure      => purged
+        }
+        if ! getvar("maverick_intelligence::tensorflow") {
+            package { ["openjdk-8-jre-headless", "openjdk-8-jre"]:
+                ensure      => purged
+            }
         }
     }
     # Ensure control center is still installed
