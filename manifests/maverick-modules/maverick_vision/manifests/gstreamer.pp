@@ -218,7 +218,7 @@ class maverick_vision::gstreamer (
             exec { "gstreamer_gst_libav":
                 user        => "mav",
                 timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "AS=gcc"],
                 command     => "/srv/maverick/var/build/gstreamer/gst-libav/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_libav.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-libav",
                 creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstlibav.so",
