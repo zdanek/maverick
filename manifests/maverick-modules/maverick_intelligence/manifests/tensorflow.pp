@@ -17,6 +17,15 @@ class maverick_intelligence::tensorflow (
         mode        => "755",
     }
     
+    # Set variables per platform, tensorbuild is quite specific per platform due to the numebr of kludges necessary
+    if $joule_present == "yes" {
+        $java_home = "/usr/lib/jvm/java-8-openjdk-amd64"
+    } elsif $odroid_present == "yes" {
+        $java_home = "/usr/lib/jvm/java-8-openjdk-armhf"
+    } elsif $raspberry_present == "yes" {
+        $java_home = "/usr/lib/jvm/java-8-openjdk-armhf"
+    }
+
     if ! ("install_flag_tensorflow" in $installflags) {
         # Install bazel.  This is a bit hacky, due to the wierd way bazel decides to distribute itself..
         exec { "download-bazel":
@@ -36,13 +45,26 @@ class maverick_intelligence::tensorflow (
             cwd         => "/srv/maverick/var/build/tensorflow",
             user        => "mav",
             creates     => "/srv/maverick/var/build/tensorflow/bazel/README.md",
-        } ->
+        }
+        if $odroid_present == "yes" or $raspberry_present == "yes" {
+            file { "/srv/maverick/var/build/tensorflow/bazel/scripts/bootstrap/compile.sh":
+                ensure      => present,
+                source      => "puppet:///modules/maverick_intelligence/bazel-compile-lowmem.sh",
+                owner       => "mav",
+                group       => "mav",
+                mode        => "755",
+                require     => Exec["unzip-bazel"],
+                before      => Exec["compile-bazel"],
+            }
+        }
         exec { "compile-bazel":
-            command     => "/srv/maverick/var/build/tensorflow/bazel/compile.sh",
+            environment => "JAVA_HOME=$java_home",
+            command     => "/srv/maverick/var/build/tensorflow/bazel/compile.sh >/srv/maverick/var/log/build/bazel.compile.log 2>&1",
             cwd         => "/srv/maverick/var/build/tensorflow/bazel",
             user        => "mav",
             timeout     => 0,
             creates     => "/srv/maverick/var/build/tensorflow/bazel/output/bazel",
+            require     => [ Exec["unzip-bazel"], Package["openjdk-8-jdk"] ],
         } ->
         # Install tensorflow
         oncevcsrepo { "git-tensorflow":
