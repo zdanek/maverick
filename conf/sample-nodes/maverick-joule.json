@@ -3,7 +3,9 @@
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
-
+	
+	"maverick_hardware::camera_realsense_install": true, // Force realsense support
+	
 	"maverick_desktop::enable": false, // Desktop is enabled by default
 
 	// Flight Controller (fc) mavlink setup
