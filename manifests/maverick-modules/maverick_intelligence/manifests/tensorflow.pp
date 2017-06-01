@@ -92,19 +92,37 @@ class maverick_intelligence::tensorflow (
             cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
             user        => "mav",
             timeout     => 0,
+            creates     => "/srv/maverick/var/build/tensorflow/tensorflow/.tf_configure.bazelrc",
         } ->
         exec { "compile-tensorflow":
             command     => "/srv/maverick/var/build/tensorflow/bazel/output/bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package --local_resources 1024,1.0,1.0 >/srv/maverick/var/log/build/tensorflow.compile.log 2>&1",
             cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
             user        => "mav",
             timeout     => 0,
+            creates     => "/srv/maverick/.cache/bazel/_bazel_mav",
         } ->
+        exec { "createwhl-tensorflow":
+            command     => "/srv/maverick/var/build/tensorflow/tensorflow/bazel-bin/tensorflow/tools/pip_package/build_pip_package /srv/maverick/var/build/tensorflow/tensorflow_pkg >/srv/maverick/var/log/build/tensorflow.createwhl.log 2>&1",
+            cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
+            user        => "mav",
+            timeout     => 0,
+            creates     => "/srv/maverick/var/build/tensorflow/tensorflow_pkg",
+        }
+        unless "tensorflow" in $::python_modules["global"] {
+            notice("installing tensorflow")
+            exec { "install-tensorflow":
+                path        => ["/usr/local/bin","/usr/bin"],
+                command     => "pip install /srv/maverick/var/build/tensorflow/tensorflow_pkg/*.whl",
+                require     => Exec["createwhl-tensorflow"],
+                before      => File["/srv/maverick/var/build/.install_flag_tensorflow"],
+            }
+        }
         file { "/srv/maverick/var/build/.install_flag_tensorflow":
             owner       => "mav",
             group       => "mav",
             mode        => "644",
-            # ensure      => present,
-            ensure      => absent,
+            ensure      => present,
+            require     => Exec["createwhl-tensorflow"],
         }
     }
  
