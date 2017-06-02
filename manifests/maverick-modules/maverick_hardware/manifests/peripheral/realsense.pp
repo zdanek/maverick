@@ -70,38 +70,6 @@ class maverick_hardware::peripheral::realsense (
         content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense",
     }
 
-    # Clone examples source from github
-    file { "/srv/maverick/code/realsense":
-        ensure          => directory,
-        owner           => mav,
-        group           => mav,
-        mode            => "755",
-    } ->
-    oncevcsrepo { "git-realsense-realsense_samples":
-        gitsource   => "https://github.com/IntelRealSense/realsense_samples.git",
-        dest        => "/srv/maverick/code/realsense/samples",
-    }
-    # This doesn't work, for now
-    if 1 == 2 {
-        exec { "realsense-samples-prepbuild":
-            user        => "mav",
-            timeout     => 0,
-            environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-            command     => "/usr/bin/cmake .",
-            cwd         => "/srv/maverick/code/realsense/samples",
-            creates     => "/srv/maverick/code/realsense/samples/Makefile",
-        } ->
-        exec { "realsense-samples-build":
-            user        => "mav",
-            timeout     => 0,
-            environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/librealsense/include:/srv/maverick/software/opencv/include:/srv/maverick/software/realsense-sdk/include", "LIBRARY_PATH=/srv/maverick/software/librealsense/lib:/srv/maverick/software/opencv/lib:/srv/maverick/software/realsense-sdk/lib"],
-            command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-samples.build.out 2>&1",
-            cwd         => "/srv/maverick/code/realsense/samples",
-            # creates     => "/srv/maverick/var/build/realsense-samples/sdk/src/core/pipeline/librealsense_pipeline.so",
-            require     => [ Exec["realsense-samples-prepbuild"], Exec["realsense-sdk-install"] ]
-        }
-    }
-    
     if ! ("install_flag_realsense_sdk" in $installflags) {
         if $realsensesdk == true {
             # Clone realsense-sdk
@@ -144,6 +112,44 @@ class maverick_hardware::peripheral::realsense (
             file { "/srv/maverick/var/build/.install_flag_realsense_sdk":
                 ensure      => file,
                 owner       => "mav",
+            }
+
+            # Disable samples for now
+            if 1 == 2 {
+                # Clone examples source from github
+                file { "/srv/maverick/code/realsense":
+                    ensure          => directory,
+                    owner           => mav,
+                    group           => mav,
+                    mode            => "755",
+                } ->
+                oncevcsrepo { "git-realsense-realsense_samples":
+                    gitsource   => "https://github.com/IntelRealSense/realsense_samples.git",
+                    dest        => "/srv/maverick/code/realsense/samples",
+                } ->
+                file { "/srv/maverick/code/realsense/samples/build":
+                    ensure      => directory,
+                    owner       => "mav",
+                    group       => "mav",
+                    mode        => "755",
+                } ->
+                exec { "realsense-samples-prepbuild":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/librealsense"],
+                    command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv:/srv/maverick/software/librealsense ..",
+                    cwd         => "/srv/maverick/code/realsense/samples/build",
+                    creates     => "/srv/maverick/code/realsense/samples/build/Makefile",
+                } ->
+                exec { "realsense-samples-build":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["CPPFLAGS=-I/srv/maverick/software/librealsense/include -I/srv/maverick/software/opencv/include", "CPLUS_INCLUDE_PATH=/srv/maverick/software/librealsense/include:/srv/maverick/software/opencv/include:/srv/maverick/software/realsense-sdk/include", "LIBRARY_PATH=/srv/maverick/software/librealsense/lib:/srv/maverick/software/opencv/lib:/srv/maverick/software/realsense-sdk/lib"],
+                    command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-samples.build.out 2>&1",
+                    cwd         => "/srv/maverick/code/realsense/samples/build",
+                    # creates     => "/srv/maverick/var/build/realsense-samples/sdk/src/core/pipeline/librealsense_pipeline.so",
+                    require     => [ Exec["realsense-samples-prepbuild"], Exec["realsense-sdk-install"] ]
+                }
             }
         }
     } 
