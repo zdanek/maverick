@@ -192,7 +192,7 @@ if [ "$SELFUPDATE" == "true" ]; then
             cd /srv/maverick/software/maverick; git pull origin;
         fi
         echo
-        echo "${bgg}Maverick update completed${reset}"
+        echo "${green}Maverick update completed${reset}"
         echo
     else
         echo
