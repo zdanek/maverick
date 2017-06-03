@@ -276,13 +276,27 @@ class maverick_mavlink (
             pkgname     => "numpy",
             ensure      => present,
             timeout     => 0,
-        } ->
-        install_python_module { "pip-cuav":
-            pkgname     => "cuav",
-            ensure      => present,
-            timeout     => 0,
-            require     => Class["maverick_vision::opencv"],
         }
+        unless "cuav" in $::python_modules["global"] {
+            oncevcsrepo { "git-cuav":
+                gitsource   => "https://github.com/CanberraUAV/cuav.git",
+                dest        => "/srv/maverick/var/build/cuav",
+                # submodules  => true,
+                require     => Install_python_module["pip-numpy"],
+            } ->
+            exec { "compile-cuav":
+                command     => "/usr/bin/python setup.py install",
+                cwd         => "/srv/maverick/var/build/cuav",
+                require     => [ Class["maverick_vision::opencv"], Package["libdc1394-22-dev"] ],
+                creates     => "/usr/local/lib/python2.7/dist-packages/cuav-1.4.0-py2.7-linux-x86_64.egg",
+            }
+        }      
+        #install_python_module { "pip-cuav":
+        #    pkgname     => "cuav",
+         #   ensure      => present,
+         #   timeout     => 0,
+         #   require     => [ Class["maverick_vision::opencv"], Package["libdc1394-22-dev"] ],
+        #}
     }
     
     # Install dronekit globally (not in virtualenv) from pip
