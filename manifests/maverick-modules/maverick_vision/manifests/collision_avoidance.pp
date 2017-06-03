@@ -47,7 +47,7 @@ class maverick_vision::collision_avoidance (
     file { "/etc/systemd/system/maverick-coav.service":
         owner           => "root",
         group           => "root",
-        mode            => "755",
+        mode            => "644",
         source          => "puppet:///modules/maverick_vision/coav.service",
         notify          => Exec["maverick-systemctl-daemon-reload"],
         before          => Service["maverick-coav"],
