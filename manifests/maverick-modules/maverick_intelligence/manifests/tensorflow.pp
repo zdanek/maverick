@@ -72,7 +72,29 @@ class maverick_intelligence::tensorflow (
             dest        => "/srv/maverick/var/build/tensorflow/tensorflow",
             revision    => $revision,
             submodules  => true,
-        } ->
+        }
+        # Do some hacks for arm build
+        if $raspberry_present or $odroid_present {
+            exec { "tfhack-lib64":
+                command     => "/bin/grep -Rl 'lib64' | xargs sed -i 's/lib64/lib/g'",
+                onlyif      => "/bin/grep lib64 /srv/maverick/var/build/tensorflow/tensorflow/tensorflow/core/platform/default/platform.bzl",
+                cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
+                user        => "mav",
+            } ->
+            exec { "tfhack-mobiledev":
+                command     => "/bin/sed -n '/IS_MOBILE_PLATFORM/!p' tensorflow/core/platform/platform.h",
+                onlyif      => "/bin/grep IS_MOBILE_PLATFORM tensorflow/core/platform/platform.h",
+                cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
+                user        => "mav",
+            } ->
+            exec { "tfhack-https-cloudflare":
+                command     => "/bin/sed -i 's#https://cdnjs#http://cdnjs#' WORKSPACE",
+                onlyif      => "/bin/grep 'https://cdnjs' WORKSPACE",
+                cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
+                user        => "mav",
+                before      => Exec["configure-tensorflow"],
+            }
+        }
         exec { "configure-tensorflow":
             environment => [
                 "PYTHON_BIN_PATH=/usr/bin/python", 
@@ -93,6 +115,7 @@ class maverick_intelligence::tensorflow (
             user        => "mav",
             timeout     => 0,
             creates     => "/srv/maverick/var/build/tensorflow/tensorflow/.tf_configure.bazelrc",
+            require     => Oncevcsrepo["git-tensorflow"],
         } ->
         exec { "compile-tensorflow":
             command     => "/srv/maverick/var/build/tensorflow/bazel/output/bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package --local_resources 1024,0.5,1.0 >/srv/maverick/var/log/build/tensorflow.compile.log 2>&1",
