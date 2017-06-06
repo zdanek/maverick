@@ -10,7 +10,7 @@ define maverick_network::interface_monitor (
     }
 
     # Add a config file for this interface
-    file { "/srv/maverick/data/config/monitor-interface-${name}.conf":
+    file { "/srv/maverick/data/config/network/monitor-interface-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

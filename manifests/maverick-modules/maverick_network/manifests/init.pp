@@ -226,6 +226,12 @@ class maverick_network (
     }
 
     # Define and configure monitor-mode interface setup in systemd
+    file { "/srv/maverick/data/config/network":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
     file { "/srv/maverick/software/maverick/bin/monitor-interface.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/monitor-interface.sh"

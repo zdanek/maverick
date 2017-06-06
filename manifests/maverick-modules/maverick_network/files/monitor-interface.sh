@@ -13,7 +13,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Load defaults if they exist
-[ ! -r /srv/maverick/data/config/monitor-interface-$2.conf ] || . /srv/maverick/data/config/monitor-interface-$2.conf
+[ ! -r /srv/maverick/data/config/network/monitor-interface-$2.conf ] || . /srv/maverick/data/config/network/monitor-interface-$2.conf
 
 # Check for required wireless utils
 if hash ifconfig; then
