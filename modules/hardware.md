@@ -46,6 +46,8 @@ Raspbian has a serial console set on the UART exposed on the GPIO pins 8 and 10 
 `"maverick_hardware::raspberry::serialconsole": true`  
 USB ports provide a maximum of 500ma current according to the USB protocol - anything more risks instability of the system, particularly as the Raspberry is powered by a USB port itself.  However, with careful hardware setup the Raspberry is capable of providing higher current through the USB ports which is useful for high power peripherals such as Wifi.  In this case, the current limiter can be lifted by setting localconf parameter:  
 `"maverick_hardware::raspberry::overpower_usb": true`  
+The default swap size on Raspbian is 100Mb and is implemented using the swapfile /var/swap.  When running memory hungry software such as compilers or running a lot of software which is a common scenario with Maverick, having more swap available is a good idea.  So the default in Maverick is increased to 1024Mb (1Gb).  To alter this, set the localconf parameter:  
+`"maverick_hardware::raspberry::swapsize": 512`
 
 ### BeagleBone Black
 The BeagleBone Black (BBB) is an interesting embedded computer system about the size of a Raspberry Pi.  It is popular with the hacking community and has been used for several ArduPilot projects.  It has an onboard MMC flash memory but can also be booted from SD card.  Maverick has been developed and tested on BeagleBone Black running the Ubuntu OS.  Beaglebone hardware will be detected automatically, to force platform support, set localconf parameter:  
