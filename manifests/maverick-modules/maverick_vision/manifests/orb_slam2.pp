@@ -1,7 +1,7 @@
 class maverick_vision::orb_slam2 (
 ) {
     
-    ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni-dev"])
+    ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni2-dev"])
     
     if ! ("install_flag_pangolin" in $installflags) {
         # Clone and Build pangolin
