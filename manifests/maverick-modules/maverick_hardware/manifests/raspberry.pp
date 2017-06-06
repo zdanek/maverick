@@ -13,6 +13,7 @@ class maverick_hardware::raspberry (
     $auto_login = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     $remove_extrapackages = true,
+    $swapsize = 1024, # /var/swap swapfile size in Mb
     ) {
 
     # https://github.com/fnoop/maverick/issues/234
@@ -238,5 +239,11 @@ class maverick_hardware::raspberry (
             command     => "/bin/sed /boot/config.txt -i -r -e 's/^max_usb_current=1/#max_usb_current=1/'",
             onlyif      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
         }
+    }
+    
+    # Size swap
+    exec { "raspberry-swapsize":
+        command     => "/bin/sed -i -e 's/^CONF_SWAPSIZE=.*/CONF_SWAPSIZE=${swapsize}/' /etc/dphys-swapfile",
+        unless      => "/bin/grep -e '^CONF_SWAPSIZE=${swapsize}$' /etc/dphys-swapfile",
     }
 }

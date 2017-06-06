@@ -27,6 +27,12 @@ rm -f /var/log/btmp* /var/log/wtmp*
 rm -rf /home/tmp
 userdel tmp
 
+# Remove swapfile
+if [ -e /var/swap ]; then
+    swapoff -a
+    rm /var/swap
+fi
+
 # Remove initial bootstrap maverick from common locations
 rm -rf /root/maverick
 rm -rf /home/pi/maverick
