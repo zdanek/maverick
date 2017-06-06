@@ -22,13 +22,18 @@
 	// "maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
 	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
 	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+
+	"maverick_mavlink::cuav_install": true,
 	
 	// "maverick_vision::visiond::active": true,
+	"maverick_vision::vision_landing::vision_landing_revision": "realsense",
 	// "maverick_vision::vision_landing::active": false,
+	"maverick_vision::orb_slam2": true,
+	"maverick_vision::rtabmap": true,
+	"maverick_vision::collision_avoidance": true,
 
 	// Add classes here
 	"classes":		[
-	    "maverick_desktop",
 	    "maverick_network"
 	]
 	
