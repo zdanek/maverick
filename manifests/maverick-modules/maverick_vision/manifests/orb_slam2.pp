@@ -3,41 +3,50 @@ class maverick_vision::orb_slam2 (
     
     ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni-dev"])
     
-    # Clone and Build pangolin
-    oncevcsrepo { "git-pangolin":
-        gitsource   => "https://github.com/stevenlovegrove/Pangolin.git",
-        dest        => "/srv/maverick/var/build/pangolin",
-    } ->
-    # Create build directory
-    file { "/srv/maverick/var/build/pangolin/build":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => 755,
-    } ->
-    exec { "pangolin-prepbuild":
-        user        => "mav",
-        timeout     => 0,
-        environment => ["CMAKE_PREFIX_PATH=/srv/maverick/var/build/pangolin:/srv/maverick/var/build/pangolin/src", "CMAKE_MODULE_PATH=/srv/maverick/var/build/pangolin:/srv/maverick/var/build/pangolin/src", "Pangolin_DIR=/srv/maverick/var/build/pangolin"],
-        command     => "/usr/bin/cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/pangolin -DCMAKE_INSTALL_RPATH=/srv/maverick/software/pangolin/lib ..",
-        cwd         => "/srv/maverick/var/build/pangolin/build",
-        creates     => "/srv/maverick/var/build/pangolin/build/Makefile",
-        require     => [ File["/srv/maverick/var/build/pangolin/build"], Package["libglew-dev"] ], # ensure we have all the dependencies satisfied
-    } ->
-    exec { "pangolin-build":
-        user        => "mav",
-        timeout     => 0,
-        command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/pangolin.build.out 2>&1",
-        cwd         => "/srv/maverick/var/build/pangolin/build",
-        creates     => "/srv/maverick/var/build/pangolin/build/src/libpangolin.so",
-        require     => Exec["pangolin-prepbuild"],
-    } ->
-    exec { "pangolin-install":
-        user        => "mav",
-        timeout     => 0,
-        command     => "/usr/bin/make install >/srv/maverick/var/log/build/pangolin.install.out 2>&1",
-        cwd         => "/srv/maverick/var/build/pangolin/build",
-        creates     => "/srv/maverick/software/pangolin/lib/libpangolin.so",
+    if ! ("install_flag_pangolin" in $installflags) {
+        # Clone and Build pangolin
+        oncevcsrepo { "git-pangolin":
+            gitsource   => "https://github.com/stevenlovegrove/Pangolin.git",
+            dest        => "/srv/maverick/var/build/pangolin",
+        } ->
+        # Create build directory
+        file { "/srv/maverick/var/build/pangolin/build":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => 755,
+        } ->
+        exec { "pangolin-prepbuild":
+            user        => "mav",
+            timeout     => 0,
+            environment => ["CMAKE_PREFIX_PATH=/srv/maverick/var/build/pangolin:/srv/maverick/var/build/pangolin/src", "CMAKE_MODULE_PATH=/srv/maverick/var/build/pangolin:/srv/maverick/var/build/pangolin/src", "Pangolin_DIR=/srv/maverick/var/build/pangolin"],
+            command     => "/usr/bin/cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/pangolin -DCMAKE_INSTALL_RPATH=/srv/maverick/software/pangolin/lib ..",
+            cwd         => "/srv/maverick/var/build/pangolin/build",
+            creates     => "/srv/maverick/var/build/pangolin/build/Makefile",
+            require     => [ File["/srv/maverick/var/build/pangolin/build"], Package["libglew-dev"] ], # ensure we have all the dependencies satisfied
+        } ->
+        exec { "pangolin-build":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/pangolin.build.out 2>&1",
+            cwd         => "/srv/maverick/var/build/pangolin/build",
+            creates     => "/srv/maverick/var/build/pangolin/build/src/libpangolin.so",
+            require     => Exec["pangolin-prepbuild"],
+        } ->
+        exec { "pangolin-install":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make install >/srv/maverick/var/log/build/pangolin.install.out 2>&1",
+            cwd         => "/srv/maverick/var/build/pangolin/build",
+            creates     => "/srv/maverick/software/pangolin/lib/libpangolin.so",
+            before      => Exec["compile-orb_slam2"],
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_pangolin":
+            owner       => "mav",
+            group       => "mav",
+            mode        => "644",
+            ensure      => present,
+        }
     }
     
     # Pull orb-slam2 from git mirror
