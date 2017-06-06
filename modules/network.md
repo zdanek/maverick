@@ -113,6 +113,17 @@ The example above to setup an AP interface is quite simple.  There are additiona
 ```
 Note that the parameter to set the IP address for AP mode is 'apaddress' instead of 'ipaddress'.
 
+### Monitor / Broadcast Interface
+Support for monitor/injection wifi mode and wifibroadcast software is installed by default in Maverick.  A monitor interface can be defined like:  
+```
+"wcast0": {
+    "type": "wireless",
+    "mode": "monitor",
+    "macaddress": "00:af:af:ff:ff:xx"
+}
+```
+This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.
+
 ## Network components
 ### Avahi
 Avahi is automatically installed and configured, in order to provide 'zeroconf' multicast DNS.  Under normal networking circumstances, the Maverick system should respond to any requests for <hostname>.local, eg. maverick-raspberry.local.  Avahi 'publish-addresses' is disabled by default but can be enabled by setting localconf parameter:  
