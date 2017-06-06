@@ -10,12 +10,6 @@ class maverick_intelligence::tensorflow (
         pkgname     => "numpy",
         ensure      => present,
     }
-    file { "/srv/maverick/var/build/tensorflow":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    }
     
     # Set variables per platform, tensorbuild is quite specific per platform due to the numebr of kludges necessary
     if $joule_present == "yes" {
@@ -27,6 +21,12 @@ class maverick_intelligence::tensorflow (
     }
 
     if ! ("install_flag_tensorflow" in $installflags) {
+        file { "/srv/maverick/var/build/tensorflow":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
         # Install bazel.  This is a bit hacky, due to the wierd way bazel decides to distribute itself..
         exec { "download-bazel":
             command     => "/usr/bin/wget https://github.com/bazelbuild/bazel/releases/download/0.5.0/bazel-0.5.0-dist.zip",
@@ -82,7 +82,7 @@ class maverick_intelligence::tensorflow (
                 user        => "mav",
             } ->
             exec { "tfhack-mobiledev":
-                command     => "/bin/sed -n '/IS_MOBILE_PLATFORM/!p' tensorflow/core/platform/platform.h",
+                command     => "/bin/sed -i '/IS_MOBILE_PLATFORM/d' tensorflow/core/platform/platform.h",
                 onlyif      => "/bin/grep IS_MOBILE_PLATFORM tensorflow/core/platform/platform.h",
                 cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
                 user        => "mav",
@@ -94,6 +94,12 @@ class maverick_intelligence::tensorflow (
                 user        => "mav",
                 before      => Exec["configure-tensorflow"],
             }
+            # $copts = '--copt="-mfpu=neon-vfpv4" --copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
+            $copts = '--copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
+            $resources = '768,1.0,1.0'
+        } else {
+            $copts = ''
+            $resources = '1024,2.0,1.0'
         }
         exec { "configure-tensorflow":
             environment => [
@@ -118,11 +124,11 @@ class maverick_intelligence::tensorflow (
             require     => Oncevcsrepo["git-tensorflow"],
         } ->
         exec { "compile-tensorflow":
-            command     => "/srv/maverick/var/build/tensorflow/bazel/output/bazel build --config=opt //tensorflow/tools/pip_package:build_pip_package --local_resources 1024,0.5,1.0 >/srv/maverick/var/log/build/tensorflow.compile.log 2>&1",
+            command     => "/srv/maverick/var/build/tensorflow/bazel/output/bazel build --config=opt ${copts} --local_resources ${resources} --verbose_failures //tensorflow/tools/pip_package:build_pip_package >/srv/maverick/var/log/build/tensorflow.compile.log 2>&1",
             cwd         => "/srv/maverick/var/build/tensorflow/tensorflow",
             user        => "mav",
             timeout     => 0,
-            creates     => "/srv/maverick/var/build/tensorflow/tensorflow/bazel-bin",
+            #creates     => "/srv/maverick/var/build/tensorflow/tensorflow/bazel-bin",
         } ->
         exec { "createwhl-tensorflow":
             command     => "/srv/maverick/var/build/tensorflow/tensorflow/bazel-bin/tensorflow/tools/pip_package/build_pip_package /srv/maverick/var/build/tensorflow/tensorflow_pkg >/srv/maverick/var/log/build/tensorflow.createwhl.log 2>&1",
