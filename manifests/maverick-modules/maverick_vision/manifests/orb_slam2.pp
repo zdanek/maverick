@@ -62,14 +62,14 @@ class maverick_vision::orb_slam2 (
         user        => "mav",
         timeout     => 0,
         cwd         => "/srv/maverick/software/orb_slam2/Thirdparty/DBoW2/build",
-        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release && /usr/bin/make -j2",
+        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release && /usr/bin/make -j2 >/srv/maverick/var/log/build/orb_slam2.dbow2.log 2>&1",
         creates     => "/srv/maverick/software/orb_slam2/Thirdparty/DBoW2/lib/libDBoW2.so",
     } ->
     exec { "compile-orb_slam2_g2o":
         user        => "mav",
         timeout     => 0,
         cwd         => "/srv/maverick/software/orb_slam2/Thirdparty/g2o/build",
-        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release && /usr/bin/make -j2",
+        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release && /usr/bin/make -j2 >/srv/maverick/var/log/build/orb_slam2.g2o.log 2>&1",
         creates     => "/srv/maverick/software/orb_slam2/Thirdparty/g2o/lib/libg2o.so",
     } ->
     exec { "compile-orb_slam2":
@@ -77,7 +77,7 @@ class maverick_vision::orb_slam2 (
         timeout     => 0,
         environment => ["PATH=/srv/maverick/software/opencv/bin:/srv/maverick/software/pangolin/bin:/srv/maverick/software/ros/current/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/pangolin", "Pangolin_DIR=/srv/maverick/var/build/pangolin"],
         cwd         => "/srv/maverick/software/orb_slam2/build",
-        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv && /usr/bin/make -j2",
+        command     => "/usr/bin/cmake .. -DROS_BUILD_TYPE=Release -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv && /usr/bin/make -j2 >/srv/maverick/var/log/build/orb_slam2.log 2>&1",
         creates     => "/srv/maverick/software/orb_slam2/Examples/Monocular/mono_euroc",
     } ->
     exec { "compile-orb_slam2_ros":
@@ -85,7 +85,7 @@ class maverick_vision::orb_slam2 (
         timeout     => 0,
         environment => ["PATH=/srv/maverick/software/opencv/bin:/srv/maverick/software/pangolin/bin:/srv/maverick/software/ros/current/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/pangolin", "Pangolin_DIR=/srv/maverick/var/build/pangolin"],
         cwd         => "/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2/build",
-        command     => "/bin/bash -c 'source /srv/maverick/software/ros/current/setup.bash && export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2 && /usr/bin/cmake .. -DROS_BUILD_TYPE=Release -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv && /usr/bin/make -j2'",
+        command     => "/bin/bash -c 'source /srv/maverick/software/ros/current/setup.bash && export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2 && /usr/bin/cmake .. -DROS_BUILD_TYPE=Release -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv && /usr/bin/make -j2' >/srv/maverick/var/log/build/orb_slam2.ros.log 2&1",
         creates     => "/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2/Mono",
     } ->
     file { "/etc/profile.d/70-maverick-orb_slam2-ros_package_path.sh":
