@@ -4,13 +4,14 @@ Vision is an important (and fun) part of UAVs.  Maverick contains good basic sup
 - [**Gstreamer**](/modules/vision#gstreamer): Industry standard software for capturing, transcoding and transmitting video
 - [**OpenCV**](/modules/vision#opencv): Industry standard software for Computer Vision
 - **Aruco**: Fiducial Tag library, for recognising tags/markers in video
-- [**Orb_Slam2**](/modules/vision#orb_slam2): Fast library for performing monocular and stereo SLAM
 - [**Visiond**](/modules/vision#visiond): A dynamic service that detects camera and encoding hardware, and automatically generates a gstreamer pipeline to transmit the video over the network - eg. wifi.  Very useful for FPV, it will in the future be useful for transmitting CV and other video
 - [**Vision_seek**](/modules/vision#vision_seek): Similar to visiond, a daemon for streaming/saving video stream from a Seek Thermal imaging device.
 - [**Vision_landing**](/modules/vision#vision_landing): Software that uses tags/markers (Aruco) as landing patterns, and controls Precision Landing in ArduCopter
 - [**Camera-streaming-daemon**](/modules/vision#camera-streaming-daemon): RTSP Video server with service discovery publishing.
 - [**Wifibroadcast**](/modules/vision#wifibroadcast): Innovative software that uses monitor/inject mode of compatible wifi adapters to provide connection-less wifi video with graceful degradation, similar to traditional analogue FPV.
 - [**Collision-avoidance-library**](/modules/vision#collision-avoidance-library): Intel RealSense Collision Avoidance Library is a library/tool for investigating collision avoidance strategies.  It uses Intel RealSense cameras for depth perception and allows different detection methods and avoidance strategies.
+- [**Orb_Slam2**](/modules/vision#orb_slam2): Fast library for performing monocular and stereo SLAM
+- [**RTAB-Map**](/modules/vision#rtab-map): RGB-D Graph-Based SLAM
 
 One key advantage of Maverick is that wherever possible it provides the same versions of software across all platforms.  This is very useful for porting code and functionality across platforms, as the underlying components often vary widely in their APIs/features.  As of Maverick 1.0, the component versions are:  
 - Gstreamer: **1.10.4**
@@ -39,10 +40,6 @@ There are two compile options which rarely need to be changed:
  - `"maverick_vision::opencv::precompile_headers": false'` control how the compile process uses precompile to speed up compilation.  However, it uses vast amounts of disk space so is turned off by default in Maverick
 
 OpenCV is installed into ~/software/opencv and the necessary supporting environment is automatically set.
-
-### Orb_slam2
-Orb_slam2 is not installed by default, as it takes a lot of resource and is really an experimental/academic project - of limited real-world use.  To enable it, set localconf parameter:  
-`"maverick_vision::orb_slam2": true`  
 
 ### Visiond
 Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in ~/data/config/vision/maverick-visiond.conf that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
@@ -99,9 +96,20 @@ To start at boot, set a localconf parameter:
 ### Collision-avoidance-library
 Intel RealSense Collision Avoidance Library is a library/tool for investigating collision avoidance strategies.  It uses Intel RealSense cameras for depth perception and allows different detection methods and avoidance strategies.  It is not intended to be an end-user service but more a system for developers to investigate collision avoidance.  Further information can be found here:  
 https://github.com/01org/collision-avoidance-library/wiki  
-Maverick provides collision-avoidance-library as a pre-installed and pre-configured vision component.  It is not installed by default, to install it set a localconf parameter:  
+Maverick provides collision-avoidance-library as a pre-installed and pre-configured vision component in the OS images.  It is not installed by default when building Maverick from scratch, to install it set a localconf parameter:  
 `"maverick_vision::collision_avoidance": true`  
 The coav-tool is controlled by maverick service *coav*, so to start and stop the service:  
 `maverick start coav`  
 `maverick stop coav`  
 To configure it, alter configuration file *~/data/config/vision/coav.conf* and restart to activate the changes: `maverick restart coav`.  
+
+### Orb_slam2
+Orb_slam2 is installed and configured as part of the OS images, but is not installed by default when building Maverick from scratch, as it takes a lot of resource and is really an experimental/academic project - of limited real-world use.  To enable it, set localconf parameter:  
+`"maverick_vision::orb_slam2": true`  
+
+### RTAB-Map
+Like Orb_slam2, RTAB-Map is installed as part of the OS images, but is not installed by default when building Maverick from scratch as it takes a lot of resource to compile and install.  To enable it, set localconf parameter:  
+`"maverick_vision::rtabmap": true`  
+
+### CUAV
+CUAV is an image processing module for MAVProxy.  It is installed by default.  For more information, please see the [official documentation](http://canberrauav.github.io/cuav/build/html/index.html).
