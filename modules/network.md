@@ -122,7 +122,7 @@ Support for monitor/injection wifi mode and wifibroadcast software is installed 
     "macaddress": "00:af:af:ff:ff:xx"
 }
 ```
-This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.
+This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/network/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.
 
 ## Network components
 ### Avahi
