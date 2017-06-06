@@ -4,7 +4,7 @@ class maverick_vision::rtabmap (
 ) {
     
     if $raspberry_present == "yes" {
-        ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libqt4-dev"])
+        ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libqt4-dev", "libvtk5-qt4-dev"])
     } else {
         ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libproj-dev", "libqt5svg5-dev"])
     }
