@@ -70,7 +70,7 @@ To create an FFC image that can be applied to vision_seek to improve image quali
 Then set the *FFC* setting in *~/data/config/vision/vision_seek.conf* to point to this file:  
 `FFC=/srv/maverick/data/config/vision/seek_ffc.png`  
 If FFC is set in the config file, vision_seek will automatically apply it.  
-More information about this FFC procedure and other aspects of the vision_seek can be found in the github project of the main supporting library:  
+More information about this FFC procedure can be found in the github project of the main supporting library behind vision_seek:  
 https://github.com/maartenvds/libseek-thermal
 
 ### Vision_landing

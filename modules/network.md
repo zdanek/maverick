@@ -5,7 +5,17 @@ Networking is a complex subject and the setup and configuration of networking is
 Maverick, by default, disables these Managers and uses the very simple but reliable Debian/Ubuntu networking model of configuring a single file - */etc/network/interfaces*.  This has proved to be simpler and more reliable to manage, particularly from the automated manifests that Maverick uses.
 
 ### Quick Start Wifi
-For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is only useful when Maverick is first installed or image first booted as it relies on having the sample data in place to find and replace.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).
+For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is only useful when Maverick is first installed or image first booted as it relies on having the sample data in place to find and replace.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).  Simply type: `wifi-setup`, enter your router SSID and passphrase:  
+```
+[dev] [mav@maverick-raspberry ~/var/build]$ wifi-setup
+Enter Wifi SSID: BTHub5-9FM7
+Enter Wifi Passphrase:
+
+Updated config, restarting networking.. (If you do not see 'Done' below shortly, reset the power)
+
+Done
+```
+
 ### PSKs - Pre Shared Keys
 In the documentation below about how to setup network interfaces, wifi passphrases are represented by 'psk'.  A PSK (Pre Shared Key) is an encrypted form of the wifi passphrase, and the unencrypted passphrase form is not used anywhere for better security.  A PSK is generated from a combination of the SSID and the passphrase and can be easily generated from Maverick:  
 `wpa_passphrase <SSID> <passphrase>`  
@@ -122,7 +132,29 @@ Support for monitor/injection wifi mode and wifibroadcast software is installed 
     "macaddress": "00:af:af:ff:ff:xx"
 }
 ```
-This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/network/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.
+This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/network/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.  
+
+After a reboot, `maverick netinfo` should show a configured *Monitor* interface:  
+```
+Interface:          wcast0
+Type:               Wireless
+MAC Address:        24:05:0f:34:53:xx
+Vendor:             Ralink : Ralink Technology, Corp. : MTN Electronic Co. Ltd
+Model:              RT5572 Wireless Adapter : 5572
+Driver:             rt2800usb
+IP Address:         None
+Predictable Name:   wlx24050f34539e
+Wireless Chipset:   Ralink RT2870/3070
+Wireless Standards: a,b,g,n
+Wireless Modes:     ibss,managed,AP,AP VLAN,wds,monitor,mesh
+Wireless Bands:     Dual Band - 2.4Ghz & 5Ghz
+Wireless Mode:      Monitor
+Wireless SSID:      None
+Wireless Frequency: 5.745 Ghz
+Wireless Chanwidth: None
+Wireless RSS:       None
+```
+Now this interface is ready to be used for monitor/injection purposes, most commonly in this environment for wifibroadcast.  wifibroadcast software is installed into */srv/maverick/software/wifibroadcast* and can be setup and run as normal.  Alternatively, it can also easily be configured through [Maverick visiond](/modules/vision#visiond)
 
 ## Network components
 ### Avahi

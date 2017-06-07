@@ -3,4 +3,4 @@ The Intelligence module covers any kind of machine learning, deep learning, neur
 - [**Tensorflow**](/modules/intelligence#tensorflow): A hugely important libary from Google for machine intelligence.
 
 ### Tensorflow
-Tensorflow is installed by default as a python library.  There is lots of great developer information on the [Tensorflow website](https://www.tensorflow.org/get_started/).
+Tensorflow is installed by default as a python library, simply `import tensorflow` in python to start using it.  There is lots of great developer information on the [Tensorflow website](https://www.tensorflow.org/get_started/) to get you started.
