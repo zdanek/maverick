@@ -9,6 +9,7 @@
   - [Development](/modules/dev)
   - [Flight Controller](/modules/fc)
   - [Hardware](/modules/hardware)
+  - [Intelligence](/modules/intelligence)
   - [Mavlink](/modules/mavlink)
   - [Network](/modules/network)
   - [ROS](/modules/ros)
