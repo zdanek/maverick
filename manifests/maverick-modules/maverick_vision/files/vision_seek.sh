@@ -3,9 +3,9 @@
 # Set defaults, can be overriden in /srv/maverick/data/config/vision/vision_seek.conf
 FPS=
 FFC=
-SCALE=
-COLORMAP=
-ROTATE=
+SCALE=1.0
+COLORMAP=-1
+ROTATE=90
 CAMTYPE=seek
 OUTPUT=window
 
