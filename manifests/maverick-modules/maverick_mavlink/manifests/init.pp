@@ -307,7 +307,8 @@ class maverick_mavlink (
     if $dronekit_install {
         install_python_module { "pip-dronekit-global":
             pkgname     => "dronekit",
-            ensure      => "present",
+            ensure      => atleast,
+            version     => "2.9.1",
             timeout     => 0,
         }
     }
