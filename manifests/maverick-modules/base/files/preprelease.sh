@@ -33,6 +33,10 @@ if [ -e /var/swap ]; then
     rm /var/swap
 fi
 
+# Ensure maverick set to stable branch
+echo "MAVERICK_BRANCH=stable" >/srv/maverick/data/config/maverick/maverick-branch.conf
+chown mav:mav /srv/maverick/data/config/maverick/maverick-branch.conf
+
 # Remove initial bootstrap maverick from common locations
 rm -rf /root/maverick
 rm -rf /home/pi/maverick
@@ -65,13 +69,6 @@ rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maveric
 rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
 
-# Clean up maverick data
-find /srv/maverick/data/logs -type f -delete
-rm -f /srv/maverick/data/vision_landing/*
-find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
-rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
-rm -f /srv/maverick/var/run/*
-
 # Remove maverick config
 find /srv/maverick/data/config -type f -delete
 rm /srv/maverick/software/maverick/conf/localconf.json
@@ -84,3 +81,16 @@ if [ -e /boot/efi ]; then
     mkdir /boot/efi/EFI/BOOT
     cp /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/BOOT/bootx64.efi
 fi
+
+echo "Running maverick to regenerate any removed files"
+maverick configure
+systemctl stop maverick-*
+
+# Clean up maverick data
+find /srv/maverick/data/logs -type f -delete
+find /srv/maverick/data/mavlink -type f -delete
+rm -f /srv/maverick/data/vision_landing/*
+find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
+rm -f /srv/maverick/var/log/vision_landing/last.log
+rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
+rm -f /srv/maverick/var/run/*
