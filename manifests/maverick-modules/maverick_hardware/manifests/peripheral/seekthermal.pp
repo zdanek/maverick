@@ -1,6 +1,6 @@
 class maverick_hardware::peripheral::seekthermal (
     $libseek_thermal = true,
-    $libseek_thermal_source = "https://github.com/maartenvds/libseek-thermal.git",
+    $libseek_thermal_source = "https://github.com/fnoop/libseek-thermal.git",
     $libseek_thermal_revision = "master",
     $libseek = false,
     $seek_id = "0010", # 0010 for Compact, 0011 for Compact Pro
