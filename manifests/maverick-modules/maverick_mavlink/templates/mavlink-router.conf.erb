@@ -3,7 +3,11 @@
 TcpServerPort=<%= @startingtcp %>
 ReportStats=false
 #Which mavlink dialect is being used. Can be `common`[default] or `ardupilotmega`
-MavlinkDialect=ardupilotmega
+MavlinkDialect=auto
+# error, warning, info or debug
+DebugLogLevel=info
+# Log - Path to directory where to store flightstack log.
+Log=/srv/maverick/data/mavlink/fc
 
 <% if @inputtype == "tcp" -%>
 [TcpEndpoint tcpin]
@@ -13,7 +17,7 @@ MavlinkDialect=ardupilotmega
 <% elsif @inputtype == "serial" -%>
 [UartEndpoint serialin]
     Device=<%= @inputaddress %>
-    Baud=<%= @inputbaud %>
+    Baud=<%= @inputbaud %>,115200,57600
 <% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>

@@ -26,7 +26,7 @@ class maverick_mavlink (
         mode        => "755",
     }
     # Create data directory for mavlink
-    file { "/srv/maverick/data/mavlink":
+    file { [ "/srv/maverick/data/mavlink", "/srv/maverick/data/mavlink/fc" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
