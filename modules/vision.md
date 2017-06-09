@@ -55,8 +55,7 @@ This service is not started by default.  To start it:
 `maverick start vision_seek`  
 To enable it by default on boot, set a localconf parameter:  
 `"maverick_vision::vision_seek::active": true`  
-Note that the hardware support for the Seek Thermal camera is automatically applied during a configure run if the camera is plugged in and detected.  To force this support to be installed if building a platform that the Seek is likely to be used with, set localconf parameter:  
-`"maverick_hardware::seekthermal_install": true`  
+Note that the hardware support for the Seek Thermal camera is automatically applied during a configure run if the camera is plugged in and detected.  To force this support to be installed if building a platform that the Seek is likely to be used with, refer to the [hardware documentation for Seek Thermal devices](/modules/hardware#seek-thermal-cameras).  
 
 Image of lunch, without dead pixel correction applied:  
 <img src="media/thermal-lunch.jpg" width="50%">
@@ -64,7 +63,7 @@ Image of lunch, without dead pixel correction applied:
 Image of Intel Joule before and after some hard work (running Maverick vision_landing):  
 <img src="media/joule-thermal.jpg" width="50%">  
 
-Flat Field Correction (FFC):  
+#### Flat Field Correction (FFC)  
 To create an FFC image that can be applied to vision_seek to improve image quality, first run the camera for a while to warm it up, then cover the lens with something thermally consistent (eg. a book, or DVD cover) and run:  
 `~/software/libseek-thermal/bin/seek_create_flat_field -c seek ~/data/config/vision/seek_ffc.png`  
 Then set the *FFC* setting in *~/data/config/vision/vision_seek.conf* to point to this file:  
@@ -72,6 +71,11 @@ Then set the *FFC* setting in *~/data/config/vision/vision_seek.conf* to point t
 If FFC is set in the config file, vision_seek will automatically apply it.  
 More information about this FFC procedure can be found in the github project of the main supporting library behind vision_seek:  
 https://github.com/maartenvds/libseek-thermal
+#### Output
+Vision_seek has three methods of output, all controlled by setting the *OUTPUT* parameter in the *~/data/config/vision/vision_seek.conf* config file.
+ - _window_: This outputs to a local window.  This will not work when running vision_seek as a service, as the service is disconnected from any terminal and does not know where to create the window.  Instead, run `vision_seek.sh` from the command line, either logged into the desktop or through ssh with X-forwarding enabled (*ssh -X* or *ssh -Y*).
+ - _filename.avi_: This outputs a raw video file to specified filename/path.  Raw video files can be very large but because of the relatively low resolution of the Seek devices this should not be a problem.
+ - _appsrc gstreamer pipeline_: It is also possible to specify a gstreamer pipeline - _Note: the pipeline must start with 'appsrc ! '_.  This can be very useful for compressing the video, transcoding or converting the video format, or streaming over the network.  Several examples are given in the config file.
 
 ### Vision_landing
 vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense components to create a system that analyses video in realtime for landing markers (Aruco/April fiducial markers, or tags) and uses these markers to estimate the position and distance of the landing marker compared to the UAV and passes this data to the flight controller to achieve Precision Landing.  The flight controller applies corrections according to the attitude of the UAV to work out what needs to be done to land directly on the marker.  A well tuned setup can achieve reliable accuracy to within a couple of centimeters.  

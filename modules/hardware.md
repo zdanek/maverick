@@ -55,4 +55,6 @@ The BeagleBone Black (BBB) is an interesting embedded computer system about the 
 
 ### Seek Thermal cameras
 Seek Thermal Compact and CompactPro cameras are supported.  If plugged in they will be automatically detected and support installed and configured at the next `maverick configure` run.  To force install, set localconf parameter:  
-`"maverick_hardware::seekthermal_install": true`
+`"maverick_hardware::seekthermal_install": true`  
+If Maverick does not detect a Seek Thermal camera plugged in, and install is forced as above, it will default to configure a Seek Compact device (id 0010).  To change this to force install support for a Seek Compact Pro (id 0011), set a localconf parameter:  
+`"maverick_hardware::peripheral::seekthermal::seek_id": "0011"`  
