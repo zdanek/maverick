@@ -1,16 +1,24 @@
 class maverick_hardware::peripheral::seekthermal (
     $libseek_thermal = true,
-    $libseek_thermal_source = "https://github.com/maartenvds/libseek-thermal.git",
+    $libseek_thermal_source = "https://github.com/fnoop/libseek-thermal.git",
     $libseek_thermal_revision = "master",
     $libseek = false,
+    $seek_id = "0010", # 0010 for Compact, 0011 for Compact Pro
 ) {
     
+    # If Seek Thermal camera isn't detected (ie. plugged in), then use $seek_id
+    if $seekthermal_modelid != "None" {
+        $_seekid = $seekthermal_modelid
+    } else {
+        $_seekid = $seek_id
+    }
+
     # Install udev rule so seek thermal can be used by mav user
     file { "/etc/udev/rules.d/95-seekthermal.rules":
         owner       => "root",
         group       => "root",
         mode        => "644",
-        content     => "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"289d\", ATTRS{idProduct}==\"${$seekthermal_modelid}\", MODE=\"0664\", OWNER=\"mav\", GROUP=\"mav\"\n",
+        content     => "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"289d\", ATTRS{idProduct}==\"${$_seekid}\", MODE=\"0664\", OWNER=\"mav\", GROUP=\"mav\"\n",
     }
 
     # Install libseek-thermal
@@ -36,6 +44,7 @@ class maverick_hardware::peripheral::seekthermal (
                 command     => "/usr/bin/make install PREFIX=/srv/maverick/software/libseek-thermal",
                 cwd         => "/srv/maverick/var/build/libseek-thermal",
                 creates     => "/srv/maverick/software/libseek-thermal/lib/libseek.so",
+                before      => Service["maverick-vision_seek"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_libseek-thermal":
                 ensure      => present,

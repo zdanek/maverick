@@ -1,26 +1,39 @@
 # Config file for vision_seek
 
-# FPS - Kludge factor for gstreamer filesink interpolation
+# FPS - Kludge factor for gstreamer filesink interpolation.  7 is about right for Pi Zero
 FPS=
 
 # FFC - Flat Field Correction - .png file created by FFC calibration
 FFC=
 
 # Scale output image size by multiple
-SCALE=
+SCALE=1.0
 
 # Apply opencv colormap: http://docs.opencv.org/3.2.0/d3/d50/group__imgproc__colormap.html
-# Note this has to be integer value relating to enum, not the enum itself
-COLORMAP=
+# Note this has to be integer value relating to enum, not the enum itself.
+# -1 means no map applied
+COLORMAP=2
 
 # Rotate output image in degrees, only possible values are 90,180,270
-ROTATE=
+ROTATE=90
 
 # Camtype is seek or seekpro
-CAMTYPE=
+CAMTYPE=seek
 
-# Opencv/Gstreamer output pipeline, eg:
+### Video Output
+#
+# window output opens a local window.  Must be started using vision_seek.sh not by system service, and
+# either from desktop or x-forwarded ssh session.
+# OUTPUT=window
+# 
+# filename output saves a raw video to file. Easiest and best quality.
+OUTPUT=/srv/maverick/data/vision/vision_seek/seek.avi
+#
+# gstreamer output uses a gstreamer pipeline.  Note, it *must* start with appsrc
 # OUTPUT="appsrc ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_seek/vision_seek.avi"
-# OUTPUT="appsrc ! autovideoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false"
-# OUTPUT="window"
-OUTPUT=
+#
+# raspberry h264 streaming, client end would be: gst-launch-1.0 -v udpsrc port=5000 buffer-size=0 ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! h264parse ! decodebin ! autovideosink sync=false
+# OUTPUT="appsrc ! decodebin ! queue ! videoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.243 port=5000 sync=false"
+#
+# raspberry mjpeg streaming, client end would be: st-launch-1.0 -v udpsrc port=5000 buffer-size=0 ! application/x-rtp,encoding-name=JPEG,payload=26 ! rtpjpegdepay ! decodebin ! autovideosink sync=false
+# OUTPUT="appsrc ! queue ! videoconvert ! video/x-raw,format=I420 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.1.244 port=5000 sync=false"

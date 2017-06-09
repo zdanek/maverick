@@ -3,9 +3,9 @@
 # Set defaults, can be overriden in /srv/maverick/data/config/vision/vision_seek.conf
 FPS=
 FFC=
-SCALE=
-COLORMAP=
-ROTATE=
+SCALE=1.0
+COLORMAP=-1
+ROTATE=90
 CAMTYPE=seek
 OUTPUT=window
 
@@ -19,7 +19,9 @@ else
     _FPS=""
 fi
 if [ ! -z $FFC ]; then
-    _FFC="-FFC $FFC"
+    _FFC="--FFC=$FFC"
+else
+    _FFC=""
 fi
 if [ ! -z $SCALE ]; then
     _SCALE="--scale=$SCALE"
@@ -42,10 +44,11 @@ else
     _CAMTYPE=""
 fi
 if [ ! -z "$OUTPUT" ]; then
-    _OUTPUT="-o \"$OUTPUT\""
+    _OUTPUT="--output=\"$OUTPUT\""
 else
     _OUTPUT=""
 fi
 
 # Call vision_seek with configured arguments
-/srv/maverick/software/libseek-thermal/bin/seek_viewer $_FPS $_SCALE $_COLORMAP $_ROTATE $_CAMTYPE $FFC -o "$OUTPUT"
+echo /srv/maverick/software/libseek-thermal/bin/seek_viewer $_FPS $_SCALE $_COLORMAP $_ROTATE $_CAMTYPE $_FFC -o "$OUTPUT"
+/srv/maverick/software/libseek-thermal/bin/seek_viewer $_FPS $_SCALE $_COLORMAP $_ROTATE $_CAMTYPE $_FFC -o "$OUTPUT"
