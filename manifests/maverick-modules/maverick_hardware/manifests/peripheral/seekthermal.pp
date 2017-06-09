@@ -44,6 +44,7 @@ class maverick_hardware::peripheral::seekthermal (
                 command     => "/usr/bin/make install PREFIX=/srv/maverick/software/libseek-thermal",
                 cwd         => "/srv/maverick/var/build/libseek-thermal",
                 creates     => "/srv/maverick/software/libseek-thermal/lib/libseek.so",
+                before      => Service["maverick-vision_seek"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_libseek-thermal":
                 ensure      => present,
