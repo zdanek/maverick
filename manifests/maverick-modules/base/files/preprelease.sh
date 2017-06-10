@@ -27,12 +27,6 @@ rm -f /var/log/btmp* /var/log/wtmp*
 rm -rf /home/tmp
 userdel tmp
 
-# Remove swapfile
-if [ -e /var/swap ]; then
-    swapoff -a
-    rm /var/swap
-fi
-
 # Ensure maverick set to stable branch
 echo "MAVERICK_BRANCH=stable" >/srv/maverick/data/config/maverick/maverick-branch.conf
 chown mav:mav /srv/maverick/data/config/maverick/maverick-branch.conf
