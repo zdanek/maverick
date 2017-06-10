@@ -9,10 +9,12 @@ Facter.add(:python_modules) do
     
     pippaths.each do |pipenv,pippath|
         pip_output = Facter::Core::Execution::exec("#{pippath} freeze")
-        pips = pip_output.lines.map(&:chomp)
-        pips.each do |pip|
-            pipfrags = pip.split("==")
-            modules[pipenv][pipfrags[0]] = pipfrags[1]
+        unless pip_output.to_s.empty?
+            pips = pip_output.lines.map(&:chomp)
+            pips.each do |pip|
+                pipfrags = pip.split("==")
+                modules[pipenv][pipfrags[0]] = pipfrags[1]
+            end
         end
     end
     
