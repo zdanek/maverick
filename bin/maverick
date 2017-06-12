@@ -418,7 +418,7 @@ if [ "$CONFIGURE" != "true" ]; then
 fi
 
 # Check that puppet, hiera and facter are not installed through system packages
-for pkg in "puppet" "hiera" "facter"; do
+for pkg in "puppet" "hiera" "facter" "ruby-rgen"; do
     if dpkg --get-selections | grep "^$pkg[[:space:]]*install$" >/dev/null; then
         echo "Warning: $pkg installed as a system package, removing.."
         if [ $EUID -eq 0 ]; then
@@ -434,9 +434,11 @@ for pkg in "hiera" "facter" "puppet"; do
     if ! gem list $pkg -i >/dev/null; then
         echo "Installing $pkg from gems"
         if [ $EUID -eq 0 ]; then
-            gem install $pkg >/dev/null
+            if [ -e /usr/bin/$pkg ]; then rm -f /usr/bin/$pkg; fi
+            gem install $pkg --force >/dev/null
         else
-            sudo gem install $pkg >/dev/null
+            if [ -e /usr/bin/$pkg ]; then sudo rm -f /usr/bin/$pkg; fi
+            sudo gem install $pkg --force >/dev/null
         fi
     fi
 done
