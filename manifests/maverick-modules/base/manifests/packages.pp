@@ -85,7 +85,7 @@ class base::packages {
         pkgname     => 'netifaces',
         ensure      => present,
     } ->
-    install_python_module { 'pip-pyfuture':
+    install_python_module { 'pip-future':
         pkgname     => 'future',
         ensure      => present,
     }
