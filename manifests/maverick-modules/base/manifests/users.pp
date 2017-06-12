@@ -3,7 +3,8 @@ class base::users (
     $mav_sudopass = false, # If mav sudo should ask for password or not
     $root_password = '$6$MIBUXpXc$AA8j.88LvHFBzvVKofKcHnEqvWdv5Cl5D8.O8aB446Mao2X4UkuJ.1VKSr2VcmsbZB7A5ypmmkO0MWGAZr37N.',
 ) {
-
+    ensure_packages(["ruby-shadow"])
+    
     if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
         $_groups = ['dialout', 'video', 'input']
     } else {
@@ -25,6 +26,7 @@ class base::users (
       shell            => '/bin/bash',
       uid              => '6789',
       groups           => $_groups,
+      require          => Package["ruby-shadow"],
     } ->
     file { "/srv/maverick/.bashrc":
         content 	=> template("base/mav-bashrc.erb"),
