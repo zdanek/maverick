@@ -124,6 +124,16 @@ define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
     }
 }
 
+# Define a function that only stops services if they exist
+define service_stop () {
+    if ! empty(grep($::installed_services, $name)) {
+        service { $name:
+            ensure      => stopped,
+            enable      => false,
+        }
+    }
+}
+
 ### End of defines
 
 node default {
