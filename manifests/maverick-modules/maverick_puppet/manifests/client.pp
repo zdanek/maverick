@@ -6,7 +6,7 @@ class maverick_puppet::client (
     ensure_packages(["puppet", "facter", "hiera", "puppet-agent", "puppet-common"], {'ensure'=>'absent'})
 
     # Ensure puppet services are stopped, maverick runs puppet entirely in oneshot/masterless mode
-	service {["puppet", "puppetmaster"]:
+	service {"puppet":
         ensure		=> "stopped",
 		enable		=> false,
 	}
