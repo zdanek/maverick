@@ -3,6 +3,11 @@ class base::users (
     $mav_sudopass = false, # If mav sudo should ask for password or not
     $root_password = '$6$MIBUXpXc$AA8j.88LvHFBzvVKofKcHnEqvWdv5Cl5D8.O8aB446Mao2X4UkuJ.1VKSr2VcmsbZB7A5ypmmkO0MWGAZr37N.',
 ) {
+    
+    # Add input group, in case it doesn't already exist from other system packages
+    group { 'input':
+        gid             => '106',
+    }
 
     ### Setup main mav user
     group { 'mav':
