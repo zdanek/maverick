@@ -429,6 +429,17 @@ for pkg in "puppet" "hiera" "facter" "ruby-rgen"; do
     fi
 done
 
+# Check that ruby/gem is installed
+# Check that puppet is installed
+if ! hash gem 2>/dev/null; then
+    echo 'gem not installed, installing..'
+    if [ $EUID -eq 0 ]; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install ruby >/dev/null 2>&1
+    else
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby >/dev/null 2>&1
+    fi
+fi
+
 # Check that puppet is installed through gem
 for pkg in "hiera" "facter" "puppet"; do
     if ! gem list $pkg -i >/dev/null; then
