@@ -1,3 +1,3 @@
 #!/bin/sh
 
-puppet module --confdir ../../conf --modulepath ./ $1 $2 $3 $4
+sudo puppet module --confdir /srv/maverick/software/maverick/conf --environmentpath=/srv/maverick/software/maverick/conf/environments --modulepath /srv/maverick/software/maverick/manifests/puppet-modules $1 $2 $3 $4
