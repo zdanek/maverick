@@ -26,6 +26,7 @@ class base::users (
       shell            => '/bin/bash',
       uid              => '6789',
       groups           => $_groups,
+      provider         => useradd,
       require          => Package["ruby-shadow"],
     } ->
     file { "/srv/maverick/.bashrc":

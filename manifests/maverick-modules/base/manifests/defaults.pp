@@ -23,4 +23,7 @@ class base::defaults {
         group       => "mav",
     }
     
+    User {
+        provider    => useradd,
+    }
 }
