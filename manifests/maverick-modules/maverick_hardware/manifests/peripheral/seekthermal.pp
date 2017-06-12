@@ -49,10 +49,10 @@ class maverick_hardware::peripheral::seekthermal (
             file { "/srv/maverick/var/build/.install_flag_libseek-thermal":
                 ensure      => present,
                 owner       => mav,
-                mode        => 644
+                mode        => "644"
             } ->
             file { "/etc/profile.d/70-maverick-libseek-thermal-pkgconfig.sh":
-                mode        => 644,
+                mode        => "644",
                 owner       => "root",
                 group       => "root",
                 content     => "export PKG_CONFIG_PATH=/srv/maverick/software/libseek-thermal/lib/pkgconfig:\$PKG_CONFIG_PATH",
@@ -101,7 +101,7 @@ class maverick_hardware::peripheral::seekthermal (
             file { "/srv/maverick/var/build/.install_flag_libseek":
                 ensure      => present,
                 owner       => "mav",
-                mode        => 644,
+                mode        => "644",
             }
         }
     }

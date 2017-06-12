@@ -153,7 +153,7 @@ class maverick_network (
             ensure      => file,
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
         } ->
         service { "connman.service":
             ensure      => undef,
@@ -202,7 +202,7 @@ class maverick_network (
     file { "/etc/systemd/system/rfkill-unblock.service":
         ensure      => present,
         source      => "puppet:///modules/maverick_network/rfkill-unblock.service",
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         notify      => Exec["maverick-systemctl-daemon-reload"],
@@ -219,7 +219,7 @@ class maverick_network (
     if $wifi_ssid and $wifi_passphrase {
         file { "/etc/wpa_supplicant/wpa_supplicant.conf":
             content => template("maverick_network/wpa_supplicant.conf.erb"),
-            mode    => 600,
+            mode    => "600",
             owner   => "root",
             group   => "root",
         }
@@ -240,7 +240,7 @@ class maverick_network (
         content     => template("maverick_network/monitor-interface@.service.erb"),
         owner       => "root",
         group       => "root",
-        mode        => 644,
+        mode        => "644",
         notify      => [ Exec["maverick-systemctl-daemon-reload"] ]
     }
     

@@ -65,7 +65,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
             ensure      => directory,
             owner       => "${owner}",
             group       => "${group}",
-            mode        => 755,
+            mode        => "755",
         } ->
         vcsrepo { "${dest}":
             ensure		=> present,

@@ -15,7 +15,7 @@ class maverick_vision::orb_slam2 (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => 755,
+            mode        => "755",
         } ->
         exec { "pangolin-prepbuild":
             user        => "mav",
@@ -110,7 +110,7 @@ class maverick_vision::orb_slam2 (
         require     => Exec["compile-orb_slam2"],
     } ->
     file { "/etc/ld.so.conf.d/maverick-orb_slam2.conf":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "/srv/maverick/software/orb_slam2/lib\n/srv/maverick/software/pangolin/lib",

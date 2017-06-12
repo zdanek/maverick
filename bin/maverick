@@ -30,6 +30,11 @@ if [[ $EUID -ne 0 && $USER != "mav" ]]; then
     exit 1
 fi
 
+# Determine script path
+_path=$(dirname $0)
+_path=$(cd $_path && pwd)
+_path=$(dirname $_path)
+
 # Define usage function
 usage () {
     echo "maverick [--options] command"
@@ -507,9 +512,9 @@ else
 fi
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        puppet apply --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H puppet apply --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)

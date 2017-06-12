@@ -11,7 +11,7 @@ class maverick_hardware::raspberry::lcd_adafruit28r (
     file { "/etc/udev/rules.d/95-stmpe.rules":
         content     => 'SUBSYSTEM=="INPUT", ATTRS{name}=="stmpe-ts", ENV{DEVNAME}=="*event*", SYMLINK+="input/touchscreen"',
         owner       => "root",
-        mode        => 644
+        mode        => "644"
     }
     
     # Setup the pitft28-resistive overlay which seems to magically take care of everything for us
@@ -36,8 +36,8 @@ class maverick_hardware::raspberry::lcd_adafruit28r (
     
     # Set console font
     file { "/etc/default/console-setup":
-	source      => 'puppet:///modules/maverick_hardware/console-setup',
-	mode        => 644,
+	    source      => 'puppet:///modules/maverick_hardware/console-setup',
+	    mode        => "644",
         owner       => 'root',
         group       => 'root',
     }

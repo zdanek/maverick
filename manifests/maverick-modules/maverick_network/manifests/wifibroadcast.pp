@@ -16,7 +16,7 @@ class maverick_network::wifibroadcast (
         cwd         => "/srv/maverick/software/wifibroadcast",
     } ->
     file { "/srv/maverick/software/wifibroadcast/tx":
-        mode        => 755,
+        mode        => "755",
         owner       => "mav",
         group       => "mav",
     } ->

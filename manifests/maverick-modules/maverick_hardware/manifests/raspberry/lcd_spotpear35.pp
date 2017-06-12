@@ -50,8 +50,8 @@ class maverick_hardware::raspberry::lcd_spotpear35 (
     
     # Set console font
     file { "/etc/default/console-setup":
-	source      => 'puppet:///modules/maverick_hardware/console-setup',
-	mode        => 644,
+	    source      => 'puppet:///modules/maverick_hardware/console-setup',
+	    mode        => "644",
         owner       => 'root',
         group       => 'root',
     }

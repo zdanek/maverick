@@ -4,7 +4,7 @@ class maverick_hardware::beagle (
     
     file { "/etc/modprobe.d/can-blacklist.conf":
         content     => template("maverick_hardware/can-blacklist.conf.erb"),
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
     }

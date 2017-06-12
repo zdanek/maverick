@@ -10,7 +10,7 @@ class maverick_network::avahi (
     file { "/etc/avahi/avahi-daemon.conf":
         owner       => root,
         group       => root,
-        mode        => 644,
+        mode        => "644",
         content     => template("maverick_network/avahi-daemon.conf.erb"),
         notify      => Service["avahi-daemon"],
         require     => Package["avahi-daemon"],

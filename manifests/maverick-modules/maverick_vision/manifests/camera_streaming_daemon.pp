@@ -38,7 +38,7 @@ class maverick_vision::camera_streaming_daemon (
             source      => "puppet:///modules/maverick_vision/csd.service",
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
             before      => Service["maverick-csd"],
         }

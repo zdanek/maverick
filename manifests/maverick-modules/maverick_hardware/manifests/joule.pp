@@ -116,7 +116,7 @@ class maverick_hardware::joule (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => 755,
+            mode        => "755",
         } ->
         file { ["/etc/OpenCL", "/etc/OpenCL/vendors"]:
             ensure      => directory,
