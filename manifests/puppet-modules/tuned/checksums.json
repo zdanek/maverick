@@ -1,9 +1,0 @@
-{
-  "CHANGELOG.md": "5688eb83098c6afb54c4a8c8dc802678",
-  "LICENSE": "c9adee8b428bb93113df5009fafd3ac1",
-  "README.md": "3977cf57d8366e3a03bc5cbeb97ccf62",
-  "manifests/init.pp": "9c7d05810583432a3be5eda2f20a86a5",
-  "manifests/params.pp": "3f48bf4b096b5708512e0e134f2d8023",
-  "metadata.json": "33cbb6469d95c1e4bec9bd33376100f0",
-  "tests/init.pp": "bbe9e9016a9829bb601b024523c662d9"
-}
