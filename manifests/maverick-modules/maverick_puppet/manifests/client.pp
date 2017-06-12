@@ -17,7 +17,13 @@ class maverick_puppet::client (
         }
     }
 
-    file { "/etc/puppet/puppet.conf":
+    file { ["/etc/puppetlabs", "/etc/puppetlabs/puppet"]:
+        ensure      => directory,
+        mode        => "755",
+        owner       => "root",
+        group       => "root",
+    } ->
+    file { "/etc/puppetlabs/puppet/puppet.conf":
         ensure      => file,
         content     => template("maverick_puppet/puppet-client.conf.erb"),
         mode        => "644",
