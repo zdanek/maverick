@@ -9,7 +9,7 @@ class Baseos(object):
         
     def facter(self):
         # Define main data container
-        f = subprocess.check_output(['/usr/bin/facter'])
+        f = subprocess.check_output(['facter'])
         data = f.split("\n")
         for line in data:
             r = re.search('^(.*)\s+=>\s+(.*)', line)

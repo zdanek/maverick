@@ -37,7 +37,7 @@ class maverick_security::firewall (
 	    	month       => "*",
 	    	weekday     => "*",
 		 	user		=> "root",
-	    	command		=> '/bin/sleep `expr ${RANDOM} \% 600`; /usr/bin/puppet agent --tags maverick_security::firewall -t >/var/log/puppet-firewall 2>&1'
+	    	command		=> '/bin/sleep `expr ${RANDOM} \% 600`; puppet agent --tags maverick_security::firewall -t >/var/log/puppet-firewall 2>&1'
 	    }
     }
 
