@@ -3,12 +3,13 @@ class base::users (
     $mav_sudopass = false, # If mav sudo should ask for password or not
     $root_password = '$6$MIBUXpXc$AA8j.88LvHFBzvVKofKcHnEqvWdv5Cl5D8.O8aB446Mao2X4UkuJ.1VKSr2VcmsbZB7A5ypmmkO0MWGAZr37N.',
 ) {
-    
-    # Add input group, in case it doesn't already exist from other system packages
-    group { 'input':
-        gid             => '106',
-    }
 
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+        $_groups = ['dialout', 'video', 'input']
+    } else {
+        $_groups = ['dialout', 'video']
+    }
+    
     ### Setup main mav user
     group { 'mav':
         gid				=> '6789',
@@ -23,7 +24,7 @@ class base::users (
       password_min_age => '0',
       shell            => '/bin/bash',
       uid              => '6789',
-      groups           => ['dialout', 'video', 'input'],
+      groups           => $_groups,
     } ->
     file { "/srv/maverick/.bashrc":
         content 	=> template("base/mav-bashrc.erb"),
