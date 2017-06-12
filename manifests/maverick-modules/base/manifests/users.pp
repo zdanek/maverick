@@ -25,7 +25,7 @@ class base::users (
         ensure		=> present,
         owner		=> "mav",
         group		=> "mav",
-        mode		=> 644,
+        mode		=> "644",
     } 
     if $mav_sudopass == false {
         file { "/etc/sudoers.d/mav":
@@ -33,7 +33,7 @@ class base::users (
             ensure		=> present,
             owner		=> "root",
             group		=> "root",
-            mode		=> 644,
+            mode		=> "644",
         }
     } else {
         file { "/etc/sudoers.d/mav":
@@ -41,7 +41,7 @@ class base::users (
             ensure		=> present,
             owner		=> "root",
             group		=> "root",
-            mode		=> 644,
+            mode		=> "644",
         }
     }
     

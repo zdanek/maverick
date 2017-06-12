@@ -1,13 +1,20 @@
 ---
-:backends:
-  - json
-:json:
-  :datadir: conf/ 
-:hierarchy:
-  - localconf
-  - "%{environment}/nodes/%{::hostname}"
-  - "%{environment}/defaults"
-  - "local-nodes/%{::hostname}"
-  - "sample-nodes/%{::hostname}"
-  - maverick-defaults
-  - puppet-defaults
+version: 5
+defaults:
+  datadir: .
+  data_hash: json_data
+hierarchy:
+  - name: "localconf"
+    path: "localconf.json"
+  - name: "Environment node files"
+    path: "environments/%{environment}/nodes/%{::hostname}"
+  - name: "Environment defaults"
+    path: "environments/%{environment}/defaults.json"
+  - name: "Local node files"
+    path: "local-nodes/${::hostname}.json"
+  - name: "Sample node files"
+    path: "sample-nodes/${::hostname}.json"
+  - name: "Maverick defaults"
+    path: "maverick-defaults.json"
+  - name: "Puppet defaults"
+    path: "puppet-defaults.json"

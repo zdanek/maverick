@@ -20,15 +20,15 @@ define maverick_network::interface_managed (
 	# Define first wireless interface
     if $ssid {
         $_ssid = $ssid
-    } elsif hiera('wifi_ssid') {
-        $_ssid = hiera('wifi_ssid')
+    } elsif lookup('wifi_ssid') {
+        $_ssid = lookup('wifi_ssid')
     } else {
         $_ssid = undef
     }
     if $psk {
         $_psk = $psk
-    } elsif hiera('wifi_psk') {
-        $_psk = hiera('wifi_psk')
+    } elsif lookup('wifi_psk') {
+        $_psk = lookup('wifi_psk')
     } else {
         $_psk = undef
     }

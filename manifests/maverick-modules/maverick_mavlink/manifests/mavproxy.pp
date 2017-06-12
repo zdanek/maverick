@@ -43,13 +43,13 @@ define maverick_mavlink::mavproxy (
             $endingudp = $startingudp + $udpports + $udpinports
             maverick_security::firewall::firerule { "mavlink-${name}-udp":
                 ports       => ["${startingudp}-${endingudp}"],
-                ips         => hiera("firewall_ips"),
+                ips         => lookup("firewall_ips"),
                 proto       => "udp"
             }
             $endingtcp = $startingtcp + $tcpports
             maverick_security::firewall::firerule { "mavlink-${name}-tcp":
                 ports       => ["${startingtcp}-${endingtcp}"],
-                ips         => hiera("firewall_ips"),
+                ips         => lookup("firewall_ips"),
                 proto       => "tcp"
             }
         }

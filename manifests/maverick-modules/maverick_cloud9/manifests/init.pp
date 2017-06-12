@@ -37,7 +37,7 @@ class maverick_cloud9 (
     file { "/srv/maverick/.c9/user.settings":
         ensure      => present,
         content     => template("maverick_cloud9/user.settings.erb"),
-        mode        => 644,
+        mode        => "644",
         owner       => "mav",
         group       => "mav",
         replace     => false,
@@ -45,7 +45,7 @@ class maverick_cloud9 (
     file { "/srv/maverick/.c9/state.settings":
         ensure      => present,
         content     => template("maverick_cloud9/state.settings.erb"),
-        mode        => 644,
+        mode        => "644",
         owner       => "mav",
         group       => "mav",
         replace     => false,
@@ -54,7 +54,7 @@ class maverick_cloud9 (
         content     => template("maverick_cloud9/cloud9.service.erb"),
         owner       => "root",
         group       => "root",
-        mode        => 644,
+        mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     service { "maverick-cloud9":
@@ -65,7 +65,7 @@ class maverick_cloud9 (
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "cloud9":
             ports       => $webport,
-            ips         => hiera("firewall_ips"),
+            ips         => lookup("firewall_ips"),
             proto       => "tcp"
         }
     }

@@ -103,7 +103,7 @@ class maverick_vision::gstreamer (
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
-                mode        => 755,
+                mode        => "755",
             } ->
 
             oncevcsrepo { "git-gstreamer_core":
@@ -304,7 +304,7 @@ class maverick_vision::gstreamer (
         # Export local typelib for gobject introspection
         file { "/etc/profile.d/50-gi-typelibs.sh":
             ensure      => present,
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "export GI_TYPELIB_PATH=/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0",
@@ -312,23 +312,23 @@ class maverick_vision::gstreamer (
 
         # Set profile scripts for custom gstreamer location
         file { "/etc/profile.d/50-maverick-gstreamer-path.sh":
-            mode        => 644,
+            mode        => "644",
             content     => "export PATH=/srv/maverick/software/gstreamer/bin:\$PATH",
         }
         file { "/etc/profile.d/50-maverick-gstreamer-pkgconfig.sh":
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "export PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:\$PKG_CONFIG_PATH",
         }
         file { "/etc/profile.d/50-maverick-gstreamer-plugins.sh":
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "export GST_PLUGIN_PATH=/srv/maverick/software/gstreamer/lib/gstreamer-1.0; export GST_PLUGIN_SYSTEM_PATH=\$GST_PLUGIN_PATH",
         }
         file { "/etc/profile.d/50-maverick-gstreamer-pythonpath.sh":
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "export PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:\$PYTHONPATH",
@@ -337,14 +337,14 @@ class maverick_vision::gstreamer (
             ensure      => absent,
         }
         file { "/etc/ld.so.conf.d/maverick-gstreamer.conf":
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "/srv/maverick/software/gstreamer/lib",
             notify      => Exec["maverick-ldconfig"],
         } ->
         file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/gstreamer:\$CMAKE_PREFIX_PATH",

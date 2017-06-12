@@ -214,8 +214,8 @@ class maverick_network (
     
     # If wireless auth defaults are set in config, configure it 
     # Retrieve wireless auth data from hiera
-    $wifi_ssid = hiera('wifi_ssid')
-    $wifi_passphrase = hiera('wifi_passphrase')
+    $wifi_ssid = lookup('wifi_ssid')
+    $wifi_passphrase = lookup('wifi_passphrase')
     if $wifi_ssid and $wifi_passphrase {
         file { "/etc/wpa_supplicant/wpa_supplicant.conf":
             content => template("maverick_network/wpa_supplicant.conf.erb"),
@@ -245,7 +245,7 @@ class maverick_network (
     }
     
     # Retrieve defined interfaces and process
-    $interfaces = hiera_hash("maverick_network::interfaces")
+    $interfaces = lookup("maverick_network::interfaces", {merge => hash})
     if $interfaces {
         concat { "/etc/udev/rules.d/10-network-customnames.rules":
             ensure      => present,

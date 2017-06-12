@@ -3,7 +3,7 @@ class maverick_security::fail2ban (
     ) {
 
     class { "::fail2ban":
-        ignoreip            => hiera("firewall_ips"),
+        ignoreip            => lookup("firewall_ips"),
         destemail           => $alertemail,
         bantime             => 1800,
         maxretry            => 6,

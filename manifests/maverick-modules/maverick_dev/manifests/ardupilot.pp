@@ -31,42 +31,10 @@ class maverick_dev::ardupilot (
         cwd         => "/srv/maverick/code/ardupilot",
         require     => Oncevcsrepo["git-ardupilot"],
     }
-
-    # Define function to build ardupilot firmwares using new waf system
-    define fwbuildwaf ($build, $board) {
-        if ! ("${board}/bin/ardu${build}" in $waffiles or "${board}/bin/${build}" in $waffiles) {
-            warning("Ardupilot Firmware: ${build} will be compiled and can take a while, please be patient")
-            exec { "ardupilotfw_${board}_${build}":
-                user        => "mav",
-                timeout     => 0,
-                command     => "/srv/maverick/code/ardupilot/waf configure --board ${board} && /srv/maverick/code/ardupilot/waf ${build} >/srv/maverick/var/log/build/ardupilot-fw-${build}.build.log 2>&1",
-                cwd         => "/srv/maverick/code/ardupilot",
-                creates     => "/srv/maverick/code/ardupilot/${build}.elf",
-                require     => Install_python_module['pip-future']
-            }
-        }
-    }
     
-    # Define function to build ardupilot firmwares using old make system
-    define fwbuildmake ($build, $board) {
-        $downvar = downcase($build)
-        $buildvar = "ardupilotfw_${downvar}"
-        $warningvar = getvar("${buildvar}")
-        if $warningvar == "no" {
-            warning("Arudpilot Firmware: ${buildvar} will be compiled and can take a while, please be patient")
-            exec { "ardupilotfw_${board}_${build}":
-                user        => "mav",
-                timeout     => 0,
-                command     => "/usr/bin/make -j${::processorcount} ${board} >/srv/maverick/var/log/build/ardupilot-fw-${build}.build.log 2>&1",
-                cwd         => "/srv/maverick/code/ardupilot/${build}",
-                creates     => "/srv/maverick/code/ardupilot/${build}/${build}.elf",
-            }
-        }
-    }
-
     # Compile SITL
     if $sitl and $ardupilot_buildsystem == "waf" {
-        fwbuildwaf { "sitl_${ardupilot_vehicle}":
+        maverick_dev::fwbuildwaf { "sitl_${ardupilot_vehicle}":
             require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
             board       => "sitl",
             build       => $ardupilot_vehicle,

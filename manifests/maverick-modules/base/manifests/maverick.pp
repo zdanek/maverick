@@ -8,13 +8,13 @@ class base::maverick (
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
-        mode    => 755
+        mode    => "755",
     }
     file { "/srv/maverick/.virtualenvs":
         ensure	=> directory,
         owner   => "mav",
         group   => "mav",
-        mode    => 755
+        mode    => "755",
     }
     
     # Setup git for the mav user
@@ -44,13 +44,13 @@ class base::maverick (
         target      => "/srv/maverick/software/maverick/conf",
     }
     file { "/srv/maverick/data/config/maverick/localconf.json":
-        mode        => 644,
+        mode        => "644",
         owner       => "mav",
         group       => "mav",
     } ->
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "maverick() { /srv/maverick/software/maverick/bin/maverick \$1 \$2 \$3 \$4; . /etc/profile; }",
@@ -65,7 +65,7 @@ class base::maverick (
         ensure      => file,
         owner       => "mav",
         group       => "mav",
-        mode        => 644,
+        mode        => "644",
         content     => $environment,
     }
 

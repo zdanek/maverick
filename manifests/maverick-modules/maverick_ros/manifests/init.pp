@@ -59,7 +59,7 @@ class maverick_ros (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     } ->
     file { "/opt/ros/${distribution}":
         ensure      => link,
@@ -105,7 +105,7 @@ class maverick_ros (
         } ->
         file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "source /opt/ros/${distribution}/setup.bash",
@@ -129,7 +129,7 @@ class maverick_ros (
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
-                mode        => 755,
+                mode        => "755",
             }
             
             $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
@@ -224,7 +224,7 @@ class maverick_ros (
 
         file { "/etc/profile.d/30-ros-env.sh":
             ensure      => present,
-            mode        => 644,
+            mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "source /opt/ros/${distribution}/setup.bash",

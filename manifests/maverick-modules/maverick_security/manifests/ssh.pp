@@ -2,14 +2,14 @@ class maverick_security::ssh {
     
     file { "/etc/issue.net":
         ensure          => present,
-        mode            => 644,
+        mode            => "644",
         owner           => "root",
         group           => "root",
         content         => template("maverick_security/issue.erb"),
     }
     file { "/etc/issue":
         ensure          => present,
-        mode            => 644,
+        mode            => "644",
         owner           => "root",
         group           => "root",
         content         => template("maverick_security/issue.erb"),

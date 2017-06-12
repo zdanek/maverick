@@ -24,7 +24,7 @@ class maverick_fc (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     } ->
     python::virtualenv { '/srv/maverick/code/fc':
         ensure       => present,
@@ -67,7 +67,7 @@ class maverick_fc (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     }
    
     ### Setup mavlink proxy
@@ -189,7 +189,7 @@ class maverick_fc (
         source      => "puppet:///modules/maverick_fc/maverick-dflogger.service",
         owner       => "root",
         group       => "root",
-        mode        => 644,
+        mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     }
 

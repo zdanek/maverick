@@ -22,7 +22,7 @@ class maverick_dev::sitl (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     } ->
     python::virtualenv { '/srv/maverick/code/sitl':
         ensure       => present,
@@ -75,26 +75,26 @@ class maverick_dev::sitl (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     }
 
     file { "/srv/maverick/var/log/sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     } ->
     file { "/srv/maverick/data/mavlink/sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     } ->
     file { "/srv/maverick/var/log/mavlink-sitl":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     }
     
     $ardupilot_vehicle = getvar("maverick_dev::ardupilot::ardupilot_vehicle")
@@ -177,7 +177,7 @@ class maverick_dev::sitl (
         content     => template("maverick_dev/maverick-sitl.service.erb"),
         owner       => "root",
         group       => "root",
-        mode        => 644,
+        mode        => "644",
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ]
     }
     if $sitl_active {

@@ -132,4 +132,4 @@ node default {
     #  classes and data to nodes in a hierarchical, segregated fashion.
 }
 
-hiera_include('classes')
+lookup('classes', {merge => unique}).include

@@ -16,7 +16,7 @@ class maverick_vision::aruco (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => 755,
+            mode        => "755",
         }
         
         exec { "aruco-prepbuild":
@@ -52,13 +52,13 @@ class maverick_vision::aruco (
 
 
     file { "/etc/profile.d/60-maverick-aruco-path.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export PATH=/srv/maverick/software/aruco/bin:\$PATH",
     } ->
     file { "/etc/profile.d/60-maverick-aruco-pkgconfig.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export PKG_CONFIG_PATH=/srv/maverick/software/aruco/lib/pkgconfig:\$PKG_CONFIG_PATH",
@@ -67,14 +67,14 @@ class maverick_vision::aruco (
         ensure      => absent,
     } ->
     file { "/etc/ld.so.conf.d/maverick-aruco.conf":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "/srv/maverick/software/aruco/lib",
         notify      => Exec["maverick-ldconfig"],
     } ->
     file { "/etc/profile.d/60-maverick-aruco-cmake.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/aruco",

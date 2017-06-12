@@ -12,21 +12,33 @@ class base::hostip {
     }
 
     # Retrieve host/ip values from hiera
-    $_fqdn = hiera('fqdn')
-    $_primaryip = hiera("primaryip")
-    $_hostname = hiera("hostname")
-    $_hierahostaliases = hiera("hostaliases")
+    if ! empty(lookup("fqdn")) {
+        $_fqdn = lookup("fqdn")
+    } else {
+        $_fqdn = $::fqdn
+    }
+    if ! empty(lookup("primaryip")) {
+        $_ipaddress = lookup("primaryip")
+    } else {
+        $_ipaddress = $::ipaddress
+    }
+    if ! empty(lookup("hostname")) {
+        $_hostname = lookup("hostname")
+    } else {
+        $_hostname = $::hostname
+    }
+    $_hierahostaliases = lookup("hostaliases")
 
-    if $_hierahostaliases != [] {
+    if ! empty($_hierahostaliases) {
         $_host_aliases = [$_hostname, $_hierahostaliases]
     } else {
         $_host_aliases = [$_hostname]
     }
     
     # Only update entry in /etc/hosts if we have all the data necessary
-    if $_fqdn and $_primaryip and $_hostname { 
-        host { "$_fqdn":
-            ip              => $_primaryip,
+    if $_fqdn and $_ipaddress and $_hostname { 
+        host { $_fqdn:
+            ip              => $_ipaddress,
             host_aliases    => $_host_aliases,
         }
     }

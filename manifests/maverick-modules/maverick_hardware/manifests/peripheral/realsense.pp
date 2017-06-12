@@ -16,7 +16,7 @@ class maverick_hardware::peripheral::realsense (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => 755,
+            mode        => "755",
         } ->
         # Build and install
         exec { "librealsense-prepbuild":
@@ -64,7 +64,7 @@ class maverick_hardware::peripheral::realsense (
 
     # Install cmake path    
     file { "/etc/profile.d/70-maverick-librealsense-cmake.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/librealsense",
@@ -82,7 +82,7 @@ class maverick_hardware::peripheral::realsense (
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
-                mode        => 755,
+                mode        => "755",
             } ->
             exec { "realsense-sdk-prepbuild":
                 user        => "mav",

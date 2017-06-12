@@ -5,7 +5,7 @@ class maverick_dev::dronekit (
         ensure      => "directory",
         owner       => "mav",
         group       => "mav",
-        mode        => 755,
+        mode        => "755",
     }
     
     # Install rmackay9 red balloon finder

@@ -48,7 +48,7 @@ class maverick_mavlink (
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
-                mode        => 755,
+                mode        => "755",
             }
             exec { "cmavnode-prepbuild":
                 user        => "mav",
@@ -82,7 +82,7 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/maverick-cmavnode@.service",
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
         file { "/srv/maverick/software/maverick/bin/cmavnode.sh":
@@ -116,7 +116,7 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/maverick-mavlink-router@.service",
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
     }
@@ -136,7 +136,7 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
@@ -179,7 +179,7 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
             owner       => "root",
             group       => "root",
-            mode        => 644,
+            mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
@@ -258,7 +258,7 @@ class maverick_mavlink (
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "mavcesium":
                 ports       => $mavcesium_port,
-                ips         => hiera("firewall_ips"),
+                ips         => lookup("firewall_ips"),
                 proto       => "tcp"
             }
         }

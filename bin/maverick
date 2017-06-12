@@ -412,25 +412,33 @@ if [ "$CONFIGURE" != "true" ]; then
     usage
 fi
 
-# Check that puppet is installed
-if ! hash puppet 2>/dev/null; then
-    echo 'Puppet not installed, attempting to install..'
-    if hash apt-get 2>/dev/null; then
+# Check that puppet, hiera and facter are not installed through system packages
+for pkg in "puppet" "hiera" "facter"; do
+    if dpkg --get-selections | grep "^$pkg[[:space:]]*install$" >/dev/null; then
+        echo "Warning: $pkg installed as a system package, removing.."
         if [ $EUID -eq 0 ]; then
-            DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
-        elif [ $USER == "mav" ]; then
-            sudo DEBIAN_FRONTEND=noninteractive apt-get -y install puppet >/dev/null 2>&1
-        fi
-        if hash puppet; then
-            puppetinstalled=true
+            DEBIAN_FRONTEND=noninteractive apt-get -y remove $pkg >/dev/null 2>&1
+        else
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y remove $pkg >/dev/null 2>&1
         fi
     fi
-else
-    puppetinstalled=true
-fi
-if ! $puppetinstalled; then
-    echo 'Error: Puppet not installed and could not be installed'
-    echo
+done
+
+# Check that puppet is installed through gem
+for pkg in "hiera" "facter" "puppet"; do
+    if ! gem list $pkg -i >/dev/null; then
+        echo "Installing $pkg from gems"
+        if [ $EUID -eq 0 ]; then
+            gem install $pkg >/dev/null
+        else
+            sudo gem install $pkg >/dev/null
+        fi
+    fi
+done
+
+# Check that puppet is installed
+if ! hash puppet 2>/dev/null; then
+    echo 'Puppet not installed, something has gone wrong..'
     exit 1
 fi
 
@@ -499,17 +507,17 @@ else
 fi
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --config=./conf/puppet.conf --no-stringify_facts --environment $ENV --modulepath=./manifests/maverick-modules:./manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H puppet apply --confdir=conf --config=./conf/puppet.conf --no-stringify_facts --environment $ENV --modulepath=./manifests/maverick-modules:./manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        puppet apply --confdir=conf --config=./conf/puppet.conf --no-stringify_facts --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H puppet apply --confdir=conf --config=./conf/puppet.conf --no-stringify_facts --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else

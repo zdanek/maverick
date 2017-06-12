@@ -5,7 +5,7 @@ class base::console {
         content     => template("base/maverick-motd.service.erb"),
         owner       => "root",
         group       => "root",
-        mode        => 644,
+        mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     }
     service { "maverick-motd":

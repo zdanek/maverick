@@ -35,7 +35,7 @@ class maverick_vision::opencv (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => 755,
+            mode        => "755",
         }
         
         # Run cmake and generate build files
@@ -114,13 +114,13 @@ class maverick_vision::opencv (
     }
     
     file { "/etc/profile.d/40-maverick-opencv-path.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export PATH=/srv/maverick/software/opencv/bin:\$PATH",
     } ->
     file { "/etc/profile.d/40-maverick-opencv-pkgconfig.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH",
@@ -129,20 +129,20 @@ class maverick_vision::opencv (
         ensure      => absent,
     } ->
     file { "/etc/ld.so.conf.d/maverick-opencv.conf":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "/srv/maverick/software/opencv/lib",
         notify      => Exec["maverick-ldconfig"],
     } ->
     file { "/etc/profile.d/40-maverick-opencv-pythonpath.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export PYTHONPATH=/srv/maverick/software/opencv/lib/python2.7/dist-packages:\$PYTHONPATH",
     } ->
     file { "/etc/profile.d/40-maverick-opencv-cmake.sh":
-        mode        => 644,
+        mode        => "644",
         owner       => "root",
         group       => "root",
         content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:\$CMAKE_PREFIX_PATH",
