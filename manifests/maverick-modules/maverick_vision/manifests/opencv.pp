@@ -14,7 +14,12 @@ class maverick_vision::opencv (
     # as we want to access from both, so we install into global.
     
     # Install dependencies
-    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libjasper-dev", "libpng12-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "libgdal1-dev", "liblapacke-dev", "libgtk2.0-dev"])
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+        ensure_packages(["libpng-dev"])
+    } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") {
+        ensure_packages(["libjasper-dev", "libpng16-dev"])
+    }
+    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
     # ensure_packages(["qtbase5-dev"])
