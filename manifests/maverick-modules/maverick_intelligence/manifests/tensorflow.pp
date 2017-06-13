@@ -74,7 +74,7 @@ class maverick_intelligence::tensorflow (
             submodules  => true,
         }
         # Do some hacks for arm build
-        if $raspberry_present or $odroid_present {
+        if $raspberry_present == "yes" or $odroid_present == "yes" {
             exec { "tfhack-lib64":
                 command     => "/bin/grep -Rl 'lib64' | xargs sed -i 's/lib64/lib/g'",
                 onlyif      => "/bin/grep lib64 /srv/maverick/var/build/tensorflow/tensorflow/tensorflow/core/platform/default/platform.bzl",
