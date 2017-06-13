@@ -30,6 +30,10 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
   has_feature :ipsec_policy
   has_feature :mask
   has_feature :ipset
+  has_feature :length
+  has_feature :string_matching
+  has_feature :queue_num
+  has_feature :queue_bypass
 
   optional_commands({
     :ip6tables      => 'ip6tables',
@@ -89,6 +93,7 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :ishasmorefrags     => "-m frag --fragid 0 --fragmore",
     :islastfrag         => "-m frag --fragid 0 --fraglast",
     :jump               => "-j",
+    :length             => "-m length --length",
     :limit              => "-m limit --limit",
     :log_level          => "--log-level",
     :log_prefix         => "--log-prefix",
@@ -102,6 +107,8 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :pkttype            => "-m pkttype --pkt-type",
     :port               => '-m multiport --ports',
     :proto              => "-p",
+    :queue_num          => "--queue-num",
+    :queue_bypass       => "--queue-bypass",
     :rdest              => "--rdest",
     :reap               => "--reap",
     :recent             => "-m recent",
@@ -125,6 +132,10 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :stat_packet        => '--packet',
     :stat_probability   => '--probability',
     :state              => "-m state --state",
+    :string             => "-m string --string",
+    :string_algo        => "--algo",
+    :string_from        => "--from",
+    :string_to          => "--to",
     :table              => "-t",
     :tcp_flags          => "-m tcp --tcp-flags",
     :todest             => "--to-destination",
@@ -134,6 +145,8 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :physdev_in         => "--physdev-in",
     :physdev_out        => "--physdev-out",
     :physdev_is_bridged => "--physdev-is-bridged",
+    :physdev_is_in      => "--physdev-is-in",
+    :physdev_is_out     => "--physdev-is-out",
     :date_start         => "--datestart",
     :date_stop          => "--datestop",
     :time_start         => "--timestart",
@@ -142,6 +155,8 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :week_days          => "--weekdays",
     :time_contiguous    => "--contiguous",
     :kernel_timezone    => "--kerneltz",
+    :src_cc             => "--source-country",
+    :dst_cc             => "--destination-country",
   }
 
   # These are known booleans that do not take a value, but we want to munge
@@ -159,11 +174,14 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
     :rttl,
     :socket,
     :physdev_is_bridged,
+    :physdev_is_in,
+    :physdev_is_out,
     :time_contiguous,
     :kernel_timezone,
+    :queue_bypass,
   ]
 
-  # Properties that use "-m <ipt module name>" (with the potential to have multiple 
+  # Properties that use "-m <ipt module name>" (with the potential to have multiple
   # arguments against the same IPT module) must be in this hash. The keys in this
   # hash are the IPT module names, with the values being an array of the respective
   # supported arguments for this IPT module.
@@ -176,11 +194,12 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
   #                ones.
   #
   @module_to_argument_mapping = {
-    :physdev   => [:physdev_in, :physdev_out, :physdev_is_bridged],
+    :physdev   => [:physdev_in, :physdev_out, :physdev_is_bridged, :physdev_is_in, :physdev_is_out],
     :addrtype  => [:src_type, :dst_type],
     :iprange   => [:src_range, :dst_range],
     :owner     => [:uid, :gid],
-    :time      => [:time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
+    :time      => [:time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone],
+    :geoip     => [:src_cc, :dst_cc]
   }
 
   # Create property methods dynamically
@@ -218,12 +237,15 @@ Puppet::Type.type(:firewall).provide :ip6tables, :parent => :iptables, :source =
   # I put it when calling the command. So compability with manual changes
   # not provided with current parser [georg.koester])
   @resource_list = [:table, :source, :destination, :iniface, :outiface, :physdev_in,
-    :physdev_out, :physdev_is_bridged, :proto, :ishasmorefrags, :islastfrag, :isfirstfrag, :src_range, :dst_range,
+    :physdev_out, :physdev_is_bridged, :physdev_is_in, :physdev_is_out,
+    :proto, :ishasmorefrags, :islastfrag, :isfirstfrag, :src_range, :dst_range,
     :tcp_flags, :uid, :gid, :mac_source, :sport, :dport, :port, :src_type,
     :dst_type, :socket, :pkttype, :name, :ipsec_dir, :ipsec_policy, :state,
-    :ctstate, :icmp, :hop_limit, :limit, :burst, :recent, :rseconds, :reap,
-    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :jump, :clamp_mss_to_pmtu, :gateway, :todest,
-    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :log_uid, :reject, :set_mss, :set_dscp, :set_dscp_class, :mss,
-    :set_mark, :match_mark, :connlimit_above, :connlimit_mask, :connmark, :time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone]
+    :ctstate, :icmp, :hop_limit, :limit, :burst, :length, :recent, :rseconds, :reap,
+    :rhitcount, :rttl, :rname, :mask, :rsource, :rdest, :ipset, :string, :string_algo,
+    :string_from, :string_to, :jump, :clamp_mss_to_pmtu, :gateway, :todest,
+    :tosource, :toports, :checksum_fill, :log_level, :log_prefix, :log_uid, :reject, :set_mss, :set_dscp, :set_dscp_class, :mss, :queue_num, :queue_bypass,
+    :set_mark, :match_mark, :connlimit_above, :connlimit_mask, :connmark, :time_start, :time_stop, :month_days, :week_days, :date_start, :date_stop, :time_contiguous, :kernel_timezone,
+    :src_cc, :dst_cc]
 
 end

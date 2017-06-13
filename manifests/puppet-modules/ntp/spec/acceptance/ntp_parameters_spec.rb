@@ -15,9 +15,9 @@ when 'Linux'
 when 'AIX'
   packagename = 'bos.net.tcp.client'
 when 'Solaris'
-  case fact('operatingsystemrelease')
+  case fact('kernelrelease')
   when '5.10'
-    packagename = ['SUNWntpr','SUNWntpu']
+    packagename = ['SUNWntp4r','SUNWntp4u']
   when '5.11'
     packagename = 'service/network/ntp'
   end
@@ -29,6 +29,14 @@ else
   end
 end
 
+if (fact('osfamily') == 'RedHat')
+  keysfile = '/etc/ntp/keys'
+elsif (fact('osfamily') == 'Solaris')
+  keysfile = '/etc/inet/ntp.keys'
+else
+  keysfile = '/etc/ntp.keys'
+end
+
 if (fact('osfamily') == 'Solaris')
   config = '/etc/inet/ntp.conf'
 else
@@ -36,21 +44,18 @@ else
 end
 
 describe "ntp class:", :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
+  # FM-5470, this was added to reset failed count and work around puppet 3.x
+  if ( (fact('operatingsystem') == 'SLES' and fact('operatingsystemmajrelease') == '12') or (fact('operatingsystem') == 'Scientific' and fact('operatingsystemmajrelease') == '7') )
+    after :each do
+      shell('systemctl reset-failed ntpd.service')
+    end
+  end
+
   it 'applies successfully' do
     pp = "class { 'ntp': }"
 
     apply_manifest(pp, :catch_failures => true) do |r|
       expect(r.stderr).not_to match(/error/i)
-    end
-  end
-
-  describe 'autoconfig' do
-    it 'raises a deprecation warning' do
-      pp = "class { 'ntp': autoupdate => true }"
-
-      apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stdout).to match(/autoupdate parameter has been deprecated and replaced with package_ensure/)
-      end
     end
   end
 
@@ -66,20 +71,50 @@ describe "ntp class:", :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily'
   end
 
   describe 'config_template' do
-    it 'sets up template' do
+    before :all do
       modulepath = default['distmoduledir']
       shell("mkdir -p #{modulepath}/test/templates")
-      shell("echo 'testcontent' >> #{modulepath}/test/templates/ntp.conf")
+      # Add spurious template logic to verify the use of the correct template rendering engine
+      shell("echo '<% [1].each do |i| %>erbserver<%= i %><%end %>' >> #{modulepath}/test/templates/ntp.conf.erb")
     end
 
-    it 'sets the ntp.conf location' do
-      pp = "class { 'ntp': config_template => 'test/ntp.conf' }"
+    it 'sets the ntp.conf erb template location' do
+      pp = "class { 'ntp': config_template => 'test/ntp.conf.erb' }"
       apply_manifest(pp, :catch_failures => true)
     end
 
     describe file("#{config}") do
       it { should be_file }
-      its(:content) { should match 'testcontent' }
+      its(:content) { should match 'erbserver1' }
+    end
+
+    it 'sets the ntp.conf epp template location and the ntp.conf erb template location which should fail' do
+      pp = "class { 'ntp': config_template => 'test/ntp.conf.erb', config_epp => 'test/ntp.conf.epp' }"
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Cannot supply both config_epp and config_template/i)
+    end
+  end
+
+  describe 'config_epp' do
+    before :all do
+      modulepath = default['distmoduledir']
+      shell("mkdir -p #{modulepath}/test/templates")
+      # Add spurious template logic to verify the use of the correct template rendering engine
+      shell("echo '<% [1].each |$i| { -%>eppserver<%= $i %><% } -%>' >> #{modulepath}/test/templates/ntp.conf.epp")
+    end
+
+    it 'sets the ntp.conf epp template location' do
+      pp = "class { 'ntp': config_epp => 'test/ntp.conf.epp' }"
+      apply_manifest(pp, :catch_failures => true)
+    end
+
+    describe file("#{config}") do
+      it { should be_file }
+      its(:content) { should match 'eppserver1' }
+    end
+
+    it 'sets the ntp.conf epp template location and the ntp.conf erb template location which should fail' do
+      pp = "class { 'ntp': config_template => 'test/ntp.conf.erb', config_epp => 'test/ntp.conf.epp' }"
+      expect(apply_manifest(pp, :expect_failures => true).stderr).to match(/Cannot supply both config_epp and config_template/i)
     end
   end
 
@@ -100,24 +135,26 @@ describe "ntp class:", :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily'
       pp = <<-EOS
       class { 'ntp':
         keys_enable     => true,
-        keys_file       => '/etc/ntp/keys',
-        keys_controlkey => '/etc/ntp/controlkey',
-        keys_requestkey => '1',
-        keys_trusted    => [ '1', '2' ],
+        keys_controlkey => 1,
+        keys_requestkey => 1,
+        keys_trusted    => [ 1, 2 ],
+        keys            => [ '1 M AAAABBBB' ],
       }
       EOS
-      # Rely on a shell command instead of a file{} here to avoid loops
-      # within puppet when it tries to manage /etc/ntp/keys before /etc/ntp.
-      shell("mkdir -p /etc/ntp && echo '1 M AAAABBBB' >> /etc/ntp/keys")
       apply_manifest(pp, :catch_failures => true)
     end
 
     describe file("#{config}") do
       it { should be_file }
-      its(:content) { should match 'keys /etc/ntp/keys' }
-      its(:content) { should match 'controlkey /etc/ntp/controlkey' }
+      its(:content) { should match "keys #{keysfile}" }
+      its(:content) { should match 'controlkey 1' }
       its(:content) { should match 'requestkey 1' }
       its(:content) { should match 'trustedkey 1 2' }
+    end
+
+    describe file(keysfile) do
+      it { should be_file }
+      its(:content) { should match '1 M AAAABBBB' }
     end
   end
 

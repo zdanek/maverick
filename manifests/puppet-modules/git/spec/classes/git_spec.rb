@@ -36,14 +36,35 @@ describe 'git' do
       }
     )}
   end
-  
+
   context 'with configs' do
     let(:params) {
       {
-        :configs => {"user.name" => {"value" => "test"}}
+        :configs => {
+          "user.name" => {"value" => "test"},
+          "user.email" => "test@example.com"
+        }
       }
     }
     it { should contain_git__config('user.name') }
+    it { should contain_git__config('user.email') }
+  end
+
+  context 'with configs and configs defaults' do
+    let(:params) {
+      {
+        :configs => {
+          "core.filemode" => false
+        },
+        :configs_defaults => {
+          "scope" => "system"
+        }
+      }
+    }
+    it { should contain_git__config('core.filemode').with(
+        'value' => false,
+        'scope' => 'system'
+    ) }
   end
 
 end

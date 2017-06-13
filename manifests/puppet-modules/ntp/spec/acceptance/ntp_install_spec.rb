@@ -15,9 +15,9 @@ when 'Linux'
 when 'AIX'
   packagename = 'bos.net.tcp.client'
 when 'Solaris'
-  case fact('operatingsystemrelease')
+  case fact('kernelrelease')
   when '5.10'
-    packagename = ['SUNWntpr','SUNWntpu']
+    packagename = ['SUNWntp4r','SUNWntp4u']
   when '5.11'
     packagename = 'service/network/ntp'
   end

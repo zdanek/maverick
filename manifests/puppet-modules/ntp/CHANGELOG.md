@@ -1,3 +1,84 @@
+## Supported Release 6.2.0
+### Summary
+This is a small minor release that adds the `pool` parameter and revises some Japanese translations.
+
+#### Added
+- The `pool` parameter
+
+#### Fixed
+- Japanese translations for the README
+
+## Supported Release 6.1.0
+### Summary
+
+This release adds support for internationalization of the module. It also contains Japanese translations for the README, summary and description of the metadata.json and major cleanups in the README. Additional folders have been introduced called locales and readmes where translation files can be found. A number of features and bug fixes are also included in this release.
+
+#### Features
+- Addition of POT file for metadata translation for i18n.
+- Multiple Gemfile updates for Ruby and Gems support.
+- (MODULES-4225) Addition of Puppet strings to the ntp module.
+- Implements beaker module install helper and cleanup spec helper acceptance.rb.
+- (MODULES-4414) Allow NTP statistics if requested.
+- (MODULES-4278) Addition of noselect feature.
+- Addition of 'pool' parameter.
+- Addition of Ubuntu Xenial Support.
+
+#### Bugfixes
+- Huge readme updates for adding tags to private classes, edits for localization and general cleanups.
+- (MODULES-3397) Fix of the default Solaris settings.
+- Changed 'service_ensure' data type to Enum.
+- (MODULES-3396) remove superfluous empty lines in ntp.conf.
+- (MODULES-4528) Replace Puppet.version.to_f version comparison from spec helper.
+- Solaris data that was the wrong way round now fixed.
+
+## Supported Releases 5.0.0 and 6.0.0
+### Summary
+
+This double release adds new Puppet 4 features: data in modules, EPP templates, the $facts hash, and data types. The 5.0.0 release is fully backwards compatible to existing Puppet 4 configurations and provides you with [deprecation warnings](https://github.com/puppetlabs/puppetlabs-stdlib#deprecation) for every argument that will not work as expected with the final 6.0.0 release. See the [stdlib docs](https://github.com/puppetlabs/puppetlabs-stdlib#validate_legacy) for an in-depth discussion of this.
+
+If you want to learn more about the new features used, have a look at the [NTP: A Puppet 4 language update](https://puppet.com/blog/ntp-puppet-4-language-update) blog post.
+
+If you're still running Puppet 3, remain on the latest puppetlabs-ntp 4.x release for now, and see the documentation to [upgrade to Puppet 4](https://docs.puppet.com/puppet/4.6/reference/upgrade_major_pre.html).
+
+### Changes
+
+* [Data in modules](https://docs.puppet.com/puppet/latest/reference/lookup_quick_module.html#example-with-hiera): Moves all distribution and OS-dependent defaults into YAML files in `data/`, alleviating the need for a `params` class. Note that while this feature is currently still classed as experimental, the final implementation will support the changes here.
+* [EPP templating](https://docs.puppet.com/puppet/latest/reference/lang_template_epp.html): Uses the Puppet language as a base for templates to create simpler and safer templates. No need for Ruby anymore! You can pass in EPP templates for the `ntp.conf` and `step-tickers` files using the new `config_epp` and `step_tickers_epp` parameters.
+* [The $facts hash](https://docs.puppet.com/puppet/latest/reference/lang_facts_and_builtin_vars.html#the-factsfactname-hash): Makes facts visibly distinct from other variables for more readable and maintainable code. This helps eliminate confusion if you use a local variable whose name happens to match that of a common fact.
+* [Data types for validation](https://docs.puppet.com/puppet/4.6/reference/lang_data.html): Helps you find and replace deprecated code in existing `validate_*` functions with stricter, more readable data type notation. First upgrade to the 5.0.0 release of this module, and address all deprecation warnings before upgrading to the final 6.0.0 release. Please see the [stdlib docs](https://github.com/puppetlabs/puppetlabs-stdlib#validate_legacy) for an in-depth discussion of this process.
+
+## Supported Release 4.2.0
+### Summary
+
+A large release with many new features. Multiple additions to parameters and work contributed to OS compatibility. Also includes several bug fixes, including clean ups of code.
+
+#### Features
+- Updated spec helper for more consistency
+- Addition of config_dir variable
+- Addition of puppet TOS options
+- Added support for disabling kernel time discipline in ntp.conf
+- Update Solaris support for newer Facter, and Amazon for < 1.7.0 facter
+- Added disable_dhclient parameter
+- Added OpenSUSE 13.2 compatibility
+- Parameterize file mode of config file
+- Enhanced the default configuration
+- Debian 8 compatibility
+- Enabled usage of the $ntpsigndsocket parameter
+- Added parameter for interfaces to ignore
+- Added support for the authprov parameter
+- Additional work done for SLES 12 compatibility
+- Addition of key template options/ key distribution
+
+#### Bugfixes
+- Fix for strict variables and tests
+- Fixed test with preferred server and iburst enabled
+- Added logfile parameter test
+- Cleaned out unused cleanup code and utilities from spec_helper
+- Deprecated ntp_dirname function
+- No longer manages the keys_file parent when it would be inappropriate to do so
+- Converted license string to SPDX format
+- Removed ruby 1.8.7 and puppet 2.7 from travis-ci jobs
+
 ## Supported Release 4.1.2
 ###Summary
 
@@ -260,7 +341,7 @@ Configuration directives that might possibly be affected:
 - ArchLinux handled via osfamily instead of special casing.
 - parameters in `ntp` class:
   - `autoupdate`: deprecated in favor of directly setting package_ensure.
-  - `panic`: set to false if you wish to allow large clock skews. 
+  - `panic`: set to false if you wish to allow large clock skews.
 
 ---
 ##2011-11-10 Dan Bode <dan@puppetlabs.com> - 0.0.4

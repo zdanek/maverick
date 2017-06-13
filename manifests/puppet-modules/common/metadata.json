@@ -1,6 +1,6 @@
 {
   "name": "ghoneycutt-common",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "author": "ghoneycutt",
   "summary": "common module to be applied to all nodes",
   "license": "Apache-2.0",

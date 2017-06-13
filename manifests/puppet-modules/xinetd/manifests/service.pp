@@ -21,7 +21,7 @@
 #   $cps            - optional
 #   $flags          - optional
 #   $per_source     - optional
-#   $port           - required - determines the service port
+#   $port           - optional - determines the service port (required if service is not listed in /etc/services)
 #   $server         - required - determines the program to execute for this service
 #   $server_args    - optional
 #   $disable        - optional - defaults to "no"
@@ -38,7 +38,8 @@
 #   $access_times   - optional
 #   $log_type       - optional
 #   $bind           - optional
-#   $nice           - optional
+#   $nice           - optional - integer between -20 and 19, inclusive.
+#   $redirect       - optional - ip or hostname and port of the target service
 #
 # Actions:
 #   setups up a xinetd service by creating a file in /etc/xinetd.d/
@@ -58,12 +59,12 @@
 #     cps         => '100 2',
 #     flags       => 'IPv4',
 #     per_source  => '11',
-#     nice        => '19',
+#     nice        => 19,
 #   } # xinetd::service
 #
 define xinetd::service (
-  $port,
   $server,
+  $port                    = undef,
   $ensure                  = present,
   $log_on_success          = undef,
   $log_on_success_operator = '+=',
@@ -74,14 +75,14 @@ define xinetd::service (
   $cps                     = undef,
   $disable                 = 'no',
   $flags                   = undef,
-  $group                   = $xinetd::params::default_group,
+  $group                   = undef,
   $groups                  = 'yes',
   $instances               = 'UNLIMITED',
   $per_source              = undef,
   $protocol                = 'tcp',
   $server_args             = undef,
   $socket_type             = 'stream',
-  $user                    = $xinetd::params::default_user,
+  $user                    = undef,
   $only_from               = undef,
   $wait                    = undef,
   $xtype                   = undef,
@@ -89,27 +90,43 @@ define xinetd::service (
   $access_times            = undef,
   $log_type                = undef,
   $bind                    = undef,
-  $nice                    = undef
+  $nice                    = undef,
+  $env                     = undef,
+  $redirect                = undef,
 ) {
 
-  include xinetd
+  include ::xinetd
+
+  if $user {
+    $_user = $user
+  } else {
+    $_user = $xinetd::params::default_user
+  }
+
+  if $group {
+    $_group = $group
+  } else {
+    $_group = $xinetd::params::default_group
+  }
 
   if $wait {
     $_wait = $wait
   } else {
     validate_re($protocol, '(tcp|udp)')
     $_wait = $protocol ? {
-      tcp => 'no',
-      udp => 'yes'
+      'tcp' => 'no',
+      'udp' => 'yes'
     }
   }
 
   if $xtype {
     warning ('The $xtype parameter to xinetd::service is deprecated. Use the service_type parameter instead.')
   }
-  if $nice {
-    validate_re($nice,'^-?[0-9]+$')
-    if !is_numeric($nice) or $nice < -19 or $nice > 19 {
+
+  if $nice != undef {
+    validate_integer($nice)
+
+    if $nice < -20 or $nice > 19 {
       fail("Invalid value for nice, ${nice}")
     }
   }
@@ -140,6 +157,7 @@ define xinetd::service (
   # - $access_types
   # - $log_type
   # - $nice
+  # - $redirect
   file { "${xinetd::confdir}/${title}":
     ensure  => $ensure,
     owner   => 'root',

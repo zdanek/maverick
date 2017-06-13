@@ -1,28 +1,25 @@
-#ntp
+# ntp
 
-####Table of Contents
+#### Table of Contents
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with ntp](#setup)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
 
-##Overview
+1. [Module Description - What the module does and why it is useful](#module-description)
+1. [Setup - The basics of getting started with ntp](#setup)
+1. [Usage - Configuration options and additional functionality](#usage)
+1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Development - Guide for contributing to the module](#development)
 
-The ntp module installs, configures, and manages the NTP service.
 
-##Module Description
+## Module description
 
-The ntp module handles installing, configuring, and running NTP across a range of operating systems and distributions.
+The ntp module installs, configures, and manages the NTP service across a range of operating systems and distributions.
 
-##Setup
+## Setup
 
-###Beginning with ntp
+### Beginning with ntp
 
-`include '::ntp'` is enough to get you up and running.  If you wish to pass in parameters specifying which servers to use, then:
+`include '::ntp'` is enough to get you up and running. To pass in parameters specifying which servers to use:
 
 ```puppet
 class { '::ntp':
@@ -30,17 +27,17 @@ class { '::ntp':
 }
 ```
 
-##Usage
+## Usage
 
-All interaction with the ntp module can be done through the main ntp class. This means you can simply toggle the options in `::ntp` to have full functionality of the module.
+All parameters for the ntp module are contained within the main `::ntp` class, so for any function of the module, set the options you want. See the common usages below for examples.
 
-###I just want NTP, what's the minimum I need?
+### Install and enable NTP
 
 ```puppet
 include '::ntp'
 ```
 
-###I just want to tweak the servers, nothing else.
+### Change NTP servers
 
 ```puppet
 class { '::ntp':
@@ -48,7 +45,7 @@ class { '::ntp':
 }
 ```
 
-###I'd like to make sure I restrict who can connect as well.
+### Restrict who can connect
 
 ```puppet
 class { '::ntp':
@@ -57,7 +54,7 @@ class { '::ntp':
 }
 ```
 
-###I just want to install a client that can't be queried
+### Install a client that can't be queried
 
 ```puppet
 class { '::ntp':
@@ -68,14 +65,14 @@ class { '::ntp':
     '127.0.0.1',
     '-6 ::1',
     'ntp1.corp.com nomodify notrap nopeer noquery',
-    'ntp1.corp.com nomodify notrap nopeer noquery'
+    'ntp2.corp.com nomodify notrap nopeer noquery'
   ],
 }
 ```
 
-###I only want to listen on specific interfaces, not on 0.0.0.0
+### Listen on specific interfaces
 
-Restricting ntp to a specific interface is especially useful on Openstack nodes which may have numerous virtual interfaces.
+Restricting NTP to a specific interface is especially useful on Openstack node, which may have numerous virtual interfaces.
 
 ```puppet
 class { '::ntp':
@@ -84,7 +81,7 @@ class { '::ntp':
 }
 ```
 
-###I'd like to opt out of having the service controlled; we use another tool for that.
+### Opt out of Puppet controlling the service
 
 ```puppet
 class { '::ntp':
@@ -94,7 +91,7 @@ class { '::ntp':
 }
 ```
 
-###I'd like to configure and run ntp, but I don't need to install it.
+### Configure and run ntp without installing
 
 ```puppet
 class { '::ntp':
@@ -102,205 +99,547 @@ class { '::ntp':
 }
 ```
 
-###Looks great!  But I'd like a different template; we need to do something unique here.
+### Pass in a custom template
 
 ```puppet
 class { '::ntp':
   servers         => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
   restrict        => ['127.0.0.1'],
   service_manage  => false,
-  config_template => 'different/module/custom.template.erb',
+  config_epp      => 'different/module/custom.template.epp',
 }
 ```
 
-##Reference
+## Reference
 
-###Classes
+### Classes
 
-####Public Classes
+#### Public classes
 
 * ntp: Main class, includes all other classes.
 
-####Private Classes
+#### Private classes
 
 * ntp::install: Handles the packages.
 * ntp::config: Handles the configuration file.
 * ntp::service: Handles the service.
 
-###Parameters
+### Parameters
 
 The following parameters are available in the `::ntp` class:
 
-####`autoupdate`
+#### `authprov`
 
-**Deprecated; replaced by the `package_ensure` parameter**. Tells Puppet whether to keep the ntp module updated to the latest version available. Valid options: 'true' or 'false'. Default value: 'false'
+Optional.
 
-####`broadcastclient`
+Data type: String.
 
-Enable reception of broadcast server messages to any local interface.
+Enables compatibility with W32Time in some versions of NTPd, such as Novell DSfW.
+Default value: `undef`.
 
-####`config`
+#### `broadcastclient`
 
-Specifies a file for ntp's configuration info. Valid options: string containing an absolute path. Default value: '/etc/ntp.conf' (or '/etc/inet/ntp.conf' on Solaris)
+Data type: Boolean.
 
-####`config_template`
+Enables reception of broadcast server messages to any local interface.
 
-Specifies a file to act as a template for the config file. Valid options: string containing a path (absolute, or relative to the module path). Default value: 'ntp/ntp.conf.erb'
+Default value: `false`.
 
-####`disable_auth`
+#### `config`
 
-Do  not  require cryptographic authentication for broadcast client, multicast 
-client and symmetric passive associations.
+Data type: Stdlib::Absolutepath.
 
-####`disable_monitor`
+Specifies a file for NTP's configuration info.
 
-Disables the monitoring facility in NTP. Valid options: 'true' or 'false'. Default value: 'true'
+Default value: '/etc/ntp.conf' (Solaris: '/etc/inet/ntp.conf').
 
-####`driftfile`
+#### `config_dir`
 
-Specifies an NTP driftfile. Valid options: string containing an absolute path. Default value: '/var/lib/ntp/drift' (except on AIX and Solaris)
+Optional.
+
+Data type: Stdlib::Absolutepath.
+
+Specifies a directory for the NTP configuration files.
+
+Default value: `undef`.
+
+#### `config_epp`
+
+Optional.
+
+Data type: String.
+
+Specifies an absolute or relative file path to an EPP template for the config file. Example value: 'ntp/ntp.conf.epp'. A validation error is thrown if both this **and** the `config_template` parameter are specified.
+
+#### `config_file_mode`
+
+Data type: String.
+
+Specifies a file mode for the ntp configuration file.
+
+Default value: '0664'.
+
+#### `config_template`
+
+Optional.
+
+Data type: String.
+
+Specifies an absolute or relative file path to an ERB template for the config file. Example value: 'ntp/ntp.conf.erb'. A validation error is thrown if both this **and** the `config_epp` parameter are specified.
+
+#### `disable_auth`
+
+Data type: Boolean.
+
+Disables cryptographic authentication for broadcast client, multicast client, and symmetric passive associations.
+
+#### `disable_dhclient`
+
+Data type: Boolean.
+
+Disables `ntp-servers` in `dhclient.conf` to prevent Dhclient from managing the NTP configuration.
+
+#### `disable_kernel`
+
+Data type: Boolean.
+
+Disables kernel time discipline.
+
+#### `disable_monitor`
+
+Data type: Boolean.
+
+Disables the monitoring facility in NTP.
+
+Default value: `true`.
+
+#### `driftfile`
+
+Data type: Stdlib::Absolutepath.
+
+Specifies the location of the NTP driftfile.
+
+Default value: '/var/lib/ntp/drift' (AIX: 'ntp::driftfile:', Solaris: '/var/ntp/ntp.drift').
 
 #### `fudge`
 
-Used to provide additional information for individual clock drivers. Valid options: array containing strings that follow the `fudge` command. Default value: [ ]
+Optional.
 
-####`iburst_enable`
+Data type: Array[String].
 
-Specifies whether to enable the iburst option for every NTP peer. Valid options: 'true' or 'false'. Default value: 'false' (except on AIX and Debian)
+Provides additional information for individual clock drivers.
 
-####`interfaces`
+Default value: [ ].
 
-Specifies one or more network interfaces for NTP to listen on. Valid options: array. Default value: [ ]
+#### `iburst_enable`
 
-####`keys_controlkey`
+Data type: Boolean.
 
-Provides a control key to be used by NTP. Valid options: string. Default value: ' '
+Specifies whether to enable the iburst option for every NTP peer.
 
-####`keys_enable`
+Default value: `false` (AIX, Debian: `true`).
 
-Tells Puppet whether to enable key-based authentication. Valid options: 'true' or 'false'. Default value: 'false'
+#### `interfaces`
 
-####`keys_file`
+Data type: Array[String].
 
-Specifies an NTP keys file. Valid options: string containing an absolute path. Default value: '/etc/ntp/keys' (except on AIX, SLES, and Solaris)
+Specifies one or more network interfaces for NTP to listen on.
 
-####`keys_requestkey`
+Default value: [ ].
 
-Provides a request key to be used by NTP. Valid options: string. Default value: ' '
+#### `interfaces_ignore`
 
-#### `keys_trusted`:
-Provides one or more keys to be trusted by NTP. Valid options: array of keys. Default value: [ ]
+Data type: Array[String].
+
+Specifies one or more ignore pattern for the NTP listener configuration (for example: all, wildcard, ipv6).
+
+Default value: [ ].
+
+#### `keys`
+
+Data type: Array[String].
+
+Distributes keys to keys file.
+
+Default value: [ ].
+
+#### `keys_controlkey`
+
+Optional.
+
+Data type: Ntp::Key_id.
+
+Specifies the key identifier to use with the ntpq utility. Value in the range of 1 to 65,534 inclusive.
+
+Default value: ' '.
+
+#### `keys_enable`
+
+Data type: Boolean.
+
+Whether to enable key-based authentication.
+
+Default value: `false`.
+
+#### `keys_file`
+
+Stdlib::Absolutepath.
+
+Specifies the complete path and location of the MD5 key file containing the keys and key identifiers used by ntpd, ntpq and ntpdc when operating with symmetric key cryptography.
+
+Default value: '/etc/ntp.keys' (RedHat, Amazon: `/etc/ntp/keys`).
+
+#### `keys_requestkey`
+
+Optional.
+
+Data type: Ntp::Key_id.
+
+Specifies the key identifier to use with the ntpdc utility program. Value in the range of 1 to 65,534 inclusive.
+
+Default value: ' '.
+
+#### `keys_trusted`
+
+Optional.
+
+Data type: Array[Ntp::Key_id].
+
+Provides one or more keys to be trusted by NTP.
+
+Default value: [ ].
 
 #### `leapfile`
 
-Specifies a leap second file for NTP to use. Valid options: string containing an absolute path. Default value: ' '
+Optional.
+
+Data type: Stdlib::Absolutepath.
+
+Specifies a leap second file for NTP to use.
+
+Default value: ' '.
 
 #### `logfile`
 
-Specifies a log file for NTP to use instead of syslog. Valid options: string containing an absolute path. Default value: ' '
+Optional.
 
-####`minpoll`
+Data type: Stdlib::Absolutepath.
 
-Tells Puppet to use non-standard minimal poll interval of upstream servers. Valid options: 3 to 16. Default option: undef.
+Specifies a log file for NTP to use instead of syslog.
 
-####`maxpoll`
+Default value: ' '.
 
-Tells Puppet to use non-standard maximal poll interval of upstream servers. Valid options: 3 to 16. Default option: undef, except FreeBSD (on FreeBSD `maxpoll` set 9 by default).
+#### `minpoll`
 
-####`package_ensure`
+Optional.
 
-Tells Puppet whether the NTP package should be installed, and what version. Valid options: 'present', 'latest', or a specific version number. Default value: 'present'
+Data type: Ntp::Poll_interval.
 
-####`package_manage`
+Sets Puppet to non-standard minimal poll interval of upstream servers. Values: 3 to 16.
+Default: `undef`.
 
-Tells Puppet whether to manage the NTP package. Valid options: 'true' or 'false'. Default value: 'true'
+#### `maxpoll`
 
-####`package_name`
+Optional.
 
-Tells Puppet what NTP package to manage. Valid options: string. Default value: 'ntp' (except on AIX and Solaris)
+Data type: Ntp::Poll_interval.
 
-####`panic`
+Sets use non-standard maximal poll interval of upstream servers. Values: 3 to 16.
+Default option: `undef`(FreeBSD: 9).
 
-Specifies whether NTP should "panic" in the event of a very large clock skew. Applies only if `tinker` option set to "true" or in case your environment is in virtual machine. Valid options: unsigned shortint digit. Default value: 0 if environment is virtual, undef in all other cases.
+#### `ntpsigndsocket`
 
-####`peers`
+Optional.
 
-List of ntp servers which the local clock can be synchronised against, or which can synchronise against the local clock.
+Data type: Stdlib::Absolutepath.
 
-####`preferred_servers`
+Sets NTP to sign packets using the socket in the ntpsigndsocket path. Requires NTP to be configured to sign sockets. Value: Path to the socket directory; for example, for Samba: `usr/local/samba/var/lib/ntp_signd/`.
 
-Specifies one or more preferred peers. Puppet will append 'prefer' to each matching item in the `servers` array. Valid options: array. Default value: [ ]
+Default value: `undef`.
 
-####`restrict`
+#### `package_ensure`
 
-Specifies one or more `restrict` options for the NTP configuration. Puppet will prefix each item with 'restrict', so you only need to list the content of the restriction. Valid options: array. Default value for most operating systems:
+Data type: String.
 
-~~~~
+Whether to install the NTP package, and what version to install. Values: 'present', 'latest', or a specific version number.
+
+Default value: 'present'.
+
+#### `package_manage`
+
+Data type: Boolean.
+
+Whether to manage the NTP package.
+
+Default value: `true`.
+
+#### `package_name`
+
+Data type: Array[String].
+
+Specifies the NTP package to manage. 
+
+Default value: ['ntp'] (AIX: 'bos.net.tcp.client', Solaris: [ 'SUNWntp4r', 'SUNWntp4u' ]).
+
+#### `panic`
+
+Optional.
+Data type: Integer[0].
+
+Whether NTP should panic and exit in the event of a very large clock skew. Applies only if `tinker` option set to `true` or if your environment is in a virtual machine.
+
+Default value: `undef` (virtual environments: 0).
+
+#### `pool`
+
+Optional.
+
+Data type: Array[String].
+
+List of NTP server pools with which to synchronise the local clock.
+
+Default value: [ ].
+
+#### `peers`
+
+Data type: Array[String].
+
+List of NTP servers with which to synchronise the local clock.
+
+#### `preferred_servers`
+
+Data type: Array[String].
+
+Specifies one or more preferred peers. Puppet appends 'prefer' to each matching item in the `servers` array.
+
+Default value: [ ].
+
+#### `noselect_servers`
+
+Array[String] Specifies one or more peers to not sync with. Puppet appends 'noselect' to each matching item in the `servers` array. Default value: [ ].     
+
+#### `restrict`
+
+Data type: Array[String].
+
+Specifies one or more `restrict` options for the NTP configuration. Puppet prefixes each item with 'restrict', so you need to list only the content of the restriction.
+
+Default value for most operating systems:
+
+```shell
 [
   'default kod nomodify notrap nopeer noquery',
   '-6 default kod nomodify notrap nopeer noquery',
   '127.0.0.1',
   '-6 ::1',
 ]
-~~~~
+```
 
 Default value for AIX systems:
 
-~~~~
+```shell
 [
   'default nomodify notrap nopeer noquery',
   '127.0.0.1',
 ]
-~~~~
+```
 
-####`servers`
+#### `servers`
 
-Specifies one or more servers to be used as NTP peers. Valid options: array. Default value: varies by operating system
+Data type: Array[String].
 
-####`service_enable`
+Specifies one or more servers to be used as NTP peers.
 
-Tells Puppet whether to enable the NTP service at boot. Valid options: 'true' or 'false'. Default value: 'true'
+Default value: varies by operating system.
 
-####`service_ensure`
+#### `service_enable`
 
-Tells Puppet whether the NTP service should be running. Valid options: 'running' or 'stopped'. Default value: 'running'
+Data type: Boolean.
 
-####`service_manage`
+Whether to enable the NTP service at boot.
 
-Tells Puppet whether to manage the NTP service. Valid options: 'true' or 'false'. Default value: 'true'
+Default value: `true`.
 
-####`service_name`
+#### `service_ensure`
 
-Tells Puppet what NTP service to manage. Valid options: string. Default value: varies by operating system
+Data type: Enum['running', 'stopped'].
 
-####`stepout`
+Whether the NTP service should be running.
 
-Tells puppet to change stepout. Applies only if `tinker` value is 'true'. Valid options: unsigned shortint digit. Default value: undef.
+Default value: 'running'.
 
-####`tinker`
 
-Tells Puppet to enable tinker options. Valid options: 'true' of 'false'. Default value: 'false'
+#### `service_manage`
 
-####`udlc`
+Data type: Boolean.
 
-Specifies whether to configure ntp to use the undisciplined local clock as a time source. Valid options: 'true' or 'false'. Default value: 'false'
+Whether to manage the NTP service.
 
-####`udlc_stratum`
+Default value: `true`.
 
-Specifies the stratum the server should operate at when using the undisciplined local clock as the time source. It is strongly suggested that this value be set to no less than 10 where ntpd may be accessible outside your immediate, controlled network. Default value: 10
+#### `service_name`
 
-##Limitations
+Data type: String.
 
-This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix), and no issues have been identified. Additionally, it is tested (but not supported) on Solaris 10 and Fedora 20-22.
+The NTP service to manage.
 
-##Development
+Default value: varies by operating system.
 
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
+#### `service_provider`
 
-We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+Data type: String.
+
+Which service provider to use for NTP.
+
+Default value: `undef`.
+
+#### `statistics`
+
+Data type: Array.
+
+List of statistics to gather if ntp monitoring is enabled.
+
+Default value: [].
+
+#### `statsdir`
+
+Data type: Stdlib::Absolutepath.
+
+Location to store NTP statistics if ntp monitoring is enabled.
+
+Default value: '/var/log/ntpstats'.
+
+#### `step_tickers_file`
+
+Optional.
+
+Data type: Stdlib::Absolutepath.
+
+Location of the step tickers file on the managed system.
+
+Default value: varies by operating system.
+
+
+#### `step_tickers_epp`
+
+Optional.
+
+Data type: String.
+
+Location of the step tickers EPP template file. Validation error is thrown if both this and the `step_tickers_template` parameters are specified.
+
+Default value: varies by operating system.
+
+#### `step_tickers_template`
+
+Optional.
+
+Data type: String.
+
+Location of the step tickers ERB template file. Validation error is thrown if both this and the `step_tickers_epp` parameter are specified.
+
+Default value: varies by operating system.
+
+#### `stepout`
+
+Optional.
+
+Data type: Integer[0, 65535].
+
+Value for stepout if `tinker` value is `true`. Valid options: unsigned shortint digit.
+
+Default value: `undef`.
+
+#### `tos`
+
+Data type: Boolean.
+
+Whether to enable tos options.
+
+Default value: `false`.
+
+#### `tos_minclock`
+
+Optional.
+
+Data type: Integer[1].
+
+Specifies the minclock tos option.
+
+Default value: 3.
+
+#### `tos_minsane`
+
+Optional.
+
+Data type: Integer[1].
+
+Specifies the minsane tos option.
+
+Default value: 1.
+
+#### `tos_floor`
+
+Optional.
+
+Data type: Integer[1].
+
+Specifies the floor tos option.
+
+Default value: 1.
+
+#### `tos_ceiling`
+
+Optional.
+
+Data type: Integer[1].
+
+Specifies the ceiling tos option.
+
+Default value: 15.
+
+#### `tos_cohort`
+
+
+Data type: Variant. Boolean, Integer[0,1].
+
+Specifies the cohort tos option. Valid options: 0 or 1.
+
+Default value: 0.
+
+#### `tinker`
+
+Data type: Boolean.
+
+Whether to enable tinker options.
+
+Default value: `false`.
+
+#### `udlc`
+
+Data type: Boolean.
+
+Specifies whether to configure NTP to use the undisciplined local clock as a time source.
+Default value: `false`.
+
+#### `udlc_stratum`
+
+Optional. Data type: Integer[1,15].
+
+Specifies the stratum the server should operate at when using the undisciplined local clock as the time source. This value should be set to no less than 10 if ntpd might be accessible outside your immediate, controlled network.
+
+Default value: 10.
+
+## Limitations
+
+This module has been tested on [all PE-supported platforms](https://forge.puppetlabs.com/supported#compat-matrix). Additionally, it is tested (but not supported) on Solaris 10 and Fedora 20-22.
+
+## Development
+
+Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. Please follow our guidelines when contributing changes.
 
 For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
 
-###Contributors
+### Contributors
 
 To see who's already involved, see the [list of contributors.](https://github.com/puppetlabs/puppetlabs-ntp/graphs/contributors)

@@ -1,9 +1,17 @@
 {
-  "README.md": "ebc735193b6332945322438d93f63584",
-  "Rakefile": "20b80e526e351a74df2001f504e756d2",
-  "manifests/init.pp": "240ff87c1acbb160efe87762ae7b4b7e",
-  "metadata.json": "fa3578fa7426533489cf2fa30fdcad67",
+  "DEVELOPMENT.md": "229e61b78c507bef048ac6922dfe3ffe",
+  "Gemfile": "cd825ec007fb40ecdb41e07846a628fb",
+  "README.md": "cd41e2c4131e5133f3110deef6323cb6",
+  "Rakefile": "b2d436ccf19324abb6b058defc4ab0ef",
+  "examples/init.pp": "d41854379fb753235dc16a9ecb20989c",
+  "manifests/chipset.pp": "68c6baa9bc94590fd58885c5ecb4323f",
+  "manifests/init.pp": "b256fa07504d5cf9a624bd71020f10aa",
+  "manifests/install.pp": "7249912b67571b0fd824f9cd2f4e951e",
+  "manifests/params.pp": "df8f7b48b6930a1a295c961fd8770ef9",
+  "manifests/service.pp": "57ca80582faf8bce8c44a1cc9cbdf431",
+  "metadata.json": "5a447e2661bfa6c6539f028b685a53eb",
   "spec/classes/init_spec.rb": "0d35a3735b6614716c958cb02efd0a12",
-  "spec/spec_helper.rb": "a55d1e6483344f8ec6963fcb2c220372",
-  "tests/init.pp": "d41854379fb753235dc16a9ecb20989c"
+  "spec/classes/lm_sensors_spec.rb": "90bb246f8501b0940267d67c1b385705",
+  "spec/spec_helper.rb": "33efe7a944371f73bbc8823f3e741512",
+  "templates/chipset.conf": "a5d3ad89fe3d514a45471f994e6a0a96"
 }

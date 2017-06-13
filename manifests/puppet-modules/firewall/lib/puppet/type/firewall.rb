@@ -57,8 +57,16 @@ Puppet::Type.newtype(:firewall) do
   feature :ipsec_policy, "Match IPsec policy"
   feature :ipsec_dir, "Match IPsec policy direction"
   feature :mask, "Ability to match recent rules based on the ipv4 mask"
+  feature :nflog_group, "netlink group to subscribe to for logging"
+  feature :nflog_prefix, ""
+  feature :nflog_range, ""
+  feature :nflog_threshold, ""
   feature :ipset, "Match against specified ipset list"
   feature :clusterip, "Configure a simple cluster of nodes that share a certain IP and MAC address without an explicit load balancer in front of them."
+  feature :length, "Match the length of layer-3 payload"
+  feature :string_matching, "String matching features"
+  feature :queue_num, "Which NFQUEUE to send packets to"
+  feature :queue_bypass, "If nothing is listening on queue_num, allow packets to bypass the queue"
 
   # provider specific features
   feature :iptables, "The provider provides iptables features."
@@ -369,12 +377,12 @@ Puppet::Type.newtype(:firewall) do
       *tcp*.
     EOS
 
-    newvalues(*[:tcp, :udp, :icmp, :"ipv6-icmp", :esp, :ah, :vrrp, :igmp, :ipencap, :ipv4, :ipv6, :ospf, :gre, :cbt, :sctp, :all].collect do |proto|
+    newvalues(*[:ip, :tcp, :udp, :icmp, :"ipv6-icmp", :esp, :ah, :vrrp, :igmp, :ipencap, :ipv4, :ipv6, :ospf, :gre, :cbt, :sctp, :pim, :all].collect do |proto|
       [proto, "! #{proto}".to_sym]
     end.flatten)
     defaultto "tcp"
   end
-  
+
   # tcp-specific
   newproperty(:mss) do
     desc <<-EOS
@@ -444,6 +452,7 @@ Puppet::Type.newtype(:firewall) do
       * DNAT
       * SNAT
       * LOG
+      * NFLOG
       * MASQUERADE
       * REDIRECT
       * MARK
@@ -469,6 +478,40 @@ Puppet::Type.newtype(:firewall) do
       if ["accept","reject","drop"].include?(value.downcase)
         raise ArgumentError, <<-EOS
           Jump destination should not be one of ACCEPT, REJECT or DROP. Use
+          the action property instead.
+        EOS
+      end
+
+    end
+  end
+
+  newproperty(:goto, :required_features => :iptables) do
+    desc <<-EOS
+      The value for the iptables --goto parameter. Normal values are:
+
+      * QUEUE
+      * RETURN
+      * DNAT
+      * SNAT
+      * LOG
+      * MASQUERADE
+      * REDIRECT
+      * MARK
+
+      But any valid chain name is allowed.
+    EOS
+
+    validate do |value|
+      unless value =~ /^[a-zA-Z0-9\-_]+$/
+        raise ArgumentError, <<-EOS
+          Goto destination must consist of alphanumeric characters, an
+          underscore or a yphen.
+        EOS
+      end
+
+      if ["accept","reject","drop"].include?(value.downcase)
+        raise ArgumentError, <<-EOS
+          Goto destination should not be one of ACCEPT, REJECT or DROP. Use
           the action property instead.
         EOS
       end
@@ -578,6 +621,67 @@ Puppet::Type.newtype(:firewall) do
     EOS
 
     newvalues(:true, :false)
+  end
+
+  newproperty(:nflog_group, :required_features => :nflog_group) do
+    desc <<-EOS
+      Used with the jump target NFLOG.
+      The netlink group (0 - 2^16-1) to which packets are (only applicable
+      for nfnetlink_log). Defaults to 0.
+    EOS
+
+    validate do |value|
+      if value.to_i > (2**16)-1 || value.to_i < 0
+        raise ArgumentError, "nflog_group must be between 0 and 2^16-1"
+      end
+    end
+
+    munge do |value|
+      if value.is_a?(String) and value =~ /^[-0-9]+$/
+        Integer(value)
+      else
+        value
+      end
+    end
+  end
+
+  newproperty(:nflog_prefix, :required_features => :nflog_prefix) do
+    desc <<-EOS
+      Used with the jump target NFLOG.
+      A prefix string to include in the log message, up to 64 characters long,
+      useful for distinguishing messages in the logs.
+    EOS
+
+    validate do |value|
+      if value.length > 64
+        raise ArgumentError, "nflog_prefix must be less than 64 characters."
+      end
+    end
+  end
+
+  newproperty(:nflog_range, :required_features => :nflog_range) do
+    desc <<-EOS
+      Used with the jump target NFLOG.
+      The number of bytes to be copied to userspace (only applicable for nfnetlink_log).
+      nfnetlink_log instances may specify their own range, this option overrides it.
+    EOS
+  end
+
+  newproperty(:nflog_threshold, :required_features => :nflog_threshold) do
+    desc <<-EOS
+      Used with the jump target NFLOG.
+      Number of packets to queue inside the kernel before sending them to userspace
+      (only applicable for nfnetlink_log). Higher values result in less overhead
+      per packet, but increase delay until the packets reach userspace. Defaults to 1.
+    EOS
+
+    munge do |value|
+      if value.is_a?(String) and value =~ /^[-0-9]+$/
+        Integer(value)
+      else
+        value
+      end
+    end
   end
 
   # ICMP matching property
@@ -894,7 +998,7 @@ Puppet::Type.newtype(:firewall) do
       Set DSCP Markings.
     EOS
   end
-  
+
   newproperty(:set_dscp_class, :required_features => :iptables) do
     desc <<-EOS
       This sets the DSCP field according to a predefined DiffServ class.
@@ -1154,14 +1258,23 @@ Puppet::Type.newtype(:firewall) do
     EOS
   end
 
-  newproperty(:ipset, :required_features => :ipset) do
+  newproperty(:ipset, :required_features => :ipset, :array_matching => :all) do
     desc <<-EOS
       Matches against the specified ipset list.
-      Requires ipset kernel module.
+      Requires ipset kernel module. Will accept a single element or an array.
       The value is the name of the blacklist, followed by a space, and then
       'src' and/or 'dst' separated by a comma.
       For example: 'blacklist src,dst'
     EOS
+
+    def is_to_s(value)
+      should_to_s(value)
+    end
+
+    def should_to_s(value)
+      value = [value] unless value.is_a?(Array)
+      value.join(', ')
+    end
   end
 
   newproperty(:checksum_fill, :required_features => :iptables) do
@@ -1202,6 +1315,20 @@ Puppet::Type.newtype(:firewall) do
   newproperty(:physdev_is_bridged, :required_features => :iptables) do
     desc <<-EOS
       Match if the packet is transversing a bridge.
+    EOS
+    newvalues(:true, :false)
+  end
+
+  newproperty(:physdev_is_in, :required_features => :iptables) do
+    desc <<-EOS
+      Matches if the packet has entered through a bridge interface.
+    EOS
+    newvalues(:true, :false)
+  end
+
+  newproperty(:physdev_is_out, :required_features => :iptables) do
+    desc <<-EOS
+      Matches if the packet will leave through a bridge interface.
     EOS
     newvalues(:true, :false)
   end
@@ -1352,6 +1479,105 @@ Puppet::Type.newtype(:firewall) do
     EOS
   end
 
+  newproperty(:length, :required_features => :length) do
+    desc <<-EOS
+      Sets the length of layer-3 payload to match.
+    EOS
+
+    munge do |value|
+      match = value.to_s.match("^([0-9]+)(-)?([0-9]+)?$")
+      if match.nil?
+        raise ArgumentError, "Length value must either be an integer or a range"
+      end
+
+      low = match[1].to_i
+      if !match[3].nil?
+        high = match[3].to_i
+      end
+
+      if (low < 0 or low > 65535) or \
+        (!high.nil? and (high < 0 or high > 65535 or high < low))
+        raise ArgumentError, "Length values must be between 0 and 65535"
+      end
+
+      value = low.to_s
+      if !high.nil?
+        value << ":" << high.to_s
+      end
+      value
+    end
+  end
+
+  newproperty(:string, :required_features => :string_matching) do
+    desc <<-EOS
+      String matching feature. Matches the packet against the pattern
+      given as an argument.
+    EOS
+
+    munge do |value|
+       value = "'" + value + "'"
+    end
+  end
+
+  newproperty(:string_algo, :required_features => :string_matching) do
+    desc <<-EOS
+      String matching feature, pattern matching strategy.
+    EOS
+
+    newvalues(:bm, :kmp)
+  end
+
+  newproperty(:string_from, :required_features => :string_matching) do
+    desc <<-EOS
+      String matching feature, offset from which we start looking for any matching.
+    EOS
+  end
+
+  newproperty(:string_to, :required_features => :string_matching) do
+    desc <<-EOS
+      String matching feature, offset up to which we should scan.
+    EOS
+  end
+
+  newproperty(:queue_num, :required_features => :queue_num) do
+    desc <<-EOS
+      Used with NFQUEUE jump target.
+      What queue number to send packets to
+    EOS
+    munge do |value|
+      match = value.to_s.match("^([0-9])*$")
+      if match.nil?
+        raise ArgumentError, "queue_num must be an integer"
+      end
+
+      if match[1].to_i > 65535 || match[1].to_i < 0
+        raise ArgumentError, "queue_num must be between 0 and 65535"
+      end
+      value
+    end
+  end
+
+  newproperty(:queue_bypass, :required_features => :queue_bypass) do
+    desc <<-EOS
+      Used with NFQUEUE jump target
+      Allow packets to bypass :queue_num if userspace process is not listening
+    EOS
+    newvalues(:true, :false)
+  end
+
+  newproperty(:src_cc) do
+    desc <<-EOS
+      src attribute for the module geoip
+    EOS
+    newvalues(/^[A-Z]{2}(,[A-Z]{2})*$/)
+  end
+
+  newproperty(:dst_cc) do
+    desc <<-EOS
+      dst attribute for the module geoip
+    EOS
+    newvalues(/^[A-Z]{2}(,[A-Z]{2})*$/)
+  end
 
   autorequire(:firewallchain) do
     reqs = []
@@ -1391,6 +1617,14 @@ Puppet::Type.newtype(:firewall) do
       %w{firewalld iptables ip6tables iptables-persistent netfilter-persistent}
     else
       []
+    end
+  end
+
+  # autobefore is only provided since puppet 4.0
+  if Puppet::Util::Package.versioncmp(Puppet.version, '4.0') >= 0
+    # On RHEL 7 this needs to be threaded correctly to manage SE Linux permissions after persisting the rules
+    autobefore(:file) do
+      [ '/etc/sysconfig/iptables', '/etc/sysconfig/ip6tables' ]
     end
   end
 
@@ -1541,6 +1775,12 @@ Puppet::Type.newtype(:firewall) do
     if value(:checksum_fill)
       unless value(:jump).to_s == "CHECKSUM" && value(:table).to_s == "mangle"
         self.fail "Parameter checksum_fill requires jump => CHECKSUM and table => mangle"
+      end
+    end
+
+    if value(:queue_num) || value(:queue_bypass)
+      unless value(:jump).to_s == "NFQUEUE"
+        self.fail "Paramter queue_number and queue_bypass require jump => NFQUEUE"
       end
     end
 
