@@ -164,7 +164,7 @@ if [ -z $MAVERICK_BRANCH ]; then
 fi
 
 if [ "$MAVERICK_BRANCH" != "stable" ]; then
-    echo "${bgbl}${bold}${red}WARNING: Maverick is using ${MAVERICK_BRANCH}, not stable${reset}"
+    echo "${bgbl}${bold}${red}WARNING: Maverick is using branch:${MAVERICK_BRANCH}, not stable${reset}"
     echo
 fi
 

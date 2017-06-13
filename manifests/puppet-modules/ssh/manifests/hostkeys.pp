@@ -1,6 +1,13 @@
-class ssh::hostkeys {
-  $ipaddresses = ipaddresses()
-  $host_aliases = flatten([ $::fqdn, $::hostname, $ipaddresses ])
+# Class ssh::hostkeys
+class ssh::hostkeys(
+  $export_ipaddresses = true
+) {
+  if $export_ipaddresses == true {
+    $ipaddresses  = ipaddresses()
+    $host_aliases = flatten([ $::fqdn, $::hostname, $ipaddresses ])
+  } else {
+    $host_aliases = flatten([ $::fqdn, $::hostname ])
+  }
 
   if $::sshdsakey {
     @@sshkey { "${::fqdn}_dsa":
@@ -11,7 +18,7 @@ class ssh::hostkeys {
     }
   } else {
     @@sshkey { "${::fqdn}_dsa":
-      ensure       => absent,
+      ensure => absent,
     }
   }
   if $::sshrsakey {
@@ -23,7 +30,7 @@ class ssh::hostkeys {
     }
   } else {
     @@sshkey { "${::fqdn}_rsa":
-      ensure       => absent,
+      ensure => absent,
     }
   }
   if $::sshecdsakey {
@@ -35,7 +42,8 @@ class ssh::hostkeys {
     }
   } else {
     @@sshkey { "${::fqdn}_ecdsa":
-      ensure       => absent,
+      ensure => absent,
+      type   => 'ecdsa-sha2-nistp256',
     }
   }
   if $::sshed25519key {
@@ -47,7 +55,8 @@ class ssh::hostkeys {
     }
   } else {
     @@sshkey { "${::fqdn}_ed25519":
-      ensure       => absent,
+      ensure => absent,
+      type   => 'ed25519',
     }
   }
 }
