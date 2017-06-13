@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'apt::source' do
-  GPG_KEY_ID = '47B320EB4C7C375AA9DAE1A01054B7A24BD6EC30'
+  GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'
 
   let :pre_condition do
     'class { "apt": }'
@@ -15,9 +15,9 @@ describe 'apt::source' do
     context 'without location' do
       let :facts do
         {
-          :lsbdistid       => 'Debian',
-          :lsbdistcodename => 'wheezy',
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :osfamily        => 'Debian',
+          :lsbdistcodename => 'wheezy',
           :puppetversion   => Puppet.version,
         }
       end
@@ -30,6 +30,7 @@ describe 'apt::source' do
     context 'with location' do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :lsbdistcodename => 'wheezy',
           :osfamily        => 'Debian',
@@ -48,9 +49,12 @@ describe 'apt::source' do
   describe 'no defaults' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
+        :operatingsystem => 'Debian',
+        :lsbdistrelease  => '7.0',
         :puppetversion   => Puppet.version,
       }
     end
@@ -189,6 +193,7 @@ describe 'apt::source' do
   context 'allow_unsigned true' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -211,6 +216,7 @@ describe 'apt::source' do
   context 'architecture equals x86_64' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -220,7 +226,7 @@ describe 'apt::source' do
     let :params do
       {
         :location     => 'hello.there',
-        :include      => {'deb' => false, 'src' => true,},
+        :include      => {'deb' => false, 'src' => true},
         :architecture => 'x86_64',
       }
     end
@@ -231,9 +237,34 @@ describe 'apt::source' do
     }
   end
 
+  context 'with architecture fact and unset architecture parameter' do
+    let :facts do
+      {
+        :architecture    => 'amd64',
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
+        :lsbdistid       => 'Debian',
+        :lsbdistcodename => 'wheezy',
+        :osfamily        => 'Debian',
+        :puppetversion   => Puppet.version,
+      }
+    end
+    let :params do
+      {
+        :location => 'hello.there',
+        :include  => {'deb' => false, 'src' => true,},
+      }
+    end
+
+    it { is_expected.to contain_apt__setting('list-my_source').with({
+      :ensure => 'present',
+    }).with_content(/# my_source\ndeb-src hello.there wheezy main\n/)
+    }
+  end
+
   context 'include_src => true' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -243,7 +274,7 @@ describe 'apt::source' do
     let :params do
       {
         :location    => 'hello.there',
-        :include_src => true,
+        :include     => {'src' => true},
       }
     end
 
@@ -253,9 +284,10 @@ describe 'apt::source' do
     }
   end
 
-  context 'include_deb => false' do
+  context 'include deb => false' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'debian',
@@ -264,8 +296,8 @@ describe 'apt::source' do
     end
     let :params do
       {
+        :include => { 'deb' => false },
         :location    => 'hello.there',
-        :include_deb => false,
       }
     end
 
@@ -276,9 +308,10 @@ describe 'apt::source' do
     it { is_expected.to contain_apt__setting('list-my_source').without_content(/deb hello.there wheezy main\n/) }
   end
 
-  context 'include_src => true and include_deb => false' do
+  context 'include src => true and include deb => false' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'debian',
@@ -287,34 +320,8 @@ describe 'apt::source' do
     end
     let :params do
       {
+        :include => { 'deb' => false, 'src' => true },
         :location    => 'hello.there',
-        :include_deb => false,
-        :include_src => true,
-      }
-    end
-
-    it { is_expected.to contain_apt__setting('list-my_source').with({
-      :ensure => 'present',
-    }).with_content(/deb-src hello.there wheezy main\n/)
-    }
-    it { is_expected.to contain_apt__setting('list-my_source').without_content(/deb hello.there wheezy main\n/) }
-  end
-
-  context 'include precedence' do
-    let :facts do
-      {
-        :lsbdistid       => 'debian',
-        :lsbdistcodename => 'wheezy',
-        :osfamily        => 'debian',
-        :puppetversion   => Puppet.version,
-      }
-    end
-    let :params do
-      {
-        :location    => 'hello.there',
-        :include_deb => true,
-        :include_src => false,
-        :include     => { 'deb' => false, 'src' => true },
       }
     end
 
@@ -328,6 +335,7 @@ describe 'apt::source' do
   context 'ensure => absent' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -350,6 +358,7 @@ describe 'apt::source' do
     context 'no release' do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :osfamily        => 'Debian',
           :puppetversion   => Puppet.version,
@@ -364,9 +373,24 @@ describe 'apt::source' do
       end
     end
 
+    context 'release is empty string' do
+      let :facts do
+        {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
+          :lsbdistid       => 'Debian',
+          :osfamily        => 'Debian',
+          :puppetversion   => Puppet.version,
+        }
+      end
+      let(:params) { { :location => 'hello.there', :release => '' } }
+
+      it { is_expected.to contain_apt__setting('list-my_source').with_content(/hello\.there  main/) }
+    end
+
     context 'invalid pin' do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :lsbdistcodename => 'wheezy',
           :osfamily        => 'Debian',
@@ -390,6 +414,7 @@ describe 'apt::source' do
     context "with notify_update = undef (default)" do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :lsbdistcodename => 'wheezy',
           :osfamily        => 'Debian',
@@ -407,6 +432,7 @@ describe 'apt::source' do
     context "with notify_update = true" do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :lsbdistcodename => 'wheezy',
           :osfamily        => 'Debian',
@@ -425,6 +451,7 @@ describe 'apt::source' do
     context "with notify_update = false" do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :lsbdistcodename => 'wheezy',
           :osfamily        => 'Debian',

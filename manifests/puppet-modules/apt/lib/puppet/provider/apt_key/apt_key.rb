@@ -127,7 +127,15 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
       f
     else
       begin
-        key = parsedValue.read
+        # Only send basic auth if URL contains userinfo
+        # Some webservers (e.g. Amazon S3) return code 400 if empty basic auth is sent
+        if parsedValue.userinfo.nil?
+          key = parsedValue.read
+        else
+          user_pass = parsedValue.userinfo.split(':')
+          parsedValue.userinfo = ''
+          key = open(parsedValue, :http_basic_authentication => user_pass).read
+        end
       rescue OpenURI::HTTPError, Net::FTPPermError => e
         fail("#{e.message} for #{resource[:source]}")
       rescue SocketError

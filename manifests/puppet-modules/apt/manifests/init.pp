@@ -3,82 +3,92 @@
 # Manage APT (Advanced Packaging Tool)
 #
 class apt (
-  $confs    = {},
-  $update   = {},
-  $purge    = {},
-  $proxy    = {},
-  $sources  = {},
-  $keys     = {},
-  $ppas     = {},
-  $pins     = {},
-  $settings = {},
-) inherits ::apt::params {
+  Hash $update_defaults         = $apt::params::update_defaults,
+  Hash $purge_defaults          = $apt::params::purge_defaults,
+  Hash $proxy_defaults          = $apt::params::proxy_defaults,
+  Hash $include_defaults        = $apt::params::include_defaults,
+  String $provider              = $apt::params::provider,
+  String $keyserver             = $apt::params::keyserver,
+  Optional[String] $ppa_options = $apt::params::ppa_options,
+  Optional[String] $ppa_package = $apt::params::ppa_package,
+  Optional[Hash] $backports     = $apt::params::backports,
+  Hash $confs                   = $apt::params::confs,
+  Hash $update                  = $apt::params::update,
+  Hash $purge                   = $apt::params::purge,
+  Hash $proxy                   = $apt::params::proxy,
+  Hash $sources                 = $apt::params::sources,
+  Hash $keys                    = $apt::params::keys,
+  Hash $ppas                    = $apt::params::ppas,
+  Hash $pins                    = $apt::params::pins,
+  Hash $settings                = $apt::params::settings,
+  String $root                  = $apt::params::root,
+  String $sources_list          = $apt::params::sources_list,
+  String $sources_list_d        = $apt::params::sources_list_d,
+  String $conf_d                = $apt::params::conf_d,
+  String $preferences           = $apt::params::preferences,
+  String $preferences_d         = $apt::params::preferences_d,
+  Hash $config_files            = $apt::params::config_files,
+  Hash $source_key_defaults     = $apt::params::source_key_defaults
+) inherits apt::params {
+
+  if $facts['osfamily'] != 'Debian' {
+    fail('This module only works on Debian or derivatives like Ubuntu')
+  }
 
   $frequency_options = ['always','daily','weekly','reluctantly']
-  validate_hash($update)
+
   if $update['frequency'] {
     validate_re($update['frequency'], $frequency_options)
   }
   if $update['timeout'] {
-    unless is_integer($update['timeout']) {
-      fail('timeout value for update must be an integer')
-    }
+    assert_type(Integer, $update['timeout'])
   }
   if $update['tries'] {
-    unless is_integer($update['tries']) {
-      fail('tries value for update must be an integer')
-    }
+    assert_type(Integer, $update['tries'])
   }
 
   $_update = merge($::apt::update_defaults, $update)
   include ::apt::update
 
-  validate_hash($purge)
   if $purge['sources.list'] {
-    validate_bool($purge['sources.list'])
+    assert_type(Boolean, $purge['sources.list'])
   }
   if $purge['sources.list.d'] {
-    validate_bool($purge['sources.list.d'])
+    assert_type(Boolean, $purge['sources.list.d'])
   }
   if $purge['preferences'] {
-    validate_bool($purge['preferences'])
+    assert_type(Boolean, $purge['preferences'])
   }
   if $purge['preferences.d'] {
-    validate_bool($purge['preferences.d'])
+    assert_type(Boolean, $purge['preferences.d'])
   }
 
   $_purge = merge($::apt::purge_defaults, $purge)
 
-  validate_hash($proxy)
   if $proxy['ensure'] {
     validate_re($proxy['ensure'], ['file', 'present', 'absent'])
   }
   if $proxy['host'] {
-    validate_string($proxy['host'])
+    assert_type(String, $proxy['host'])
   }
   if $proxy['port'] {
-    unless is_integer($proxy['port']) {
-      fail('$proxy port must be an integer')
-    }
+    assert_type(Integer, $proxy['port'])
   }
-  if $proxy['https'] {
-    validate_bool($proxy['https'])
+  if $proxy['https']{
+    assert_type(Boolean, $proxy['https'])
   }
 
   $_proxy = merge($apt::proxy_defaults, $proxy)
 
-  validate_hash($confs)
-  validate_hash($sources)
-  validate_hash($keys)
-  validate_hash($settings)
-  validate_hash($ppas)
-  validate_hash($pins)
+  $confheadertmp = epp('apt/_conf_header.epp')
+  $proxytmp = epp('apt/proxy.epp', {'proxies' => $_proxy})
+  $updatestamptmp = epp('apt/15update-stamp.epp')
 
   if $_proxy['ensure'] == 'absent' or $_proxy['host'] {
     apt::setting { 'conf-proxy':
       ensure   => $_proxy['ensure'],
       priority => '01',
-      content  => template('apt/_conf_header.erb', 'apt/proxy.erb'),
+      content  => "${confheadertmp}${proxytmp}",
     }
   }
 
@@ -100,7 +110,7 @@ class apt (
 
   apt::setting { 'conf-update-stamp':
     priority => 15,
-    content  => template('apt/_conf_header.erb', 'apt/15update-stamp.erb'),
+    content  => "${confheadertmp}${updatestamptmp}",
   }
 
   file { 'sources.list':

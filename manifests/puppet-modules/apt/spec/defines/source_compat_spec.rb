@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'apt::source', :type => :define do
-  GPG_KEY_ID = '47B320EB4C7C375AA9DAE1A01054B7A24BD6EC30'
+  GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'
 
   let :title do
     'my_source'
@@ -10,6 +10,7 @@ describe 'apt::source', :type => :define do
   context 'mostly defaults' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -19,8 +20,7 @@ describe 'apt::source', :type => :define do
 
     let :params do
       {
-        'include_deb' => false,
-        'include_src' => true,
+        'include' => { 'deb' => false, 'src' => true },
         'location'    => 'http://debian.mirror.iweb.ca/debian/',
       }
     end
@@ -32,6 +32,7 @@ describe 'apt::source', :type => :define do
   context 'no defaults' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -40,19 +41,15 @@ describe 'apt::source', :type => :define do
     end
     let :params do
       {
-        'comment'           => 'foo',
-        'location'          => 'http://debian.mirror.iweb.ca/debian/',
-        'release'           => 'sid',
-        'repos'             => 'testing',
-        'include_src'       => false,
-        'required_packages' => 'vim',
-        'key'               => GPG_KEY_ID,
-        'key_server'        => 'pgp.mit.edu',
-        'key_content'       => 'GPG key content',
-        'key_source'        => 'http://apt.puppetlabs.com/pubkey.gpg',
-        'pin'               => '10',
-        'architecture'      => 'x86_64',
-        'trusted_source'    => true,
+        'comment'        => 'foo',
+        'location'       => 'http://debian.mirror.iweb.ca/debian/',
+        'release'        => 'sid',
+        'repos'          => 'testing',
+        'include'        => { 'src' => false },
+        'key'            => GPG_KEY_ID,
+        'pin'            => '10',
+        'architecture'   => 'x86_64',
+        'allow_unsigned' => true,
       }
     end
 
@@ -66,28 +63,17 @@ describe 'apt::source', :type => :define do
     })
     }
 
-    it { is_expected.to contain_exec("Required packages: 'vim' for my_source").that_comes_before('Apt::Setting[list-my_source]').with({
-      'command'     => '/usr/bin/apt-get -y install vim',
-      'logoutput'   => 'on_failure',
-      'refreshonly' => true,
-      'tries'       => '3',
-      'try_sleep'   => '1',
-    })
-    }
-
     it { is_expected.to contain_apt__key("Add key: #{GPG_KEY_ID} from Apt::Source my_source").that_comes_before('Apt::Setting[list-my_source]').with({
       'ensure' => 'present',
       'id'  => GPG_KEY_ID,
-      'key_server' => 'pgp.mit.edu',
-      'key_content' => 'GPG key content',
-      'key_source' => 'http://apt.puppetlabs.com/pubkey.gpg',
     })
     }
   end
 
-  context 'trusted_source true' do
+  context 'allow_unsigned true' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -96,9 +82,9 @@ describe 'apt::source', :type => :define do
     end
     let :params do
       {
-        'include_src'    => false,
+        'include'        => {'src' => false},
         'location'       => 'http://debian.mirror.iweb.ca/debian/',
-        'trusted_source' => true,
+        'allow_unsigned' => true,
       }
     end
 
@@ -108,6 +94,7 @@ describe 'apt::source', :type => :define do
   context 'architecture equals x86_64' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -128,6 +115,7 @@ describe 'apt::source', :type => :define do
   context 'ensure => absent' do
     let :facts do
       {
+        :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
         :lsbdistid       => 'Debian',
         :lsbdistcodename => 'wheezy',
         :osfamily        => 'Debian',
@@ -150,6 +138,7 @@ describe 'apt::source', :type => :define do
     context 'no release' do
       let :facts do
         {
+          :os => { :family => 'Debian', :name => 'Debian', :release => { :major => '7', :full => '7.0' }},
           :lsbdistid       => 'Debian',
           :osfamily        => 'Debian',
           :puppetversion   => Puppet.version,

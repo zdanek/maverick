@@ -1,3 +1,52 @@
+## Supported Release 4.1.0
+### Summary
+
+This release removes Data in Modules due to current compatibility issues and reinstates the params.pp file. Also includes a couple of bug fixes.
+
+#### Features
+- (MODULES-4973) Data in Modules which was introduced in the last release has now been reverted due to compatibility issues.
+
+#### Bugfixes
+- Now apt_key only sends the auth basic header when userinfo can be parsed from the URL.
+- Reverted the removal of Evolving Web's attribution in NOTICE file.
+- Test added to ensure empty string allowed for $release in apt::source.
+
+
+## Supported Release 3.0.0 and 4.0.0
+###Summary
+
+This release adds new Puppet 4 features: data in modules, EPP templates, the $facts hash, and data types. This release is fully backwards compatible to existing Puppet 4 configurations and provides you with deprecation warnings for every argument that will not work as expected with the final 4.0.0 release. See the stdlib docs here for an in-depth discussion of this: https://github.com/puppetlabs/puppetlabs-stdlib#validate_legacy
+
+If you want to learn more about the new features used or you wish to upgrade a module yourself, have a look at the NTP: A Puppet 4 language update blog post.
+
+If you're still running Puppet 3, remain on the latest puppetlabs-apt 2.x release for now, and see the documentation to upgrade to Puppet 4.
+
+Changes
+
+Data in modules: Moves all distribution and OS-dependent defaults into YAML files in data/, alleviating the need for a params class. Note that while this feature is currently still classed as experimental, the final implementation will support the changes here.
+EPP templating: Uses the Puppet language as a base for templates to create simpler and safer templates. No need for Ruby anymore!
+The $facts hash: Makes facts visibly distinct from other variables for more readable and maintainable code. This helps eliminate confusion if you use a local variable whose name happens to match that of a common fact.
+Data types for validation: Helps you find and replace deprecated code in existing validate functions with stricter, more readable data type notation. First upgrade to the 3.0.0 release of this module, and address all deprecation warnings before upgrading to the final 4.0.0 release. Please see the stdlib docs for an in-depth discussion of this process.
+
+## Supported Release 2.4.0
+### Summary
+A release that includes only a couple of additional features, but includes several cleanups and bugfixes around existing issues.
+
+#### Features
+- Tests updated to check for idempotency.
+- (MODULES-4224) Implementation of beaker-module_install_helper.
+- Deprecation warnings are now handled by the deprecation function in stdlib.
+
+#### Bugfixes
+- Now http and https sources fixed for apt_key and can take a userinfo.
+- GPG key update.
+- Notify_update param now defaults to true to avoid validation errors.
+- Implement retry on tests which pull key from a key server which sometimes times out (transient error).
+- String comparison error now comphensated for in update.pp.
+- (MODULES-4104) Removal of the port number from repository location in order to get the host name of the repository.
+- Puppet lint warnings addressed.
+- A few small readme issues addressed.
+
 ## Supported Release 2.3.0
 ### Summary
 A release containing many bugfixes with additional features.
