@@ -11,6 +11,7 @@
 #   $ipaddress - required
 #   $netmask   - required
 #   $gateway   - optional
+#   $metric    - optional
 #   $scope     - optional
 #   $source    - optional
 #   $table     - optional
@@ -99,6 +100,7 @@ define network::route (
   $ipaddress,
   $netmask,
   $gateway   = undef,
+  $metric    = undef,
   $scope     = undef,
   $source    = undef,
   $table     = undef,
@@ -111,6 +113,10 @@ define network::route (
 
   if $gateway {
     validate_array($gateway)
+  }
+
+  if $metric {
+    validate_integer($metric)
   }
 
   if $scope {
@@ -136,6 +142,17 @@ define network::route (
         group   => 'root',
         path    => "/etc/sysconfig/network-scripts/route-${name}",
         content => template('network/route-RedHat.erb'),
+        notify  => $network::manage_config_file_notify,
+      }
+    }
+    'Suse': {
+      file { "ifroute-${name}":
+        ensure  => $ensure,
+        mode    => '0644',
+        owner   => 'root',
+        group   => 'root',
+        path    => "/etc/sysconfig/network/ifroute-${name}",
+        content => template('network/route-Suse.erb'),
         notify  => $network::manage_config_file_notify,
       }
     }

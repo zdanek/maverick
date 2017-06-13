@@ -1,11 +1,25 @@
 # File Managed by Puppet
 DEVICE="<%= @interface %>"
+<% if ! @ovsbootproto -%>
 BOOTPROTO="<%= @manage_bootproto %>"
+<% end -%>
 ONBOOT="<%= @manage_onboot %>"
 TYPE="<%= @type %>"
 USERCTL="<%= @userctl %>"
 PEERDNS="<%= @manage_peerdns %>"
 PEERNTP="<%= @manage_peerntp %>"
+<% if @peer_outer_ipaddr -%>
+PEER_OUTER_IPADDR=<%= @peer_outer_ipaddr %>
+<% end -%>
+<% if @peer_inner_ipaddr-%>
+PEER_INNER_IPADDR=<%= @peer_inner_ipaddr %>
+<% end -%>
+<% if @my_outer_ipaddr -%>
+MY_OUTER_IPADDR=<%= @my_outer_ipaddr %>
+<% end -%>
+<% if @my_inner_ipaddr -%>
+MY_INNER_IPADDR=<%= @my_inner_ipaddr %>
+<% end -%>
 <% if @uuid -%>
 UUID="<%= @uuid %>"
 <% end -%>
@@ -21,11 +35,29 @@ LAYER2="<%= @layer2 %>"
 <% if @nettype -%>
 NETTYPE="<%= @nettype %>"
 <% end -%>
-<% if @manage_ipaddr -%>
+<% if @manage_ipaddr and ! @manage_ipaddr.empty? -%>
+<% if @ipaddress.kind_of?(Array) -%>
+<%- (1..(@ipaddress.length)).each do |id| -%>
+IPADDR<%= id %>="<%= @ipaddress[id-1] %>"
+<% end -%>
+<% else -%>
 IPADDR="<%= @manage_ipaddr %>"
 <% end -%>
+<% end -%>
 <% if @netmask -%>
+<% if @ipaddress.kind_of?(Array) -%>
+<% if @netmask.kind_of?(Array) -%>
+<%- (1..(@netmask.length)).each do |id| -%>
+NETMASK<%= id %>="<%= @netmask[id-1] %>"
+<% end -%>
+<% else -%>
+<%- (1..(@ipaddress.length)).each do |id| -%>
+NETMASK<%= id %>="<%= @netmask %>"
+<% end -%>
+<% end -%>
+<% else -%>
 NETMASK="<%= @netmask %>"
+<% end -%>
 <% end -%>
 <% if @broadcast -%>
 BROADCAST="<%= @broadcast %>"
@@ -41,7 +73,17 @@ HWADDR="<%= @manage_hwaddr %>"
 <% end -%>
 <% if @ipv6init -%>
 IPV6INIT="<%= @ipv6init %>"
+<% if @ipv6_autoconf -%>
+IPV6_AUTOCONF="<%= @ipv6_autoconf %>"
 <% end -%>
+<% if @ipv6addr -%>
+IPV6_ADDR="<%= @ipv6addr %>"
+<% end -%>
+<% if @ipv6_defaultgw -%>
+IPV6_DEFAULTGW="<%= @ipv6_defaultgw %>"
+<% end -%>
+<% end -%>
+
 <% if @dhcp_hostname -%>
 DHCP_HOSTNAME="<%= @dhcp_hostname %>"
 <% end -%>
@@ -75,6 +117,12 @@ BONDING_OPTS="<%= @bonding_opts %>"
 <% if @bond_mode or @bond_miimon -%>
 BONDING_OPTS="<%- if @bond_mode -%>mode=<%= @bond_mode %><%- end -%><%- if @bond_miimon -%> miimon=<%= @bond_miimon %><%- end -%>"
 <% end -%>
+<% end -%>
+<% if @team_config -%>
+TEAM_CONFIG='<%= @team_config -%>'
+<% end -%>
+<% if @team_master -%>
+TEAM_MASTER=<%= @team_master %>
 <% end -%>
 <% if @mtu -%>
 MTU="<%= @mtu %>"
@@ -112,6 +160,9 @@ LINKDELAY="<%= @linkdelay %>"
 <% if @hotplug -%>
 HOTPLUG="<%= @hotplug %>"
 <% end -%>
+<% if @persistent_dhclient -%>
+PERSISTENT_DHCLIENT="<%= @persistent_dhclient %>"
+<% end -%>
 <% if @devicetype -%>
 DEVICETYPE="<%= @devicetype %>"
 <% end -%>
@@ -138,6 +189,9 @@ OVS_TUNNEL_OPTIONS="<%= @ovs_tunnel_options %>"
 <% end -%>
 <% if @ovsdhcpinterfaces -%>
 OVSDHCPINTERFACES="<%= @ovsdhcpinterfaces %>"
+<% end -%>
+<% if @ovsbootproto -%>
+OVSBOOTPROTO="<%= @ovsbootproto %>"
 <% end -%>
 <% if @ovsrequries -%>
 OVSREQURIES="<%= @ovsrequries %>"

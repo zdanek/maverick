@@ -1,1 +1,1 @@
-class { '::ssh::server': }
+include ::ssh

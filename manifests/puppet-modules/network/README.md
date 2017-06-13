@@ -162,21 +162,18 @@ You have different possibile approaches in the usage of this module. Use the one
           gateway   => [ '192.168.1.1', '10.0.0.1', ],
         }
 
-* To configure network routes on Suse, use the routes_hash parameter, like in the following example:
+* To configure the default route on Suse, use the routes_hash parameter, like in the following example:
 
         class { 'network':
           routes_hash => {
-            'default' => {
-              destination => 'default',
-              gateway     => '192.168.0.1',
-              netmask     => '255.255.255.0',
+            'eth0' => {
+              ipaddress   => [ 'default', ],
+              gateway     => [ '192.168.0.1', ],
+              netmask     => [ '-', ],
               interface   => 'eth0',
-              type        => 'unicast',
             }
           }
         }
-
-The parameters netmask, interface and type are optional.
 
 * An alternative way to manage routes is using the network::mroute define, which expectes an hash of one of more routes where you specify the network and the gateway (either as ip or device name):
 
@@ -331,7 +328,7 @@ This is tested on these OS:
 - RedHat osfamily 5 and 6
 - Debian 6 and 7
 - Ubuntu 10.04, 12.04 and 14.04
-- OpenSuse 12, SLES 11SP3
+- OpenSuse 12, SLES 11SP3, SLES 12 SP1 (ifrule files are only supported on Suse with wicked >= 0.6.33)
 
 
 ##Development
