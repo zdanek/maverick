@@ -171,23 +171,23 @@ class maverick_dev::sitl (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        notify      => Service["maverick-sitl"],
+        notify      => Service_wrapper["maverick-sitl"],
     } ->
     file { "/etc/systemd/system/maverick-sitl.service":
         content     => template("maverick_dev/maverick-sitl.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => "644",
-        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-sitl"] ]
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-sitl"] ]
     }
     if $sitl_active {
-        service { "maverick-sitl":
+        service_wrapper { "maverick-sitl":
             ensure      => running,
             enable      => true,
             require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
     } else {
-        service { "maverick-sitl":
+        service_wrapper { "maverick-sitl":
             ensure      => stopped,
             enable      => false,
             require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
@@ -203,7 +203,7 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
-            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
+            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
@@ -225,7 +225,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
+            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "sitl":
@@ -257,7 +257,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
+            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "sitl":
@@ -268,7 +268,7 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
-            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
+            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
         } ->
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
@@ -290,7 +290,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service["maverick-sitl"], Service["maverick-rosmaster@sitl"] ],
+            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
         }
     }
 

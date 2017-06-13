@@ -52,13 +52,13 @@ class maverick_vision::visiond (
     }
     
     if $active == true {
-        service { "maverick-visiond":
+        service_wrapper { "maverick-visiond":
             ensure      => running,
             enable      => true,
             require     => Class["maverick_vision::gstreamer"],
         }
     } else {
-        service { "maverick-visiond":
+        service_wrapper { "maverick-visiond":
             ensure      => stopped,
             enable      => false,
             require     => Class["maverick_vision::gstreamer"],

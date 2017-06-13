@@ -12,10 +12,10 @@ class maverick_network::avahi (
         group       => root,
         mode        => "644",
         content     => template("maverick_network/avahi-daemon.conf.erb"),
-        notify      => Service["avahi-daemon"],
+        notify      => Service_wrapper["avahi-daemon"],
         require     => Package["avahi-daemon"],
     } ->
-    service { "avahi-daemon":
+    service_wrapper { "avahi-daemon":
         ensure      => running,
         enable      => true
     }

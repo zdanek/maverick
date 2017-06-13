@@ -165,6 +165,22 @@ define service_start () {
     }
 }
 
+# Define a function that only starts services if they exist
+define service_wrapper ($enable, $ensure) {
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+        $_provider = "systemd"
+    } else {
+        $_provider = undef
+    }
+    if ! empty(grep($::installed_services, $name)) {
+        service { $name:
+            ensure      => $ensure,
+            enable      => $enable,
+            provider    => $_provider,
+        }
+    }
+}
+
 ### End of defines
 
 node default {

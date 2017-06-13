@@ -57,7 +57,7 @@ class maverick_cloud9 (
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service { "maverick-cloud9":
+    service_wrapper { "maverick-cloud9":
         ensure      => $_ensure,
         enable      => $_enable,
     }

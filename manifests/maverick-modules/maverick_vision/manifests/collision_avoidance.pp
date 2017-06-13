@@ -54,12 +54,12 @@ class maverick_vision::collision_avoidance (
     }
     
     if $active == true {
-        service { "maverick-coav":
+        service_wrapper { "maverick-coav":
             ensure      => running,
             enable      => true,
         }
     } else {
-        service { "maverick-coav":
+        service_wrapper { "maverick-coav":
             ensure      => stopped,
             enable      => false,
         }

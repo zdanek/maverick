@@ -20,7 +20,7 @@ class maverick_security::firewall (
     	require		=> Package["cups-filters"] # ensure cups-filters is removed as it can stop iptables working
     }
     
-#    service { "netfilter-persistent":
+#    service_wrapper { "netfilter-persistent":
 #    	ensure		=> running,
 #    	enable		=> true,
 #    }

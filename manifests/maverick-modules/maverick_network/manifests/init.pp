@@ -19,7 +19,7 @@ class maverick_network (
     
     # Ensure wpa_supplicant isn't running
     # Note NetworkManager seems to start this regardless of wpa_supplicant enabled state
-    service { "wpa_supplicant":
+    service_wrapper { "wpa_supplicant":
         ensure      => stopped,
         enable      => false,
         require     => Package["wpasupplicant"]
@@ -55,7 +55,7 @@ class maverick_network (
 
     if $dhcpcd == false {
         # Make sure dhcp client daemons are turned off, for now we depend on dhclient/wpa_supplicant
-        service { "udhcpd":
+        service_wrapper { "udhcpd":
             ensure      => stopped,
             enable      => false
         } ->
@@ -155,7 +155,7 @@ class maverick_network (
             group       => "root",
             mode        => "644",
         } ->
-        service { "connman.service":
+        service_wrapper { "connman.service":
             ensure      => undef,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
@@ -165,11 +165,11 @@ class maverick_network (
     # Remove NetworkManager
     if $netman == false and $netman_networkmanager == "yes" {
         warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
-        service { "NetworkManager.service":
+        service_wrapper { "NetworkManager.service":
             ensure      => stopped,
             enable      => false,
         } ->
-        service { "NetworkManager-wait-online":
+        service_wrapper { "NetworkManager-wait-online":
             ensure      => stopped,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
@@ -208,7 +208,7 @@ class maverick_network (
         notify      => Exec["maverick-systemctl-daemon-reload"],
         require     => Package["rfkill"]
     } ->
-    service { "rfkill-unblock.service":
+    service_wrapper { "rfkill-unblock.service":
         enable      => true,
     }
     
@@ -320,7 +320,7 @@ class maverick_network (
 		}
 		# If not defined as monitor mode, ensure monitor disabled for this interface
 		if $mode != "monitor" {
-		    service { "monitor-interface@${name}":
+		    service_wrapper { "monitor-interface@${name}":
                 ensure      => stopped,
                 enable      => false,
                 require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/monitor-interface@.service"] ]

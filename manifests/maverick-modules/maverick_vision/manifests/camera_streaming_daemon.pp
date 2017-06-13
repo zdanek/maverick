@@ -59,12 +59,12 @@ class maverick_vision::camera_streaming_daemon (
     }
     
     if $active == true {
-        service { "maverick-csd":
+        service_wrapper { "maverick-csd":
             ensure      => running,
             enable      => true,
         }
     } else {
-        service { "maverick-csd":
+        service_wrapper { "maverick-csd":
             ensure      => stopped,
             enable      => false,
         }

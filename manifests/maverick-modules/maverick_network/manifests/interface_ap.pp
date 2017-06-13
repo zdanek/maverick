@@ -19,7 +19,7 @@ define maverick_network::interface_ap (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        notify      => Service["hostapd"]
+        notify      => Service_wrapper["hostapd"]
     }
     
     # Write a hostadp.conf from template based on the parameters calculated and passed through from hiera
@@ -29,12 +29,12 @@ define maverick_network::interface_ap (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        notify      => Service["hostapd"]
+        notify      => Service_wrapper["hostapd"]
     }
     
     # Ensure hostapd service is running and enabled at boot.  This will probably blow up if
     #  more than one interface is configured to be an AP, but this is unlikely use case (hopefully)
-    service { "hostapd":
+    service_wrapper { "hostapd":
         ensure      => running,
         enable      => true,
         require     => [ File["/etc/hostapd/hostapd.conf"], File["/etc/default/hostapd"] ]

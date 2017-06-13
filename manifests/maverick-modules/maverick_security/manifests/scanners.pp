@@ -31,7 +31,7 @@ class maverick_security::scanners (
         #    freshclam_service_ensure => 'stopped',
         #    freshclam_service_enable => false,
         #}
-        service { ["clamav-freshclam", "clamd"]:
+        service_wrapper { ["clamav-freshclam", "clamd"]:
             ensure      => stopped,
             enable      => false,
         } ->

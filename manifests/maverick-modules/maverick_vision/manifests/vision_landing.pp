@@ -49,13 +49,13 @@ class maverick_vision::vision_landing (
 
     # Activate or inactivate service
     if $active == true {
-        service { "maverick-vision_landing":
+        service_wrapper { "maverick-vision_landing":
             ensure  => running,
             enable  => true,
             require => Exec["vision_landing-compile"]
         }
     } else {
-        service { "maverick-vision_landing":
+        service_wrapper { "maverick-vision_landing":
             ensure  => stopped,
             enable  => false
         }

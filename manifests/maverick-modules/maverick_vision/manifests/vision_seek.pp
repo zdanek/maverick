@@ -36,12 +36,12 @@ class maverick_vision::vision_seek (
     
     # Activate or inactivate service
     if $active == true {
-        service { "maverick-vision_seek":
+        service_wrapper { "maverick-vision_seek":
             ensure  => running,
             enable  => true,
         }
     } else {
-        service { "maverick-vision_seek":
+        service_wrapper { "maverick-vision_seek":
             ensure  => stopped,
             enable  => false
         }

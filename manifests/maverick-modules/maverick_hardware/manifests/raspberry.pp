@@ -90,7 +90,7 @@ class maverick_hardware::raspberry (
             file        => "/boot/config.txt",
             line        => "dtoverlay=pi3-disable-bt",
         }
-        service { "hciuart":
+        service_wrapper { "hciuart":
             enable      => false,
             ensure      => stopped,
         } ->
@@ -155,7 +155,7 @@ class maverick_hardware::raspberry (
             onlyif      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
         }
-        service { "serial-getty@ttyAMA0":
+        service_wrapper { "serial-getty@ttyAMA0":
             ensure      => stopped,
             enable      => false,
         }
@@ -165,7 +165,7 @@ class maverick_hardware::raspberry (
             unless      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
         }
-        service { "serial-getty@ttyAMA0":
+        service_wrapper { "serial-getty@ttyAMA0":
             ensure      => running,
             enable      => true,
         }

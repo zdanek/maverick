@@ -17,7 +17,7 @@ class base::services {
     service_stop { "postfix": }
 
     # Here is where we would enable any services by default
-    # service { "example":
+    # service_wrapper { "example":
     #   ensure      => running,
     #   enable      => true
     # }

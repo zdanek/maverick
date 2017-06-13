@@ -6,12 +6,12 @@ class maverick_hardware::joule (
     
     # Control serial console, disable by default to clear the way for mavlink connection
     if $serialconsole == false {
-        service {"serial-getty@ttyS1":
+        service_wrapper {"serial-getty@ttyS1":
             ensure  => stopped,
             enable  => false
         }
     } else {
-        service { "serial-getty@ttyS1":
+        service_wrapper { "serial-getty@ttyS1":
             ensure  => running,
             enable  => true
         }

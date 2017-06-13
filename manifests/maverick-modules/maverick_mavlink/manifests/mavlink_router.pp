@@ -26,7 +26,7 @@ define maverick_mavlink::mavlink_router (
     }
 
     if $active == true {
-    	service { "maverick-mavlink-router@${name}":
+    	service_wrapper { "maverick-mavlink-router@${name}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]
@@ -47,7 +47,7 @@ define maverick_mavlink::mavlink_router (
             }
         }
     } else {
-    	service { "maverick-mavlink-router@${name}":
+    	service_wrapper { "maverick-mavlink-router@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]

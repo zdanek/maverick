@@ -11,17 +11,17 @@ define maverick_ros::mavros (
         group       => "mav",
         mode        => "644",
         content     => template("maverick_ros/mavros.conf.erb"),
-        notify      => Service["maverick-mavros@${name}"],
+        notify      => Service_wrapper["maverick-mavros@${name}"],
     }
     
     if $active == true {
-    	service { "maverick-mavros@${name}":
+    	service_wrapper { "maverick-mavros@${name}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavros@.service"] ]
         }
     } else {
-    	service { "maverick-mavros@${name}":
+    	service_wrapper { "maverick-mavros@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavros@.service"] ]

@@ -3,7 +3,7 @@ define maverick_network::interface_monitor (
 ) {
 
     # Define a service definition for this interface
-	service { "monitor-interface@${name}":
+	service_wrapper { "monitor-interface@${name}":
         ensure      => running,
         enable      => true,
         require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/monitor-interface@.service"] ]
