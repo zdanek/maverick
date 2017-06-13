@@ -15,14 +15,13 @@ class maverick_security::ssh {
         content         => template("maverick_security/issue.erb"),
     }
     class { "::ssh": 
-        storeconfigs_enabled => false,
-        server_options => {
-            'PasswordAuthentication'        => 'yes',
-            'X11Forwarding'                 => 'yes',
-            'PermitRootLogin'               => 'no',
-            'PrintMotd'                     => 'no',
-            'Banner'                        => '/etc/issue.net',
-        }
+        sshd_config_print_motd      => 'no',
+        sshd_config_banner          => "/etc/issue.net",
+        permit_root_login           => 'yes',
+        ssh_config_forward_x11_trusted  => 'yes',
+        sshd_x11_forwarding         => 'yes',
+        sshd_password_authentication    => 'yes',
+        ssh_key_import              => false,
     }
         
 }

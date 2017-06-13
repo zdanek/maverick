@@ -932,13 +932,15 @@ class ssh (
   }
 
   # export each node's ssh key
-  @@sshkey { $::fqdn :
-    ensure       => $ssh_key_ensure,
-    host_aliases => [$::hostname, $::ipaddress],
-    type         => $ssh_key_type,
-    key          => $key,
+  if $ssh_key_import_real == true {
+    @@sshkey { $::fqdn :
+      ensure       => $ssh_key_ensure,
+      host_aliases => [$::hostname, $::ipaddress],
+      type         => $ssh_key_type,
+      key          => $key,
+    }
   }
-
+  
   file { 'ssh_known_hosts':
     ensure  => file,
     path    => $ssh_config_global_known_hosts_file,
