@@ -11,7 +11,7 @@ define maverick_mavlink::mavproxy (
     $replaceconfig = true,
 ) {
     if $active {
-        $service_notify = Service["maverick-mavproxy@${name}"]
+        $service_notify = Service_wrapper["maverick-mavproxy@${name}"]
     } else {
         $service_notify = undef
     }

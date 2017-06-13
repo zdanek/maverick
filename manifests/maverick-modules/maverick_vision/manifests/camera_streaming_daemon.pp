@@ -40,7 +40,7 @@ class maverick_vision::camera_streaming_daemon (
             group       => "root",
             mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
-            before      => Service["maverick-csd"],
+            before      => Service_wrapper["maverick-csd"],
         }
     }
 

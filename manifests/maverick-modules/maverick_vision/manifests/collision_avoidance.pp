@@ -50,7 +50,7 @@ class maverick_vision::collision_avoidance (
         mode            => "644",
         source          => "puppet:///modules/maverick_vision/coav.service",
         notify          => Exec["maverick-systemctl-daemon-reload"],
-        before          => Service["maverick-coav"],
+        before          => Service_wrapper["maverick-coav"],
     }
     
     if $active == true {

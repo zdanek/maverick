@@ -12,7 +12,7 @@ define maverick_mavlink::cmavnode (
     $replaceconfig = true,
 ) {
     if $active {
-        $service_notify = Service["maverick-cmavnode@${name}"]
+        $service_notify = Service_wrapper["maverick-cmavnode@${name}"]
     } else {
         $service_notify = undef
     }

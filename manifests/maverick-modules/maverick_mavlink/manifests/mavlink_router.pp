@@ -12,7 +12,7 @@ define maverick_mavlink::mavlink_router (
     $replaceconfig = true,
 ) {
     if $active {
-        $service_notify = Service["maverick-mavlink-router@${name}"]
+        $service_notify = Service_wrapper["maverick-mavlink-router@${name}"]
     } else {
         $service_notify = undef
     }
