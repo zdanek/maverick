@@ -91,7 +91,7 @@ class maverick_vision::gstreamer (
         if ! ("install_flag_gstreamer" in $installflags) {
 
             # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm"])
+            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm", "libxext-dev"])
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
