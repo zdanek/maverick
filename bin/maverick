@@ -454,6 +454,14 @@ for pkg in "hiera" "facter" "puppet"; do
     fi
 done
 
+# Fix for Ubuntu 14.10 and Puppet 4.10.1: https://github.com/fnoop/maverick/issues/466
+_ubuntu=$(/bin/grep -e 'DISTRIB_RELEASE\=14\.' /etc/lsb-release 2>/dev/null)
+_puppet=$(gem list puppet |grep puppet |grep '4.10.1')
+if [ "z${_ubuntu}" != "z" -a "z${_puppet}" != "z" ]; then
+    echo "Patching puppet 4.10.1 on ubuntu 14"
+    sudo sed -i -e 's/Gem::Version.new(RUBY_VERSION)/Gem::Version.new(RUBY_VERSION.dup)/' `grep -lr 'Gem::Version.new(RUBY_VERSION)' /var/lib/gems/1.9.1/gems`
+fi
+
 # Check that puppet is installed
 if ! hash puppet 2>/dev/null; then
     echo 'Puppet not installed, something has gone wrong..'

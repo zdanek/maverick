@@ -8,7 +8,9 @@ class base::services {
 
     # Here is where we would disable any services by default
     # Disable cups by default.  It breaks things like iptables and who prints on a UAV?!
-    service_stop { ["cups", "cups-browsed"]:
+    service_wrapper { ["cups", "cups-browsed"]:
+        enable      => false,
+        ensure      => "stopped",
     } ->
     package { ["cups", "cups-filters", "cups-filters-core-drivers", "printer-driver-*", "cups-daemon"]:
         ensure      => purged,
