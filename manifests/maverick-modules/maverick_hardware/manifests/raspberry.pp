@@ -49,7 +49,7 @@ class maverick_hardware::raspberry (
     
     if ($expand_root) {
         # $rootpart_expanded and $rootfs_expanded are facts provided by facts.d/filesystems.py
-        if $::rootpart_expanded == False or $::rootfs_expanded == False {
+        if $::rootpart_expanded == false or $::rootfs_expanded == false {
             exec { "raspberry-expandroot":
                 command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
                 # unless      => "/bin/grep 'done' /etc/raspi-expandroot",
