@@ -17,7 +17,7 @@ class maverick_vision::opencv (
     if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
         ensure_packages(["libpng-dev"])
     } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") {
-        ensure_packages(["libjasper-dev", "libpng16-dev"])
+        ensure_packages(["libjasper-dev", "libpng12-dev"])
     }
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
