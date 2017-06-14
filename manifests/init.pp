@@ -172,7 +172,7 @@ define service_wrapper ($enable, $ensure) {
     } else {
         $_provider = undef
     }
-    if ! empty(grep($::installed_services, $name)) {
+    if ! ($ensure == "stopped" and empty(grep($::installed_services, $name))) {
         service { $name:
             ensure      => $ensure,
             enable      => $enable,
