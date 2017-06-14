@@ -49,6 +49,7 @@ class maverick_vision::opencv (
                 gitsource   => "https://github.com/opencv/opencv_contrib.git",
                 dest        => "/srv/maverick/var/build/opencv_contrib",
                 revision    => $opencv_version,
+                before      => Oncevcsrepo["git-opencv"],
             }
             $contribstr = "-DOPENCV_EXTRA_MODULES_PATH=/srv/maverick/var/build/opencv_contrib/modules -DBUILD_opencv_legacy=OFF"
             $_creates           = "/srv/maverick/var/build/opencv/build/lib/libopencv_structured_light.so"
