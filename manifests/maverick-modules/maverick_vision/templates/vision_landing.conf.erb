@@ -16,15 +16,17 @@ calibration=raspicamv1-calibration-640x480.yml
 ############
 # Optional #
 ############
-## Marker size mappings - map multiple marker IDs to different sizes - format marker_id:size - comma separated
-sizemapping=12:0.5,36:0.24,161:0.12,227:0.08,166:0.06,85:0.04
+# These values are for the old markers/a1-landing.pdf
+# sizemapping=12:0.5,36:0.24,85:0.11,161:0.11,166:0.11,227:0.11
+# Default mappings are for the new markers/a1-landing-april16h5.pdf
+sizemapping=11:0.446,16:0.204,19:0.104,23:0.047
+## Which fiducial marker dictionary, can be any dictionary supported by aruco code.  Comment out for default ARUCO_MIP_36h12
+markerdict=TAG16h5
 ## Marker tracking history - number of frames that each marker is tracked for active marker transition
 markerhistory=15
 ## Marker tracking threshold - percentage of frames in tracking history that marker must be detected to be activated
-markerthreshold=50
-## Which fiducial marker dictionary, can be any dictionary supported by aruco code.  Comment out for default ARUCO_MIP_36h12
-# markerdict=TAG36h11
-## Which fiducial marker, if not set will search for closest marker
+markerthreshold=90
+## Which fiducial marker, if not set will search for smallest marker
 # markerid=12
 ## Sets width of video image
 width=640
@@ -45,17 +47,17 @@ fps=30
 # fakerangefinder=true
 ## output is either a filename to save video to or a gstreamer pipeline.  gstreamer pipeline must start with appsrc.
 #  raspberry hardware encoding
-# output=appsrc ! autovideoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
-# output=appsrc ! autovideoconvert ! omxh264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision_landing/vision_landing-xxx.avi
+# output=appsrc ! videorate ! autovideoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
+# output=appsrc ! videorate ! autovideoconvert ! omxh264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_landing/vision_landing-xxx.avi
 #  odroid xu4 hardware encoding
-# output=appsrc ! autovideoconvert ! v4l2video11h264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
+# output=appsrc ! videorate ! autovideoconvert ! v4l2video11h264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
 #  odroid xu4 hardware encoding with options
-# output=appsrc ! autovideoconvert ! v4l2video11h264enc extra-controls="encode,h264_level=10,h264_profile=4,frame_level_rate_control_enable=1,video_bitrate=2097152" ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
+# output=appsrc ! videorate ! autovideoconvert ! v4l2video11h264enc extra-controls="encode,h264_level=10,h264_profile=4,frame_level_rate_control_enable=1,video_bitrate=2097152" ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
 #  Intel platform hardware encoding to udp stream
-# output=appsrc ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.88 port=5000 sync=false
+# output=appsrc ! videorate ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.88 port=5000 sync=false
 #  Intel platform hardware encoding to file
-# output=appsrc ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! matroskamux ! filesink location=/srv/maverick/data/vision_landing/vision_landing-xxx.mkv
-# output=appsrc ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision_landing/vision_landing-xxx.avi
+# output=appsrc ! videorate ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! matroskamux ! filesink location=/srv/maverick/data/vision/vision_landing/vision_landing-xxx.mkv
+# output=appsrc ! videorate ! videoconvert ! video/x-raw,format=NV12 ! vaapih264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_landing/vision_landing-xxx.avi
 # output=/var/tmp/vision.avi
 # output='appsrc ! fakesink'
 # output=window
@@ -63,6 +65,17 @@ fps=30
 # input=/dev/video0
 # input='v4l2src device=/dev/video2 ! videoconvert ! appsink'
 ## logdir defines where logs should going
-logdir=/srv/maverick/var/log/vision_landing
+logdir=/srv/maverick/var/log/vision/vision_landing
 ### Control video processing, only turns vision processing on during landing or precision loiter
-controlprocessing=True
+# controlprocessing=True
+
+### Realsense Options
+# streamtype = color, infrared or hybrid
+streamtype=infrared
+# depthscale in micrometers - 1000 is mm scale, 10000 is cm scale
+depthscale=1000
+# camprofile predefines settings for indoors or outdoors
+camprofile=outdoors
+# colormap applies a color map to greyscale or depth streams.  -1 means no mapping.
+# Integer as applies to enum in http://docs.opencv.org/3.2.0/d3/d50/group__imgproc__colormap.html
+colormap=-1
