@@ -74,7 +74,7 @@ class maverick_ros (
     # Install ROS bootstrap from ros.org packages
     exec { "ros-repo-key":
         command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
-        unless      => "/usr/bin/apt-key list |/bin/grep B01FA116",
+        unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
     } ->
     exec { "ros-repo":
         command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
