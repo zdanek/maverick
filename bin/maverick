@@ -430,13 +430,23 @@ for pkg in "puppet" "hiera" "facter" "ruby-rgen"; do
 done
 
 # Check that ruby/gem is installed
-# Check that puppet is installed
 if ! hash gem 2>/dev/null; then
     echo 'gem not installed, installing..'
     if [ $EUID -eq 0 ]; then
         DEBIAN_FRONTEND=noninteractive apt-get -y install ruby >/dev/null 2>&1
     else
         sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby >/dev/null 2>&1
+    fi
+fi
+
+# Check that ruby-shadow is installed
+_rubyshadow=$(dpkg -s ruby-shadow 2>/dev/null)
+if [ -z $_rubyshadow ]; then
+    echo "Installing ruby-shadow for password management"
+    if [ $EUID -eq 0 ]; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-shadow >/dev/null 2>&1
+    else
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-shadow >/dev/null 2>&1
     fi
 fi
 
