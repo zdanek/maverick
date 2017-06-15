@@ -66,6 +66,7 @@ class base {
     ### Virtual Machine setup
     if str2bool("$is_virtual") {
         $servertype = "Virtual Machine"
+        class { "maverick_hardware": }
     ### Physical setup
     } else {
         $servertype = "Physical Computer"

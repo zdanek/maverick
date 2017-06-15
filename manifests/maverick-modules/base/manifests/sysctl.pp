@@ -9,14 +9,14 @@ class base::sysctl {
     exec {"sysctl_conf_add_$key":
         command     => "/bin/echo '$key=$value' >>/etc/sysctl.conf",
         unless      => "/bin/grep -e '^$key\s*=' /etc/sysctl.conf",
-        notify      => Exec["sysctl"],
+        notify      => Exec["/sbin/sysctl -p"],
     }
 
     # Alter key if already exists
     exec { "sysctl_conf_$key":
         command     => "/bin/sed /etc/sysctl.conf -i -r -e 's/^$key\s*=.*/$key=$value/'",
         unless      => "/bin/grep -e '^$key\s*=\s*$value' /etc/sysctl.conf",
-        notify      => Exec["sysctl"],
+        notify      => Exec["/sbin/sysctl -p"],
     }
 
   }
