@@ -18,7 +18,7 @@ class maverick_hardware::joule (
     }
     
     # Expand rootfs
-    if $rootpart_expanded == "False" and $rootpart_device and $rootpart_partition and $rootpart_partno {
+    if str2bool($::rootpart_expanded) == false and str2bool($::rootpart_device) and str2bool($::rootpart_partition) and str2bool($::rootpart_partno) {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
         file { "/fsexpand":
             content     => template("maverick_hardware/fsexpand.erb"),

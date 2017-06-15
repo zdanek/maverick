@@ -22,7 +22,7 @@ class maverick_hardware::odroid (
     }
     
     # Expand rootfs
-    if $rootpart_expanded == "False" and $rootpart_device {
+    if str2bool($::rootpart_expanded == false) and str2bool($::rootpart_device) {
         warning("Root Partition does not fill available disk, expanding.  Please reboot after this run.")
         file { "/aafirstboot":
             content     => template("maverick_hardware/aafirstboot.erb"),
