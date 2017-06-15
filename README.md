@@ -10,17 +10,18 @@ There are two ways to get started with Maverick:
 
 Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All models)](http://46.101.21.208/maverick-1.0.2.raspberry.img.xz)
-- [Odroid XU3/XU4](http://46.101.21.208/maverick-1.0.odroidxu4.img.xz)
-- [Intel Joule](http://46.101.21.208/maverick-1.0.joule.iso)
+- [Raspberry Pi (All models)](http://46.101.21.208/maverick-1.0.6-raspberrypi.img.xz)
+- [Odroid XU3/XU4](http://46.101.21.208/maverick-1.0.4-odroidxu4.img.xz)
+- [Intel Joule (ISO)](http://46.101.21.208/maverick-1.0.6-joule.iso)
+- [Intel Joule (tar)](http://46.101.21.208/maverick-1.0.6-joule.tar)
 
-These initial images require a 16Gb or larger SD card.  Future images will be more streamlined and fit on an 8Gb SD card.
+These initial images require an 8Gb or larger SD card.
 
 The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
 #### Joule Instructions
-Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and is not supported by this initial image - subsequent releases will support the 550.  Flashing onboard MMC is more tricky than booting from an SD card, so this initial image uses a Clonezilla flashing mechanism.
-- Write the ISO file to a 16Gb SD card (like the one that comes with the Joule) and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
+Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Further efficiencies will be made in the future to leave more space.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
+- Write the ISO file to an SD card (like the one that comes with the Joule), or write the tar file to a USB stick, and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
 - Reboot, take the SD card out and boot to the newly flashed OS
 - Login as 'mav' user (default password is 'wingman')
 - Run 'wifi-setup' to setup wireless networking so you can connect to it, as there is no onboard ethernet
@@ -79,7 +80,7 @@ See more things you can do with the `maverick` command:
 First update the OS, download Maverick and do a bootstrap run and reboot:
 ```bash
 $ sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
+sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git --depth 1
 cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot
 ```
