@@ -197,6 +197,35 @@ Note: the imaging process is very slow as it uses a small blocksize to minimise 
 ### Non-removable media
 If the donor system is on non-removeable media (eg. onboard MMC storage such as Intel Joule uses), then a different process is necessary to create the image.  Prepare the donor system as normal (run the preparation script as above).
 
+- Download clonezilla alternate, burn to SD card/USB.  Boot using default option.
+- Either drop to shell and add a DOS partition on rest of SD card, or plug in a USB stick to use as an image store.
+
 TODO: Work in Progress
 - Create image from disk - device_image -> local_dev -> savedisk
 - Create image from disk - device_image -> local_dev -> recovery-iso-zip -- put 'ask_user' for restore device - choose both iso and zip
+
+Stage 1:
+ - device_image
+ - local_dev
+ - Choose partition to mount for image storage
+ - savedisk
+ - name something like maverick-1.0.6-joule
+ - Choose deafult -q2 priority
+ - Choose default advanced parameters
+ - Use -z2p parallel bzip2 compression
+ - Use 4096000000 (very large number) to force a single image file
+ - fsck-y auto repair filesystem
+ - Yes, check saved image
+ - senc, don't encrypt image
+ - -p choose reboot/shutdown
+
+ Stage 2:
+ - rerun2 (keep_image_repository_/home/partimag_mounted)
+ - device_image
+ - skip (Use existing /home/partimag)
+ - beginner
+ - recovery-iso-zip
+ - replace mmcblk1 with 'ask_user' for 'device to be restored'
+ - -scr no, skip Checking
+ - -p choose
+ - both - iso and zip
