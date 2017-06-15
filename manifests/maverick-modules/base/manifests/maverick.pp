@@ -123,4 +123,10 @@ class base::maverick (
         content => "enabled=False",
     }
     
+    file { "/srv/maverick/.cache":
+        ensure  => directory,
+        owner   => "mav",
+        group   => "mav",
+        recurse => true,
+    }
 }
