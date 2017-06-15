@@ -1,10 +1,11 @@
 # Maverick Changelog
 
-## [2017-06-14] 1.0.6 Release
- - Various bugfixes and doc updates
+## [2017-06-15] 1.0.6 Release
  - Huge refactor of codebase to Puppet 4
  - Upgrade and refactor of puppet modules
  - Add support for Ubuntu 17.04 and 14.04
+ - Add downloadable Ubuntu 16.04 VM developer image
+ - Various bugfixes and doc updates
 
 ## [2017-06-07] 1.0.5 Release
  - Various bugfixes and doc updates
