@@ -56,7 +56,7 @@ rm -rf /var/lib/dhcpcd5/*
 # Clean up maverick user data
 # Note: MUST rerun maverick configure again after removing these files, to restore defaults.
 # Otherwise odd behaviour will happen.
-rm /srv/maverick/.bash_history
+rm -f /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp /srv/maverick/.c9/node /srv/maverick/.c9/node_modules /srv/maverick/.c9/lib
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
@@ -66,7 +66,7 @@ rm -rf /srv/maverick/.ros/log/*
 
 # Remove maverick config
 find /srv/maverick/data/config -type f -delete
-rm /srv/maverick/software/maverick/conf/localconf.json
+rm -f /srv/maverick/software/maverick/conf/localconf.json
 rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
 # Restore localconf.json
 cd /srv/maverick/software/maverick; git checkout conf/localconf.json
@@ -76,6 +76,8 @@ if [ -e /boot/efi ]; then
     mkdir /boot/efi/EFI/BOOT
     cp /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/BOOT/bootx64.efi
 fi
+
+rm -f /etc/network/interfaces
 
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
@@ -94,6 +96,8 @@ rm -f /srv/maverick/var/log/vision_landing/last.log
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
 
-echo "Maverick preparation complete, shutting down cleanly"
+echo "Maverick preparation complete"
+read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
+echo "Shutting down cleanly"
 sudo sync
 sudo systemctl poweroff
