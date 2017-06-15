@@ -1,0 +1,40 @@
+// Sample/default config file for running Maverick in an Ubuntu VM
+// Activated by changing hostname to 'maverick-ubuntuvm' and running 'maverick configure'
+{
+
+	// NOTE: Network configuration is defined in localconf.json, to keep settings private
+	
+	"maverick_hardware::camera_realsense_install": true, // Force realsense support
+	
+	"maverick_desktop::enable": true, // Desktop is enabled by default
+
+	// Flight Controller (fc) mavlink setup
+	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	"maverick_fc::mavlink_active": false, // Whether the mavlink proxy is active or not
+	// "maverick_fc::mavlink_input": "/dev/ttyS1", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
+	// "maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
+	"maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
+	"maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
+
+	// Dev SITL mavlink setup - note this requires dev environment to be active
+	// "maverick_dev::sitl::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	// "maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
+	// "maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
+	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
+	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+
+	"maverick_mavlink::cuav_install": true,
+	
+	"maverick_vision::visiond::active": false,
+	"maverick_vision::vision_landing::vision_landing_revision": "master",
+	// "maverick_vision::vision_landing::active": false,
+	"maverick_vision::orb_slam2": true,
+	"maverick_vision::rtabmap": true,
+	"maverick_vision::collision_avoidance": true,
+
+	// Add classes here
+	"classes":		[
+	    "maverick_network"
+	]
+	
+}
