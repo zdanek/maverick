@@ -88,7 +88,7 @@ systemctl stop maverick-*
 # Clean up maverick data
 find /srv/maverick/data/logs -type f -delete
 find /srv/maverick/data/mavlink -type f -delete
-rm -f /srv/maverick/data/vision_landing/*
+find /srv/maverick/data/vision -type f -delete
 find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -exec rm -f {} \;
 rm -f /srv/maverick/var/log/vision_landing/last.log
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
