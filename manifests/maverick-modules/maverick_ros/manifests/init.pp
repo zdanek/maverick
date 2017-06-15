@@ -132,7 +132,7 @@ class maverick_ros (
                 mode        => "755",
             }
             
-            $buildparallel = ceiling((0 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
+            $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
             ensure_packages(["build-essential"])
             # Install ros install packages
             package {["python-rosinstall", "python-rosinstall-generator"]:
