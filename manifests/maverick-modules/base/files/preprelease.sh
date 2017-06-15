@@ -10,9 +10,15 @@
 systemctl stop maverick-*
 
 # Clean packages and cache
-apt-get autoremove --purge -y
-apt-get clean
+echo "Cleaning dpkg and apt"
+apt-get autoremove --purge -y >/dev/null 2>&1
+apt-get clean >/dev/null 2>&1
 
+# Ensure maverick set to stable branch
+echo "MAVERICK_BRANCH=stable" >/srv/maverick/data/config/maverick/maverick-branch.conf
+chown mav:mav /srv/maverick/data/config/maverick/maverick-branch.conf
+
+echo "Removing logs, config and data"
 # Clean as much of /var/log as possible
 rm -f /var/log/*.log*
 rm -f /var/log/apt/*
@@ -25,11 +31,7 @@ rm -f /var/log/btmp* /var/log/wtmp*
 
 # Remove tmp user used to initially install OS
 rm -rf /home/tmp
-userdel tmp
-
-# Ensure maverick set to stable branch
-echo "MAVERICK_BRANCH=stable" >/srv/maverick/data/config/maverick/maverick-branch.conf
-chown mav:mav /srv/maverick/data/config/maverick/maverick-branch.conf
+userdel tmp >/dev/null 2>&1
 
 # Remove initial bootstrap maverick from common locations
 rm -rf /root/maverick
@@ -58,7 +60,6 @@ rm /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp /srv/maverick/.c9/node /srv/maverick/.c9/node_modules /srv/maverick/.c9/lib
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
-su - -c gst-inspect-1.0 mav # restore gstreamer .cache
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
 rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
@@ -76,7 +77,11 @@ if [ -e /boot/efi ]; then
     cp /boot/efi/EFI/ubuntu/grubx64.efi /boot/efi/EFI/BOOT/bootx64.efi
 fi
 
-echo "Running maverick to regenerate any removed files"
+echo "Recreating gstreamer cache"
+su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
+
+echo
+echo "Running maverick to regenerate any removed files or config"
 maverick configure
 systemctl stop maverick-*
 
@@ -88,3 +93,7 @@ find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -
 rm -f /srv/maverick/var/log/vision_landing/last.log
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
+
+echo "Maverick preparation complete, shutting down cleanly"
+sudo sync
+sudo systemctl poweroff
