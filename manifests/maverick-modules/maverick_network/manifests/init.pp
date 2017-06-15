@@ -98,10 +98,15 @@ class maverick_network (
         ensure      => link,
         target      => "/dev/null",
     }
+    exec { "update-initramfs":
+        command         => "/usr/sbin/update-initramfs -u",
+        refreshonly     => true,
+    }
     if $predictable == false {
         file { "/etc/udev/rules.d/80-net-setup-link.rules":
             ensure      => link,
             target      => "/dev/null",
+            notify      => Exec["update-initramfs"],
         }
         if $odroid_present == "yes" {
             lineval { "predictable-names-odroid-off":
@@ -124,6 +129,7 @@ class maverick_network (
     } else {
         file { "/etc/udev/rules.d/80-net-setup-link.rules":
             ensure      => absent,
+            notify      => Exec["update-initramfs"],
         }
         if $odroid_present == "yes" {
             lineval { "predictable-names-odroid-on":
