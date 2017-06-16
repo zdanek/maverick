@@ -1,0 +1,6 @@
+class maverick_web (
+) {
+    
+    
+    
+}
