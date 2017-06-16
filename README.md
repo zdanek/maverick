@@ -14,6 +14,7 @@ Initial images are available for the following platforms.  Volunteers to produce
 - [Odroid XU3/XU4](http://46.101.21.208/maverick-1.0.4-odroidxu4.img.xz)
 - [Intel Joule (ISO)](http://46.101.21.208/maverick-1.0.6-joule.iso)
 - [Intel Joule (tar)](http://46.101.21.208/maverick-1.0.6-joule.tar)
+- [Ubuntu Dev VM (ova)](http://46.101.21.208/maverick-1.0.6-ubuntuvm.ova)
 
 These initial images require an 8Gb or larger SD card.
 
