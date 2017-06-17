@@ -52,7 +52,7 @@ class maverick_analysis::influx (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     # Ensure system influxd instance is stopped
-    service_wrapper { "influxd":
+    service_wrapper { "influxdb":
         ensure      => stopped,
         enable      => false,
     }

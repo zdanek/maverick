@@ -2,11 +2,19 @@ class maverick_analysis::collect (
     $active = true,
 ) {
     
+    # Collectd repos only provide i386/amd64 packages
+    if $::architecture == "i386" or $::architecture == "amd64" {
+        $manage_repo = true
+    } else {
+        $manage_repo = false
+    }
+
     class { "collectd":
         purge           => true,
         recurse         => true,
         purge_config    => true,
         minimum_version => '5.4',
+        manage_repo     => $manage_repo,
         require         => Service_wrapper["maverick-influxd"],
     }
     
