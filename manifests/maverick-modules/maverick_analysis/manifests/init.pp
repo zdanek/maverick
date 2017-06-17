@@ -8,6 +8,6 @@ class maverick_analysis (
         ensure      => directory,
     }
 
-    class { "maverick_analysis::influxdb": }
+    class { "maverick_analysis::influxd": }
     
 }

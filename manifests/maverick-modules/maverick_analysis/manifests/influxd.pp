@@ -1,4 +1,4 @@
-class maverick_analysis::influxdb (
+class maverick_analysis::influxd (
     $source = "https://github.com/influxdata/influxdb.git",
     $branch = "v1.2.4",
     $active = true,
@@ -30,7 +30,7 @@ class maverick_analysis::influxdb (
 
     # Install influxdb
     package { "influxdb":
-        ensure      => installed,
+        ensure     => installed,
         require     => Exec["influx-repo"],
     } ->
     file { "/srv/maverick/data/config/analysis/influxdb.conf":
@@ -38,16 +38,11 @@ class maverick_analysis::influxdb (
         owner       => "root",
         group       => "root",
     } ->
-    file { "/srv/maverick/data/analysis/influxdb":
+    file { ["/srv/maverick/data/analysis/influxdb", "/srv/maverick/var/lib/influxdb", "/srv/maverick/var/lib/influxdb/meta", "/srv/maverick/var/lib/influxdb/wal", "/srv/maverick/var/log/analysis"]:
         owner       => "mav",
         group       => "mav",
         ensure      => directory,
         mode        => "755",
-    } ->
-    file { "/var/lib/influxdb":
-        owner       => "mav",
-        group       => "mav",
-        recurse     => true,
     } ->
     file { "/etc/systemd/system/maverick-influxd.service":
         source      => "puppet:///modules/maverick_analysis/influxd.service",
@@ -74,6 +69,13 @@ class maverick_analysis::influxdb (
             enable      => false,
             require     => File["/etc/systemd/system/maverick-influxd.service"],
         }
+    }
+    
+    # Ensure maverick metrics db exists
+    exec { "influx-maverickdb":
+        command         => "/usr/bin/influx -execute 'create database maverick'",
+        unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
+        user            => "mav",
     }
     
 }
