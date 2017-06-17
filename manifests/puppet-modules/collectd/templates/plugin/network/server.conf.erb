@@ -1,0 +1,26 @@
+<Plugin network>
+<% if scope.lookupvar('collectd::collectd_version_real') and (scope.function_versioncmp([scope.lookupvar('collectd::collectd_version_real'), '4.7']) >= 0) -%>
+  <Server "<%= @name %>" "<%= @port %>">
+<% if @securitylevel -%>
+    SecurityLevel "<%= @securitylevel %>"
+<% end -%>
+<% if @username -%>
+    Username "<%= @username %>"
+<% end -%>
+<% if @password -%>
+    Password "<%= @password %>"
+<% end -%>
+<% if @interface -%>
+    Interface "<%= @interface %>"
+<% end -%>
+<% if @resolveinterval -%>
+    ResolveInterval "<%= @resolveinterval %>"
+<% end %>
+  </Server>
+<% else -%>
+  Server "<%= @name %>" "<%= @port %>"
+<% end -%>
+<% if ! @forward.nil? -%>
+  Forward <%= @forward %>
+<% end -%>
+</Plugin>

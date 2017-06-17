@@ -1,4 +1,4 @@
-class maverick_analysis::influxd (
+class maverick_analysis::influx (
     $source = "https://github.com/influxdata/influxdb.git",
     $branch = "v1.2.4",
     $active = true,

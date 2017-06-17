@@ -1,4 +1,6 @@
 class maverick_analysis (
+    $influxdb = true,
+    $collectd = true,
 ) {
     
     file { ["/srv/maverick/data/analysis", "/srv/maverick/data/config/analysis"]:
@@ -8,6 +10,14 @@ class maverick_analysis (
         ensure      => directory,
     }
 
-    class { "maverick_analysis::influxd": }
+    if $influxdb == true {
+        # Note class named influx instead of influxdb to not conflict with other classes
+        class { "maverick_analysis::influx": }
+    }
+    
+    if $collectd == true {
+        # Note class named collect instead of collectd to not conflict with other classes
+        class { "maverick_analysis::collect": }
+    }
     
 }

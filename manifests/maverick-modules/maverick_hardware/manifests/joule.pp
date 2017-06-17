@@ -36,7 +36,7 @@ class maverick_hardware::joule (
     }
     
     ### Install MRAA - Intel GPIO access library
-    class { "apt": }
+    ensure_resource("class", "apt")
     apt::ppa { 'ppa:mraa/mraa': 
         notify => Exec['apt_update']
     } ->

@@ -1,0 +1,105 @@
+{
+  "name": "puppet-collectd",
+  "version": "5.3.0",
+  "author": "Vox Pupuli",
+  "summary": "Puppet module for Collectd",
+  "license": "Apache-2.0",
+  "source": "https://github.com/voxpupuli/puppet-collectd",
+  "project_page": "https://github.com/voxpupuli/puppet-collectd",
+  "issues_url": "https://github.com/voxpupuli/puppet-collectd/issues",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.6.0"},
+    {"name":"puppetlabs/concat","version_requirement":">= 1.2.5"},
+    {"name":"puppet-yum","version_requirement":">= 0.9.15 < 1.0.0"},
+    {"name":"puppetlabs-apt","version_requirement":">= 2.2.0"}
+  ],
+  "data_provider": null,
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "12.04",
+        "14.04",
+        "16.04"
+      ]
+    },
+    {
+      "operatingsystem": "Solaris",
+      "operatingsystemrelease": [
+        "11"
+      ]
+    },
+    {
+      "operatingsystem": "FreeBSD",
+      "operatingsystemrelease": [
+        "9",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "OpenBSD",
+      "operatingsystemrelease": [
+        "5.7",
+        "5.8",
+        "5.9"
+      ]
+    },
+    {
+      "operatingsystem": "Gentoo"
+    },
+    {
+      "operatingsystem": "Archlinux"
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.8.7 < 5.0.0"
+    }
+  ],
+  "tags": [
+    "collectd",
+    "statistics",
+    "graphite"
+  ]
+}

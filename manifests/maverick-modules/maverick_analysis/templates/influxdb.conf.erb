@@ -3,6 +3,8 @@
 ### This file is placed here and controlled by Maverick.
 ### Any modifications will be overwritten the next time 'maverick configure' is run.
 
+reporting-disabled = true
+
 [meta]
   dir = "/srv/maverick/var/lib/influxdb/meta"
   # retention-autocreate = true
@@ -71,9 +73,9 @@
 [[collectd]]
   enabled = true
   bind-address = ":25826"
-  database = "collectd"
+  database = "maverick"
   retention-policy = ""
-  typesdb = "/usr/local/share/collectd"
+  typesdb = "/usr/share/collectd/types.db"
   security-level = "none"
   auth-file = "/etc/collectd/auth_file"
   batch-size = 5000

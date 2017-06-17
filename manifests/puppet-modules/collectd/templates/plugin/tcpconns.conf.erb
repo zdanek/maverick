@@ -1,0 +1,19 @@
+<Plugin tcpconns>
+
+<% if @listening -%>
+  ListeningPorts <%= @listening %>
+<% end -%>
+<% if @localports -%>
+<%   @localports.each do |localport| -%>
+  LocalPort "<%= localport %>"
+<%   end -%>
+<% end -%>
+<% if @remoteports -%>
+<%   @remoteports.each do |remoteport| -%>
+  RemotePort "<%= remoteport %>"
+<%   end -%>
+<% end -%>
+<% if @allportssummary and scope.lookupvar('collectd::collectd_version_real') and (scope.function_versioncmp([scope.lookupvar('collectd::collectd_version_real'), '5.5.0']) >= 0) -%>
+  AllPortsSummary <%= @allportssummary %>
+<% end -%>
+</Plugin>

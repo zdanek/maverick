@@ -1,0 +1,11 @@
+# https://collectd.org/wiki/index.php/Plugin:ConnTrack
+class collectd::plugin::conntrack (
+  $ensure = 'present',
+) {
+
+  include ::collectd
+
+  collectd::plugin { 'conntrack':
+    ensure => $ensure,
+  }
+}

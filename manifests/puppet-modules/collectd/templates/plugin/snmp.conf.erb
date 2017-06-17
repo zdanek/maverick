@@ -1,0 +1,41 @@
+<% if @data or @hosts -%>
+<Plugin snmp>
+<% @data.sort_by {|k,v| k}.each do |key,val| -%>
+  <Data "<%=key %>">
+    Type "<%= val['type'] %>"
+<% if val['table'] -%>
+    Table <%= val['table'] %>
+<% end -%>
+<% if val['instance'] -%>
+    Instance "<%= val['instance'] %>"
+<% end -%>
+<% if val['instance_prefix'] -%>
+    InstancePrefix "<%= val['instance_prefix'] %>"
+<% end -%>
+    Values <% Array(val['values']).each do |x| -%>"<%= x %>" <% end %>
+<% if val['scale'] -%>
+    Scale <%= val['scale'] %>
+<% end -%>
+<% if val['shift'] -%>
+    Shift <%= val['shift'] %>
+<% end -%>
+<% if val['ignore'] -%>
+    Ignore <% Array(val['ignore']).each do |x| -%>"<%= x %>" <% end %>
+<% end -%>
+<% if val['invert_match'] -%>
+    InvertMatch <%= val['invert_match'] %>
+<% end -%>
+  </Data>
+
+<% end -%>
+<% @hosts.sort_by {|k,v| k}.each do |key,val| -%>
+  <Host "<%=key %>">
+    Address "<%= val['address'] %>"
+    Version <%= val['version'] %>
+    Community "<%= val['community'] %>"
+    Collect <% Array(val['collect']).sort.each do |x| -%>"<%= x -%>" <% end %>
+    Interval <%= val['interval'] %>
+  </Host>
+<% end -%>
+</Plugin>
+<% end -%>

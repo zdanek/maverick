@@ -1,0 +1,11 @@
+<Plugin ceph>
+  LongRunAvgLatency <%= @longrunavglatency %>
+  ConvertSpecialMetricTypes <%= @convertspecialmetrictypes %>
+
+<% @daemons.each do |daemon| -%>
+  <Daemon "<%= daemon %>">
+    SocketPath "/var/run/ceph/<%= daemon %>.asok"
+  </Daemon>
+<% end -%>
+
+</Plugin>

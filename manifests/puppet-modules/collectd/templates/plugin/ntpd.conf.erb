@@ -1,0 +1,8 @@
+<Plugin ntpd>
+  Host "<%= @host %>"
+  Port "<%= @port %>"
+  ReverseLookups <%= @reverselookups %>
+<% if scope.lookupvar('collectd::collectd_version_real') and scope.function_versioncmp([scope.lookupvar('collectd::collectd_version_real'), '5.2']) > 0 -%>
+  IncludeUnitID <%= @includeunitid %>
+<% end -%>
+</Plugin>
