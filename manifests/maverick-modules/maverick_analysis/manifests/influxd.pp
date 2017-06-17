@@ -76,6 +76,7 @@ class maverick_analysis::influxd (
         command         => "/usr/bin/influx -execute 'create database maverick'",
         unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
         user            => "mav",
+        require         => Service_wrapper["maverick-influxd"],
     }
     
 }
