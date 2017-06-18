@@ -1,4 +1,4 @@
-class maverick_cloud9 (
+class maverick_web::cloud9 (
     $cloud9_active = true,
     $webport = "6789",
     $basepath = "/srv/maverick",
@@ -18,8 +18,6 @@ class maverick_cloud9 (
     # Install system ncurses first, so cloud9 doesn't have to compile it
     ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
 
-    ensure_packages(["npm", "nodejs"])
-    
     oncevcsrepo { "git-cloud9":
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",
@@ -36,7 +34,7 @@ class maverick_cloud9 (
     } ->
     file { "/srv/maverick/.c9/user.settings":
         ensure      => present,
-        content     => template("maverick_cloud9/user.settings.erb"),
+        content     => template("maverick_web/user.settings.erb"),
         mode        => "644",
         owner       => "mav",
         group       => "mav",
@@ -44,14 +42,14 @@ class maverick_cloud9 (
     } ->
     file { "/srv/maverick/.c9/state.settings":
         ensure      => present,
-        content     => template("maverick_cloud9/state.settings.erb"),
+        content     => template("maverick_web/state.settings.erb"),
         mode        => "644",
         owner       => "mav",
         group       => "mav",
         replace     => false,
     } ->
     file { "/etc/systemd/system/maverick-cloud9.service":
-        content     => template("maverick_cloud9/cloud9.service.erb"),
+        content     => template("maverick_web/cloud9.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => "644",
