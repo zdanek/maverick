@@ -110,12 +110,11 @@ class maverick_intelligence::tensorflow (
                     user        => "mav",
                     before      => Exec["configure-tensorflow"],
                 }
-                # $copts = '--copt="-mfpu=neon-vfpv4" --copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
-                $copts = '--copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
-                $resources = '768,1.0,1.0'
+                $copts = '--copt="-mfpu=neon-vfpv4" --copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
+                $resources = '768,0.5,1.0'
             } else {
                 $copts = ''
-                $resources = '1024,2.0,1.0'
+                $resources = '1024,0.5,1.0'
             }
             exec { "configure-tensorflow":
                 environment => [
