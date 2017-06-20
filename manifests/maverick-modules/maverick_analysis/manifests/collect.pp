@@ -60,6 +60,15 @@ class maverick_analysis::collect (
         verbose => true,
     }
 
+    # Configure an exec plugin to run power script on Joule platform, to retrieve power consumption
+    if $joule_present == "yes" {
+        collectd::plugin::exec::cmd { 'joule-power':
+            user => mav,
+            group => mav,
+            exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/joule-power.sh"],
+        }
+    }
+    
     # Configure collect to send metrics to influxdb
     collectd::plugin::network::server{'localhost':
         port => 25826,
