@@ -22,7 +22,6 @@ class maverick_analysis (
     }
     
     if $grafana == true {
-        # Note class name grafand instead of grafana to not conflict with other classes
         class { "maverick_analysis::grafana": }
     }
     

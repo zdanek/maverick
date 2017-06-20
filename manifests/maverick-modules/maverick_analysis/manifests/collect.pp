@@ -18,33 +18,48 @@ class maverick_analysis::collect (
         require         => Service_wrapper["maverick-influxd"],
     }
     
+    ### Collectd Plugins
+    class { 'collectd::plugin::contextswitch': }
     class { 'collectd::plugin::cpu':
         reportbystate => true,
         reportbycpu => true,
         valuespercentage => true,
     }
-
-    class { 'collectd::plugin::cpufreq':
+    class { 'collectd::plugin::cpufreq': }
+    class { 'collectd::plugin::df':
+        mountpoints    => [],
+        fstypes        => ['nfs','tmpfs','autofs','gpfs','proc','devpts'],
+        ignoreselected => true,
     }
-    
-    class { 'collectd::plugin::load':
+    class { 'collectd::plugin::disk':
+        disks          => ['/^dm/'],
+        ignoreselected => true,
+        udevnameattr   => 'DM_NAME',
     }
-
-    class { 'collectd::plugin::memory':
+    class { 'collectd::plugin::interface': }
+    class { 'collectd::plugin::ipmi':
+        # ignore_selected           => true,
+        # sensors                   => ['temperature'],
+        notify_sensor_add         => true,
+        notify_sensor_remove      => true,
+        notify_sensor_not_present => true,
     }
-    
+    class { 'collectd::plugin::irq': }
+    class { 'collectd::plugin::load': }
+    class { 'collectd::plugin::memory': }
+    class { 'collectd::plugin::processes': }
+    class { 'collectd::plugin::sensors': }
     class { 'collectd::plugin::swap':
         reportbydevice => false,
         reportbytes    => true
     }
-
-    class {'collectd::plugin::uptime':
-    }
-
+    class { 'collectd::plugin::thermal': }
+    class { 'collectd::plugin::uptime': }
+    class { 'collectd::plugin::users': }
     class { 'collectd::plugin::vmem':
         verbose => true,
     }
-    
+
     # Configure collect to send metrics to influxdb
     collectd::plugin::network::server{'localhost':
         port => 25826,

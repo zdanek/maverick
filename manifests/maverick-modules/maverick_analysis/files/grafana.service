@@ -1,0 +1,22 @@
+[Unit]
+Description=Starts and stops a single grafana instance on this system
+Documentation=http://docs.grafana.org
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=mav
+Group=mav
+Type=simple
+WorkingDirectory=/usr/share/grafana
+ExecStart=/usr/sbin/grafana-server                                \
+                            --config=/srv/maverick/data/config/analysis/grafana.ini                 \
+                            --pidfile=/srv/maverick/var/run/grafana.pid                 \
+                            cfg:default.paths.logs=/srv/maverick/var/log/analysis/grafana     \
+                            cfg:default.paths.data=/srv/maverick/data/analysis/grafana
+LimitNOFILE=10000
+TimeoutStopSec=20
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

@@ -304,6 +304,7 @@ if [ "$STATUS" == "true" ]; then
     statusout+="${blue}Analysis Services${reset}\n"
     (systemctl status maverick-influxd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-influxd >/dev/null 2>&1); statusen=$?; statusout+=$(status "influxd" "Metrics DB" $status $statusen)
     (systemctl status collectd >/dev/null 2>&1); status=$?; (systemctl is-enabled collectd >/dev/null 2>&1); statusen=$?; statusout+=$(status "collectd" "System Metrics" $status $statusen)
+    (systemctl status maverick-grafana >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-grafana >/dev/null 2>&1); statusen=$?; statusout+=$(status "grafana" "Metrics Dashboard" $status $statusen)
     statusout+='------------:------------:------------------\n'
     statusout+="${blue}Vision Services${reset}\n"
     (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Vision Daemon" $vis $visen)
