@@ -21,7 +21,7 @@ Gst.init(None)
 
 ### Streamer Class to build up Gstreamer pipeline from in to out
 class Streamer(object):
-    def __init__(self,width,height,framerate,format,pixelformat,encoder,input,source,output,dest,port):
+    def __init__(self,width,height,framerate,format,pixelformat,encoder,input,source,brightness,output,dest,port):
         self.size = 0
         self.playing = False
         self.paused = False
@@ -33,7 +33,7 @@ class Streamer(object):
         if input == "appsrc":
             self.input_appsrc()
         elif input == "v4l2":
-            self.input_v4l2(source)
+            self.input_v4l2(source, brightness)
         
         # Next deal with each input format separately and interpret the stream and encoding method to the pipeline
         if format == "h264":
@@ -122,13 +122,14 @@ class Streamer(object):
         self.source.set_property("do-timestamp",True)
         self.source.set_property("min-latency",0)
     
-    def input_v4l2(self, source):
+    def input_v4l2(self, source, brightness):
         if not source:
             source = "/dev/video0"
         logger.info("Attaching input 'v4l2': "+str(source))
         self.pipeline = Gst.Pipeline.new()
         self.source = Gst.ElementFactory.make("v4l2src", "v4l2-source")
         self.source.set_property("device", source)
+        self.source.set_property("brightness", brightness)
         self.pipeline.add(self.source)
 
     ### Stream methods
@@ -536,8 +537,8 @@ class App():
 
         # Create the stream
         try:
-            logger.info("Creating stream object - camera:"+cameradev+", stream:"+streamtype+", pixelformat:"+pixelformat+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output'])
-            Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, pixelformat, encoder, self.config['input'], cameradev, self.config['output'], self.config['output_dest'], int(self.config['output_port']))
+            logger.info("Creating stream object - camera:"+cameradev+", stream:"+streamtype+", pixelformat:"+pixelformat+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output']+", brightness:"+self.config['brightness'])
+            Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, pixelformat, encoder, self.config['input'], cameradev, int(self.config['brightness']), self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
             # logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
             logger.critical('Error creating '+streamtype+' stream: ' + str(repr(e)))
