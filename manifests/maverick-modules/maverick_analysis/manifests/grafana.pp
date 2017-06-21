@@ -61,9 +61,11 @@ class maverick_analysis::grafana (
       version               => "4.3.2",
     } ->
     # Create mav user in grafana
-    #exec { "grafana-mavuser":
-    #    command         => "/usr/sbin/grafana-cli ",
-    #}
+    exec { "grafana-mavuser":
+        unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep mav",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(10,0,'mav','mav','Maverick User','e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4','ry48G1ZHyi','yICOZzT82L','',1,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1)\"",
+        user            => "mav",
+    }
  
     grafana_datasource { 'influxdb':
         grafana_url       => "http://localhost:${webport}",
@@ -77,11 +79,19 @@ class maverick_analysis::grafana (
         require             => Service["maverick-grafana"],
     }
 
+    if $joule_present == "yes" {
+        $_dashboard = "system-dashboard-joule.json"
+    } elsif $raspberry_present == "yes" {
+        $_dashboard = "system-dashboard-raspberry.json"
+    } else {
+        $_dashboard = "system-dashboard-generic.json"
+    }
     grafana_dashboard { 'system_dashboard':
+        title               => "System Dashboard",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
         grafana_password  => 'admin',
-        content           => template('maverick_analysis/grafana-system-dashboard.json'),
+        content           => template("maverick_analysis/${_dashboard}"),
         require             => Service["maverick-grafana"],
     }
 

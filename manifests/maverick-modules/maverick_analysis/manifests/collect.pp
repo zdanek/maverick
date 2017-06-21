@@ -19,6 +19,12 @@ class maverick_analysis::collect (
     }
     
     ### Collectd Plugins
+    collectd::plugin::aggregation::aggregator {'cpu':
+        plugin           => 'cpu',
+        agg_type         => 'cpu',
+        groupby          => ["Host", "TypeInstance",],
+        calculateaverage => true,
+    }
     class { 'collectd::plugin::contextswitch': }
     class { 'collectd::plugin::cpu':
         reportbystate => true,
@@ -36,7 +42,10 @@ class maverick_analysis::collect (
         ignoreselected => true,
         udevnameattr   => 'DM_NAME',
     }
-    class { 'collectd::plugin::interface': }
+    class { 'collectd::plugin::interface':
+        interfaces     => ['lo'],
+        ignoreselected => true
+    }
     class { 'collectd::plugin::ipmi':
         # ignore_selected           => true,
         # sensors                   => ['temperature'],
@@ -48,6 +57,10 @@ class maverick_analysis::collect (
     class { 'collectd::plugin::load': }
     class { 'collectd::plugin::memory': }
     class { 'collectd::plugin::processes': }
+    class { 'collectd::plugin::protocols':
+        values => ['/^Tcp:*/', '/^Udp:*/',],
+        ignoreselected => false,
+    }
     class { 'collectd::plugin::sensors': }
     class { 'collectd::plugin::swap':
         reportbydevice => false,
@@ -56,9 +69,10 @@ class maverick_analysis::collect (
     class { 'collectd::plugin::thermal': }
     class { 'collectd::plugin::uptime': }
     class { 'collectd::plugin::users': }
-    class { 'collectd::plugin::vmem':
-        verbose => true,
-    }
+    # This collects a lot of data which we don't really need
+    #class { 'collectd::plugin::vmem':
+    #    verbose => true,
+    #}
 
     # Configure an exec plugin to run power script on Joule platform, to retrieve power consumption
     if $joule_present == "yes" {
