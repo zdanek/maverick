@@ -34,6 +34,14 @@ class maverick_analysis::grafana (
         }
     }
     
+    if $joule_present == "yes" {
+        $_dashboard = "system-dashboard-joule.json"
+    } elsif $raspberry_present == "yes" {
+        $_dashboard = "system-dashboard-raspberry.json"
+    } else {
+        $_dashboard = "system-dashboard-generic.json"
+    }
+
     file { "/etc/systemd/system/maverick-grafana.service":
         owner       => "root",
         group       => "root",
@@ -60,37 +68,40 @@ class maverick_analysis::grafana (
       service_name          => "maverick-grafana",
       version               => "4.3.2",
     } ->
+    # Create maverick org in grafana
+    exec { "grafana-maverickorg":
+        unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org' |grep Maverick",
+        command         => "/bin/sleep 10; /usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org values(10,0,'Maverick','','','','','','','','2017-06-20 11:02:55','2017-06-20 11:15:51')\"", # sleep is to give grafana enough time to fire up and release the db
+        user            => "mav",
+    } ->
     # Create mav user in grafana
     exec { "grafana-mavuser":
         unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep mav",
-        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(10,0,'mav','mav','Maverick User','e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4','ry48G1ZHyi','yICOZzT82L','',1,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1)\"",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(10,0,'mav','mav','Maverick User','e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4','ry48G1ZHyi','yICOZzT82L','',10,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1)\"",
         user            => "mav",
-    }
- 
+    } ->
+    # Link mav user to org
+    exec { "grafana-linkorg":
+        unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"10\" and user_id=\"10\"' |grep Admin",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('10','10','10','Admin','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
+        user            => "mav",
+    } ->
     grafana_datasource { 'influxdb':
         grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => 'admin',
+        grafana_user      => 'mav',
+        grafana_password  => 'wingman',
         type              => 'influxdb',
         url               => 'http://localhost:8086',
         database          => 'maverick',
         access_mode       => 'proxy',
         is_default        => true,
         require             => Service["maverick-grafana"],
-    }
-
-    if $joule_present == "yes" {
-        $_dashboard = "system-dashboard-joule.json"
-    } elsif $raspberry_present == "yes" {
-        $_dashboard = "system-dashboard-raspberry.json"
-    } else {
-        $_dashboard = "system-dashboard-generic.json"
-    }
+    } ->
     grafana_dashboard { 'system_dashboard':
         title               => "System Dashboard",
         grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => 'admin',
+        grafana_user      => 'mav',
+        grafana_password  => 'wingman',
         content           => template("maverick_analysis/${_dashboard}"),
         require             => Service["maverick-grafana"],
     }
