@@ -4385,108 +4385,6 @@
       "height": 282,
       "panels": [
         {
-          "alert": {
-            "conditions": [
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "and"
-                },
-                "query": {
-                  "params": [
-                    "A",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "B",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "C",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "D",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              }
-            ],
-            "executionErrorState": "alerting",
-            "frequency": "60s",
-            "handler": 1,
-            "name": "IMU1 Test Ratios alert",
-            "noDataState": "no_data",
-            "notifications": []
-          },
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
@@ -4671,15 +4569,7 @@
               "tags": []
             }
           ],
-          "thresholds": [
-            {
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 1
-            }
-          ],
+          "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
           "title": "IMU1 Test Ratios",
@@ -4716,108 +4606,6 @@
           ]
         },
         {
-          "alert": {
-            "conditions": [
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "and"
-                },
-                "query": {
-                  "params": [
-                    "A",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "B",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "C",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              },
-              {
-                "evaluator": {
-                  "params": [
-                    1
-                  ],
-                  "type": "gt"
-                },
-                "operator": {
-                  "type": "or"
-                },
-                "query": {
-                  "params": [
-                    "D",
-                    "10s",
-                    "now"
-                  ]
-                },
-                "reducer": {
-                  "params": [],
-                  "type": "avg"
-                },
-                "type": "query"
-              }
-            ],
-            "executionErrorState": "alerting",
-            "frequency": "60s",
-            "handler": 1,
-            "name": "IMU2 Test Ratios alert",
-            "noDataState": "no_data",
-            "notifications": []
-          },
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
@@ -5002,15 +4790,7 @@
               "tags": []
             }
           ],
-          "thresholds": [
-            {
-              "colorMode": "critical",
-              "fill": true,
-              "line": true,
-              "op": "gt",
-              "value": 1
-            }
-          ],
+          "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
           "title": "IMU2 Test Ratios",
@@ -5982,5 +5762,5 @@
   },
   "timezone": "browser",
   "title": "Flight - EKF Analysis",
-  "version": 5
+  "version": 7
 }
