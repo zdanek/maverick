@@ -118,7 +118,7 @@ class maverick_analysis::grafana (
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
-        content           => template("maverick_analysis/flight-ekf2-arudpilot.json"),
+        content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
         require             => Service["maverick-grafana"],
     }
 
