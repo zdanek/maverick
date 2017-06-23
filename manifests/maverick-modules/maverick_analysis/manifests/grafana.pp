@@ -104,6 +104,22 @@ class maverick_analysis::grafana (
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/${_dashboard}"),
         require             => Service["maverick-grafana"],
+    } ->
+    grafana_dashboard { 'flight_dashboard':
+        title               => "Flight Data Analysis",
+        grafana_url       => "http://localhost:${webport}",
+        grafana_user      => 'mav',
+        grafana_password  => 'wingman',
+        content           => template("maverick_analysis/flight-dashboard-ardupilot.json"),
+        require             => Service["maverick-grafana"],
+    } ->
+    grafana_dashboard { 'ekf2_dashboard':
+        title               => "Flight EKF2 Analysis",
+        grafana_url       => "http://localhost:${webport}",
+        grafana_user      => 'mav',
+        grafana_password  => 'wingman',
+        content           => template("maverick_analysis/flight-ekf2-arudpilot.json"),
+        require             => Service["maverick-grafana"],
     }
 
     if defined(Class["::maverick_security"]) {

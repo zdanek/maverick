@@ -79,4 +79,11 @@ class maverick_analysis::influx (
         require         => Service_wrapper["maverick-influxd"],
     }
     
+    # Install python library
+    install_python_module { "pip-influxdb":
+        ensure          => atleast,
+        version         => "4.1.1",
+        pkgname         => "influxdb",
+    }
+    
 }
