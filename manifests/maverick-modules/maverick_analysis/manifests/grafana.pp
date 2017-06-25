@@ -3,7 +3,7 @@ class maverick_analysis::grafana (
 ) {
     
     ensure_packages(["sqlite3"])
-    
+
     file { ["/srv/maverick/software/grafana", "/srv/maverick/data/analysis/grafana", "/srv/maverick/var/log/analysis/grafana"]:
         ensure      => directory,
         mode        => "755",

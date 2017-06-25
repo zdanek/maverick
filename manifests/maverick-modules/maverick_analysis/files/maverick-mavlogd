@@ -1,0 +1,185 @@
+#!/usr/bin/env python
+#
+# Script to import ArduPilot logs into influxdb for analysis/display
+# https://github.com/fnoop/maverick
+
+import sys, os, shutil, signal, datetime, time, logging, errno, re, ConfigParser, traceback, subprocess, glob
+import lockfile, signal, grp
+import asyncore, pyinotify
+import sqlite3
+from daemon import runner
+from pyinotify import WatchManager, AsyncNotifier, ThreadedNotifier, ProcessEvent, IN_CLOSE_WRITE
+from pymavlink import DFReader
+from pymavlink.DFReader import DFReader, DFReader_binary, DFReader_text
+from influxdb import InfluxDBClient, SeriesHelper
+
+class ProcessLog(ProcessEvent):
+    def __init__(self, app):
+        logger.debug("Starting ProcessLog.__init__")
+        logger.debug("App influx_database:" + app.influx_database)
+        self.app = app
+        
+    def process_IN_CLOSE_WRITE(self, event):
+        logger.debug("Received IN_CLOSE_WRITE event")
+        self.process(event.pathname)
+    def process_IN_MOVED_TO(self, event):
+        logger.debug("Received IN_MOVED_TO event")
+        self.process(event.pathname)
+
+    def process(self, filename):
+        logger.info("Processing data from "+filename)
+        if filename.endswith('.log'):
+            log = DFReader_text(filename, False)
+            logger.debug("Text mavlog detected, creating text parser")
+        else:
+            log = DFReader_binary(filename, False)
+            logger.debug("Binary mavlog detected, creating binary parser")
+        parameters = {}
+        formats = {}
+        json_points = []
+        counter = 0
+        first_timestamp = None
+        last_timestamp = None
+        while True:
+            entry = log.recv_msg()
+            if entry is None:
+                logger.debug("No more log entries, break from processing loop")
+                break
+            msgtype = entry.fmt.name
+            if msgtype == "PARM":
+                # parameters[entry.Name] = entry.Value
+                pass
+            elif msgtype == "FMT":
+                formats[entry.Name] = {'format': list(entry.Format), 'columns': entry.Columns.split(",")}
+            elif msgtype == "MSG":
+                logger.debug(" - Mavlink Message:"+str(entry.TimeUS)+":"+str(entry.Message))
+            else:
+                if msgtype in formats:
+                    _fields = {column:getattr(entry, column) for column in formats[msgtype]['columns']}
+                    last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')
+                    if not first_timestamp:
+                        first_timestamp = last_timestamp
+                    json_body = {
+                        "database": self.app.influx_database,
+                        "time_precision": "ms",
+                        "measurement": "flight_"+msgtype.lower(),
+                        "tags": {
+                            "filename": filename
+                        },
+                        "time": last_timestamp,
+                        "fields": _fields
+                    }
+                    json_points.append(json_body)
+                    counter += 1
+            # Batch writes to influxdb, much faster
+            if counter > 0 and counter % 1000 == 0:
+                # logger.debug(" - Batch sending 1000 points to influxdb:"+str(counter))
+                self.app.client.write_points(json_points)
+                json_points = [] # Clear out json_points after bulk write
+        # Write any remaining points
+        self.app.client.write_points(json_points)
+        logger.info("Processing complete of "+filename)
+        logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp) + ", Last timestamp is " + str(last_timestamp))
+        self.meta_entry(os.path.basename(filename), first_timestamp, last_timestamp)
+        self.archive_file(filename)
+    
+    def meta_entry(self, filename, start, finish):
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        # See if entry already exists
+        cursor.execute("SELECT id FROM logfiles WHERE filename='"+filename+"'")
+        id_exists = cursor.fetchone()[0]
+        if not id_exists:
+            cursor.execute('INSERT INTO logfiles (filename, start, finish) VALUES (?,?,?)', (filename, start, finish))
+        else:
+            cursor.execute('UPDATE logfiles SET start=?,finish=? WHERE id=?', (start,finish,id_exists))
+        conn.commit()
+        conn.close()
+        
+    def archive_file(self, filename):
+        file = os.path.basename(filename)
+        dirs = os.path.split(filename)
+        dirfrags = dirs[0].split(os.path.sep)
+        destfile = os.path.sep.join(["/srv/maverick/data/mavlink/archive",dirfrags[-1],dirs[1]])
+        shutil.move(filename, destfile)
+        logger.info("Archiving file from " +filename+ " to " +destfile)
+
+
+### Main App Class
+class App():
+    def __init__(self):
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/srv/maverick/var/log/analysis/maverick-mavlogd.daemon.log'
+        self.stderr_path = '/srv/maverick/var/log/analysis/maverick-mavlogd.daemon.log'
+        self.pidfile_path = '/srv/maverick/var/run/maverick-mavlogd.pid'
+        self.pidfile_timeout = 5
+        
+    def run(self):
+        logger.info("")
+        logger.info("--------------------------------")
+        logger.info("Starting maverick-mavlogd daemon")
+        # Get config
+        self.config = self.config_parse("/srv/maverick/data/config/analysis/maverick-mavlogd.conf")
+        self.influx_database = self.config['influx_database']
+        self.client = InfluxDBClient(self.config['influx_server'], self.config['influx_port'], self.config['influx_user'], self.config['influx_password'], self.influx_database)
+        self.client.create_database(self.influx_database)
+        self.logdirs = self.config['logdirs']
+        self.watch_dirs()
+        self.metadb(self.config['meta_database'])
+        # Loop and wait for files
+        while True:
+            time.sleep(1)
+
+    def watch_dirs(self):
+    	watch_manager = WatchManager()
+    	notifier = ThreadedNotifier(watch_manager, default_proc_fun=ProcessLog(self))
+        notifier.start()
+    	for logdir in self.logdirs.split(","):
+    		logger.info("Watching directory: "+str(logdir))
+    		mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM
+    		watch_manager.add_watch(logdir, mask)
+
+    def config_parse(self, path):
+        Config = ConfigParser.SafeConfigParser()
+        options = {}
+        try:
+            Config.read(path)
+            for item in Config.options("mavlogd"):
+                options[item] = Config.get("mavlogd", item)
+            logger.info("Config read from " + str(path))
+        except:
+            logger.critical("Error reading config file: " + str(path))
+            sys.exit(1)
+        return options
+
+    def metadb(self, path):
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT)')
+        conn.commit()
+        conn.close()
+
+if __name__ == "__main__":
+    # Setup logging
+    logger = logging.getLogger("DaemonLog")
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler = logging.FileHandler("/srv/maverick/var/log/analysis/maverick-mavlogd.log")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    
+    # Create app instance and daemonize
+    app = App()
+    daemon_runner = runner.DaemonRunner(app)
+    daemon_runner.daemon_context.files_preserve=[handler.stream]
+    try:
+        daemon_runner.do_action()
+    except runner.DaemonRunnerStopFailureError as Error:
+        print " - mavlogd not running, cannot stop"
+        # If stop action, just ignore the error and exit
+        if daemon_runner.action == "stop":
+            sys.exit(0)
+        elif daemon_runner.action == "restart":
+            print " - starting mavlogd"
+            daemon_runner.action = "start"
+            daemon_runner.do_action()

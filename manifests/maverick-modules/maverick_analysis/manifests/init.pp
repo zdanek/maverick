@@ -2,6 +2,7 @@ class maverick_analysis (
     $influxdb = true,
     $collectd = true,
     $grafana = true,
+    $mavlogd = true,
 ) {
     
     file { ["/srv/maverick/data/analysis", "/srv/maverick/data/config/analysis"]:
@@ -23,6 +24,10 @@ class maverick_analysis (
     
     if $grafana == true {
         class { "maverick_analysis::grafana": }
+    }
+    
+    if $mavlogd == true {
+        class { "maverick_analysis::mavlogd": }
     }
     
 }

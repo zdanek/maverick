@@ -300,11 +300,12 @@ if [ "$STATUS" == "true" ]; then
     statusout+='------------:------------:------------------\n'
     statusout+="${blue}Web Services${reset}\n"
     (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
+    (systemctl status maverick-grafana >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-grafana >/dev/null 2>&1); statusen=$?; statusout+=$(status "grafana" "Analysis Dashboard" $status $statusen)
     statusout+='------------:------------:------------------\n'
     statusout+="${blue}Analysis Services${reset}\n"
-    (systemctl status maverick-influxd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-influxd >/dev/null 2>&1); statusen=$?; statusout+=$(status "influxd" "Metrics DB" $status $statusen)
+    (systemctl status maverick-mavlogd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-mavlogd >/dev/null 2>&1); statusen=$?; statusout+=$(status "mavlogd" "Log Import Daemon" $status $statusen)
+    (systemctl status maverick-influxd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-influxd >/dev/null 2>&1); statusen=$?; statusout+=$(status "influxd" "Time Data DB" $status $statusen)
     (systemctl status collectd >/dev/null 2>&1); status=$?; (systemctl is-enabled collectd >/dev/null 2>&1); statusen=$?; statusout+=$(status "collectd" "System Metrics" $status $statusen)
-    (systemctl status maverick-grafana >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-grafana >/dev/null 2>&1); statusen=$?; statusout+=$(status "grafana" "Metrics Dashboard" $status $statusen)
     statusout+='------------:------------:------------------\n'
     statusout+="${blue}Vision Services${reset}\n"
     (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Vision Daemon" $vis $visen)

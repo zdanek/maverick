@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick Log Import Daemon
+After=network-online.target,maverick-grafana.service,maverick-influxd.service
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/maverick-mavlogd start
+ExecStop=/srv/maverick/software/maverick/bin/maverick-mavlogd stop
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+
