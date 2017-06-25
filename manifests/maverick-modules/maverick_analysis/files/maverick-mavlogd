@@ -88,7 +88,10 @@ class ProcessLog(ProcessEvent):
         cursor = conn.cursor()
         # See if entry already exists
         cursor.execute("SELECT id FROM logfiles WHERE filename='"+filename+"'")
-        id_exists = cursor.fetchone()[0]
+        try:
+            id_exists = cursor.fetchone()[0]
+        except:
+            id_exists = None
         if not id_exists:
             cursor.execute('INSERT INTO logfiles (filename, start, finish) VALUES (?,?,?)', (filename, start, finish))
         else:
