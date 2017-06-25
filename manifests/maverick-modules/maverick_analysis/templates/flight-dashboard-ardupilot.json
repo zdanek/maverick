@@ -1,42 +1,12 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_INFLUXDB",
-      "label": "influxdb",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "4.3.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": []
   },
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
-  "hideControls": true,
-  "id": null,
+  "hideControls": false,
+  "id": 2,
   "links": [],
   "refresh": false,
   "rows": [
@@ -49,7 +19,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 7,
           "legend": {
@@ -87,7 +57,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -125,7 +95,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -171,7 +141,7 @@
               "measurement": "flight_att",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(Roll) - mean(DesRoll) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(null)\n",
+              "query": "SELECT mean(Roll) - mean(DesRoll) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)\n",
               "rawQuery": true,
               "refId": "C",
               "resultFormat": "time_series",
@@ -229,7 +199,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 8,
           "legend": {
@@ -267,7 +237,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -305,7 +275,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -350,7 +320,7 @@
               ],
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(Pitch) - mean(DesPitch) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(null)\n",
+              "query": "SELECT mean(Pitch) - mean(DesPitch) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)\n",
               "rawQuery": true,
               "refId": "C",
               "resultFormat": "time_series",
@@ -412,7 +382,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 9,
           "legend": {
@@ -432,7 +402,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Difference",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -450,7 +425,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -488,7 +463,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -533,7 +508,7 @@
               ],
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(Yaw) - mean(DesYaw) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(null)\n",
+              "query": "SELECT mean(Yaw) - mean(DesYaw) AS diff FROM \"flight_att\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)\n",
               "rawQuery": true,
               "refId": "C",
               "resultFormat": "time_series",
@@ -595,7 +570,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 10,
           "legend": {
@@ -633,7 +608,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -671,7 +646,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -751,7 +726,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 2,
           "legend": {
@@ -904,7 +879,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "decimals": null,
           "fill": 0,
           "id": 1,
@@ -1095,7 +1070,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 5,
           "legend": {
@@ -1244,7 +1219,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 6,
           "legend": {
@@ -1362,7 +1337,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 11,
           "legend": {
@@ -1672,7 +1647,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 12,
           "legend": {
@@ -1686,6 +1661,7 @@
           },
           "lines": true,
           "linewidth": 1,
+          "links": [],
           "nullPointMode": "null",
           "percentage": false,
           "pointradius": 5,
@@ -1698,6 +1674,7 @@
           "steppedLine": false,
           "targets": [
             {
+              "alias": "TuneStep",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1718,6 +1695,7 @@
               "tags": []
             },
             {
+              "alias": "Autotune Axis",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1741,7 +1719,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Panel Title",
+          "title": "Autotune Status",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1779,7 +1757,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 13,
           "legend": {
@@ -1793,6 +1771,7 @@
           },
           "lines": true,
           "linewidth": 1,
+          "links": [],
           "nullPointMode": "null",
           "percentage": false,
           "pointradius": 5,
@@ -1805,6 +1784,7 @@
           "steppedLine": false,
           "targets": [
             {
+              "alias": "Max",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1825,6 +1805,7 @@
               "tags": []
             },
             {
+              "alias": "Min",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight-atun",
@@ -1848,7 +1829,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Panel Title",
+          "title": "Rate Max/Min",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1886,7 +1867,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 14,
           "legend": {
@@ -1900,18 +1881,29 @@
           },
           "lines": true,
           "linewidth": 1,
+          "links": [],
           "nullPointMode": "null",
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "flight_atun.SP",
+              "yaxis": 2
+            },
+            {
+              "alias": "Stabilize P",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
+              "alias": "Rate D",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1932,6 +1924,7 @@
               "tags": []
             },
             {
+              "alias": "Rate P",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1952,6 +1945,7 @@
               "tags": []
             },
             {
+              "alias": "Stabilize P",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -1975,7 +1969,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Panel Title",
+          "title": "Test Gains",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2013,7 +2007,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 15,
           "legend": {
@@ -2027,18 +2021,25 @@
           },
           "lines": true,
           "linewidth": 1,
+          "links": [],
           "nullPointMode": "null",
           "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "flight_atun.ddt",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
+              "alias": "Target",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -2059,6 +2060,7 @@
               "tags": []
             },
             {
+              "alias": "DDT",
               "dsType": "influxdb",
               "groupBy": [],
               "measurement": "flight_atun",
@@ -2082,7 +2084,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Panel Title",
+          "title": "Target",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2120,7 +2122,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 18,
           "legend": {
@@ -2209,7 +2211,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 19,
           "legend": {
@@ -2310,7 +2312,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 17,
           "legend": {
@@ -2353,7 +2355,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2391,7 +2393,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2459,7 +2461,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 16,
           "legend": {
@@ -2502,7 +2504,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2540,7 +2542,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2608,7 +2610,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 20,
           "legend": {
@@ -2646,7 +2648,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2726,7 +2728,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 21,
           "legend": {
@@ -2746,7 +2748,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Difference",
+              "yaxis": 1
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -2764,7 +2771,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2802,7 +2809,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2847,7 +2854,7 @@
               ],
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(ThI) - mean(ThO) AS diff FROM \"flight_ctun\" WHERE $timeFilter GROUP BY time($__interval) fill(null)\n",
+              "query": "SELECT mean(ThI) - mean(ThO) AS diff FROM \"flight_ctun\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)\n",
               "rawQuery": true,
               "refId": "C",
               "resultFormat": "time_series",
@@ -2909,7 +2916,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 22,
           "legend": {
@@ -2949,7 +2956,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2987,7 +2994,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3031,7 +3038,7 @@
               ],
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(CRt) - mean(DCRt) AS diff FROM \"flight_ctun\" WHERE $timeFilter GROUP BY time($__interval) fill(null)\n",
+              "query": "SELECT mean(CRt) - mean(DCRt) AS diff FROM \"flight_ctun\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)\n",
               "rawQuery": true,
               "refId": "C",
               "resultFormat": "time_series",
@@ -3093,7 +3100,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 23,
           "legend": {
@@ -3131,7 +3138,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3199,7 +3206,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 24,
           "legend": {
@@ -3237,7 +3244,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3275,7 +3282,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3313,7 +3320,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3351,7 +3358,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3389,7 +3396,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3427,7 +3434,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3507,7 +3514,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 26,
           "legend": {
@@ -3659,7 +3666,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 47,
           "legend": {
@@ -3767,7 +3774,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 48,
           "legend": {
@@ -3886,7 +3893,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 27,
           "legend": {
@@ -3924,7 +3931,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3962,7 +3969,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4000,7 +4007,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4068,7 +4075,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 29,
           "legend": {
@@ -4106,7 +4113,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4144,7 +4151,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4182,7 +4189,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4250,7 +4257,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 28,
           "legend": {
@@ -4288,7 +4295,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4326,7 +4333,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4364,7 +4371,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4432,7 +4439,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 30,
           "legend": {
@@ -4470,7 +4477,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4508,7 +4515,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4546,7 +4553,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -4626,7 +4633,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 31,
           "legend": {
@@ -4808,7 +4815,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 33,
           "legend": {
@@ -4990,7 +4997,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 32,
           "legend": {
@@ -5172,7 +5179,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 34,
           "legend": {
@@ -5366,7 +5373,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 35,
           "legend": {
@@ -5586,7 +5593,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 36,
           "legend": {
@@ -5818,7 +5825,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 37,
           "legend": {
@@ -6000,7 +6007,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 38,
           "legend": {
@@ -6182,7 +6189,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 39,
           "legend": {
@@ -6364,7 +6371,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 40,
           "legend": {
@@ -6558,7 +6565,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 41,
           "legend": {
@@ -6707,7 +6714,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 42,
           "legend": {
@@ -6948,7 +6955,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 43,
           "legend": {
@@ -7139,7 +7146,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 44,
           "legend": {
@@ -7245,7 +7252,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 45,
           "legend": {
@@ -7401,7 +7408,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 46,
           "legend": {
@@ -7773,7 +7780,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 49,
           "legend": {
@@ -8069,7 +8076,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 50,
           "legend": {
@@ -8441,7 +8448,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 51,
           "legend": {
@@ -8748,8 +8755,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-20T18:35:37.567Z",
-    "to": "2017-06-20T18:39:04.986Z"
+    "from": "2017-06-13T21:21:20.944Z",
+    "to": "2017-06-13T21:24:09.474Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -8777,6 +8784,6 @@
     ]
   },
   "timezone": "browser",
-  "title": "Flight Dashboard",
-  "version": 28
+  "title": "Flight Data Analysis",
+  "version": 32
 }

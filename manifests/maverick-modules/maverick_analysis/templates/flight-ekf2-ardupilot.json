@@ -1,42 +1,12 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_INFLUXDB",
-      "label": "influxdb",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "4.3.2"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    }
-  ],
   "annotations": {
     "list": []
   },
   "editable": false,
   "gnetId": null,
   "graphTooltip": 1,
-  "hideControls": true,
-  "id": null,
+  "hideControls": false,
+  "id": 4,
   "links": [],
   "refresh": false,
   "rows": [
@@ -49,7 +19,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 1,
           "legend": {
@@ -236,7 +206,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 2,
           "legend": {
@@ -423,7 +393,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 3,
           "legend": {
@@ -652,7 +622,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 7,
           "legend": {
@@ -881,7 +851,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 8,
           "legend": {
@@ -995,7 +965,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -1063,7 +1033,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 9,
           "legend": {
@@ -1177,7 +1147,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -1245,7 +1215,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 10,
           "legend": {
@@ -1427,7 +1397,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 11,
           "legend": {
@@ -1621,7 +1591,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 12,
           "legend": {
@@ -1727,7 +1697,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 13,
           "legend": {
@@ -1833,7 +1803,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 14,
           "legend": {
@@ -2015,7 +1985,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 18,
           "legend": {
@@ -2197,7 +2167,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 15,
           "legend": {
@@ -2235,7 +2205,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2273,7 +2243,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2311,7 +2281,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2379,7 +2349,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 19,
           "legend": {
@@ -2417,7 +2387,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2455,7 +2425,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2493,7 +2463,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -2561,7 +2531,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 16,
           "legend": {
@@ -2743,7 +2713,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 20,
           "legend": {
@@ -2937,7 +2907,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 21,
           "legend": {
@@ -3119,7 +3089,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 22,
           "legend": {
@@ -3301,7 +3271,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 23,
           "legend": {
@@ -3445,7 +3415,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 24,
           "legend": {
@@ -3589,7 +3559,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 25,
           "legend": {
@@ -3695,7 +3665,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 26,
           "legend": {
@@ -3801,7 +3771,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 27,
           "legend": {
@@ -3983,7 +3953,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 28,
           "legend": {
@@ -4165,7 +4135,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 29,
           "legend": {
@@ -4271,7 +4241,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 30,
           "legend": {
@@ -4389,7 +4359,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "description": "- A value of less than 1 indicates that that measurement has passed its checks and is being used by the EKF2.  \n- A value of more than 1 indicates that the innovations for that measurement are so high that the EKF2 will be rejecting the data from that sensor.  \n- Values of less than 0.3 in flight are typical for a setup with good quality sensor data.",
           "fill": 0,
           "id": 31,
@@ -4610,7 +4580,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "description": "- A value of less than 1 indicates that that measurement has passed its checks and is being used by the EKF2.  \n- A value of more than 1 indicates that the innovations for that measurement are so high that the EKF2 will be rejecting the data from that sensor.  \n- Values of less than 0.3 in flight are typical for a setup with good quality sensor data.",
           "fill": 0,
           "id": 32,
@@ -4831,7 +4801,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 33,
           "legend": {
@@ -4937,7 +4907,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 34,
           "legend": {
@@ -5055,7 +5025,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 35,
           "legend": {
@@ -5275,7 +5245,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 1,
           "id": 36,
           "legend": {
@@ -5313,7 +5283,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -5381,7 +5351,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 37,
           "legend": {
@@ -5568,7 +5538,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_INFLUXDB}",
+          "datasource": null,
           "fill": 0,
           "id": 38,
           "legend": {
@@ -5615,7 +5585,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -5653,7 +5623,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -5732,8 +5702,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-20T18:35:29.913Z",
-    "to": "2017-06-20T18:39:14.039Z"
+    "from": "2017-06-13T21:20:44.804Z",
+    "to": "2017-06-13T21:24:46.038Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -5762,5 +5732,5 @@
   },
   "timezone": "browser",
   "title": "Flight - EKF Analysis",
-  "version": 7
+  "version": 9
 }
