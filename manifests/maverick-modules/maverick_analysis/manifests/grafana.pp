@@ -42,6 +42,15 @@ class maverick_analysis::grafana (
         $_dashboard = "system-dashboard-generic.json"
     }
 
+    if $raspberry_present == "yes" {
+        $manage_package_repo = false
+        $package_source = "https://github.com/fg2it/grafana-on-raspberry/releases/download/v4.3.2/grafana_4.3.2_armhf.deb"
+        $install_method = "package"
+    } else {
+        $manage_package_repo = true
+        $package_source = undef
+        $install_method = "repo"
+    }
     file { "/etc/systemd/system/maverick-grafana.service":
         owner       => "root",
         group       => "root",
@@ -65,6 +74,9 @@ class maverick_analysis::grafana (
             },
       },
       data_dir              => "/srv/maverick/data/analysis/grafana",
+      install_method        => $install_method,
+      manage_package_repo   => $manage_package_repo,
+      package_source        => $package_source,
       service_name          => "maverick-grafana",
       version               => "4.3.2",
     } ->
