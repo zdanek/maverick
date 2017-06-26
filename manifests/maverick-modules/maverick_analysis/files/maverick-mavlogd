@@ -7,6 +7,8 @@ import sys, os, shutil, signal, datetime, time, logging, errno, re, ConfigParser
 import lockfile, signal, grp
 import asyncore, pyinotify
 import sqlite3
+from grafana_api_client import GrafanaClient
+from grafanalib.core import *
 from daemon import runner
 from pyinotify import WatchManager, AsyncNotifier, ThreadedNotifier, ProcessEvent, IN_CLOSE_WRITE
 from pymavlink import DFReader
@@ -39,7 +41,9 @@ class ProcessLog(ProcessEvent):
         json_points = []
         counter = 0
         first_timestamp = None
+        first_epoch = None
         last_timestamp = None
+        last_epoch = None
         while True:
             entry = log.recv_msg()
             if entry is None:
@@ -56,17 +60,20 @@ class ProcessLog(ProcessEvent):
             else:
                 if msgtype in formats:
                     _fields = {column:getattr(entry, column) for column in formats[msgtype]['columns']}
-                    last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%f')
+                    last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%fZ')
+                    last_epoch = int(float(entry._timestamp)*1000000000)
+                    # logger.debug("_timestamp:"+str(last_epoch)+":, last_timestamp:"+str(last_timestamp))
                     if not first_timestamp:
                         first_timestamp = last_timestamp
+                        first_epoch = last_epoch
                     json_body = {
                         "database": self.app.influx_database,
-                        "time_precision": "ms",
+                        "time_precision": "ns",
                         "measurement": "flight_"+msgtype.lower(),
                         "tags": {
                             "filename": filename
                         },
-                        "time": last_timestamp,
+                        "time": last_epoch,
                         "fields": _fields
                     }
                     json_points.append(json_body)
@@ -79,9 +86,10 @@ class ProcessLog(ProcessEvent):
         # Write any remaining points
         self.app.client.write_points(json_points)
         logger.info("Processing complete of "+filename)
-        logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp) + ", Last timestamp is " + str(last_timestamp))
-        self.meta_entry(os.path.basename(filename), first_timestamp, last_timestamp)
+        logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
+        self.meta_entry(os.path.basename(filename), int(first_epoch/1000000000), int(last_epoch/1000000000))
         self.archive_file(filename)
+        self.dashboard_links()
     
     def meta_entry(self, filename, start, finish):
         conn = sqlite3.connect(self.app.config['meta_database'])
@@ -106,6 +114,43 @@ class ProcessLog(ProcessEvent):
         destfile = os.path.sep.join(["/srv/maverick/data/mavlink/archive",dirfrags[-1],dirs[1]])
         shutil.move(filename, destfile)
         logger.info("Archiving file from " +filename+ " to " +destfile)
+
+    def dashboard_links(self):
+        # Retrieve metadata
+        logentries = []
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        cursor.execute("SELECT filename,start,finish FROM logfiles")
+        rows = cursor.fetchall()
+        for row in rows:
+            fromdt=str(int(float(row[1]))*1000)
+            todt=str(int(float(row[2]))*1000)
+            logentries.append("<tr><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td><a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>Flight Data Analysis</a></td><td><a href='/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>EKF2 Analysis</a></td></tr>")
+        conn.close()
+        # Construct the dashboard
+        dashboard = {
+            "editable": False,
+            "hideControls": True,
+            "rows": [{"panels": [{
+                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th>EKF Data Link</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table>",
+                  "mode": "html",
+                  "span": 12,
+                  "title": "Flight Logs",
+                  "type": "text"
+                }],
+            "title": "Flight Logs",
+            }],
+            "schemaVersion": 14,
+            "style": "dark",
+            "timezone": "browser",
+            "version": int(time.time()),
+            "title": "Flight Logs Index"
+        }
+        # logger.debug("Dashboard:"+str(dashboard))
+        # Create/update the dashboard in grafana
+        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host="127.0.0.1", port=6790)
+        dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
+        logger.debug("Grafana dashboard update:"+str(dashreturn))
 
 
 ### Main App Class

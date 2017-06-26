@@ -6,6 +6,14 @@ class maverick_analysis::mavlogd (
         pkgname     => 'pyinotify',
         ensure      => present,
     } ->
+    install_python_module { 'pip-grafanalib':
+        pkgname     => 'grafanalib',
+        ensure      => present,
+    } ->
+    install_python_module { 'pip-grafana_api_client':
+        pkgname     => 'grafana-api-client',
+        ensure      => present,
+    } ->
     file { "/srv/maverick/software/maverick/bin/maverick-mavlogd":
         ensure          => link,
         target          => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/maverick-mavlogd",
