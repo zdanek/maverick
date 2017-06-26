@@ -120,15 +120,15 @@ class maverick_analysis::grafana (
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
         require             => Service["maverick-grafana"],
-    } ->
-    grafana_dashboard { 'logindex_dashboard':
-        title               => "Flight Logs Index",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'mav',
-        grafana_password  => 'wingman',
-        content           => template("maverick_analysis/flight-logs-index.json"),
-        require             => Service["maverick-grafana"],
     }
+    #grafana_dashboard { 'logindex_dashboard':
+    #    title               => "Flight Logs Index",
+    #    grafana_url       => "http://localhost:${webport}",
+    #    grafana_user      => 'mav',
+    #    grafana_password  => 'wingman',
+    #    content           => template("maverick_analysis/flight-logs-index.json"),
+    #    require             => Service["maverick-grafana"],
+    #}
 
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "grafana":

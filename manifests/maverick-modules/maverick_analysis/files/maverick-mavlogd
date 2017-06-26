@@ -87,11 +87,17 @@ class ProcessLog(ProcessEvent):
         self.app.client.write_points(json_points)
         logger.info("Processing complete of "+filename)
         logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
-        self.meta_entry(os.path.basename(filename), int(first_epoch/1000000000), int(last_epoch/1000000000))
+        self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000))
         self.archive_file(filename)
         self.dashboard_links()
     
     def meta_entry(self, filename, start, finish):
+        # Work out source
+        file = os.path.basename(filename)
+        dirs = os.path.split(filename)
+        dirfrags = dirs[0].split(os.path.sep)
+        filename = dirs[1]
+        # Connect to meta db
         conn = sqlite3.connect(self.app.config['meta_database'])
         cursor = conn.cursor()
         # See if entry already exists
@@ -101,7 +107,7 @@ class ProcessLog(ProcessEvent):
         except:
             id_exists = None
         if not id_exists:
-            cursor.execute('INSERT INTO logfiles (filename, start, finish) VALUES (?,?,?)', (filename, start, finish))
+            cursor.execute('INSERT INTO logfiles (filename, start, finish, source) VALUES (?,?,?,?)', (filename, start, finish, dirfrags[-1].title()))
         else:
             cursor.execute('UPDATE logfiles SET start=?,finish=? WHERE id=?', (start,finish,id_exists))
         conn.commit()
@@ -120,19 +126,19 @@ class ProcessLog(ProcessEvent):
         logentries = []
         conn = sqlite3.connect(self.app.config['meta_database'])
         cursor = conn.cursor()
-        cursor.execute("SELECT filename,start,finish FROM logfiles")
+        cursor.execute("SELECT filename,start,finish,source FROM logfiles")
         rows = cursor.fetchall()
         for row in rows:
             fromdt=str(int(float(row[1]))*1000)
             todt=str(int(float(row[2]))*1000)
-            logentries.append("<tr><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td><a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>Flight Data Analysis</a></td><td><a href='/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>EKF2 Analysis</a></td></tr>")
+            logentries.append("<tr><td>"+row[3]+"</td><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td><a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>Flight Data Analysis</a></td><td><a href='/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>EKF2 Analysis</a></td></tr>")
         conn.close()
         # Construct the dashboard
         dashboard = {
             "editable": False,
             "hideControls": True,
             "rows": [{"panels": [{
-                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th>EKF Data Link</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table>",
+                  "content": "<table><thead><tr><th>Source</th><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th>EKF Data Link</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table>",
                   "mode": "html",
                   "span": 12,
                   "title": "Flight Logs",
@@ -203,7 +209,7 @@ class App():
     def metadb(self, path):
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
-        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT, source TEXT)')
         conn.commit()
         conn.close()
 
