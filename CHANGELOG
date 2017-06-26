@@ -1,5 +1,13 @@
 # Maverick Changelog
 
+## [2017-06-26] 1.1.0 'Ooh pretty pictures' Release
+ - Mavlink data analysis/graphing tool
+ - System metrics collection and analysis
+ - Power and thermal data for Joule platform
+ - Automated dataflash log translation
+ - Preset graph sets for flight data and EKF analysis
+ - Nanosecond time-series database resolution
+
 ## [2017-06-15] 1.0.6 Release
  - Huge refactor of codebase to Puppet 4
  - Upgrade and refactor of puppet modules
