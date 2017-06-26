@@ -42,8 +42,6 @@ class base::locale (
     # Set TZ environment variable, https://github.com/fnoop/maverick/issues/497
     file { "/etc/profile.d/01-TZ.sh":
         content     => 'export TZ=":/etc/localtime"',
-        owner       => "root",
-        group       => "root",
         mode        => "644",
     }
     
