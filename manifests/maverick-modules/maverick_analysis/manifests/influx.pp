@@ -73,7 +73,7 @@ class maverick_analysis::influx (
     
     # Ensure maverick metrics db exists
     exec { "influx-maverickdb":
-        command         => "/usr/bin/influx -execute 'create database maverick'",
+        command         => "/bin/sleep 10; /usr/bin/influx -execute 'create database maverick'",
         unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
         user            => "mav",
         require         => Service_wrapper["maverick-influxd"],
