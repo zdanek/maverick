@@ -562,17 +562,17 @@ else
 fi
 if [ -e ./conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        STDLIB_LOG_DEPRECATIONS=false puppet apply --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        STDLIB_LOG_DEPRECATIONS=false puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else
