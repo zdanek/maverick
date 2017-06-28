@@ -26,11 +26,17 @@ class maverick_web::cloud9 (
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
-        creates		=> "/srv/maverick/software/cloud9/node_modules/.gitignore",
+        creates		=> [ "/srv/maverick/software/cloud9/node_modules/.gitignores", "/srv/maverick/.c9/node_modules" ],
         timeout		=> 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
         require     => Package["nodejs"],
+    } ->
+    file { "/srv/maverick/.c9":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
     } ->
     file { "/srv/maverick/.c9/user.settings":
         ensure      => present,
