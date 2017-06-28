@@ -90,23 +90,14 @@ class base::packages {
         pkgname     => 'future',
         ensure      => present,
     }
-#    exec { "install-netifaces":
-#        command     => "pip install netifaces",
-#        unless      => "pip list |grep netifaces",
-#        require     => [ Class["python"], Class["locales"] ],
-#        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
-#    } ->
-    # Install python future, important base module for python 2.7
-    #exec { "install-pyfuture":
-    #    command     => "pip install future",
-    #    unless      => "pip list |grep future",
-    #    require     => [ Class["python"], Class["locales"] ],
-    #    path        => ["/usr/local/bin", "/usr/bin", "/bin"],
-    #}
     
     # Disable unattended upgrades
     package { "unattended-upgrades":
         ensure      => purged,
     }
 
+    # Remove popularity-contest, https://github.com/fnoop/maverick/issues/503
+    package { "popularity-contest":
+        ensure      => absent,
+    }
 }
