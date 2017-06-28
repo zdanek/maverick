@@ -204,6 +204,11 @@ class maverick_network (
         unless      => "/bin/grep -e '^timeout 5;' /etc/dhcp/dhclient.conf",
     }
     
+    # Try to force a renew when dhclient runs
+    file { "/etc/dhcp/dhclient-enter-hooks.d/forcerenew":
+        content     => "old_ip_address=1.2.3.4",
+    }
+    
     # Define a service that unblocks radios with rfkill
     file { "/etc/systemd/system/rfkill-unblock.service":
         ensure      => present,
