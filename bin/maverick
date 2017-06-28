@@ -470,6 +470,13 @@ for pkg in "hiera" "facter" "puppet"; do
     fi
 done
 
+# Check that there are no apt/dpkg processes going on
+_aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep)
+if  [ "z${_aptdpkg}" != "z" ]; then
+    echo "${red}Error: There are active apt/dpkg processes.  This will interfere with Maverick, please ensure there are no apt/dpkg processes before running Maverick.${reset}"
+    exit 1
+fi
+
 # Fix for Ubuntu 14.10 and Puppet 4.10.1: https://github.com/fnoop/maverick/issues/466
 # Long-term fix already in Puppet 4.10.2
 _ubuntu=$(/bin/grep -e 'DISTRIB_RELEASE\=14\.' /etc/lsb-release 2>/dev/null)

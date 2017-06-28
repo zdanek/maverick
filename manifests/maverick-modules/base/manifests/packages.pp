@@ -103,5 +103,10 @@ class base::packages {
     #    require     => [ Class["python"], Class["locales"] ],
     #    path        => ["/usr/local/bin", "/usr/bin", "/bin"],
     #}
+    
+    # Disable unattended upgrades
+    package { "unattended-upgrades":
+        ensure      => purged,
+    }
 
 }
