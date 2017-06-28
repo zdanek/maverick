@@ -8,6 +8,7 @@ define maverick_network::interface_ap (
     $disable_broadcast_ssid = false,
     $dhcp_range = "192.168.10.10,192.168.10.50",
     $dhcp_leasetime = "24h",
+    $forward = false,
 ) {
     ## Note, in order to keep this as simple as possible this AP setup does NOT allow for bridging, routing or NATing.
     ## It is a deliberately simple setup just to allow remote connection to the OBC for telemetry, video etc
@@ -51,4 +52,26 @@ define maverick_network::interface_ap (
         content     => template('maverick_network/dnsmasq-dhcp.erb'),
     }
     
+    # Turn on IP forwarding and set iptables rules to forward data between the interfaces.
+    if $forward != false {
+        base::sysctl::conf {
+            "net.ipv4.ip_forward":      value => 1;
+        }
+        if defined(Class["::maverick_security"]) {
+            firewall { 'ap-masquerade':
+              chain     => 'POSTROUTING',
+              jump      => 'MASQUERADE',
+              proto     => 'all',
+              outiface  => $forward,
+              table     => 'nat',
+            }
+            firewall { 'ap-forward':
+              chain     => 'FORWARD',
+              jump      => 'ACCEPT',
+              proto     => 'all',
+              iface     => $name,
+            }
+        }
+    }
+
 }
