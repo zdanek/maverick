@@ -50,7 +50,6 @@ class maverick_analysis::influx (
         group       => "root",
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
-        before      => Service_wrapper["maverick-influxd"],
     } ->
     # Ensure system influxd instance is stopped
     service_wrapper { "influxdb":
@@ -62,13 +61,11 @@ class maverick_analysis::influx (
         service_wrapper { "maverick-influxd":
             ensure      => running,
             enable      => true,
-            require     => File["/etc/systemd/system/maverick-influxd.service"],
         }
     } else {
         service_wrapper { "maverick-influxd":
             ensure      => stopped,
             enable      => false,
-            require     => File["/etc/systemd/system/maverick-influxd.service"],
         }
     }
     
