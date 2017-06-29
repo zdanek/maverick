@@ -127,6 +127,11 @@ class base::maverick (
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
+    } ->
+    file { "/srv/maverick/.cache/pip":
+        ensure  => directory,
+        owner   => "mav",
+        group   => "mav",
         recurse => true,
     }
 }
