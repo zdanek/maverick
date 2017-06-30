@@ -1,6 +1,6 @@
 class maverick_vision::gstreamer (
     $gstreamer_installtype = "source",
-    $gstreamer_version = "1.10.4",
+    $gstreamer_version = "1.12.1",
     $libx264 = "installed",
 ) {
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
