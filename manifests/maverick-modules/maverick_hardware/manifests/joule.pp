@@ -2,6 +2,7 @@ class maverick_hardware::joule (
     $remove_more_packages = true,
     $ipu4_blacklist = true,
     $serialconsole = false,
+    $install_caspa = true,
 ) {
     
     # Control serial console, disable by default to clear the way for mavlink connection
@@ -168,4 +169,8 @@ class maverick_hardware::joule (
         }
     }
 
+    if $install_caspa == true {
+        class { "maverick_hardware::peripheral::caspa": }
+    }
+    
 }
