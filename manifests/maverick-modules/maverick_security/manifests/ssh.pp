@@ -22,6 +22,7 @@ class maverick_security::ssh {
         sshd_x11_forwarding         => 'yes',
         sshd_password_authentication    => 'yes',
         ssh_key_import              => false,
+        ssh_key_export              => false,
     }
         
 }

@@ -102,7 +102,6 @@ class ssh (
   $service_hasstatus                    = 'USE_DEFAULTS',
   $ssh_key_ensure                       = 'present',
   $ssh_key_import                       = true,
-  $ssh_key_export                       = true,
   $ssh_key_type                         = 'ssh-rsa',
   $ssh_config_global_known_hosts_file   = '/etc/ssh/ssh_known_hosts',
   $ssh_config_global_known_hosts_list   = undef,
@@ -281,14 +280,8 @@ class ssh (
 
   if "${::ssh_version}" =~ /^OpenSSH/  { # lint:ignore:only_variable_string
     $ssh_version_array = split($::ssh_version_numeric, '\.')
-    $ssh_version_maj_int = versioncmp($::puppetversion, "4.0.0") ? {
-        -1          => 0 + $ssh_version_array[0],
-        default     => Numeric($ssh_version_array[0]),
-    }
-    $ssh_version_min_int = versioncmp($::puppetversion, "4.0.0") ? {
-        -1          => 0 + $ssh_version_array[1],
-        default     => Numeric($ssh_version_array[1]),
-    }
+    $ssh_version_maj_int = 0 + $ssh_version_array[0]
+    $ssh_version_min_int = 0 + $ssh_version_array[1]
     if $ssh_version_maj_int > 5 {
       $default_ssh_config_use_roaming = 'no'
     } elsif $ssh_version_maj_int == 5 and $ssh_version_min_int >= 4 {
@@ -702,20 +695,6 @@ class ssh (
   }
   validate_bool($ssh_key_import_real)
 
-  case type3x($ssh_key_export) {
-    'string': {
-      validate_re($ssh_key_export, '^(true|false)$', "ssh::ssh_key_export may be either 'true' or 'false' and is set to <${ssh_key_export}>.")
-      $ssh_key_export_real = str2bool($ssh_key_export)
-    }
-    'boolean': {
-      $ssh_key_export_real = $ssh_key_export
-    }
-    default: {
-      fail('ssh::ssh_key_export type must be true or false.')
-    }
-  }
-  validate_bool($ssh_key_export_real)
-
   case type3x($ssh_config_sendenv_xmodifiers) {
     'string': {
       $ssh_config_sendenv_xmodifiers_real = str2bool($ssh_config_sendenv_xmodifiers)
@@ -953,7 +932,7 @@ class ssh (
   }
 
   # export each node's ssh key
-  if $ssh_key_export_real == true {
+  if $ssh_key_import_real == true {
     @@sshkey { $::fqdn :
       ensure       => $ssh_key_ensure,
       host_aliases => [$::hostname, $::ipaddress],
@@ -961,7 +940,7 @@ class ssh (
       key          => $key,
     }
   }
-
+  
   file { 'ssh_known_hosts':
     ensure  => file,
     path    => $ssh_config_global_known_hosts_file,
