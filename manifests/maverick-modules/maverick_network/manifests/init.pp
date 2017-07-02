@@ -244,16 +244,17 @@ class maverick_network (
         group       => "mav",
         mode        => "755",
     } ->
-    file { "/srv/maverick/software/maverick/bin/monitor-interface.sh":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/monitor-interface.sh"
+    file { ["/srv/maverick/software/maverick/bin/monitor-interface.sh", "/etc/systemd/system/monitor-interface@.service"]:
+        ensure      => absent,
+        notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    file { "/etc/systemd/system/monitor-interface@.service":
-        content     => template("maverick_network/monitor-interface@.service.erb"),
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        notify      => [ Exec["maverick-systemctl-daemon-reload"] ]
+    file { "/srv/maverick/software/maverick/bin/network-if-monitor":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-monitor.sh"
+    } ->
+    file { "/srv/maverick/software/maverick/bin/network-if-managed":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-managed.sh"
     }
     
     # Retrieve defined interfaces and process

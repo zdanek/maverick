@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set defaults, can be overriden in /srv/maverick/data/config/wifibroadcast-if.conf
+# Set defaults, can be overriden in /srv/maverick/data/config/interface-.conf
 RATE=24
 CHAN5G=149
 CHAN2G=13
@@ -13,7 +13,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Load defaults if they exist
-[ ! -r /srv/maverick/data/config/network/monitor-interface-$2.conf ] || . /srv/maverick/data/config/network/monitor-interface-$2.conf
+[ ! -r /srv/maverick/data/config/network/interface-$2.conf ] || . /srv/maverick/data/config/network/interface-$2.conf
 
 # Check for required wireless utils
 if hash ifconfig; then
@@ -59,11 +59,8 @@ case $1 in
                 exit 1
                 ;;
         esac
-        
-        echo "start $2 $driver" >/var/tmp/wifibroadcast-if.log
         ;;
     stop)
-        echo "stop $2" >/var/tmp/wifibroadcast-if.log
         ;;
     *)
         echo "Usage: $0 {start|stop} <interface>"

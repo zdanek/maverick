@@ -44,6 +44,9 @@ define maverick_network::interface_managed (
                 template        => "maverick_network/interface_fragment_wireless.erb",
                 wpa_ssid        => $_ssid,
                 wpa_psk         => $_psk,
+                options         => {
+                    # wireless_mode =>    "managed",
+                },
             }
         } elsif $type == "ethernet" {
             network::interface { "$name":
@@ -89,9 +92,11 @@ define maverick_network::interface_managed (
             auto            => true,
             allow_hotplug   => true,
             method          => "static",
-            wireless_mode   => "master",
             ipaddress       => $ipaddress,
             netmask         => $netmask,
+            options         => {
+                wireless_mode       => "master",
+            }
         }
     }
     

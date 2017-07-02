@@ -294,8 +294,6 @@ define network::interface (
   $wpa_scan_ssid         = undef,
   $wpa_ap_scan           = undef,
 
-  $wireless_mode         = undef,
-  
   ## RedHat specific
   $ipaddr                = '',
   $uuid                  = undef,

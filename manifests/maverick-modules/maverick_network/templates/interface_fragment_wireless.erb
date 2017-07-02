@@ -6,6 +6,9 @@ auto <%= @interface %>
 allow-hotplug <%= @interface %>
 <% end -%>
 <%= @stanza %> <%= @interface %> <%= @family %> <%= @manage_method %>
+<% if @options['wireless_mode'] -%>
+    wireless-mode <%= @options['wireless_mode'] %>
+<% end -%>
 <% if @wpa_supplicant -%>
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 <% end -%>
@@ -86,9 +89,6 @@ allow-hotplug <%= @interface %>
 <% end -%>
 <% if @unit -%>
     unit <%= @unit %>
-<% end -%>
-<% if @options -%>
-    options <%= @options %>
 <% end -%>
 <% if @privext -%>
     privext <%= @privext %>
