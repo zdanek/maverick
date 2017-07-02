@@ -1,8 +1,8 @@
 [Unit]
 Description=Starts and stops a single grafana instance on this system
 Documentation=http://docs.grafana.org
-Wants=network-online.target
-After=network-online.target
+Wants=network-online.target multi-user.target influxd.service
+After=network-online.target multi-user.target influxd.service
 
 [Service]
 User=mav
