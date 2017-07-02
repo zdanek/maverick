@@ -176,6 +176,9 @@ class App():
         self.config = self.config_parse("/srv/maverick/data/config/analysis/maverick-mavlogd.conf")
         self.influx_database = self.config['influx_database']
         self.client = InfluxDBClient(self.config['influx_server'], self.config['influx_port'], self.config['influx_user'], self.config['influx_password'], self.influx_database)
+        if not self.client:
+            logger.critical("Error connecting to InfluxDB")
+            sys.exit(1)
         self.client.create_database(self.influx_database)
         self.logdirs = self.config['logdirs']
         self.watch_dirs()
@@ -229,6 +232,8 @@ if __name__ == "__main__":
     try:
         daemon_runner.do_action()
     except runner.DaemonRunnerStopFailureError as Error:
+        if Error:
+            print "Error: " + str(Error)
         print " - mavlogd not running, cannot stop"
         # If stop action, just ignore the error and exit
         if daemon_runner.action == "stop":
