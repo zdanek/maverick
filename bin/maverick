@@ -471,7 +471,7 @@ for pkg in "hiera" "facter" "puppet"; do
 done
 
 # Check that there are no apt/dpkg processes going on
-_aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep)
+_aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq)
 if  [ "z${_aptdpkg}" != "z" ]; then
     echo "${red}Error: There are active apt/dpkg processes.  This will interfere with Maverick, please ensure there are no apt/dpkg processes before running Maverick.${reset}"
     exit 1
