@@ -51,8 +51,7 @@ class ProcessLog(ProcessEvent):
                 break
             msgtype = entry.fmt.name
             if msgtype == "PARM":
-                # parameters[entry.Name] = entry.Value
-                pass
+                parameters[entry.Name] = entry.Value
             elif msgtype == "FMT":
                 formats[entry.Name] = {'format': list(entry.Format), 'columns': entry.Columns.split(",")}
             elif msgtype == "MSG":
@@ -62,7 +61,6 @@ class ProcessLog(ProcessEvent):
                     _fields = {column:getattr(entry, column) for column in formats[msgtype]['columns']}
                     last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%fZ')
                     last_epoch = int(float(entry._timestamp)*1000000000)
-                    # logger.debug("_timestamp:"+str(last_epoch)+":, last_timestamp:"+str(last_timestamp))
                     if not first_timestamp:
                         first_timestamp = last_timestamp
                         first_epoch = last_epoch
@@ -109,7 +107,7 @@ class ProcessLog(ProcessEvent):
         if not id_exists:
             cursor.execute('INSERT INTO logfiles (filename, start, finish, source) VALUES (?,?,?,?)', (filename, start, finish, dirfrags[-1].title()))
         else:
-            cursor.execute('UPDATE logfiles SET start=?,finish=? WHERE id=?', (start,finish,id_exists))
+            cursor.execute('UPDATE logfiles SET start=?,finish=?,source=? WHERE id=?', (start,finish,dirfrags[-1].title(),id_exists))
         conn.commit()
         conn.close()
         
@@ -126,12 +124,16 @@ class ProcessLog(ProcessEvent):
         logentries = []
         conn = sqlite3.connect(self.app.config['meta_database'])
         cursor = conn.cursor()
-        cursor.execute("SELECT filename,start,finish,source FROM logfiles")
+        cursor.execute("SELECT filename,start,finish,source FROM logfiles ORDER by datetime(\"finish\") DESC")
         rows = cursor.fetchall()
         for row in rows:
-            fromdt=str(int(float(row[1]))*1000)
-            todt=str(int(float(row[2]))*1000)
-            logentries.append("<tr><td>"+row[3]+"</td><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td><a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>Flight Data Analysis</a></td><td><a href='/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>EKF2 Analysis</a></td></tr>")
+            try:
+                fromdt=str(int(float(row[1]))*1000)
+                todt=str(int(float(row[2]))*1000)
+                logentries.append("<tr><td>"+row[3]+"</td><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td><a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>Flight Data Analysis</a></td><td><a href='/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"'>EKF2 Analysis</a></td></tr>")
+            # If dates are in old format, skip entry
+            except:
+                pass
         conn.close()
         # Construct the dashboard
         dashboard = {
@@ -152,7 +154,6 @@ class ProcessLog(ProcessEvent):
             "version": int(time.time()),
             "title": "Flight Logs Index"
         }
-        # logger.debug("Dashboard:"+str(dashboard))
         # Create/update the dashboard in grafana
         grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host="127.0.0.1", port=6790)
         dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
@@ -184,17 +185,14 @@ class App():
         self.watch_dirs()
         self.metadb(self.config['meta_database'])
         # Loop and wait for files
-        while True:
-            time.sleep(1)
+        asyncore.loop()
 
     def watch_dirs(self):
     	watch_manager = WatchManager()
-    	#notifier = ThreadedNotifier(watch_manager, default_proc_fun=ProcessLog(self))
-        #notifier.start()
+        mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM
         notifier = pyinotify.AsyncNotifier(watch_manager, ProcessLog(self))
     	for logdir in self.logdirs.split(","):
     		logger.info("Watching directory: "+str(logdir))
-    		mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM
     		watch_manager.add_watch(logdir, mask)
 
     def config_parse(self, path):
@@ -213,7 +211,13 @@ class App():
     def metadb(self, path):
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
+        # Create logfiles table if it doesn't exist
         cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT, source TEXT)')
+        # Add source column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN source TEXT default null");
+        except:
+            pass
         conn.commit()
         conn.close()
 
