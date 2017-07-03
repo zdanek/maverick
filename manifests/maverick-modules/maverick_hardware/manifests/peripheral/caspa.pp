@@ -43,7 +43,7 @@ class maverick_hardware::peripheral::caspa (
     exec { "compile-camera-dev-support-adapter":
         command     => "/usr/bin/autoreconf -i && ./configure && make && make install",
         cwd         => "/srv/maverick/var/build/caspa/intel-camera-dev-support/icamera_adapter",
-        creates     => "/usr/local/lib/libcutils.so",
+        creates     => "/usr/local/lib/libicamera_adapter.so.0",
     } ->
     exec { "compile-icamerasrc":
         command     => "/usr/bin/autoreconf -i && /srv/maverick/var/build/caspa/icamerasrc/configure --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer --with-headercheck=no --with-libcheck=no --with-cameralib=licamera_adapter --with-androidstubs=yes && make && make install",
