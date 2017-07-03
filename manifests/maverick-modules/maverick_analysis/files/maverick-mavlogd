@@ -167,7 +167,7 @@ class App():
         self.stderr_path = '/srv/maverick/var/log/analysis/maverick-mavlogd.daemon.log'
         self.pidfile_path = '/srv/maverick/var/run/maverick-mavlogd.pid'
         self.pidfile_timeout = 5
-        
+
     def run(self):
         logger.info("")
         logger.info("--------------------------------")
@@ -189,8 +189,9 @@ class App():
 
     def watch_dirs(self):
     	watch_manager = WatchManager()
-    	notifier = ThreadedNotifier(watch_manager, default_proc_fun=ProcessLog(self))
-        notifier.start()
+    	#notifier = ThreadedNotifier(watch_manager, default_proc_fun=ProcessLog(self))
+        #notifier.start()
+        notifier = pyinotify.AsyncNotifier(watch_manager, ProcessLog(self))
     	for logdir in self.logdirs.split(","):
     		logger.info("Watching directory: "+str(logdir))
     		mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM
