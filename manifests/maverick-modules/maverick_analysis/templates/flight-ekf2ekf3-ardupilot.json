@@ -6,7 +6,7 @@
   "gnetId": null,
   "graphTooltip": 2,
   "hideControls": true,
-  "id": 3,
+  "id": 5,
   "links": [],
   "refresh": false,
   "rows": [
@@ -67,7 +67,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -254,7 +254,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -292,7 +292,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -330,7 +330,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -674,7 +674,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -712,7 +712,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -750,7 +750,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -788,7 +788,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -871,7 +871,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Position Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -1053,7 +1058,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Position Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -1076,7 +1086,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1114,7 +1124,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1152,7 +1162,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1440,7 +1450,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1478,7 +1488,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1516,7 +1526,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1724,7 +1734,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "AZbias",
+              "alias": "AccelX",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1740,7 +1750,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1749,7 +1759,83 @@
                 [
                   {
                     "params": [
-                      "AZbias"
+                      "AX"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "AccelY",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf2",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "AY"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "AccelZ",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf2",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "AZ"
                     ],
                     "type": "field"
                   },
@@ -1765,7 +1851,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Z-Accel Bias",
+          "title": "IMU2 Accel",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1823,7 +1909,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Gyro Scale Z",
+              "yaxis": 1
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -2028,7 +2119,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2066,7 +2157,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2104,7 +2195,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2369,7 +2460,20 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Magfield East",
+              "yaxis": 1
+            },
+            {
+              "alias": "Magfield Down",
+              "yaxis": 1
+            },
+            {
+              "alias": "Magfield North",
+              "yaxis": 1
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -2392,7 +2496,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2430,7 +2534,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2468,7 +2572,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2756,7 +2860,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2794,7 +2898,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2832,7 +2936,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -3132,7 +3236,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3170,7 +3274,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3208,7 +3312,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -3458,7 +3562,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3496,7 +3600,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3708,7 +3812,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3996,7 +4100,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4034,7 +4138,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -4072,7 +4176,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -4284,7 +4388,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4624,7 +4728,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4662,7 +4766,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -4700,7 +4804,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -4738,7 +4842,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -4950,7 +5054,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5018,114 +5122,8 @@
     },
     {
       "collapse": true,
-      "height": 260,
+      "height": 359,
       "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fill": 1,
-          "id": 36,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Range Finder Innovation",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "linear"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "flight_nkf5",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "RI"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Range Finder Innovations",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
         {
           "aliasColors": {},
           "bars": false,
@@ -5313,7 +5311,827 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Optical Flow Innovations",
+          "title": "Optical Flow Innovations EKF2",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "id": 39,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "OptFlow Innovation Variance",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "NI"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "OptFlow X Innovations",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "FIX"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "OptFlow Y Innovations",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "FIY"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "OptFlow Terrain Height Estimator Innovation",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "D",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "AFI"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Optical Flow Innovations EKF3",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "id": 36,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "flight_xkf5.mean",
+              "yaxis": 1
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Range Finder Innovation EKF2",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_nkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "RI"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Range Finder Innovations EKF2",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "id": 40,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "flight_xkf5.mean",
+              "yaxis": 1
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Range Finder Innovation EKF3",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "RI"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Range Finder Innovations EKF3",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 0,
+          "id": 37,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Estimated Terrain Offset",
+              "yaxis": 2
+            },
+            {
+              "alias": "Range Finder range",
+              "yaxis": 1
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Height AGL",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_nkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "HAGL"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "Range Finder range",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_nkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "rng"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "Estimated Terrain Offset",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_nkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "offset"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Height EKF2",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 0,
+          "id": 41,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Estimated Terrain Offset",
+              "yaxis": 2
+            }
+          ],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "Height AGL",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "HAGL"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "Range Finder range",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "rng"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "Estimated Terrain Offset",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf5",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "offset"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Height EKF3",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -5466,7 +6284,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Estimation Offset",
+          "title": "Estimation Offset EKF2",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -5506,7 +6324,7 @@
           "dashes": false,
           "datasource": null,
           "fill": 0,
-          "id": 37,
+          "id": 42,
           "legend": {
             "avg": false,
             "current": false,
@@ -5526,6 +6344,10 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
+              "alias": "flight_nkf5.mean",
+              "yaxis": 1
+            },
+            {
               "alias": "Estimated Terrain Offset",
               "yaxis": 2
             }
@@ -5536,7 +6358,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Height AGL",
+              "alias": "Sigma Uncertainty In Terrain Height Offset",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -5552,7 +6374,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5561,45 +6383,7 @@
                 [
                   {
                     "params": [
-                      "HAGL"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            },
-            {
-              "alias": "Range Finder range",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "linear"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "flight_nkf5",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "rng"
+                      "Herr"
                     ],
                     "type": "field"
                   },
@@ -5628,10 +6412,10 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
-              "refId": "C",
+              "refId": "B",
               "resultFormat": "time_series",
               "select": [
                 [
@@ -5653,7 +6437,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Height",
+          "title": "Estimation Offset EKF3",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -5702,8 +6486,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-14T19:48:02.000Z",
-    "to": "2017-06-14T20:07:35.000Z"
+    "from": "2017-07-03T20:10:54.209Z",
+    "to": "2017-07-03T20:13:44.944Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -5731,6 +6515,6 @@
     ]
   },
   "timezone": "browser",
-  "title": "Flight EKF2 Analysis",
-  "version": 3
+  "title": "Flight EKF2/EKF3 Analysis",
+  "version": 5
 }

@@ -4,9 +4,9 @@
   },
   "editable": false,
   "gnetId": null,
-  "graphTooltip": 2,
+  "graphTooltip": 1,
   "hideControls": true,
-  "id": 3,
+  "id": 6,
   "links": [],
   "refresh": false,
   "rows": [
@@ -67,7 +67,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -105,7 +105,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -143,7 +143,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -254,7 +254,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -292,7 +292,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -330,7 +330,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -445,7 +445,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -483,7 +483,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -521,7 +521,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -559,7 +559,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -674,7 +674,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -712,7 +712,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -750,7 +750,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -788,7 +788,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -871,7 +871,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Position Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -894,7 +899,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -932,7 +937,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -970,7 +975,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1053,7 +1058,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Position Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -1076,7 +1086,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1114,7 +1124,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1152,7 +1162,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1258,7 +1268,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1296,7 +1306,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1334,7 +1344,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf1",
+              "measurement": "flight_xkf1",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1440,7 +1450,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1478,7 +1488,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1516,7 +1526,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf6",
+              "measurement": "flight_xkf6",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1592,7 +1602,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": null,
-          "fill": 1,
+          "fill": 0,
           "id": 12,
           "legend": {
             "avg": false,
@@ -1618,7 +1628,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "AZbias",
+              "alias": "Accel X",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1634,7 +1644,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1643,7 +1653,7 @@
                 [
                   {
                     "params": [
-                      "AZbias"
+                      "AX"
                     ],
                     "type": "field"
                   },
@@ -1654,77 +1664,9 @@
                 ]
               ],
               "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "IMU1 Z-Accel Bias",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
             },
             {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fill": 1,
-          "id": 13,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "AZbias",
+              "alias": "Accel Y",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1740,16 +1682,54 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
-              "refId": "A",
+              "refId": "B",
               "resultFormat": "time_series",
               "select": [
                 [
                   {
                     "params": [
-                      "AZbias"
+                      "AY"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "Accel Z",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf2",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "AZ"
                     ],
                     "type": "field"
                   },
@@ -1765,7 +1745,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Z-Accel Bias",
+          "title": "IMU1 Accel Bias",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1805,7 +1785,7 @@
           "dashes": false,
           "datasource": null,
           "fill": 0,
-          "id": 14,
+          "id": 39,
           "legend": {
             "avg": false,
             "current": false,
@@ -1830,7 +1810,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "alias": "Gyro Scale X",
+              "alias": "Accel X",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1846,7 +1826,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1855,7 +1835,7 @@
                 [
                   {
                     "params": [
-                      "GSX"
+                      "AX"
                     ],
                     "type": "field"
                   },
@@ -1868,7 +1848,7 @@
               "tags": []
             },
             {
-              "alias": "Gyro Scale Y",
+              "alias": "Accel Y",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1884,7 +1864,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -1893,7 +1873,7 @@
                 [
                   {
                     "params": [
-                      "GSY"
+                      "AY"
                     ],
                     "type": "field"
                   },
@@ -1906,7 +1886,7 @@
               "tags": []
             },
             {
-              "alias": "Gyro Scale Z",
+              "alias": "Accel Z",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -1922,7 +1902,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -1931,7 +1911,7 @@
                 [
                   {
                     "params": [
-                      "GSZ"
+                      "AZ"
                     ],
                     "type": "field"
                   },
@@ -1947,189 +1927,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Gyro Scale Factor",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fill": 0,
-          "id": 18,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "Gyro Scale X",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "linear"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "flight_nkf7",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "GSX"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            },
-            {
-              "alias": "Gyro Scale Y",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "linear"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "flight_nkf7",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "B",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "GSY"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            },
-            {
-              "alias": "Gyro Scale Z",
-              "dsType": "influxdb",
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "linear"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "measurement": "flight_nkf7",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "C",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "GSZ"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "IMU2 Gyro Scale Factor",
+          "title": "IMU2 Accel Bias",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2187,7 +1985,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Magfield Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -2210,7 +2013,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2248,7 +2051,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2286,7 +2089,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2369,7 +2172,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Magfield Down",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -2392,7 +2200,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2430,7 +2238,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2468,7 +2276,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2574,7 +2382,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2612,7 +2420,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2650,7 +2458,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf2",
+              "measurement": "flight_xkf2",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2756,7 +2564,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2794,7 +2602,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -2832,7 +2640,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf7",
+              "measurement": "flight_xkf7",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -2908,7 +2716,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": null,
-          "fill": 1,
+          "fill": 0,
           "id": 21,
           "legend": {
             "avg": false,
@@ -2950,7 +2758,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2988,7 +2796,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3026,7 +2834,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -3132,7 +2940,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3170,7 +2978,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3208,7 +3016,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -3314,7 +3122,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3352,7 +3160,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3458,7 +3266,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3496,7 +3304,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3602,7 +3410,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3708,7 +3516,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3814,7 +3622,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3852,7 +3660,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -3890,7 +3698,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -3996,7 +3804,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4034,7 +3842,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -4072,7 +3880,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -4178,7 +3986,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf3",
+              "measurement": "flight_xkf3",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4284,7 +4092,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf8",
+              "measurement": "flight_xkf8",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4380,7 +4188,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "SS",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -4403,7 +4216,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf4",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4441,7 +4254,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf4",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -4479,7 +4292,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf4",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -4517,7 +4330,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf4",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -4527,6 +4340,82 @@
                   {
                     "params": [
                       "SM"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "SS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf4",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "E",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "SS"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "SVT",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf4",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "F",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "SVT"
                     ],
                     "type": "field"
                   },
@@ -4601,7 +4490,12 @@
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "SS",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 6,
           "stack": false,
@@ -4624,7 +4518,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf9",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4662,7 +4556,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf9",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -4700,7 +4594,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf9",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -4738,7 +4632,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf9",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -4748,6 +4642,82 @@
                   {
                     "params": [
                       "SM"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "SS",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf9",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "E",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "SS"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "SVT",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "linear"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "measurement": "flight_xkf9",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "F",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "SVT"
                     ],
                     "type": "field"
                   },
@@ -4844,7 +4814,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf4",
+              "measurement": "flight_xkf4",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -4950,7 +4920,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf9",
+              "measurement": "flight_xkf9",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5068,7 +5038,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5174,7 +5144,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5212,7 +5182,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -5250,7 +5220,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "C",
@@ -5288,7 +5258,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "D",
@@ -5403,7 +5373,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5441,7 +5411,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -5528,6 +5498,10 @@
             {
               "alias": "Estimated Terrain Offset",
               "yaxis": 2
+            },
+            {
+              "alias": "Range Finder range",
+              "yaxis": 1
             }
           ],
           "spaceLength": 10,
@@ -5552,7 +5526,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -5590,7 +5564,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "flight_nkf5",
+              "measurement": "flight_xkf5",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "B",
@@ -5702,8 +5676,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-14T19:48:02.000Z",
-    "to": "2017-06-14T20:07:35.000Z"
+    "from": "2017-07-04T10:32:56.342Z",
+    "to": "2017-07-04T10:34:50.072Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -5731,6 +5705,6 @@
     ]
   },
   "timezone": "browser",
-  "title": "Flight EKF2 Analysis",
+  "title": "Flight EKF3 Analysis",
   "version": 3
 }

@@ -4,8 +4,8 @@
   },
   "editable": false,
   "gnetId": null,
-  "graphTooltip": 1,
-  "hideControls": false,
+  "graphTooltip": 2,
+  "hideControls": true,
   "id": 2,
   "links": [],
   "refresh": false,
@@ -1359,7 +1359,26 @@
           "pointradius": 1,
           "points": true,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Clip0",
+              "lines": true,
+              "points": false,
+              "yaxis": 2
+            },
+            {
+              "alias": "Clip1",
+              "lines": true,
+              "points": false,
+              "yaxis": 2
+            },
+            {
+              "alias": "Clip2",
+              "lines": true,
+              "points": false,
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "span": 12,
           "stack": false,
@@ -1491,7 +1510,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -1529,7 +1548,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -1567,7 +1586,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -3021,6 +3040,7 @@
               "tags": []
             },
             {
+              "alias": "Difference",
               "dsType": "influxdb",
               "groupBy": [
                 {
@@ -3518,12 +3538,12 @@
           "fill": 0,
           "id": 26,
           "legend": {
-            "alignAsTable": true,
+            "alignAsTable": false,
             "avg": true,
             "current": false,
             "max": true,
             "min": true,
-            "rightSide": true,
+            "rightSide": false,
             "show": true,
             "total": false,
             "values": true
@@ -3706,7 +3726,7 @@
                 },
                 {
                   "params": [
-                    "null"
+                    "linear"
                   ],
                   "type": "fill"
                 }
@@ -8755,8 +8775,8 @@
     "list": []
   },
   "time": {
-    "from": "2017-06-13T21:21:20.944Z",
-    "to": "2017-06-13T21:24:09.474Z"
+    "from": "2017-07-03T20:11:24.000Z",
+    "to": "2017-07-03T20:13:08.000Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -8785,5 +8805,5 @@
   },
   "timezone": "browser",
   "title": "Flight Data Analysis",
-  "version": 32
+  "version": 5
 }
