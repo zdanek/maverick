@@ -54,8 +54,6 @@ class ProcessLog(ProcessEvent):
                 parameters[entry.Name] = entry.Value
             elif msgtype == "FMT":
                 formats[entry.Name] = {'format': list(entry.Format), 'columns': entry.Columns.split(",")}
-            elif msgtype == "MSG":
-                logger.debug(" - Mavlink Message:"+str(entry.TimeUS)+":"+str(entry.Message))
             else:
                 if msgtype in formats:
                     _fields = {column:getattr(entry, column) for column in formats[msgtype]['columns']}
@@ -64,17 +62,46 @@ class ProcessLog(ProcessEvent):
                     if not first_timestamp:
                         first_timestamp = last_timestamp
                         first_epoch = last_epoch
-                    json_body = {
-                        "database": self.app.influx_database,
-                        "time_precision": "ns",
-                        "measurement": "flight_"+msgtype.lower(),
-                        "tags": {
-                            "filename": filename
-                        },
-                        "time": last_epoch,
-                        "fields": _fields
-                    }
-                    json_points.append(json_body)
+                    if msgtype in ["CMD", "ERR", "EV", "MODE", "MSG"]:
+                        #if msgtype == "CMD":
+                        #    _fields = {"title": "Command", "tags": "command", "text": str(entry)}
+                        if msgtype == "ERR":
+                            [subsystxt, ecodetxt] = self.error_text(getattr(entry, "Subsys"), getattr(entry, "ECode"))
+                            if ecodetxt:
+                                _fields = {"title": "Error", "tags": "error", "text": subsystxt+"<br>"+ecodetxt}
+                            else:
+                                _fields = {"title": "Error", "tags": "error", "text": subsystxt}
+                        elif msgtype == "EV":
+                            _fields = {"title": "Event", "tags": "event", "text": self.event_text(getattr(entry, "Id"))}
+                        elif msgtype == "MODE":
+                            _fields = {"title": "Mode Change", "tags": "mode", "text": "Mode: "+self.mode_text(getattr(entry, "Mode"))+"<br>Reason: "+self.modereason_text(getattr(entry, "Rsn"))}
+                        elif msgtype == "MSG":
+                            _fields = {"title": "Message", "tags": "message", "text": getattr(entry, "Message").rstrip()}
+                        json_body = {
+                            "database": self.app.influx_database,
+                            "time_precision": "ns",
+                            "measurement": "events",
+                            "tags": {
+                                "filename": filename,
+                                "event_type": msgtype.lower()
+                            },
+                            "time": last_epoch,
+                            "fields": _fields
+                        }
+                        json_points.append(json_body)
+                        #logger.debug("Mode:"+str(json_body))
+                    else:
+                        json_body = {
+                            "database": self.app.influx_database,
+                            "time_precision": "ns",
+                            "measurement": "flight_"+msgtype.lower(),
+                            "tags": {
+                                "filename": filename
+                            },
+                            "time": last_epoch,
+                            "fields": _fields
+                        }
+                        json_points.append(json_body)
                     counter += 1
             # Batch writes to influxdb, much faster
             if counter > 0 and counter % 1000 == 0:
@@ -158,7 +185,211 @@ class ProcessLog(ProcessEvent):
         grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host="127.0.0.1", port=6790)
         dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
         logger.debug("Grafana dashboard update:"+str(dashreturn))
+        
+    def error_text(self,subsys,ecode):
+        subsysId = {
+            1: "Main",
+            2: "Radio",
+            3: "Compass",
+            4: "Optical Flow",
+            5: "Failsafe Radio",
+            6: "Failsafe Battery",
+            7: "Failsafe GPS",
+            8: "Failsafe GCS",
+            9: "Failsafe Fence",
+            10: "Flight Mode",
+            11: "GPS",
+            12: "Crash Check",
+            13: "Flip",
+            14: "Autotune",
+            15: "Parachute",
+            16: "EKF Check",
+            17: "Failsafe EKF INAV",
+            18: "Barometer",
+            19: "CPU",
+            20: "Failsafe ADSB",
+            21: "Terrain",
+            22: "Navigation",
+            23: "Failsafe Terrain",
+            24: "EKF Primary"
+        }
+        ecodes = {}
+        if subsys == 1:
+            ecodes = {
+                1: "INS Delay"
+            }
+        elif subsys == 2:
+            ecodes = {
+                2: "Radio Late Frame"
+            }
+        elif subsys == 3:
+            ecodes = {
+                2: "Compass Failed to Read"
+            }
+        elif subsys == 5 or subsys == 6 or subsys == 7:
+            ecodes = {
+                0: "Failsafe Resolved",
+                1: "Failsafe Occurred"
+            }
+        elif subsys == 12:
+            ecodes = {
+                1: "Crash",
+                2: "Loss of Control"
+            }
+        elif subsys == 13:
+            ecodes = {
+                2: "Flip Abandoned"
+            }
+        elif subsys == 15:
+            ecodes = {
+                2: "Parachute Too Low",
+                3: "Parachute Landed"
+            }
+        elif subsys == 16:
+            ecodes = {
+                2: "Bad Variance",
+                0: "Variance Cleared"
+            }
+        elif subsys == 18:
+            ecodes = {
+                2: "Barometer Glitch"
+            }
+        elif subsys == 21:
+            ecodes = {
+                2: "Missing Terrain Data"
+            }
+        elif subsys == 22:
+            ecodes = {
+                2: "Failed to Set Destination",
+                3: "Restarted RTL",
+                4: "Failed Circle Init",
+                5: "Destination Outside Fence"
+            }
+        else:
+            ecodes = {
+                0: "Error Resolved",
+                1: "Failed to Initialise",
+                4: "Unhealthy"
+            }
+        
+        try:
+            if subsys == 10:
+                return [subsysId[subsys], "Attempting to change to flight mode: <b>"+self.mode_text(ecode)+"</b>"]
+            else:
+                return [subsysId[subsys], ecodes[ecode]]
+        except:
+            return [subsysId[subsys], None]
 
+    def modereason_text(self,id):
+        idText = {
+            0: "Reason Unknown",
+            1: "TX Command",
+            2: "GCS Command",
+            3: "Radio Failsafe",
+            4: "Battery Failsafe",
+            5: "GCS Failsafe",
+            6: "EKF Failsafe",
+            7: "GPS Glitch",
+            8: "Mission End",
+            9: "Throttle Land Escape",
+            10: "Fence Breach",
+            11: "Terrain Failsafe",
+            12: "Brake Timeout",
+            13: "Flip Complete",
+            14: "Avoidance",
+            15: "Avoidance Recovery",
+            16: "Throw Complete"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Mode Reason ID not recognised"
+
+    def mode_text(self,id):
+        idText = {
+            0: "Stabilize",
+            1: "Acro",
+            2: "Altitude Hold",
+            3: "Auto",
+            4: "Guided",
+            5: "Loiter",
+            6: "Return To Launch",
+            7: "Circle",
+            9: "Land",
+            11: "Drift",
+            13: "Sport",
+            14: "Flip",
+            15: "Autotune",
+            16: "Position Hold",
+            17: "Brake",
+            18: "Throw",
+            19: "Avoid ADSB",
+            20: "Guided No GPS"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Mode ID not recognised"
+
+    def event_text(self, id):
+        idText = {
+            7: "AutoPilot State",
+            8: "System Time Set",
+            9: "Init Simple Bearing",
+            10: "Armed",
+            11: "Disarmed",
+            15: "Auto Armed",
+            17: "Land Complete (Maybe)",
+            18: "Land Complete",
+            19: "Lost GPS",
+            21: "Flip Start",
+            22: "Flip End",
+            25: "Set Home",
+            26: "Simple On",
+            27: "Simple Off",
+            28: "Not Landed",
+            29: "Super Simple On",
+            30: "Autotune Initialised",
+            31: "Autotune Off",
+            32: "Autotune Restart",
+            33: "Autotune Success",
+            34: "Autotune Failed",
+            35: "Autotune Reached Limit",
+            36: "Autotune Pilot Testing",
+            37: "Autotune Saved Gains",
+            38: "Save Trim",
+            39: "Save/Add Waypoint",
+            41: "Fence Enable",
+            42: "Fence Disable",
+            43: "Acro Trainer Disabled",
+            44: "Acro Trainer Leveling",
+            45: "Acro Trainer Limited",
+            46: "Gripper Grab",
+            47: "Gripper Release",
+            49: "Parachute Disabled",
+            50: "Parachute Enabled",
+            51: "Parachute Released",
+            52: "Landing Gear Deployed",
+            53: "Landing Gear Retracted",
+            54: "Motors Emergency Stopped",
+            55: "Motors Emergency Stop Cleared",
+            56: "Motors Interlock Disabled",
+            57: "Motors Interlock Enabled",
+            58: "Rotor Runup Complete",
+            59: "Rotor Speed Below Critical",
+            60: "EKF Altitude Reset",
+            61: "Land Cancelled by Pilot",
+            62: "EKF Yaw Reset",
+            63: "Avoidance ADSB Enable",
+            64: "Avoidance ADSB Disable",
+            65: "Avoidance Proximity Enable",
+            66: "Avoidance Proximity Disable",
+            67: "GPS Primary Changed"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Event ID not recognised"
 
 ### Main App Class
 class App():

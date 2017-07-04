@@ -1,6 +1,63 @@
 {
   "annotations": {
-    "list": []
+    "list": [
+      {
+        "datasource": "influxdb",
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgb(96, 166, 255)",
+        "limit": 100,
+        "name": "Mode",
+        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='mode'",
+        "showIn": 0,
+        "tagsColumn": "tags",
+        "textColumn": "text",
+        "titleColumn": "title",
+        "type": "event"
+      },
+      {
+        "datasource": "influxdb",
+        "enable": false,
+        "hide": false,
+        "iconColor": "rgb(101, 255, 96)",
+        "limit": 100,
+        "name": "Message",
+        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='msg'",
+        "showIn": 0,
+        "tagsColumn": "tags",
+        "textColumn": "text",
+        "titleColumn": "title",
+        "type": "event"
+      },
+      {
+        "datasource": "influxdb",
+        "enable": false,
+        "hide": false,
+        "iconColor": "rgb(198, 96, 255)",
+        "limit": 100,
+        "name": "Event",
+        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='ev'",
+        "showIn": 0,
+        "tagsColumn": "tags",
+        "textColumn": "text",
+        "titleColumn": "title",
+        "type": "alert"
+      },
+      {
+        "datasource": "influxdb",
+        "enable": true,
+        "hide": false,
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "limit": 100,
+        "name": "Error",
+        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='err'",
+        "showIn": 0,
+        "tagsColumn": "tags",
+        "textColumn": "text",
+        "titleColumn": "title",
+        "type": "alert"
+      }
+    ]
   },
   "editable": false,
   "gnetId": null,
