@@ -63,7 +63,7 @@
   "gnetId": null,
   "graphTooltip": 2,
   "hideControls": true,
-  "id": 2,
+  "id": 7,
   "links": [],
   "refresh": false,
   "rows": [
@@ -8827,7 +8827,9 @@
   ],
   "schemaVersion": 14,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ardupilot"
+  ],
   "templating": {
     "list": []
   },
@@ -8862,5 +8864,5 @@
   },
   "timezone": "browser",
   "title": "Flight Data Analysis",
-  "version": 10
+  "version": 6
 }

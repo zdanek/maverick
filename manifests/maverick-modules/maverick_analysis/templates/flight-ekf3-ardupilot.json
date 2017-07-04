@@ -5728,7 +5728,10 @@
   ],
   "schemaVersion": 14,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ekf3",
+    "ardupilot"
+  ],
   "templating": {
     "list": []
   },
@@ -5763,5 +5766,5 @@
   },
   "timezone": "browser",
   "title": "Flight EKF3 Analysis",
-  "version": 3
+  "version": 11
 }

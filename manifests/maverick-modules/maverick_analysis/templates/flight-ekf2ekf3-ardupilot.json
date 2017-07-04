@@ -225,7 +225,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Euler Angles",
+          "title": "EKF2 Euler Angles",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -412,7 +412,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Euler Angles",
+          "title": "EKF3 Euler Angles",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -641,7 +641,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Velocities",
+          "title": "EKF2 Velocities",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -870,7 +870,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Velocities",
+          "title": "EKF3 Velocities",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1057,7 +1057,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Position",
+          "title": "EKF2 Position",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1244,7 +1244,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Position",
+          "title": "EKF3 Position",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1426,7 +1426,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Gyro Rate Bias",
+          "title": "EKF2 Gyro Rate Bias",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1608,7 +1608,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Gyro Rate Bias",
+          "title": "EKF3 Gyro Rate Bias",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1726,7 +1726,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Z-Accel Bias",
+          "title": "EKF2 Z-Accel Bias",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1908,7 +1908,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Accel",
+          "title": "EKF3 Accel",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2095,7 +2095,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Gyro Scale Factor",
+          "title": "EKF2 Gyro Scale Factor",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2277,7 +2277,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Gyro Scale Factor",
+          "title": "EKF3 Gyro Scale Factor",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2459,7 +2459,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Earth Magnetic Field",
+          "title": "EKF2 Earth Magnetic Field",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2654,7 +2654,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Earth Magnetic Field",
+          "title": "EKF3 Earth Magnetic Field",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -2836,7 +2836,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Body Fixed Magnetic Field",
+          "title": "EKF2 Body Fixed Magnetic Field",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3018,7 +3018,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Body Fixed Magnetic Field",
+          "title": "EKF3 Body Fixed Magnetic Field",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3212,7 +3212,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 GPS Velocity Innovations",
+          "title": "EKF2 GPS Velocity Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3394,7 +3394,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 GPS Velocity Innovations",
+          "title": "EKF3 GPS Velocity Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3538,7 +3538,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 GPS Position Innovations",
+          "title": "EKF2 GPS Position Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3682,7 +3682,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 GPS Position Innovations",
+          "title": "EKF3 GPS Position Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3788,7 +3788,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Barometer Position Innovations",
+          "title": "EKF2 Barometer Position Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -3894,7 +3894,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Barometer Position Innovations",
+          "title": "EKF3 Barometer Position Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4076,7 +4076,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Magnetometer Innovations",
+          "title": "EKF2 Magnetometer Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4258,7 +4258,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Magnetometer Innovations",
+          "title": "EKF3 Magnetometer Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4364,7 +4364,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Magnetometer Yaw Innovations",
+          "title": "EKF2 Magnetometer Yaw Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4470,7 +4470,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Magnetometer Yaw Innovations",
+          "title": "EKF3 Magnetometer Yaw Innovations",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4703,7 +4703,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Test Ratios",
+          "title": "EKF2 Test Ratios",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4924,7 +4924,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Test Ratios",
+          "title": "EKF3 Test Ratios",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -5030,7 +5030,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU1 Estimated Attitude Error",
+          "title": "EKF2 Estimated Attitude Error",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -5136,7 +5136,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "IMU2 Estimated Attitude Error",
+          "title": "EKF3 Estimated Attitude Error",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -6538,13 +6538,17 @@
   ],
   "schemaVersion": 14,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "ekf2",
+    "ekf3",
+    "ardupilot"
+  ],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "2017-07-03T20:10:54.209Z",
-    "to": "2017-07-03T20:13:44.944Z"
+    "from": "2017-07-03T19:39:14.000Z",
+    "to": "2017-07-03T19:41:54.000Z"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -6572,6 +6576,6 @@
     ]
   },
   "timezone": "browser",
-  "title": "Flight EKF2/EKF3 Analysis",
-  "version": 5
+  "title": "Flight EKF2-EKF3 Analysis",
+  "version": 16
 }
