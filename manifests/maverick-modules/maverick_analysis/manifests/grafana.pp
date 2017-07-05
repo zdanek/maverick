@@ -78,7 +78,7 @@ class maverick_analysis::grafana (
       manage_package_repo   => $manage_package_repo,
       package_source        => $package_source,
       service_name          => "maverick-grafana",
-      version               => "4.3.2",
+      version               => "4.4.1",
     } ->
     # Create maverick org in grafana
     exec { "grafana-maverickorg":
