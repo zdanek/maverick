@@ -79,6 +79,12 @@ class maverick_analysis::grafana (
       package_source        => $package_source,
       service_name          => "maverick-grafana",
       version               => "4.4.1",
+      notify                => Exec["grafana-postdelay"],
+    } ->
+    exec { "grafana-postdelay":
+        refreshonly     => true,
+        command         => "/bin/sleep 10",
+        subscribe       => Service["maverick-grafana"],
     } ->
     # Create maverick org in grafana
     exec { "grafana-maverickorg":
@@ -107,7 +113,7 @@ class maverick_analysis::grafana (
         database          => 'maverick',
         access_mode       => 'proxy',
         is_default        => true,
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'system_dashboard':
         title               => "System Dashboard",
@@ -115,7 +121,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/${_dashboard}"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'flight_dashboard':
         title               => "Flight Data Analysis",
@@ -123,7 +129,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-dashboard-ardupilot.json"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf2_dashboard':
         title               => "Flight EKF2 Analysis",
@@ -131,7 +137,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf3_dashboard':
         title               => "Flight EKF3 Analysis",
@@ -139,7 +145,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf3-ardupilot.json"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf2ekf3_dashboard':
         title               => "Flight EKF2-EKF3 Analysis",
@@ -147,7 +153,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'mavexplorer_mavgraphs_dashboard':
         title               => "MAVExplorer Mavgraphs",
@@ -155,7 +161,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/mavexplorer-mavgraphs.json"),
-        require             => Service["maverick-grafana"],
+        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
     }
 
     if defined(Class["::maverick_security"]) {
