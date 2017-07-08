@@ -3,6 +3,7 @@
 
 - Modules
   - [Overview](/modules/intro)
+  - [Analysis](/modules/analysis)
   - [Base](/modules/base)
   - [Cloud9](/modules/cloud9)
   - [Desktop](/modules/desktop)
