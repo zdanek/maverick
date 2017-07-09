@@ -7,31 +7,31 @@ class maverick_analysis::influx (
     # Install Go
     ensure_packages(["golang"])
 
+    # Install influx repo
+    if $::operatingsystem == "Debian" {
+        $_influx_command = "/bin/bash -c 'source /etc/os-release; test \$VERSION_ID = \"7\" && echo \"deb https://repos.influxdata.com/debian wheezy stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list; test \$VERSION_ID = \"8\" && echo \"deb https://repos.influxdata.com/debian jessie stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+    } elsif $::operatingsystem == "Ubuntu" {
+        $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+    }
+
     # Install influx repo key
     exec { "influx-key":
         command         => "/usr/bin/curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -",
         unless          => "/usr/bin/apt-key list |/bin/egrep '2582\s?E0C5'",
-    }
-    
-    # Install influx repo
-    if $::operatingsystem == "Debian" {
-        exec { "influx-repo":
-            command         => "/bin/bash -c 'source /etc/os-release; test \$VERSION_ID = \"7\" && echo \"deb https://repos.influxdata.com/debian wheezy stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list; test \$VERSION_ID = \"8\" && echo \"deb https://repos.influxdata.com/debian jessie stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'",
-            notify          => Exec["maverick-aptget-update"],
-            creates         => "/etc/apt/sources.list.d/influxdb.list",
-        }
-    } elsif $::operatingsystem == "Ubuntu" {
-        exec { "influx-repo":
-            command         => "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'",
-            notify          => Exec["maverick-aptget-update"],
-            creates         => "/etc/apt/sources.list.d/influxdb.list",
-        }
-    }
-
+    } ->
+    exec { "influx-repo":
+        command         => $_influx_command,
+        creates         => "/etc/apt/sources.list.d/influxdb.list",
+    } ->
+    # Do an apt update if necessary
+    exec { "influx-aptupdate":
+        command     => "/usr/bin/apt update",
+        unless      => "/usr/bin/apt-cache showpkg influxdb |grep influxdata.com"
+    } ->
     # Install influxdb
     package { "influxdb":
         ensure      => latest,
-        require     => [ Exec["influx-repo"], Exec["maverick-aptget-update"] ],
+        require     => [ Exec["influx-repo"], Exec["influx-aptupdate"] ],
     } ->
     file { "/srv/maverick/data/config/analysis/influxdb.conf":
         content     => template("maverick_analysis/influxdb.conf.erb"),
