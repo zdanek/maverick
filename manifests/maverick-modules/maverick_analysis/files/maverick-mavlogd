@@ -225,8 +225,8 @@ class ProcessLog(ProcessEvent):
         errorsrs = self.app.client.query('select * from events where "event_type"=\'err\';', epoch='ms')
         for error in list(errorsrs.get_points()):
             try:
-                fromdt=str(int(error['time']) - 300000)
-                todt=str(int(error['time']) + 300000)
+                fromdt=str(int(error['time']) - 30000)
+                todt=str(int(error['time']) + 30000)
                 link = "<tr><td>"+error['text']+"</td><td>"+datetime.datetime.fromtimestamp(int(error['time'])/1000).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
                 link += "<td>"
                 link += "<a href='/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"

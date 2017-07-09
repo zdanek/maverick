@@ -100,4 +100,7 @@ class base::packages {
     package { "popularity-contest":
         ensure      => absent,
     }
+    
+    # Add ruby-dev, needed for some gems to update/install
+    ensure_packages(["ruby-dev"])
 }

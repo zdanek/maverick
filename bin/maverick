@@ -456,19 +456,38 @@ if [ "z$_rubyshadow" == "z" ]; then
     fi
 fi
 
+# Check that ruby-dev is installed
+_rubydev=$(dpkg -s ruby-dev 2>/dev/null)
+if [ "z$_rubydev" == "z" ]; then
+    echo "Installing ruby-dev for gems"
+    if [ $EUID -eq 0 ]; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-gem >/dev/null 2>&1
+    else
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-gem >/dev/null 2>&1
+    fi
+fi
+
 # Check that puppet is installed through gem
+declare -A GEMVERSIONS=( [puppet]=5.0.0 [hiera]=3.4.0 [facter]=2.4.6 )
 for pkg in "hiera" "facter" "puppet"; do
-    if ! gem list $pkg -i >/dev/null; then
+    if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
         echo "Installing $pkg from gems"
         if [ $EUID -eq 0 ]; then
+            gem uninstall $pkg --force >/dev/null
             if [ -e /usr/bin/$pkg ]; then rm -f /usr/bin/$pkg; fi
-            gem install $pkg --force >/dev/null
+            gem install $pkg --force -v ${GEMVERSIONS[$pkg]} >/dev/null
         else
+            sudo gem uninstall $pkg --force >/dev/null
             if [ -e /usr/bin/$pkg ]; then sudo rm -f /usr/bin/$pkg; fi
-            sudo gem install $pkg --force >/dev/null
+            sudo gem install $pkg --force -v ${GEMVERSIONS[$pkg]} >/dev/null
         fi
     fi
 done
+if [ $EUID -eq 0 ]; then
+    gem cleanup >/dev/null
+else
+    sudo gem cleanup >/dev/null
+fi
 
 # Check that there are no apt/dpkg processes going on
 _aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq)
