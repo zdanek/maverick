@@ -22,6 +22,8 @@ class maverick_web::cloud9 (
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",
         notify		=> Exec["install-cloud9"],
+        revision    => "c5d3f33749439f90b4e3f40d18854f1fde31b13a",
+        depth       => "",
     } ->
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
