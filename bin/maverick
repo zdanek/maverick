@@ -461,9 +461,9 @@ _rubydev=$(dpkg -s ruby-dev 2>/dev/null)
 if [ "z$_rubydev" == "z" ]; then
     echo "Installing ruby-dev for gems"
     if [ $EUID -eq 0 ]; then
-        DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-gem >/dev/null 2>&1
+        DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-dev >/dev/null 2>&1
     else
-        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-gem >/dev/null 2>&1
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install ruby-dev >/dev/null 2>&1
     fi
 fi
 
@@ -471,7 +471,7 @@ fi
 declare -A GEMVERSIONS=( [puppet]=5.0.0 [hiera]=3.4.0 [facter]=2.4.6 )
 for pkg in "hiera" "facter" "puppet"; do
     if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
-        echo "Installing $pkg from gems"
+        echo "Installing $pkg from gems (this can take a while on slower platforms)"
         if [ $EUID -eq 0 ]; then
             gem uninstall $pkg --force >/dev/null
             if [ -e /usr/bin/$pkg ]; then rm -f /usr/bin/$pkg; fi
