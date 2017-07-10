@@ -26,7 +26,7 @@ class maverick_web::cloud9 (
     exec { "install-cloud9":
         command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
-        creates		=> [ "/srv/maverick/software/cloud9/node_modules/.gitignores", "/srv/maverick/.c9/node_modules" ],
+        creates		=> [ "/srv/maverick/software/cloud9/node_modules/.gitignore", "/srv/maverick/.c9/node_modules" ],
         timeout		=> 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
