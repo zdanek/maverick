@@ -22,7 +22,14 @@ class maverick_network::avahi (
     
     # Declare /etc/avahi/hosts and then build up through interface processing, one per interface
     concat { "/etc/avahi/hosts":
-        ensure      => present,
+        ensure          => present,
+        ensure_newline  => true,
+        notify          => Service_wrapper["avahi-daemon"],
+    }
+    
+    concat::fragment { "avahi-hosts-main":
+        target      => "/etc/avahi/hosts",
+        content     => "${::ipaddress} ${::hostname}.local",
     }
 
     # Allow udp port 5353 for mdns requests
