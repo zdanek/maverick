@@ -10,13 +10,13 @@ Depending on the environment and what other classes are included by configuratio
   - [Cloud9](/modules/cloud9)
   - [Desktop](/modules/desktop)
   - [Development](/modules/dev)
-  - [Flight Controller](/modules-fc)
+  - [Flight Controller](/modules/fc)
   - [Hardware](/modules/hardware)
   - [Intelligence](/modules/intelligence)
   - [Mavlink](/modules/mavlink)
-  - [Network](/modules-network)
-  - [ROS](/modules-ros)
-  - [Security](/modules-security)
-  - [Vision](/modules-vision)
+  - [Network](/modules/network)
+  - [ROS](/modules/ros)
+  - [Security](/modules/security)
+  - [Vision](/modules/vision)
 
 !> Note:  Throughout the module documentation, it refers to 'localconf parameters'.  This generally refers to the file ~/data/config/maverick/localconf.json, although there are other ways to set localconf such as local-nodes and sample-nodes.  More information can be [obtained here](/about#local-configuration).

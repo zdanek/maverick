@@ -118,10 +118,16 @@ The example above to setup an AP interface is quite simple.  There are additiona
     "disable_broadcast_ssid": false,
     "apaddress": "192.168.10.1",
     "dhcp_range": "192.168.10.10,192.168.10.50",
-    "dhcp_leasetime": "24h"
+    "dhcp_leasetime": "24h",
+    "forward": "wman0"
 }
 ```
-Note that the parameter to set the IP address for AP mode is 'apaddress' instead of 'ipaddress'.
+Note that the parameter to set the IP address for AP mode is 'apaddress' instead of 'ipaddress'.  
+
+#### Connection Sharing
+'Connection Sharing', aka Masquerading or NAT, is a method of sharing a network connection.  Instead of bridging interfaces, it creates an internal network for clients, forwards the data between interfaces and translates the network addresses to the external network (and back again for the return trip).  This allows a large number of clients to share the single external connection, as well as providing a separate internal network for the clients and better isolation and security.  
+To setup connection sharing, simply set the 'forward' parameter in the AP interface definition to the external interface.  So for example, if there is a *wman0* interface that is connected to the internet through wifi or 3g/4g connection, and the AP interface is *wap0*, within the *wap0* definition set the 'forward' parameter to *wman0*, as shown in the above example.
+![Network Connection Sharing](/media/network-connection-sharing.svg)
 
 ### Monitor / Broadcast Interface
 Support for monitor/injection wifi mode and wifibroadcast software is installed by default in Maverick.  A monitor interface can be defined like:  
