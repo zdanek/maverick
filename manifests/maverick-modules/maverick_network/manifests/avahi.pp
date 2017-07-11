@@ -29,7 +29,7 @@ class maverick_network::avahi (
     
     concat::fragment { "avahi-hosts-main":
         target      => "/etc/avahi/hosts",
-        content     => "${::ipaddress} ${::hostname}.local",
+        content     => "# Avahi hosts is controlled by Maverick/Puppet, any modifications will be overridden on the next configure run",
     }
 
     # Allow udp port 5353 for mdns requests
