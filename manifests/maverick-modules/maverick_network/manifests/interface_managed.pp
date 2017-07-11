@@ -94,6 +94,7 @@ define maverick_network::interface_managed (
             method          => "static",
             ipaddress       => $ipaddress,
             netmask         => $netmask,
+            template        => "maverick_network/interface_fragment_wireless.erb",
             options         => {
                 wireless_mode       => "master",
             }

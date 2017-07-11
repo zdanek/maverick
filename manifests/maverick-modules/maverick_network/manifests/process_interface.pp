@@ -16,6 +16,11 @@ define maverick_network::process_interface (
     $dhcp_range = "192.168.10.10,192.168.10.50",
     $dhcp_leasetime = "24h",
 ) {
+	# Display a warning to reboot if networking config has chagned significantly
+    if getvar("::netinfo_${name}_macaddress") != $macaddress {
+    	crit("WARNING: Interface config has changed significantly, PLEASE REBOOT TO ACTIVATE")
+    }
+	
     # If the mac address is specified, then set the interface name statically in udev
 	if $macaddress {
     	concat::fragment { "interface-customname-${name}":

@@ -196,6 +196,7 @@ if __name__ == '__main__':
     if data:
         print "netinfo_etchostname="+str(data[0].rstrip())
     
+    print "netinfo_interfaces="+",".join(ifs)
     for _if in ifs:
         _netinfo = Netinfo(_if)
         _netinfo.getinfo()
