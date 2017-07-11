@@ -10,6 +10,11 @@ class maverick_network::dnsmasq (
     file { "/etc/dnsmasq.d/README":
         ensure      => present,
         content     => template("maverick_network/dnsmasq-README")
+    } ->
+    # Add a fix in the for systemd dependency, see https://github.com/fnoop/maverick/issues/521
+    file { "/lib/systemd/system/dnsmasq.service":
+        ensure      => present,
+        source      => "puppet:///modules/maverick_network/dnsmasq.service.fixed",
     }
     
     ::dnsmasq::conf { "dnsmasq-basic":
