@@ -56,20 +56,27 @@ define maverick_network::interface_ap (
     if $forward != false {
         base::sysctl::conf {
             "net.ipv4.ip_forward":      value => 1;
+            "net.ipv4.ip_dynaddr":      value => 1;
         }
         if defined(Class["::maverick_security"]) {
-            firewall { 'ap-masquerade':
-              chain     => 'POSTROUTING',
-              jump      => 'MASQUERADE',
-              proto     => 'all',
-              outiface  => $forward,
-              table     => 'nat',
+            firewall { "201 masquerade traffic from AP":
+                chain       => 'POSTROUTING',
+                jump        => 'MASQUERADE',
+                proto       => 'all',
+                outiface    => $forward,
+                table       => 'nat',
             }
-            firewall { 'ap-forward':
-              chain     => 'FORWARD',
-              jump      => 'ACCEPT',
-              proto     => 'all',
-              iface     => $name,
+            firewall { '200 forward traffic through AP':
+                chain       => 'FORWARD',
+                action      => 'accept',
+                proto       => 'all',
+                iniface     => $name,
+                outiface    => $forward,
+            }
+            maverick_security::firewall::firerule { "203 allow dns traffic from clients":
+                ports       => [53],
+                ips         => lookup("firewall_ips"),
+                proto       => "udp",
             }
         }
     }

@@ -15,6 +15,7 @@ define maverick_network::process_interface (
     $disable_broadcast_ssid = false,
     $dhcp_range = "192.168.10.10,192.168.10.50",
     $dhcp_leasetime = "24h",
+    $forward = false,
 ) {
 	# Display a warning to reboot if networking config has chagned significantly
     if (!(empty($macaddress)) and getvar("::netinfo_${name}_macaddress") != $macaddress) or (!($name in $::netinfo_interfaces) and $name != "eth0" and $name != "wlan0") {
@@ -65,6 +66,7 @@ define maverick_network::process_interface (
             disable_broadcast_ssid => $disable_broadcast_ssid,
             dhcp_range  => $dhcp_range,
             dhcp_leasetime => $dhcp_leasetime,
+            forward		=> $forward,
 	    }
 	}
 	# If not defined as monitor mode, ensure monitor disabled for this interface
