@@ -65,13 +65,13 @@ class maverick_analysis::influx (
         service_wrapper { "maverick-influxd":
             ensure      => running,
             enable      => true,
-            require     => Package["collectd-core"],
+            require     => [ Service_wrapper["influxdb"], Package["collectd-core"] ],
         }
     } else {
         service_wrapper { "maverick-influxd":
             ensure      => stopped,
             enable      => false,
-            require     => Package["collectd-core"],
+            require     => [ Service_wrapper["influxdb"], Package["collectd-core"] ],
         }
     }
     
