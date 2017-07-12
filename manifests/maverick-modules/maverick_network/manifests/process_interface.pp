@@ -6,6 +6,7 @@ define maverick_network::process_interface (
     $ipaddress = undef,
     $apaddress = "192.168.10.1",
     $gateway = undef,
+    $netmask = undef,
     $nameservers = undef,
     $ssid = undef,
     $psk = undef,
@@ -37,6 +38,7 @@ define maverick_network::process_interface (
 	        macaddress  => $macaddress,
 	        ipaddress   => $ipaddress,
 	        gateway     => $gateway,
+	        netmask		=> $netmask,
 	        nameservers => $nameservers,
 	        ssid        => $ssid,
 	        psk         => $psk,
@@ -53,6 +55,7 @@ define maverick_network::process_interface (
 	        macaddress  => $macaddress,
 	        ipaddress   => $apaddress,
 	        gateway     => $gateway,
+	        netmask		=> $netmask,
 	        nameservers => $nameservers,
 	    }
 	    # Then setup the AP

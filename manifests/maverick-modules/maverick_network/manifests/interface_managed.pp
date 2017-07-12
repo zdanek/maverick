@@ -4,6 +4,7 @@ define maverick_network::interface_managed (
     $ipaddress = undef,
     $macaddress = undef,
     $gateway = undef,
+    $netmask = undef,
     $nameservers = undef,
     $ssid = undef,
     $psk = undef,
