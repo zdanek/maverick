@@ -423,6 +423,13 @@ if [ "$CONFIGURE" != "true" ]; then
     usage
 fi
 
+# Check that there are no apt/dpkg processes going on
+_aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq)
+if  [ "z${_aptdpkg}" != "z" ]; then
+    echo "${red}Error: There are active apt/dpkg processes.  This will interfere with Maverick, please ensure there are no apt/dpkg processes before running Maverick.${reset}"
+    exit 1
+fi
+
 # Check that puppet, hiera and facter are not installed through system packages
 for pkg in "puppet" "hiera" "facter" "ruby-rgen"; do
     if dpkg --get-selections | grep "^$pkg[[:space:]]*install$" >/dev/null; then
@@ -489,13 +496,6 @@ else
     sudo gem cleanup >/dev/null
 fi
 
-# Check that there are no apt/dpkg processes going on
-_aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq)
-if  [ "z${_aptdpkg}" != "z" ]; then
-    echo "${red}Error: There are active apt/dpkg processes.  This will interfere with Maverick, please ensure there are no apt/dpkg processes before running Maverick.${reset}"
-    exit 1
-fi
-
 # Fix for Ubuntu 14.10 and Puppet 4.10.1: https://github.com/fnoop/maverick/issues/466
 # Long-term fix already in Puppet 4.10.2
 _ubuntu=$(/bin/grep -e 'DISTRIB_RELEASE\=14\.' /etc/lsb-release 2>/dev/null)
@@ -536,6 +536,17 @@ if ! $pythoninstalled; then
     echo 'Error: Python not installed and could not be installed'
     echo
     exit 1
+fi
+
+# Check that openssh-server is installed
+_pkg=$(dpkg -s openssh-server 2>/dev/null)
+if [ "z$_pkg" == "z" ]; then
+    echo "Installing openssh-server"
+    if [ $EUID -eq 0 ]; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server >/dev/null 2>&1
+    else
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install openssh-server >/dev/null 2>&1
+    fi
 fi
 
 # If git is installed at this point, then force git to ignore any changes to localconf.json
