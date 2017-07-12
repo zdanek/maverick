@@ -1,5 +1,12 @@
 # Maverick Changelog
 
+## [2017-07-12] 1.1.1 'Bugstomp' Release
+ - Lots of network fixes and improvements - in particular support for 'Connection Sharing'
+ - Lots of fixes, improvements and add docs to mavlink data analysis/graphing tool, new dashboards and indexes
+ - Refactor puppet installation to gems, locked to version 5.0.0
+ - Various bugfixes and doc updates
+ - Update gstreamer to 1.12.1 
+
 ## [2017-06-26] 1.1.0 'Ooh pretty pictures' Release
  - Mavlink data analysis/graphing tool
  - System metrics collection and analysis
