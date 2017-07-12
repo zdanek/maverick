@@ -51,6 +51,10 @@ class maverick_analysis::influx (
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
+    exec { "influxd-systemd-activate":
+        command     => "/bin/systemctl daemon-reload",
+        unless      => "/bin/systemctl list-units |grep maverick-influxd",
+    } ->
     # Ensure system influxd instance is stopped
     service_wrapper { "influxdb":
         ensure      => stopped,
@@ -61,11 +65,13 @@ class maverick_analysis::influx (
         service_wrapper { "maverick-influxd":
             ensure      => running,
             enable      => true,
+            require     => Package["collectd-core"],
         }
     } else {
         service_wrapper { "maverick-influxd":
             ensure      => stopped,
             enable      => false,
+            require     => Package["collectd-core"],
         }
     }
     
@@ -83,5 +89,12 @@ class maverick_analysis::influx (
         version         => "4.1.1",
         pkgname         => "influxdb",
     }
-    
+
+    # Configure collect to send metrics to influxdb
+    collectd::plugin::network::server{'localhost':
+        port            => 25826,
+        securitylevel   => '',
+        require         => Service_wrapper["maverick-influxd"],
+    }
+
 }

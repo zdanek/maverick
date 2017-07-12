@@ -58,10 +58,6 @@ class maverick_analysis::grafana (
         source      => "puppet:///modules/maverick_analysis/grafana.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service_wrapper { "grafana-server":
-        ensure      => "stopped",
-        enable      => false,
-    } ->
     class { "::grafana": 
         cfg_location        => "/srv/maverick/data/config/analysis/grafana.ini",
         cfg => {
@@ -80,6 +76,10 @@ class maverick_analysis::grafana (
       service_name          => "maverick-grafana",
       version               => "4.4.1",
       notify                => Exec["grafana-postdelay"],
+    } ->
+    service_wrapper { "grafana-server":
+        ensure      => "stopped",
+        enable      => false,
     } ->
     exec { "grafana-postdelay":
         refreshonly     => true,

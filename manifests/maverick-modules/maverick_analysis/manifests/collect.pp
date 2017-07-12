@@ -15,7 +15,7 @@ class maverick_analysis::collect (
         purge_config    => true,
         minimum_version => '5.4',
         manage_repo     => $manage_repo,
-        require         => Service_wrapper["maverick-influxd"],
+        # manage_service  => false,
     }
     
     ### Collectd Plugins
@@ -81,12 +81,6 @@ class maverick_analysis::collect (
             group => mav,
             exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/joule-power.sh"],
         }
-    }
-    
-    # Configure collect to send metrics to influxdb
-    collectd::plugin::network::server{'localhost':
-        port => 25826,
-        securitylevel   => '',
     }
 
 }
