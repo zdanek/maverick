@@ -97,7 +97,9 @@ rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
 
 echo "Maverick preparation complete"
-read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
-echo "Shutting down cleanly"
+#read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
+#echo "Shutting down cleanly"
 sudo sync
-sudo systemctl poweroff
+#sudo systemctl poweroff
+echo "Please check the system is prepared as expected for imaging, then shutdown."
+echo
