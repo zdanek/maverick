@@ -35,10 +35,15 @@ class maverick_hardware::peripheral::caspa (
         cwd         => "/srv/maverick/var/build/caspa/gtest",
         creates     => "/usr/local/lib/libgtest_main.a",
     } ->
+    exec { "expand-camera-libs":
+        command     => "/usr/bin/find /srv/maverick/var/build/caspa/intel-camera-adaptation -name '*.gz' -exec tar xf {} \\; && cp -R etc lib usr /",
+        cwd         => "/srv/maverick/var/build/caspa/intel-camera-adaptation",
+        creates     => "/usr/lib/libia_camera.so.0.0.0",
+    } ->
     exec { "compile-camera-dev-support":
         command     => "/usr/bin/autoreconf -i && ./configure && make && make install",
         cwd         => "/srv/maverick/var/build/caspa/intel-camera-dev-support",
-        creates     => "/usr/local/lib/libicamera_adapter.so.0.0.0",
+        creates     => "/usr/local/lib/libcamera_metadata.so.0.0.0",
     } ->
     exec { "compile-camera-dev-support-adapter":
         command     => "/usr/bin/autoreconf -i && ./configure && make && make install",
@@ -46,6 +51,7 @@ class maverick_hardware::peripheral::caspa (
         creates     => "/usr/local/lib/libicamera_adapter.so.0",
     } ->
     exec { "compile-icamerasrc":
+        environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig"],
         command     => "/usr/bin/autoreconf -i && /srv/maverick/var/build/caspa/icamerasrc/configure --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer --with-headercheck=no --with-libcheck=no --with-cameralib=licamera_adapter --with-androidstubs=yes && make && make install",
         cwd         => "/srv/maverick/var/build/caspa/icamerasrc",
         creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgsticamerasrc.so",
