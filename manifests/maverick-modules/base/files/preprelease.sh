@@ -25,7 +25,7 @@ rm -f /var/log/apt/*
 rm -f -rf /var/log/installer
 rm -f /var/log/faillog /var/log/lastlog
 rm -f /var/log/lightdm/*
-rm -f /var/log/syslog* /var/log/dmesg
+rm -f /var/log/syslog* /var/log/dmesg /var/log/debug* /var/log/messages*
 rm -f /var/log/unattended-upgrades/*
 rm -f /var/log/btmp* /var/log/wtmp*
 
@@ -79,6 +79,13 @@ fi
 
 rm -f /etc/network/interfaces
 
+# Clean up maverick data
+find /srv/maverick/data/logs -type f -delete
+find /srv/maverick/data/mavlink -type f -delete
+find /srv/maverick/data/vision -type f -delete
+find /srv/maverick/data/analysis -type f -delete
+rm -rf /srv/maverick/var/lib/influxdb
+
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
 
@@ -87,7 +94,7 @@ echo "Running maverick to regenerate any removed files or config"
 maverick configure
 systemctl stop maverick-*
 
-# Clean up maverick data
+# Final clean up of var data
 find /srv/maverick/data/logs -type f -delete
 find /srv/maverick/data/mavlink -type f -delete
 find /srv/maverick/data/vision -type f -delete
@@ -95,6 +102,8 @@ find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -
 rm -f /srv/maverick/var/log/vision_landing/last.log
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
+find /run/log/journal -type f -delete
+systemctl restart systemd-journald
 
 echo "Maverick preparation complete"
 #read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
