@@ -1,6 +1,13 @@
 #!/bin/bash
 
 # Simple script to setup wifi details for maverick default install from images
+
+isvanilla=$(grep averylonggeneratedkey /etc/network/interfaces)
+if [ "x$isvanilla" == "x" ]; then
+    echo "Error: Network settings have already been modified and cannot be updated by wifi-setup"
+    exit 1
+fi
+
 read -p "Enter Wifi SSID: " ssid
 read -s -p "Enter Wifi Passphrase: " passphrase
 echo
@@ -24,4 +31,5 @@ nohup sudo systemctl restart networking >/dev/null 2>&1
 
 echo
 echo "Done"
+echo "Note: You may need to reboot to activate the new network settings"
 echo
