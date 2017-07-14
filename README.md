@@ -10,11 +10,11 @@ There are two ways to get started with Maverick:
 
 Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All models)](http://46.101.21.208/maverick-1.0.6-raspberrypi.img.xz)
-- [Odroid XU3/XU4](http://46.101.21.208/maverick-1.0.4-odroidxu4.img.xz)
-- [Intel Joule (ISO)](http://46.101.21.208/maverick-1.0.6-joule.iso)
-- [Intel Joule (tar)](http://46.101.21.208/maverick-1.0.6-joule.tar)
-- [Ubuntu Dev VM (ova)](http://46.101.21.208/maverick-1.0.6-ubuntuvm.ova)
+- [Raspberry Pi (All models)](http://www.maverick.one/downloads/maverick-1.1.1-raspberry.img.xz)
+- [Intel Joule (ISO)](http://www.maverick.one/downloads/maverick-1.1.1-joule.iso)
+- [Intel Joule (tar)](http://www.maverick.one/downloads/maverick-1.1.1-joule.tar)
+- [Ubuntu Dev VM (ova)](http://www.maverick.one/downloads/maverick-1.1.1-ubuntuvm.ova)
+- [Odroid XU3/XU4](http://www.maverick.one/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
 These initial images require an 8Gb or larger SD card.
 
@@ -41,11 +41,13 @@ If the installation and network setup was successful, you should now be able to 
 Joule: `ssh maverick-joule.local`  
 Raspberry: `ssh maverick-raspberry.local`  
 Odroid: `ssh maverick-odroidxu4.local`  
+Ubuntu VM: `ssh maverick-ubuntuvm.local`  
 
 You can also connect to the Web IDE from any web browser:  
 Joule: http://maverick-joule.local:6789/  
 Raspberry: http://maverick-raspberry.local:6789/  
 Odroid: http://maverick-odroidxu4.local:6789/  
+Ubuntu VM: http://maverick-ubuntuvm.local:6789/  
 
 The Web IDE has a browser based SSH client which is open at the bottom of the window by default and logged in to the mav user, and is a very convenient tool for quick command line access.
 
