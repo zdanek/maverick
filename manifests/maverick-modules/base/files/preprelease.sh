@@ -58,7 +58,7 @@ rm -rf /var/lib/dhcpcd5/*
 # Otherwise odd behaviour will happen.
 rm -f /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
-rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp /srv/maverick/.c9/node /srv/maverick/.c9/node_modules /srv/maverick/.c9/lib
+rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
 rm -rf /srv/maverick/.[Xx]*
