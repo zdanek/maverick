@@ -31,6 +31,10 @@ class Baseos(object):
                 self.data['fqdn'] = val
             elif key == "architecture":
                 self.data['arch'] = val
+            elif key == "is_virtual":
+                self.data['is_virtual'] = val
+            elif key == "virtual":
+                self.data['virtual'] = val
 
     def runall(self):
         self.facter()

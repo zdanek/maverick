@@ -78,7 +78,12 @@ elif beagle.data['present'] == 'yes':
 elif joule.data['present'] == 'yes':
     print twocols('Vendor', '\t\t\tIntel')
     print twocols('Model', '\t\t\t'+joule.data['model'])
-    
+
+elif baseos.data['is_virtual'] == "true":
+    print twocols('System Type','\t\tVirtual Machine (VM)')
+    if baseos.data['virtual']:
+        print twocols('VM Hypervisor', '\t\t'+baseos.data['virtual'])
+
 else:
     print ctrls['bg_red']+ctrls['bold']+ctrls['fg_grey']+ 'Hardware platform not recognised' +ctrls['reset']
 

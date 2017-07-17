@@ -8,7 +8,10 @@ class base::console {
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service_start { "maverick-motd": }
+    service_wrapper { "maverick-motd": 
+        enable      => true,
+        ensure      => running,
+    }
 
     # Leave the ubuntu motd header in place as it usually contains the OS+kernel version, but remove the help stuff
     file { "/etc/update-motd.d/10-help-text":
