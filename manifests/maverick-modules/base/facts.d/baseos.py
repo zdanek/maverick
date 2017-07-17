@@ -35,6 +35,10 @@ class Baseos(object):
                 self.data['is_virtual'] = val
             elif key == "virtual":
                 self.data['virtual'] = val
+            elif key == "processorcount":
+                self.data['processorcount'] = val
+            elif key == "memorysize":
+                self.data['memorysize'] = val
 
     def runall(self):
         self.facter()
