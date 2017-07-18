@@ -36,7 +36,7 @@ define wget::fetch (
   # The strict_variables setting aborts compilation referencing unset variables.
   $strict = defined('$::settings::strict_variables') and $::settings::strict_variables
 
-  if $strict and !defined('$schedule') {
+  if !defined('$schedule') {
     $schedule = undef
   }
 
@@ -54,12 +54,12 @@ define wget::fetch (
     }
   }
 
-  if $strict and !defined('$::http_proxy') {
+  if !defined('$::http_proxy') {
     $http_proxy = undef
   } else {
     $http_proxy = $::http_proxy
   }
-  if $strict and !defined('$::https_proxy') {
+  if !defined('$::https_proxy') {
     $https_proxy = undef
   } else {
     $https_proxy = $::https_proxy
