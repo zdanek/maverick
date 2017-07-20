@@ -43,6 +43,13 @@ class maverick_dev::sitl (
         dest        => "/srv/maverick/code/sitl/dronekit-python",
     }
     
+    install_python_module { 'pip-dronekit-sitl':
+        pkgname     => 'dronekit-sitl',
+        ensure      => present,
+        timeout     => 0,
+    }
+
+    /*
     # Install dronekit into sitl
     install_python_module { 'pip-dronekit-sitl':
         pkgname     => 'dronekit',
@@ -69,6 +76,7 @@ class maverick_dev::sitl (
         require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
         env         => "sitl",
     }
+    */
         
     # This is needed for sitl run
     file { "/var/APM":
@@ -184,13 +192,13 @@ class maverick_dev::sitl (
         service_wrapper { "maverick-sitl":
             ensure      => running,
             enable      => true,
-            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
     } else {
         service_wrapper { "maverick-sitl":
             ensure      => stopped,
             enable      => false,
-            require     => [ Install_python_module['pip-mavproxy-sitl'], Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
     }
 

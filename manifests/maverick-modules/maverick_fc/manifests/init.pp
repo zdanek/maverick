@@ -44,7 +44,7 @@ class maverick_fc (
         gitsource   => $fc_dronekit_source,
         dest        => "/srv/maverick/code/fc/dronekit-python",
     }
-    
+    /*
     install_python_module { 'pip-dronekit-fc':
         pkgname     => 'dronekit',
         virtualenv  => '/srv/maverick/.virtualenvs/fc',
@@ -62,7 +62,7 @@ class maverick_fc (
         require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
         env         => "fc",
     }
-        
+    */        
     file { "/srv/maverick/var/log/mavlink-fc":
         ensure      => directory,
         owner       => "mav",
