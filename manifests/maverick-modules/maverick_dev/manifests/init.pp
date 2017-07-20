@@ -1,9 +1,12 @@
 class maverick_dev (
     $sitl = true,
+    $ardupilot = true,
 ) {
    
-    class { "maverick_dev::ardupilot": 
-        sitl    => $sitl,
+    if $ardupilot {
+        class { "maverick_dev::ardupilot": 
+            sitl    => $sitl,
+        }
     }
     
     if $sitl {
