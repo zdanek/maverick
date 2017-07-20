@@ -26,17 +26,17 @@ class maverick_intelligence::tensorflow (
             ensure      => present,
         }
     } elsif $_install_type == "source" {
-        ensure_packages(["openjdk-8-jdk", "zlib1g-dev", "swig"])
-        # Set variables per platform, tensorbuild is quite specific per platform due to the numebr of kludges necessary
-        if $architecture == "amd64" {
-            $java_home = "/usr/lib/jvm/java-8-openjdk-amd64"
-        } elsif $architecture == "armv7l" or $architecture == "armv6l" {
-            $java_home = "/usr/lib/jvm/java-8-openjdk-armhf"
-        } else {
-            $java_home = ""
-        }
-    
         if ! ("install_flag_tensorflow" in $installflags) and ! empty($java_home) {
+            ensure_packages(["openjdk-8-jdk", "zlib1g-dev", "swig"])
+            # Set variables per platform, tensorbuild is quite specific per platform due to the numebr of kludges necessary
+            if $architecture == "amd64" {
+                $java_home = "/usr/lib/jvm/java-8-openjdk-amd64"
+            } elsif $architecture == "armv7l" or $architecture == "armv6l" {
+                $java_home = "/usr/lib/jvm/java-8-openjdk-armhf"
+            } else {
+                $java_home = ""
+            }
+    
             file { "/srv/maverick/var/build/tensorflow":
                 ensure      => directory,
                 owner       => "mav",
