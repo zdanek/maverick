@@ -226,6 +226,8 @@ class Streamer(object):
         if Gst.ElementFactory.find("omxh264enc"):
             logger.info("Raspberry hardware encoder detected, using omxh264enc as h264 encoder")
             self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
+            self.h264enc.set_property('control-rate', 'variable')
+            self.h264enc.set_property('target-bitrate', 2000000)
         # Detect Odroid/MFC
         try:
             odroid264encoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
