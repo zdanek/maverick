@@ -265,5 +265,12 @@ class maverick_network (
         }
 		create_resources("maverick_network::process_interface", $interfaces)
 	}
+	
+	if ! defined(Class["maverick_network::interface_ap"]) {
+	    service_wrapper { "hostapd":
+	        ensure          => stopped,
+	        enable          => false,
+	    }
+	}
     
 }
