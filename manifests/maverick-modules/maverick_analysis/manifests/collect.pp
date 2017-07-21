@@ -9,14 +9,27 @@ class maverick_analysis::collect (
         $manage_repo = false
     }
 
+    file { "/etc/systemd/system/maverick-collectd.service":
+        ensure          => present,
+        owner           => "root",
+        group           => "root",
+        mode            => "644",
+        source          => "puppet:///modules/maverick_analysis/maverick-collectd.service",
+    } ->
     class { "collectd":
         purge           => true,
         recurse         => true,
         purge_config    => true,
         minimum_version => '5.4',
         manage_repo     => $manage_repo,
-        # manage_service  => false,
+        manage_service  => true,
+        service_name   => 'maverick-collectd',
+    } ->
+    service_wrapper { "collectd":
+        ensure          => stopped,
+        enable          => false,
     }
+    
     
     ### Collectd Plugins
     collectd::plugin::aggregation::aggregator {'cpu':

@@ -6,7 +6,7 @@ class collectd::service (
 ) {
 
   if $manage_service {
-    service { 'collectd':
+    service { $service_name:
       ensure => $service_ensure,
       name   => $service_name,
       enable => $service_enable,
