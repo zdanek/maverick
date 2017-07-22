@@ -91,7 +91,7 @@ class maverick_vision::gstreamer (
         if ! ("install_flag_gstreamer" in $installflags) {
 
             # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm", "libxext-dev"])
+            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", "python-gobject", "python-gobject-dev", "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm", "libxext-dev"])
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
@@ -151,10 +151,10 @@ class maverick_vision::gstreamer (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/core/autogen.sh --disable-gtk-doc --disable-docbook --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
+                command     => "/srv/maverick/var/build/gstreamer/core/autogen.sh --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/core",
                 creates     => "/srv/maverick/software/gstreamer/bin/gst-launch-1.0",
-                require     => [ Package["libglib2.0-dev", "bison", "flex"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ] # ensure we have all the dependencies satisfied
+                require     => [ Package["libglib2.0-dev", "bison", "flex", "gettext"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ] # ensure we have all the dependencies satisfied
             }->
             exec { "gstreamer_gst_plugins_base":
                 user        => "mav",
