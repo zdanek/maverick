@@ -44,6 +44,7 @@ class maverick_analysis::collect (
             group           => "root",
             mode            => "644",
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
         }
     } else {
         $manage_package = true
@@ -53,6 +54,7 @@ class maverick_analysis::collect (
             group           => "root",
             mode            => "644",
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-dpkg.service",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
         }
     }
     
