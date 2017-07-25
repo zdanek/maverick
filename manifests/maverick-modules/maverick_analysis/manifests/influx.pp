@@ -65,13 +65,13 @@ class maverick_analysis::influx (
         service_wrapper { "maverick-influxd":
             ensure      => running,
             enable      => true,
-            require     => [ Service_wrapper["influxdb"], Package["collectd-core"] ],
+            require     => [ Service_wrapper["influxdb"], Class["maverick_analysis::collect"] ],
         }
     } else {
         service_wrapper { "maverick-influxd":
             ensure      => stopped,
             enable      => false,
-            require     => [ Service_wrapper["influxdb"], Package["collectd-core"] ],
+            require     => [ Service_wrapper["influxdb"], Class["maverick_analysis::collect"] ],
         }
     }
     
@@ -93,7 +93,7 @@ class maverick_analysis::influx (
     # Configure collect to send metrics to influxdb
     collectd::plugin::network::server{'localhost':
         port            => 25826,
-        securitylevel   => '',
+        securitylevel   => "None",
         require         => Service_wrapper["maverick-influxd"],
     }
 

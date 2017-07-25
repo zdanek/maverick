@@ -1,6 +1,60 @@
 class maverick_analysis::collect (
     $active = true,
+    $install_type = "source",
+    $git_source = "https://github.com/collectd/collectd.git",
+    $git_revision = "collectd-5.7.2",
 ) {
+    
+    # Install from source
+    if $install_type == "source" {
+        $manage_package = false
+        ensure_packages(["flex", "bison"])
+        oncevcsrepo { "git-collectd":
+            gitsource   => $git_source,
+            revision    => $git_revision,
+            dest        => "/srv/maverick/var/build/collectd",
+        } ->
+        exec { "collectd-build.sh":
+            user        => "mav",
+            command     => "/srv/maverick/var/build/collectd/build.sh",
+            cwd         => "/srv/maverick/var/build/collectd",
+            creates     => "/srv/maverick/var/build/collectd/configure",
+        } ->
+        exec { "collectd-confgure":
+            user        => "mav",
+            command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
+            cwd         => "/srv/maverick/var/build/collectd",
+            creates     => "/srv/maverick/var/build/collectd/Makefile",
+        } ->
+        exec { "collectd-make":
+            user        => "mav",
+            command     => "/usr/bin/make",
+            cwd         => "/srv/maverick/var/build/collectd",
+            creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
+        } ->
+        exec { "collectd-install":
+            user        => "mav",
+            command     => "/usr/bin/make install",
+            cwd         => "/srv/maverick/var/build/collectd",
+            creates     => "/srv/maverick/software/collectd/sbin/collectd",
+        }
+        file { "/etc/systemd/system/maverick-collectd.service":
+            ensure          => present,
+            owner           => "root",
+            group           => "root",
+            mode            => "644",
+            source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
+        }
+    } else {
+        $manage_package = true
+        file { "/etc/systemd/system/maverick-collectd.service":
+            ensure          => present,
+            owner           => "root",
+            group           => "root",
+            mode            => "644",
+            source          => "puppet:///modules/maverick_analysis/maverick-collectd-dpkg.service",
+        }
+    }
     
     # Collectd repos only provide i386/amd64 packages
     if $::architecture == "i386" or $::architecture == "amd64" {
@@ -9,21 +63,16 @@ class maverick_analysis::collect (
         $manage_repo = false
     }
 
-    file { "/etc/systemd/system/maverick-collectd.service":
-        ensure          => present,
-        owner           => "root",
-        group           => "root",
-        mode            => "644",
-        source          => "puppet:///modules/maverick_analysis/maverick-collectd.service",
-    } ->
     class { "collectd":
         purge           => true,
         recurse         => true,
         purge_config    => true,
-        minimum_version => '5.4',
+        minimum_version => '5.5',
+        manage_package  => $manage_package,
         manage_repo     => $manage_repo,
         manage_service  => true,
         service_name   => 'maverick-collectd',
+        require         => File["/etc/systemd/system/maverick-collectd.service"],
     } ->
     service_wrapper { "collectd":
         ensure          => stopped,
