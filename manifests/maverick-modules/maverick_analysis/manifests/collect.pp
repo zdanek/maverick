@@ -8,7 +8,7 @@ class maverick_analysis::collect (
     # Install from source
     if $install_type == "source" {
         $manage_package = false
-        ensure_packages(["flex", "bison"])
+        ensure_packages(["flex", "bison", "libopenipmi-dev", "libsensors4-dev", "libsnmp-dev"])
         oncevcsrepo { "git-collectd":
             gitsource   => $git_source,
             revision    => $git_revision,
@@ -20,7 +20,7 @@ class maverick_analysis::collect (
             cwd         => "/srv/maverick/var/build/collectd",
             creates     => "/srv/maverick/var/build/collectd/configure",
         } ->
-        exec { "collectd-confgure":
+        exec { "collectd-configure":
             user        => "mav",
             command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
             cwd         => "/srv/maverick/var/build/collectd",
@@ -46,6 +46,9 @@ class maverick_analysis::collect (
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
             notify          => Exec["maverick-systemctl-daemon-reload"],
         }
+        $collectd_dir = '/srv/maverick/software/collectd/etc'
+        $config_file = "${collectd_dir}/collectd.conf"
+        $plugin_conf_dir = "${collectd_dir}/conf.d"
     } else {
         $manage_package = true
         file { "/etc/systemd/system/maverick-collectd.service":
@@ -56,6 +59,9 @@ class maverick_analysis::collect (
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-dpkg.service",
             notify          => Exec["maverick-systemctl-daemon-reload"],
         }
+        $collectd_dir = '/etc/collectd'
+        $config_file = "${collectd_dir}/collectd.conf"
+        $plugin_conf_dir = "${collectd_dir}/conf.d"
     }
     
     # Collectd repos only provide i386/amd64 packages
@@ -66,6 +72,8 @@ class maverick_analysis::collect (
     }
 
     class { "collectd":
+        config_file     => $config_file,
+        plugin_conf_dir => $plugin_conf_dir,
         purge           => true,
         recurse         => true,
         purge_config    => true,
