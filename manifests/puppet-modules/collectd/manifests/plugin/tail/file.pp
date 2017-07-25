@@ -23,6 +23,6 @@ define collectd::plugin::tail::file (
     owner   => 'root',
     group   => $collectd::root_group,
     content => template('collectd/tail-file.conf.erb'),
-    notify  => Service['collectd'],
+    notify  => Service['collectd_service'],
   }
 }

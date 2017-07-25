@@ -20,6 +20,6 @@ define collectd::plugin::network::listener (
     owner   => 'root',
     group   => $collectd::root_group,
     content => template('collectd/plugin/network/listener.conf.erb'),
-    notify  => Service['collectd'],
+    notify  => Service['collectd_service'],
   }
 }

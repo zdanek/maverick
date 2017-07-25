@@ -27,7 +27,7 @@ define collectd::plugin::python::module (
       mode    => '0640',
       source  => $script_source,
       require => File[$module_dir],
-      notify  => Service['collectd'],
+      notify  => Service['collectd_service'],
     }
   }
 

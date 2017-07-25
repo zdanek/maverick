@@ -77,7 +77,7 @@ class collectd::plugin::python (
     mode           => '0640',
     owner          => 'root',
     group          => $collectd::root_group,
-    notify         => Service['collectd'],
+    notify         => Service['collectd_service'],
     ensure_newline => true,
     require        => File['collectd.d'],
   }

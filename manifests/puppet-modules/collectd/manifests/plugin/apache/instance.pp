@@ -21,6 +21,6 @@ define collectd::plugin::apache::instance (
     group   => $root_group,
     mode    => '0640',
     content => template('collectd/plugin/apache/instance.conf.erb'),
-    notify  => Service['collectd'],
+    notify  => Service['collectd_service'],
   }
 }

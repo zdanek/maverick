@@ -115,7 +115,7 @@ class collectd::plugin::rabbitmq (
     group   => $::collectd::root_group,
     mode    => '0640',
     content => template('collectd/plugin/rabbitmq.conf.erb'),
-    notify  => Service['collectd'],
+    notify  => Service['collectd_service'],
   }
 
   collectd::plugin::python::module { 'collectd_rabbitmq.collectd_plugin':
