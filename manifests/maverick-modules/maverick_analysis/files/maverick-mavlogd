@@ -113,12 +113,12 @@ class ProcessLog(ProcessEvent):
                         json_points.append(json_body)
                     counter += 1
             # Batch writes to influxdb, much faster
-            if counter > 0 and counter % 1000 == 0:
-                # logger.debug(" - Batch sending 1000 points to influxdb:"+str(counter))
-                self.app.client.write_points(json_points)
+            if counter > 0 and counter % 10000 == 0:
+                # logger.debug(" - Batch sending 10000 points to influxdb:"+str(counter))
+                self.app.client.write_points(json_points, retention_policy='flightdata', batch_size=10000)
                 json_points = [] # Clear out json_points after bulk write
         # Write any remaining points
-        self.app.client.write_points(json_points)
+        self.app.client.write_points(json_points, retention_policy='flightdata', batch_size=10000)
         logger.info("Processing complete of "+filename)
         logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
         self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data)
@@ -491,7 +491,7 @@ class App():
         if not self.client:
             logger.critical("Error connecting to InfluxDB")
             sys.exit(1)
-        self.client.create_database(self.influx_database)
+        self.setup_influxdb()
         self.logdirs = self.config['logdirs']
         self.watch_dirs()
         self.metadb(self.config['meta_database'])
@@ -518,6 +518,13 @@ class App():
             logger.critical("Error reading config file: " + str(path))
             sys.exit(1)
         return options
+
+    def setup_influxdb(self):
+        # Ensure database is created
+        self.client.create_database(self.influx_database)
+        # Ensure retention periods (RPs) are created.  Note: We don't use downsampling and CQs (yet, or possibly ever)
+        self.client.create_retention_policy('systemdata', '7d', 1, default=False) # Only keep system data for 7 days
+        self.client.create_retention_policy('flightdata', 'INF', 1, default=True) # Keep flight data inifinitely
 
     def metadb(self, path):
         conn = sqlite3.connect(path)

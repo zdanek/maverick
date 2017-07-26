@@ -32,8 +32,8 @@ reporting-disabled = true
   # max-select-buckets = 0
 
 [retention]
-  # enabled = true
-  # check-interval = "30m"
+  enabled = true
+  check-interval = "30m"
 
 [shard-precreation]
   # enabled = true
@@ -74,7 +74,7 @@ reporting-disabled = true
   enabled = true
   bind-address = ":25826"
   database = "maverick"
-  retention-policy = ""
+  retention-policy = "systemdata"
   typesdb = "/usr/share/collectd/types.db"
   security-level = "none"
   auth-file = "/etc/collectd/auth_file"
