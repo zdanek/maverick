@@ -8,43 +8,51 @@ class maverick_analysis::collect (
     # Install from source
     if $install_type == "source" {
         $manage_package = false
-        ensure_packages(["flex", "bison", "libopenipmi-dev", "libsensors4-dev", "libsnmp-dev"])
-        oncevcsrepo { "git-collectd":
-            gitsource   => $git_source,
-            revision    => $git_revision,
-            dest        => "/srv/maverick/var/build/collectd",
-        } ->
-        exec { "collectd-build.sh":
-            user        => "mav",
-            command     => "/srv/maverick/var/build/collectd/build.sh",
-            cwd         => "/srv/maverick/var/build/collectd",
-            creates     => "/srv/maverick/var/build/collectd/configure",
-        } ->
-        exec { "collectd-configure":
-            user        => "mav",
-            command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
-            cwd         => "/srv/maverick/var/build/collectd",
-            creates     => "/srv/maverick/var/build/collectd/Makefile",
-        } ->
-        exec { "collectd-make":
-            user        => "mav",
-            command     => "/usr/bin/make",
-            cwd         => "/srv/maverick/var/build/collectd",
-            creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
-        } ->
-        exec { "collectd-install":
-            user        => "mav",
-            command     => "/usr/bin/make install",
-            cwd         => "/srv/maverick/var/build/collectd",
-            creates     => "/srv/maverick/software/collectd/sbin/collectd",
-        }
-        file { "/etc/systemd/system/maverick-collectd.service":
-            ensure          => present,
-            owner           => "root",
-            group           => "root",
-            mode            => "644",
-            source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
-            notify          => Exec["maverick-systemctl-daemon-reload"],
+        unless "install_flag_collectd" in $installflags {
+            ensure_packages(["flex", "bison", "libopenipmi-dev", "libsensors4-dev", "libsnmp-dev"])
+            oncevcsrepo { "git-collectd":
+                gitsource   => $git_source,
+                revision    => $git_revision,
+                dest        => "/srv/maverick/var/build/collectd",
+            } ->
+            exec { "collectd-build.sh":
+                user        => "mav",
+                command     => "/srv/maverick/var/build/collectd/build.sh",
+                cwd         => "/srv/maverick/var/build/collectd",
+                creates     => "/srv/maverick/var/build/collectd/configure",
+            } ->
+            exec { "collectd-configure":
+                user        => "mav",
+                command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
+                cwd         => "/srv/maverick/var/build/collectd",
+                creates     => "/srv/maverick/var/build/collectd/Makefile",
+            } ->
+            exec { "collectd-make":
+                user        => "mav",
+                command     => "/usr/bin/make",
+                cwd         => "/srv/maverick/var/build/collectd",
+                creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
+            } ->
+            exec { "collectd-install":
+                user        => "mav",
+                command     => "/usr/bin/make install",
+                cwd         => "/srv/maverick/var/build/collectd",
+                creates     => "/srv/maverick/software/collectd/sbin/collectd",
+            } ->
+            file { "/etc/systemd/system/maverick-collectd.service":
+                ensure          => present,
+                owner           => "root",
+                group           => "root",
+                mode            => "644",
+                source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
+                notify          => Exec["maverick-systemctl-daemon-reload"],
+                before          => Class["collectd"],
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_collectd":
+                owner           => "mav",
+                group           => "mav",
+                ensure          => present,
+            }
         }
         $collectd_dir = '/srv/maverick/software/collectd/'
         $config_file = "${collectd_dir}/etc/collectd.conf"
@@ -59,6 +67,7 @@ class maverick_analysis::collect (
             mode            => "644",
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-dpkg.service",
             notify          => Exec["maverick-systemctl-daemon-reload"],
+            before          => Class["collectd"],
         }
         $collectd_dir = '/etc/collectd'
         $config_file = "${collectd_dir}/collectd.conf"
