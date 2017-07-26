@@ -85,7 +85,7 @@ class maverick_analysis::collect (
         manage_repo     => $manage_repo,
         manage_service  => true,
         service_name    => 'maverick-collectd',
-        typesdb         => $typesdb,
+        typesdb         => [$typesdb],
         require         => File["/etc/systemd/system/maverick-collectd.service"],
     } ->
     service_wrapper { "collectd":
