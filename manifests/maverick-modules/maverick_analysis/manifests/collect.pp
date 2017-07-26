@@ -95,7 +95,6 @@ class maverick_analysis::collect (
         manage_service  => true,
         service_name    => 'maverick-collectd',
         typesdb         => [$typesdb],
-        require         => File["/etc/systemd/system/maverick-collectd.service"],
     } ->
     service_wrapper { "collectd":
         ensure          => stopped,
