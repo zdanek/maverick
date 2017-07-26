@@ -46,9 +46,9 @@ class maverick_analysis::collect (
             source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
             notify          => Exec["maverick-systemctl-daemon-reload"],
         }
-        $collectd_dir = '/srv/maverick/software/collectd/etc'
-        $config_file = "${collectd_dir}/collectd.conf"
-        $plugin_conf_dir = "${collectd_dir}/conf.d"
+        $collectd_dir = '/srv/maverick/software/collectd/'
+        $config_file = "${collectd_dir}/etc/collectd.conf"
+        $plugin_conf_dir = "${collectd_dir}/etc/conf.d"
         $typesdb = "${collectd_dir}/share/collectd/types.db"
     } else {
         $manage_package = true
