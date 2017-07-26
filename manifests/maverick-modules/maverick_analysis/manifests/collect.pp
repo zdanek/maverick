@@ -49,6 +49,7 @@ class maverick_analysis::collect (
         $collectd_dir = '/srv/maverick/software/collectd/etc'
         $config_file = "${collectd_dir}/collectd.conf"
         $plugin_conf_dir = "${collectd_dir}/conf.d"
+        $typesdb = "${collectd_dir}/share/collectd/types.db"
     } else {
         $manage_package = true
         file { "/etc/systemd/system/maverick-collectd.service":
@@ -62,6 +63,7 @@ class maverick_analysis::collect (
         $collectd_dir = '/etc/collectd'
         $config_file = "${collectd_dir}/collectd.conf"
         $plugin_conf_dir = "${collectd_dir}/conf.d"
+        $typesdb = "/usr/share/collectd/types.db"
     }
     
     # Collectd repos only provide i386/amd64 packages
@@ -74,6 +76,7 @@ class maverick_analysis::collect (
     class { "collectd":
         config_file     => $config_file,
         plugin_conf_dir => $plugin_conf_dir,
+        plugin_conf_dir_mode => "755",
         purge           => true,
         recurse         => true,
         purge_config    => true,
@@ -81,15 +84,15 @@ class maverick_analysis::collect (
         manage_package  => $manage_package,
         manage_repo     => $manage_repo,
         manage_service  => true,
-        service_name   => 'maverick-collectd',
+        service_name    => 'maverick-collectd',
+        typesdb         => $typesdb,
         require         => File["/etc/systemd/system/maverick-collectd.service"],
     } ->
     service_wrapper { "collectd":
         ensure          => stopped,
         enable          => false,
     }
-    
-    
+
     ### Collectd Plugins
     collectd::plugin::aggregation::aggregator {'cpu':
         plugin           => 'cpu',
