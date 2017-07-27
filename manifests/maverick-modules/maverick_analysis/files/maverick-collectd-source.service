@@ -1,6 +1,6 @@
 [Unit]
 Description=Maverick instance of Statistics collection and monitoring daemon
-After=local-fs.target network.target
+After=local-fs.target network.target maverick-influxd.service
 Requires=local-fs.target network.target
 ConditionPathExists=/srv/maverick/data/config/analysis/collectd/collectd.conf
 Documentation=man:collectd(1)
