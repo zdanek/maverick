@@ -77,12 +77,13 @@ class maverick_analysis::influx (
     }
     
     # Ensure maverick metrics db exists
-    exec { "influx-maverickdb":
-        command         => "/bin/sleep 10; /usr/bin/influx -execute 'create database maverick'",
-        unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
-        user            => "mav",
-        require         => Service_wrapper["maverick-influxd"],
-    }
+    # Note: Disabling the exec below that creates influx database.  Instead, we rely on mavlogd to do this.
+    #exec { "influx-maverickdb":
+    #    command         => "/bin/sleep 10; /usr/bin/influx -execute 'create database maverick'",
+    #    unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
+    #    user            => "mav",
+    #    require         => Service_wrapper["maverick-influxd"],
+    #}
     
     # Install python library
     install_python_module { "pip-influxdb":

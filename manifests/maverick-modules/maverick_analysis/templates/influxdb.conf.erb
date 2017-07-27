@@ -41,7 +41,7 @@ reporting-disabled = true
   # advance-period = "30m"
 
 [monitor]
-  # store-enabled = true
+  store-enabled = false
   # store-database = "_internal"
   # store-interval = "10s"
 
@@ -74,7 +74,7 @@ reporting-disabled = true
   enabled = true
   bind-address = ":25826"
   database = "maverick"
-  # retention-policy = "systemdata"
+  retention-policy = "systemdata"
   typesdb = "/srv/maverick/software/collectd/share/collectd/types.db"
   batch-size = 5000
   batch-pending = 10
