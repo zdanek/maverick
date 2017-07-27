@@ -121,11 +121,14 @@ class ProcessLog(ProcessEvent):
         self.app.client.write_points(json_points, retention_policy='flightdata', batch_size=10000)
         logger.info("Processing complete of "+filename)
         logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
-        self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data)
-        self.archive_file(filename)
-        self.dashboard_links()
-        self.dashboard_errors()
-    
+        try:
+            self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data)
+            self.archive_file(filename)
+            self.dashboard_links()
+            self.dashboard_errors()
+        except Exception as e:
+            logger.critical("Error processing log entry: "+ str(repr(e)))
+            
     def meta_entry(self, filename, start, finish, ekf_data):
         # Work out source
         file = os.path.basename(filename)
