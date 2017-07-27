@@ -35,10 +35,11 @@ class maverick_analysis::influx (
     } ->
     file { "/srv/maverick/data/config/analysis/influxdb.conf":
         content     => template("maverick_analysis/influxdb.conf.erb"),
-        owner       => "root",
-        group       => "root",
+        owner       => "mav",
+        group       => "mav",
+        notify      => Service_wrapper["maverick-influxd"],
     } ->
-    file { ["/srv/maverick/data/analysis/influxdb", "/srv/maverick/var/lib/influxdb", "/srv/maverick/var/lib/influxdb/meta", "/srv/maverick/var/lib/influxdb/wal", "/srv/maverick/var/log/analysis"]:
+    file { ["/srv/maverick/data/analysis/influxdb", "/srv/maverick/data/analysis/influxdb/meta", "/srv/maverick/data/analysis/influxdb/wal", "/srv/maverick/data/analysis/influxdb/data", "/srv/maverick/var/log/analysis"]:
         owner       => "mav",
         group       => "mav",
         ensure      => directory,

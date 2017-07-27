@@ -6,13 +6,13 @@
 reporting-disabled = true
 
 [meta]
-  dir = "/srv/maverick/var/lib/influxdb/meta"
+  dir = "/srv/maverick/data/analysis/influxdb/meta"
   # retention-autocreate = true
   # logging-enabled = true
 
 [data]
-  dir = "/srv/maverick/data/analysis/influxdb"
-  wal-dir = "/srv/maverick/var/lib/influxdb/wal"
+  dir = "/srv/maverick/data/analysis/influxdb/data"
+  wal-dir = "/srv/maverick/data/analysis/influxdb/wal"
   # trace-logging-enabled = false
   # query-log-enabled = true
   # cache-max-memory-size = 1048576000
@@ -50,7 +50,7 @@ reporting-disabled = true
   # bind-address = ":8086"
   # auth-enabled = false
   # realm = "InfluxDB"
-  # log-enabled = true
+  log-enabled = false
   # write-tracing = false
   # pprof-enabled = true
   # https-enabled = false
@@ -74,10 +74,8 @@ reporting-disabled = true
   enabled = true
   bind-address = ":25826"
   database = "maverick"
-  retention-policy = "systemdata"
-  typesdb = "/usr/share/collectd/types.db"
-  security-level = "none"
-  auth-file = "/etc/collectd/auth_file"
+  # retention-policy = "systemdata"
+  typesdb = "/srv/maverick/software/collectd/share/collectd/types.db"
   batch-size = 5000
   batch-pending = 10
   batch-timeout = "10s"

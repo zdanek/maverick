@@ -54,9 +54,15 @@ class maverick_analysis::collect (
                 ensure          => present,
             }
         }
-        $collectd_dir = '/srv/maverick/software/collectd/'
-        $config_file = "${collectd_dir}/etc/collectd.conf"
-        $plugin_conf_dir = "${collectd_dir}/etc/conf.d"
+        file { "/srv/maverick/data/config/analysis/collectd":
+            ensure          => directory,
+            mode            => "755",
+            owner           => "mav",
+            group           => "mav",
+        }
+        $config_file = "/srv/maverick/data/config/analysis/collectd/collectd.conf"
+        $plugin_conf_dir = "/srv/maverick/data/config/analysis/collectd/conf.d"
+        $collectd_dir = '/srv/maverick/software/collectd'
         $typesdb = "${collectd_dir}/share/collectd/types.db"
     } else {
         $manage_package = true
@@ -139,6 +145,9 @@ class maverick_analysis::collect (
     class { 'collectd::plugin::irq': }
     class { 'collectd::plugin::load': }
     class { 'collectd::plugin::memory': }
+    class { 'collectd::plugin::network':
+        maxpacketsize => '1452',
+    }
     class { 'collectd::plugin::processes': }
     class { 'collectd::plugin::protocols':
         values => ['/^Tcp:*/', '/^Udp:*/',],
