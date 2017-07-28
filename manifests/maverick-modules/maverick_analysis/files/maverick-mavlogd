@@ -527,8 +527,8 @@ class App():
         self.client.create_database(self.influx_database)
         self.client.switch_database(self.influx_database)
         # Ensure retention periods (RPs) are created.  Note: We don't use downsampling and CQs (yet, or possibly ever)
-        self.client.create_retention_policy('systemdata', '7d', 1, database="maverick", default=False) # Only keep system data for 7 days
-        self.client.create_retention_policy('flightdata', 'INF', 1, database="maverick", default=True) # Keep flight data inifinitely
+        self.client.create_retention_policy('systemdata', '3d', 1, database="maverick", default=True) # Only keep system data for 7 days
+        self.client.create_retention_policy('flightdata', 'INF', 1, database="maverick", default=False) # Keep flight data inifinitely
 
     def metadb(self, path):
         conn = sqlite3.connect(path)
