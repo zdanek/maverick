@@ -12,6 +12,7 @@ try:
     netinfo = {}
 except:
     print "netinfo_present=no"
+    print "netinfo_interfaces="
     sys.exit(1)
 
 class Netinfo(object):
