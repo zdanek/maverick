@@ -19,7 +19,7 @@ define maverick_network::process_interface (
     $forward = false,
 ) {
 	# Display a warning to reboot if networking config has chagned significantly
-    if (!(empty($macaddress)) and $macaddress !~ "xx" and getvar("::netinfo_${name}_macaddress") != $macaddress) or (!empty(getvar("::netinfo_interfaces")) and !($name in $::netinfo_interfaces) and $name != "eth0" and $name != "wlan0") {
+    if (!(empty($macaddress)) and $macaddress !~ "xx") and ((getvar("::netinfo_${name}_macaddress") != $macaddress) or (!empty($::netinfo_interfaces) and !($name in $::netinfo_interfaces) and $name != "eth0" and $name != "wlan0")) {
     	crit("WARNING: Interface config has changed significantly, PLEASE REBOOT TO ACTIVATE")
     }
 	
