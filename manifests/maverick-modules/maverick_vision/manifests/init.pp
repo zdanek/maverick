@@ -62,5 +62,9 @@ class maverick_vision (
     if $rtabmap == true {
         class { "maverick_vision::rtabmap": }
     }
+    
+	if $camera_realsense == "yes" or getvar("maverick_hardware::camera_realsense_install") == true {
+        class { "maverick_vision::realsense": }
+	}
 
 }
