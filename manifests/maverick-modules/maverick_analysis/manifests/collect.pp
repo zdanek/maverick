@@ -8,6 +8,7 @@ class maverick_analysis::collect (
     # Install from source
     if $install_type == "source" {
         $manage_package = false
+        ensure_packages(["collectd", "collectd-core"], {'ensure'=>'absent'})
         unless "install_flag_collectd" in $installflags {
             ensure_packages(["flex", "bison", "libopenipmi-dev", "libsensors4-dev", "libsnmp-dev"])
             oncevcsrepo { "git-collectd":
@@ -39,20 +40,20 @@ class maverick_analysis::collect (
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/software/collectd/sbin/collectd",
             } ->
-            file { "/etc/systemd/system/maverick-collectd.service":
-                ensure          => present,
-                owner           => "root",
-                group           => "root",
-                mode            => "644",
-                source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
-                notify          => Exec["maverick-systemctl-daemon-reload"],
-                before          => Class["collectd"],
-            } ->
             file { "/srv/maverick/var/build/.install_flag_collectd":
                 owner           => "mav",
                 group           => "mav",
                 ensure          => present,
             }
+        }
+        file { "/etc/systemd/system/maverick-collectd.service":
+            ensure          => present,
+            owner           => "root",
+            group           => "root",
+            mode            => "644",
+            source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
+            before          => Class["collectd"],
         }
         file { "/srv/maverick/data/config/analysis/collectd":
             ensure          => directory,
@@ -110,8 +111,9 @@ class maverick_analysis::collect (
     ### Collectd Plugins
     collectd::plugin::aggregation::aggregator {'cpu':
         plugin           => 'cpu',
-        agg_type         => 'cpu',
+        agg_type         => 'percent',
         groupby          => ["Host", "TypeInstance",],
+        calculatesum     => true,
         calculateaverage => true,
     }
     class { 'collectd::plugin::contextswitch': }
