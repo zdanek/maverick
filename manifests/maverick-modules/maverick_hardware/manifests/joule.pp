@@ -90,9 +90,9 @@ class maverick_hardware::joule (
         ensure          => latest,
     } ->
     # Install GL support
-    package { ["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"]:
-        ensure          => latest,
-    } ->
+    #package { ["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"]:
+    #    ensure          => latest,
+    #} ->
     # Install misc support
     package { ["intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2"]:
         ensure          => latest,
