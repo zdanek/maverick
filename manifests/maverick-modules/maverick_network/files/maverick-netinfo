@@ -17,7 +17,9 @@ udevnet.runall()
 from netinfo import Netinfo # from facts.d/netinfo.py
 
 import argparse
+import ConfigParser
 parser = argparse.ArgumentParser(description='Display network information')
+parser.add_argument('--verbose', '-v', action='store_true', help="Verbose/Detailed output")
 args = parser.parse_args()
 
 ctrls = {}
@@ -59,16 +61,12 @@ for _if in ifs:
                 print twocols("Wireless Bands", '\t\t'+'Dual Band - 2.4Ghz & 5Ghz')
         except:
             print twocols("Wireless Bands", '\t\t'+'Single Band - 2.4Ghz')
-        #print twocols("Wireless Channels", '\t'+str(_netinfo.data['chans']))
-        #print twocols("Wireless Frequencies", '\t'+str(_netinfo.data['freqs']))
-
         if _netinfo.data['mode'].lower() == "managed":
             print twocols("Wireless Mode", '\t\t'+ctrls['bg_blue']+str(_netinfo.data['mode'].capitalize()+ctrls['reset']))
         elif _netinfo.data['mode'].lower() == "monitor":
             print twocols("Wireless Mode", '\t\t'+ctrls['bg_purple']+str(_netinfo.data['mode'].capitalize()+ctrls['reset']))
         elif _netinfo.data['mode'].lower() == "ap":
             print twocols("Wireless Mode", '\t\t'+ctrls['bg_red']+"Access Point"+ctrls['reset'])
-
         print twocols("Wireless SSID", '\t\t'+str(_netinfo.data['ssid']))
         try:
             print twocols("Wireless State", '\t\t'+str(_netinfo.data['state'].capitalize()))
@@ -80,12 +78,20 @@ for _if in ifs:
             pass
         print twocols("Wireless Chanwidth", '\t'+str(_netinfo.data['chw']))
         print twocols("Wireless RSS", '\t\t'+str(_netinfo.data['rss']))
-        
         try:
             print twocols("Wireless TX Rate", '\t'+str(_netinfo.data['wtx']['bitrate']['rate'])+' Mbps')
         except:
             pass
-        
+        # Print available rates
+        if "2GHz" in _netinfo.data['bands']:
+            print twocols("Wireless 2.4Ghz Rates", '\t'+", ".join([ctrls['bold']+str(rate)+ctrls['reset']+" Mbps"+ctrls['reset'] for rate in _netinfo.data['bands']['2GHz']['rates']]))
+        if "5GHz" in _netinfo.data['bands']:
+            print twocols("Wireless 5Ghz Rates", '\t'+", ".join([ctrls['bold']+str(rate)+ctrls['reset']+" Mbps"+ctrls['reset'] for rate in _netinfo.data['bands']['5GHz']['rates']]))
+        # Print available channels
+        chans = []
+        for idx,chan in enumerate(_netinfo.data['chans']):
+            chans.append(ctrls['bold'] + str(_netinfo.data['chans'][idx]) + ":" +ctrls['fg_red']+ str(float(_netinfo.data['freqs'][idx])/1000)+" Ghz" + ctrls['reset'])
+        print twocols("Wireless Channels", '\t'+ctrls['reset']+", ".join(chans))
     except:
         pass
     print
