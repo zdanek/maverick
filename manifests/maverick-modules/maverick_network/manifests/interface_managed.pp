@@ -45,7 +45,9 @@ define maverick_network::interface_managed (
                 template        => "maverick_network/interface_fragment_wireless.erb",
                 wpa_ssid        => $_ssid,
                 wpa_psk         => $_psk,
+                pre_up          => ["/srv/maverick/software/maverick/bin/network-if-managed ${name}"],
                 post_up         => ["/sbin/dhclient $name"],
+                options         => {},
             }
         } elsif $type == "ethernet" {
             network::interface { "$name":
@@ -54,6 +56,7 @@ define maverick_network::interface_managed (
                 auto            => true,
                 allow_hotplug   => true,
                 method          => "dhcp",
+                options         => {},
             }
         }
     } elsif $addressing == "static" {
@@ -71,6 +74,7 @@ define maverick_network::interface_managed (
                 template        => "maverick_network/interface_fragment_wireless.erb",
                 wpa_ssid        => $_ssid,
                 wpa_psk         => $_psk,
+                options         => {},
             }
         } elsif $type == "ethernet" {
             network::interface { "$name":
@@ -83,6 +87,7 @@ define maverick_network::interface_managed (
                 netmask         => $netmask,
                 gateway         => $gateway,
                 dns_nameservers => $nameservers,
+                options         => {}
             }
         }
     } elsif $addressing == "master" {
@@ -94,6 +99,7 @@ define maverick_network::interface_managed (
             ipaddress       => $ipaddress,
             netmask         => $netmask,
             template        => "maverick_network/interface_fragment_wireless.erb",
+            post_up         => ["/srv/maverick/software/maverick/bin/network-if-managed ${name}"],
             options         => {
                 wireless_mode       => "master",
             }
