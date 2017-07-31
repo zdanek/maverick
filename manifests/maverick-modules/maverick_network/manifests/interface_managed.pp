@@ -45,8 +45,7 @@ define maverick_network::interface_managed (
                 template        => "maverick_network/interface_fragment_wireless.erb",
                 wpa_ssid        => $_ssid,
                 wpa_psk         => $_psk,
-                pre_up          => ["/srv/maverick/software/maverick/bin/network-if-managed ${name}"],
-                post_up         => ["/sbin/dhclient $name"],
+                post_up         => ["/sbin/dhclient $name", "/srv/maverick/software/maverick/bin/network-if-managed ${name}"],
                 options         => {},
             }
         } elsif $type == "ethernet" {
