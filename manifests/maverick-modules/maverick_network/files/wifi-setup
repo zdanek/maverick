@@ -30,6 +30,8 @@ echo "Updated config, restarting networking.. (If you do not see 'Done' below sh
 nohup sudo systemctl restart networking >/dev/null 2>&1
 nohup systemctl restart ifup@wlan0 >/dev/null 2>&1
 nohup systemctl restart ifup@wman0 >/dev/null 2>&1
+sudo dhclient wlan0
+sudo dhclient wman0
 echo
 echo "Done"
 echo "Note: You may need to reboot to activate the new network settings"
