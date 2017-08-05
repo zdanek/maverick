@@ -134,4 +134,18 @@ class base::maverick (
         group   => "mav",
         recurse => true,
     }
+    
+    # Create a 'firstboot' service that runs on boot and calls configure if required
+    file { "/etc/systemd/system/maverick-firstboot.service":
+        source      => "puppet:///modules/base/maverick-firstboot.service",
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    } ->
+    service_wrapper { "maverick-firstboot": 
+        enable      => true,
+        ensure      => undef,
+    }
+
 }

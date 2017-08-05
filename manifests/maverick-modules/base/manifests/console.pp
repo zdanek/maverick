@@ -2,7 +2,8 @@ class base::console {
     
     # Instead of using puppet template to fill in motd, instead use a systemd oneshot service so it refreshes on boot
     file { "/etc/systemd/system/maverick-motd.service":
-        content     => template("base/maverick-motd.service.erb"),
+        source      => "puppet:///modules/base/maverick-motd.service",
+        # content     => template("base/maverick-motd.service.erb"),
         owner       => "root",
         group       => "root",
         mode        => "644",

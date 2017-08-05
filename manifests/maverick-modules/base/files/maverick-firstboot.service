@@ -1,0 +1,15 @@
+[Unit]
+Description=Maverick First Boot actions
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=True
+TimeoutStartSec=0
+ExecStart=/bin/sh -c 'if [ -e /boot/maverick ]; then /srv/maverick/software/maverick/bin/maverick configure; fi'
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+
