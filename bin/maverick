@@ -19,8 +19,13 @@ if hash tput 2>/dev/null; then
     reset=$(tput sgr0)
 fi
 
+ver=$(cat /srv/maverick/software/maverick/VERSION)
+if [ -z $ver ]; then
+    $ver = "n/a"
+fi
 echo
-echo "${bgb}${bold}Maverick - UAV Companion Computer System${reset}"
+echo "${bgb}${bold}Maverick - UAV Companion Computer System - Version ${ver}${reset}"
+
 echo
 
 # Check that we're root or mav user
@@ -148,7 +153,7 @@ mavenv () {
         echo "Maverick Environment:   ${bgg}${white}${bold} flight ${reset}"
     elif [ "x$1" == "xbootstrap" ]; then
         echo "Maverick Environment:   ${bgb}${white}${bold} bootstrap ${reset}"
-    fi    
+    fi
 }
 
 # If git branch config file exists, source it
