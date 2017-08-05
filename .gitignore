@@ -8,10 +8,13 @@ bin/maverick-info
 bin/maverick-netinfo
 bin/maverick-visiond
 bin/maverick-logd
+bin/maverick-mavlogd
 bin/mavproxy-fc.sh
 bin/mavproxy-sitl.sh
 bin/dev-sitl.sh
 bin/monitor-interface.sh
+bin/network-if-managed
+bin/network-if-monitor
 bin/mavros.sh
 bin/cmavnode.sh
 bin/mavlink-router.sh
@@ -19,6 +22,7 @@ bin/mavproxy.sh
 bin/rosmaster.sh
 bin/vision_seek.sh
 bin/sitl.sh
+bin/wifi-setup
 conf/local-nodes/
 conf/maverick-branch.conf
 conf/localconf.json
