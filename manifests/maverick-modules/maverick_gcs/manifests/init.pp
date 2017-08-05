@@ -2,6 +2,7 @@ class maverick_gcs (
     $skysense = false,
     $qgroundcontrol = false,
     $apmplanner2 = false,
+    $fcs = true,
 ) {
     
     if $skysense == true {
@@ -14,6 +15,10 @@ class maverick_gcs (
     
     if $apmplanner2 == true {
         class { "maverick_gcs::apmplanner2": }
+    }
+    
+    if $fcs == true {
+        class { "maverick_gcs::fcs": }
     }
     
 }

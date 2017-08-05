@@ -11,6 +11,7 @@
 		"maverick_mavlink",
 		"maverick_vision",
 		"maverick_fc",
+		"maverick_gcs",
 		"maverick_ros",
 		"maverick_dev",
 	    "maverick_desktop",
