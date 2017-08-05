@@ -1,5 +1,11 @@
 # Maverick Changelog
 
+## [2017-08-05] 1.1.2 'Reconnect' Release
+ - Lots more fixes and improvements to mavlink data analysis/graphing tool including automated housekeeping
+ - Lots more fixes and improvements to network configuration
+ - New provisioning feature to import config from /boot/maverick
+ - Various bugfixes and doc updates
+
 ## [2017-07-12] 1.1.1 'Bugstomp' Release
  - Lots of network fixes and improvements - in particular support for 'Connection Sharing'
  - Lots of fixes, improvements and add docs to mavlink data analysis/graphing tool, new dashboards and indexes
