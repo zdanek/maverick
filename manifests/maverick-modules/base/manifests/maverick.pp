@@ -61,7 +61,7 @@ class base::maverick (
     }
     
     # Add environment marker
-    file { "/srv/maverick/.environment":
+    file { "/srv/maverick/data/config/maverick/maverick-environment.conf":
         ensure      => file,
         owner       => "mav",
         group       => "mav",

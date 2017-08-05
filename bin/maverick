@@ -173,6 +173,11 @@ if [ "$MAVERICK_BRANCH" != "stable" ]; then
     echo
 fi
 
+# Migrate old environment marker to new location
+if [ -e /srv/maverick/.environment ]; then
+    mv -f /srv/maverick/.environment /srv/maverick/data/config/maverick/maverick-environment.conf
+fi
+
 # If self-update set, action and then exit
 if [ "$SELFUPDATE" == "true" ]; then
     # If config branch is different to current branch, change branch
@@ -214,8 +219,8 @@ fi
 
 # If info set, action and then exit
 if [ "$INFO" == "true" ]; then
-    if [ -e /srv/maverick/.environment ]; then
-        environment=$(cat /srv/maverick/.environment)
+    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -226,8 +231,8 @@ fi
 
 # If netinfo set, action and then exit
 if [ "$NETINFO" == "true" ]; then
-    if [ -e /srv/maverick/.environment ]; then
-        environment=$(cat /srv/maverick/.environment)
+    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -251,8 +256,8 @@ if [ "$STATUS" == "true" ]; then
         fi
         echo "$1:$2:$_status | $_atboot\n"
     }
-    if [ -e /srv/maverick/.environment ]; then
-        environment=$(cat /srv/maverick/.environment)
+    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -402,8 +407,8 @@ if [ "$DISABLE" == "true" ]; then
 fi
 
 # Read environment marker if it exists
-if [ -e /srv/maverick/.environment ]; then
-    environment=$(cat /srv/maverick/.environment)
+if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
+    environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
     if [[ $environment && "$ENV" != "" ]]; then
         echo "Environment marker set but is being ignored as --env is set"
     elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "flight" ]]; then

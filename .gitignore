@@ -25,4 +25,5 @@ bin/sitl.sh
 bin/wifi-setup
 conf/local-nodes/
 conf/maverick-branch.conf
+conf/maverick-environment.conf
 conf/localconf.json
