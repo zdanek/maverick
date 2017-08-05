@@ -452,6 +452,16 @@ for pkg in "puppet" "hiera" "facter" "ruby-rgen"; do
     fi
 done
 
+# Check that rsync
+if ! hash rsync 2>/dev/null; then
+    echo 'rsync not installed, installing..'
+    if [ $EUID -eq 0 ]; then
+        DEBIAN_FRONTEND=noninteractive apt-get -y install rsync >/dev/null 2>&1
+    else
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rsync >/dev/null 2>&1
+    fi
+fi
+
 # Check that ruby/gem is installed
 if ! hash gem 2>/dev/null; then
     echo 'gem not installed, installing..'
@@ -592,6 +602,15 @@ else
     TAGS=""
 fi
 echo
+
+# If /boot/maverick and /srv/maverick exists, move the contents and use them
+if [ -e /srv/maverick -a -e /boot/maverick ]; then
+    echo "Migrating supplied config to maverick location"
+    sudo rsync -K -a /boot/maverick/* /srv/maverick/data/config >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        sudo rm -rf /boot/maverick
+    fi
+fi
 
 DT=$(date +"%Y-%m-%d-%H-%M")
 # If installed maverick exists use that logpath, otherwise use /var/tmp
