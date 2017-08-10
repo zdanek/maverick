@@ -21,18 +21,21 @@ class maverick_analysis::collect (
                 command     => "/srv/maverick/var/build/collectd/build.sh",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/configure",
+                timeout     => 0,
             } ->
             exec { "collectd-configure":
                 user        => "mav",
                 command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/Makefile",
+                timeout     => 0,
             } ->
             exec { "collectd-make":
                 user        => "mav",
                 command     => "/usr/bin/make",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
+                timeout     => 0,
             } ->
             exec { "collectd-install":
                 user        => "mav",
