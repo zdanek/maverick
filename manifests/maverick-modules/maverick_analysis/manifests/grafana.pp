@@ -1,5 +1,6 @@
 class maverick_analysis::grafana (
     $webport = "6790",
+    $rootpath = "/analysis/grafana/",
 ) {
     
     ensure_packages(["sqlite3"])
@@ -72,6 +73,8 @@ class maverick_analysis::grafana (
             app_mode => 'production',
             server   => {
               http_port     => $webport,
+              root_url      => "%(protocol)s://%(domain)s:${rootpath}",
+
             },
             users    => {
               allow_sign_up => false,
