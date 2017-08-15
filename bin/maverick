@@ -199,12 +199,14 @@ if [ "$SELFUPDATE" == "true" ]; then
         CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git checkout $MAVERICK_BRANCH)
     fi
         
-    # Finally, do a git pull to update code
+    # Next, do a git pull to update maverick code
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
         if [ $EUID -eq 0 ]; then
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+            su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
         elif [ $USER == "mav" ]; then
             cd /srv/maverick/software/maverick; git pull origin;
+            cd /srv/maverick/software/maverick-fcs; git pull origin;
         fi
         echo
         echo "${green}Maverick update completed${reset}"
@@ -214,6 +216,8 @@ if [ "$SELFUPDATE" == "true" ]; then
         echo "${bgr}Error: Maverick not found in expected location: /srv/maverick/software/maverick${reset}"
         echo
     fi
+
+    # Finally, exit
     exit 0
 fi
 
