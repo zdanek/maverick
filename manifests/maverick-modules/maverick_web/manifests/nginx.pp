@@ -8,6 +8,8 @@ class maverick_web::nginx (
         enable      => false,
     } ->
     class { 'nginx':
+        confd_purge     => true,
+        server_purge    => true,
     }
     nginx::resource::server { "${::hostname}.local":
         listen_port => $port,
