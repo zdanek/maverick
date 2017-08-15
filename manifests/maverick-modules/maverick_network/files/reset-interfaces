@@ -1,0 +1,26 @@
+# Interface lo
+auto lo
+iface lo inet loopback
+# Interface eth0
+auto eth0
+allow-hotplug eth0
+iface eth0 inet dhcp
+    options {}
+# Interface wlan0
+auto wlan0
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+    wpa-ssid MySSID
+    wpa-psk  averylonggeneratedkey
+    post-up /sbin/dhclient wlan0
+    post-up /srv/maverick/software/maverick/bin/network-if-managed wlan0
+
+# Interface wman0
+auto wman0
+allow-hotplug wman0
+iface wman0 inet dhcp
+    wpa-ssid MySSID
+    wpa-psk  averylonggeneratedkey
+    post-up /sbin/dhclient wman0
+    post-up /srv/maverick/software/maverick/bin/network-if-managed wman0
+

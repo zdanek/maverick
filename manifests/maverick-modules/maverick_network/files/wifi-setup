@@ -4,8 +4,17 @@
 
 isvanilla=$(grep averylonggeneratedkey /etc/network/interfaces)
 if [ "x$isvanilla" == "x" ]; then
+    # Reset config to vanilla?
     echo "Error: Network settings have already been modified and cannot be updated by wifi-setup"
-    exit 1
+    read -p "Do you want to reset network settings and proceed?  WARNING: This will delete all existing network settings: [Yn] " networkreset
+    networkreset=${networkreset:-y}
+    if [ "$networkreset" == "y" -o "$networkreset" == "Y" ]; then
+        echo "Resetting network settings.."
+        sudo cp -f /srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/reset-interfaces /etc/network/interfaces
+    else
+        echo "NOT resetting network settings, exiting"
+        exit 1
+    fi
 fi
 
 read -p "Enter Wifi SSID: " ssid
