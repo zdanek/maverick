@@ -19,7 +19,7 @@ fi
 read -p "Enter Wifi SSID: " ssid
 read -s -p "Enter Wifi Passphrase: " passphrase
 echo
-psk=$(wpa_passphrase $ssid '$passphrase' |grep -e '\spsk=' |awk -F= {'print $2'})
+psk=$(echo $passphrase | wpa_passphrase $ssid |grep -e '\spsk=' |awk -F= {'print $2'})
 
 sed -i -e "s/ssid\":[[:space:]]\+\".*\"/ssid\":    \"$ssid\"/" /srv/maverick/software/maverick/conf/localconf.json
 sed -i -e "s/psk\":[[:space:]]\+\".*\"/psk\":    \"$psk\"/" /srv/maverick/software/maverick/conf/localconf.json
