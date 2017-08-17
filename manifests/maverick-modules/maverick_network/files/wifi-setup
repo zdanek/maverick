@@ -38,6 +38,7 @@ echo "Updated config, restarting networking.. (If you do not see 'Done' below sh
 nohup sudo systemctl restart networking >/dev/null 2>&1
 nohup systemctl restart ifup@wlan0 >/dev/null 2>&1
 nohup systemctl restart ifup@wman0 >/dev/null 2>&1
+sudo dhclient eth0 >/dev/null 2>&1
 sudo dhclient wlan0 >/dev/null 2>&1
 sudo dhclient wman0 >/dev/null 2>&1
 echo
