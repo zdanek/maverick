@@ -257,6 +257,7 @@ class maverick_network (
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-managed.sh"
     }
     
+    
     # Retrieve defined interfaces and process
     $interfaces = lookup("maverick_network::interfaces", {merge => hash})
     if $interfaces {
@@ -264,12 +265,22 @@ class maverick_network (
             ensure      => present,
         }
 		create_resources("maverick_network::process_interface", $interfaces)
-    	if ! defined(Class["maverick_network::interface_ap"]) {
-    	    service_wrapper { "hostapd":
-    	        ensure          => stopped,
-    	        enable          => false,
-    	    }
-    	}
-	}
 
+        # Scan through config to detect AP interfaces.  If not found, then disable hostap
+        $combine = $interfaces.map |$items| {
+            if !empty($items[1]) {
+                $_keys = keys($items[1])
+                if "mode" in $_keys and $items[1]["mode"] == "ap" { 1 }
+            }
+        }
+        # If no AP interface detected, ensure hostapd is turned off
+        if count($combine, 1) == 0 {
+            service_wrapper { "hostapd":
+                ensure      => stopped,
+                enable      => false,
+            }
+        }
+
+	}
+    
 }
