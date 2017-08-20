@@ -7,7 +7,7 @@ MavlinkDialect=auto
 # error, warning, info or debug
 DebugLogLevel=info
 # Log - Path to directory where to store flightstack log.
-Log=/srv/maverick/data/mavlink/fc
+Log=/srv/maverick/data/mavlink/<%= @name %>/logs
 
 <% if @inputtype == "tcp" -%>
 [TcpEndpoint tcpin]

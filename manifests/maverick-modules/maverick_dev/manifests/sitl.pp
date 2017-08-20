@@ -92,12 +92,6 @@ class maverick_dev::sitl (
         group       => "mav",
         mode        => "755",
     } ->
-    file { "/srv/maverick/data/mavlink/sitl":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
     file { "/srv/maverick/var/log/mavlink-sitl":
         ensure      => directory,
         owner       => "mav",
