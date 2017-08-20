@@ -29,7 +29,7 @@ class maverick_analysis::mavlogd (
         mode            => "644",
         owner           => "mav",
         group           => "mav",
-        replace         => false,
+        #replace         => false,
         source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
     } ->
     file { "/etc/systemd/system/maverick-mavlogd.service":
