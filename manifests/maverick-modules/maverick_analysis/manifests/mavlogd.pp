@@ -31,6 +31,7 @@ class maverick_analysis::mavlogd (
         group           => "mav",
         #replace         => false,
         source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
+        notify          => Service_wrapper["maverick-mavlogd"],
     } ->
     file { "/etc/systemd/system/maverick-mavlogd.service":
         ensure          => present,

@@ -8,7 +8,7 @@
         "iconColor": "rgb(96, 166, 255)",
         "limit": 100,
         "name": "Mode",
-        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='mode'",
+        "query": "SELECT title,tags,text FROM flightdata.events WHERE $timeFilter AND \"event_type\"='mode'",
         "showIn": 0,
         "tagsColumn": "tags",
         "textColumn": "text",
@@ -22,7 +22,7 @@
         "iconColor": "rgb(101, 255, 96)",
         "limit": 100,
         "name": "Message",
-        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='msg'",
+        "query": "SELECT title,tags,text FROM flightdata.events WHERE $timeFilter AND \"event_type\"='msg'",
         "showIn": 0,
         "tagsColumn": "tags",
         "textColumn": "text",
@@ -36,7 +36,7 @@
         "iconColor": "rgb(198, 96, 255)",
         "limit": 100,
         "name": "Event",
-        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='ev'",
+        "query": "SELECT title,tags,text FROM flightdata.events WHERE $timeFilter AND \"event_type\"='ev'",
         "showIn": 0,
         "tagsColumn": "tags",
         "textColumn": "text",
@@ -50,7 +50,7 @@
         "iconColor": "rgba(255, 96, 96, 1)",
         "limit": 100,
         "name": "Error",
-        "query": "SELECT title,tags,text FROM events WHERE $timeFilter AND \"event_type\"='err'",
+        "query": "SELECT title,tags,text FROM flightdata.events WHERE $timeFilter AND \"event_type\"='err'",
         "showIn": 0,
         "tagsColumn": "tags",
         "textColumn": "text",
@@ -129,7 +129,7 @@
               ],
               "measurement": "flight_arsp",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -167,7 +167,7 @@
               ],
               "measurement": "flight_gps",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -287,7 +287,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -325,7 +325,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -445,7 +445,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -483,7 +483,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -521,7 +521,7 @@
               ],
               "measurement": "flight_ahr2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -559,7 +559,7 @@
               ],
               "measurement": "flight_ahr2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -683,7 +683,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -721,7 +721,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -759,7 +759,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -797,7 +797,7 @@
               ],
               "measurement": "flight_att",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -835,7 +835,7 @@
               ],
               "measurement": "flight_ctun",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -873,7 +873,7 @@
               ],
               "measurement": "flight_ctun",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -911,7 +911,7 @@
               ],
               "measurement": "flight_ctun",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -949,7 +949,7 @@
               ],
               "measurement": "flight_ctun",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -1082,7 +1082,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -1120,7 +1120,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -1158,7 +1158,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -1196,7 +1196,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -1234,7 +1234,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -1272,7 +1272,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -1310,7 +1310,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -1348,7 +1348,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -1386,7 +1386,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "I",
               "resultFormat": "time_series",
               "select": [
@@ -1507,7 +1507,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -1545,7 +1545,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -1583,7 +1583,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "query": "SELECT mean(\"AccZ\") FROM \"flight_imu\" WHERE $timeFilter GROUP BY time($__interval) fill(linear)",
               "rawQuery": false,
               "refId": "C",
@@ -1623,7 +1623,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -1661,7 +1661,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -1699,7 +1699,7 @@
               ],
               "measurement": "flight_imu2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -1737,7 +1737,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -1775,7 +1775,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -1813,7 +1813,7 @@
               ],
               "measurement": "flight_imu3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "I",
               "resultFormat": "time_series",
               "select": [
@@ -1920,7 +1920,7 @@
               ],
               "measurement": "flight_baro",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -1958,7 +1958,7 @@
               ],
               "measurement": "flight_bar2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -2074,7 +2074,7 @@
               ],
               "measurement": "flight_baro",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -2112,7 +2112,7 @@
               ],
               "measurement": "flight_baro",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -2150,7 +2150,7 @@
               ],
               "measurement": "flight_bar2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -2188,7 +2188,7 @@
               ],
               "measurement": "flight_bar2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -2312,7 +2312,7 @@
               ],
               "measurement": "flight_mag",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -2350,7 +2350,7 @@
               ],
               "measurement": "flight_mag2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -2388,7 +2388,7 @@
               ],
               "measurement": "flight_mag3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -2426,7 +2426,7 @@
               ],
               "measurement": "flight_mag",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -2464,7 +2464,7 @@
               ],
               "measurement": "flight_mag2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -2502,7 +2502,7 @@
               ],
               "measurement": "flight_mag3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -2540,7 +2540,7 @@
               ],
               "measurement": "flight_mag",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -2578,7 +2578,7 @@
               ],
               "measurement": "flight_mag2",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -2616,7 +2616,7 @@
               ],
               "measurement": "flight_mag3",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "I",
               "resultFormat": "time_series",
               "select": [
@@ -2723,7 +2723,7 @@
               ],
               "measurement": "flight_baro",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -2761,7 +2761,7 @@
               ],
               "measurement": "flight_rfnd",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -2799,7 +2799,7 @@
               ],
               "measurement": "flight_rfnd",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -2919,7 +2919,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -2957,7 +2957,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -2995,7 +2995,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -3033,7 +3033,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -3140,7 +3140,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -3178,7 +3178,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -3216,7 +3216,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -3254,7 +3254,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -3292,7 +3292,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -3330,7 +3330,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -3368,7 +3368,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -3406,7 +3406,7 @@
               ],
               "measurement": "flight_rcou",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -3513,7 +3513,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -3551,7 +3551,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -3589,7 +3589,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -3627,7 +3627,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -3665,7 +3665,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -3703,7 +3703,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "F",
               "resultFormat": "time_series",
               "select": [
@@ -3741,7 +3741,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "G",
               "resultFormat": "time_series",
               "select": [
@@ -3779,7 +3779,7 @@
               ],
               "measurement": "flight_rcin",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "H",
               "resultFormat": "time_series",
               "select": [
@@ -3904,7 +3904,7 @@
               ],
               "measurement": "flight_pidp",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -3942,7 +3942,7 @@
               ],
               "measurement": "flight_pidp",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -3980,7 +3980,7 @@
               ],
               "measurement": "flight_pidp",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -4018,7 +4018,7 @@
               ],
               "measurement": "flight_pidp",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -4056,7 +4056,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
@@ -4168,7 +4168,7 @@
               ],
               "measurement": "flight_pidr",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "A",
               "resultFormat": "time_series",
               "select": [
@@ -4206,7 +4206,7 @@
               ],
               "measurement": "flight_pidr",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "B",
               "resultFormat": "time_series",
               "select": [
@@ -4244,7 +4244,7 @@
               ],
               "measurement": "flight_pidr",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "C",
               "resultFormat": "time_series",
               "select": [
@@ -4282,7 +4282,7 @@
               ],
               "measurement": "flight_pidr",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "D",
               "resultFormat": "time_series",
               "select": [
@@ -4320,7 +4320,7 @@
               ],
               "measurement": "flight_imu",
               "orderByTime": "ASC",
-              "policy": "default",
+              "policy": "flightdata",
               "refId": "E",
               "resultFormat": "time_series",
               "select": [
