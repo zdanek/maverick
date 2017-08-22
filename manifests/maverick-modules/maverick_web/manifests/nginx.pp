@@ -3,6 +3,13 @@ class maverick_web::nginx (
     $sslport,
 ) {
     
+    # Nginx doesn't have repo for ARM, so don't try to use it
+    if $::architecture =~ "arm" {
+        $manage_repo = false
+    } else {
+        $manage_repo = true
+    }
+    
     service_wrapper { "apache2":
         ensure      => stopped,
         enable      => false,
@@ -10,6 +17,7 @@ class maverick_web::nginx (
     class { 'nginx':
         confd_purge     => true,
         server_purge    => true,
+        manage_repo     => $manage_repo,
     }
     nginx::resource::server { "${::hostname}.local":
         listen_port => $port,
