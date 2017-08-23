@@ -31,14 +31,16 @@ class ProcessLog(ProcessEvent):
 
     def process(self, filename):
         logger.info("Processing data from "+filename)
-        if filename.endswith('.log'):
+        if filename.lower().endswith('.log') and "LASTLOG.TXT" not in filename:
             log = DFReader_text(filename, False)
             logger.info("Text mavlog detected, creating text parser")
-        elif filename.endswith('.bin'):
+        elif filename.lower().endswith('.bin') and "LASTLOG.TXT" not in filename:
             log = DFReader_binary(filename, False)
             logger.info("Binary mavlog detected, creating binary parser")
-        else:
+        elif "LASTLOG.TXT" not in filename:
             logger.info("Logfile extension not recognised, skipping log")
+            return False
+        else:
             return False
         parameters = {}
         formats = {}
@@ -126,7 +128,7 @@ class ProcessLog(ProcessEvent):
         logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
         try:
             self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data)
-            self.archive_file(filename)
+            #self.archive_file(filename)
             self.dashboard_links()
             self.dashboard_errors()
         except Exception as e:
