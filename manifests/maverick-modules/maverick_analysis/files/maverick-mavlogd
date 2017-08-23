@@ -24,21 +24,22 @@ class ProcessLog(ProcessEvent):
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
-        if "LASTLOG.TXT" not in event.pathname:
-            self.process(event.pathname)
+        self.process(event.pathname)
     def process_IN_MOVED_TO(self, event):
         logger.debug("Received IN_MOVED_TO event")
-        if "LASTLOG.TXT" not in event.pathname:
-            self.process(event.pathname)
+        self.process(event.pathname)
 
     def process(self, filename):
         logger.info("Processing data from "+filename)
         if filename.endswith('.log'):
             log = DFReader_text(filename, False)
-            logger.debug("Text mavlog detected, creating text parser")
-        else:
+            logger.info("Text mavlog detected, creating text parser")
+        elif filename.endswith('.bin'):
             log = DFReader_binary(filename, False)
-            logger.debug("Binary mavlog detected, creating binary parser")
+            logger.info("Binary mavlog detected, creating binary parser")
+        else:
+            logger.info("Logfile extension not recognised, skipping log")
+            return False
         parameters = {}
         formats = {}
         json_points = []
