@@ -1,6 +1,7 @@
 class maverick_analysis::grafana (
     $webport = "6790",
     $rootpath = "/analysis/grafana/",
+    $grafana_version = "4.3.2",
 ) {
     
     ensure_packages(["sqlite3"])
@@ -47,13 +48,13 @@ class maverick_analysis::grafana (
         $manage_package_repo = false
         /*
         if $::raspberry_model =~ "Zero" or $::raspberry_model =~ "^A" or $::raspberry_model =~ "^B" {
-            $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_4.3.2_armhf.deb"
+            $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
         } else {
-            $package_source = "https://github.com/fg2it/grafana-on-raspberry/releases/download/v4.3.2/grafana_4.3.2_armhf.deb"
+            $package_source = "https://github.com/fg2it/grafana-on-raspberry/releases/download/v${grafana_version}/grafana_${grafana_version}_armhf.deb"
         }
         */
         # Don't use autodetect above, because we want OS images to be compatible with Zero
-        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_4.3.2_armhf.deb"
+        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
         $install_method = "package"
     } else {
         $manage_package_repo = true
@@ -85,7 +86,7 @@ class maverick_analysis::grafana (
       manage_package_repo   => $manage_package_repo,
       package_source        => $package_source,
       service_name          => "maverick-grafana",
-      version               => "4.4.1",
+      version               => $grafana_version,
       notify                => Exec["grafana-postdelay"],
     } ->
     service_wrapper { "grafana-server":

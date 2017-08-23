@@ -1,6 +1,7 @@
 class maverick_analysis::influx (
     $source = "https://github.com/influxdata/influxdb.git",
     $branch = "v1.2.4",
+    $influxdb_version = "1.3.3-1",
     $active = true,
 ) {
     
@@ -30,7 +31,7 @@ class maverick_analysis::influx (
     } ->
     # Install influxdb
     package { "influxdb":
-        ensure      => latest,
+        ensure      => $influxdb_version,
         require     => [ Exec["influx-repo"], Exec["influx-aptupdate"] ],
     } ->
     file { "/srv/maverick/data/config/analysis/influxdb.conf":
