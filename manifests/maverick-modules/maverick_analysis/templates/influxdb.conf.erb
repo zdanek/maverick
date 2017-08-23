@@ -13,12 +13,15 @@ reporting-disabled = true
 [data]
   dir = "/srv/maverick/data/analysis/influxdb/data"
   wal-dir = "/srv/maverick/data/analysis/influxdb/wal"
+  wal-fsync-delay = "100ms"
+  index-version = "tsi1"
   # trace-logging-enabled = false
-  # query-log-enabled = true
+  query-log-enabled = false
   # cache-max-memory-size = 1048576000
   # cache-snapshot-memory-size = 26214400
   # cache-snapshot-write-cold-duration = "10m"
   # compact-full-write-cold-duration = "4h"
+  # max-concurrent-compactions = 0
   # max-series-per-database = 1000000
   # max-values-per-tag = 100000
 
