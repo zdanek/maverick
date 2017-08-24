@@ -1,0 +1,11 @@
+{
+    "config": {
+        "connect": "tcp:localhost:5780"
+    },
+    "params": {
+    	"LOG_FILE_DSRMROT": 1,
+    	"LOG_DISARMED": 0
+    },
+    "actions": {
+    }
+}

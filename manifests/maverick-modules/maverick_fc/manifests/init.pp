@@ -69,6 +69,28 @@ class maverick_fc (
         group       => "mav",
         mode        => "755",
     }
+    
+    # Install default params config
+    file { "/srv/maverick/data/config/mavlink/mavlink_params-fc.json":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        source      => "puppet:///modules/maverick_fc/mavlink_params-fc.json",
+        replace     => false,
+    }
+    if $mavlink_active {
+        service_wrapper { "maverick-params@fc":
+            ensure      => running,
+            enable      => true,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
+        }
+    } else {
+        service_wrapper { "maverick-params@fc":
+            ensure      => stopped,
+            enable      => false,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
+        }
+    }
    
     ### Setup mavlink proxy
     if $mavlink_proxy == "mavproxy" {

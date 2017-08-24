@@ -33,6 +33,19 @@ class maverick_mavlink (
         mode        => "755",
     }
     
+    # Install mavlink-params@ service
+    file { "/srv/maverick/software/maverick/bin/mavlink_params":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlink_params",
+    } ->
+    file { "/etc/systemd/system/maverick-params@.service":
+        source      => "puppet:///modules/maverick_mavlink/maverick-params@.service",
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    }
+        
     ### cmavnode
     # Install cmavnode from gitsource
     if $cmavnode_install {

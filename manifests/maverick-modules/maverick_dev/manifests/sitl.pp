@@ -181,18 +181,35 @@ class maverick_dev::sitl (
         group       => "root",
         mode        => "644",
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-sitl"] ]
+    } ->
+    file { "/srv/maverick/data/config/mavlink/mavlink_params-sitl.json":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "644",
+        source      => "puppet:///modules/maverick_dev/mavlink_params-sitl.json",
+        replace     => false,
     }
     if $sitl_active {
         service_wrapper { "maverick-sitl":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+        } ->
+        service_wrapper { "maverick-params@sitl":
+            ensure      => running,
+            enable      => true,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
         }
     } else {
         service_wrapper { "maverick-sitl":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+        } ->
+        service_wrapper { "maverick-params@sitl":
+            ensure      => stopped,
+            enable      => false,
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
         }
     }
 

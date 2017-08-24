@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick Parameter Control - %I
+After=network-online.target maverick-sitl.service
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/mavlink_params -c /srv/maverick/data/config/mavlink/mavlink_params-%I.json
+User=mav
+
+[Install]
+WantedBy=multi-user.target
