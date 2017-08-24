@@ -17,18 +17,19 @@ Log=/srv/maverick/data/mavlink/<%= @name %>/logs
 <% elsif @inputtype == "serial" -%>
 [UartEndpoint serialin]
     Device=<%= @inputaddress %>
-    Baud=<%= @inputbaud %>,115200,57600
+    Baud=<%= @inputbaud %>,57600,115200,921600
+    FlowControl=<%= @inputflow %>
 <% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
 [UdpEndpoint <%= i -%>]
-    Mode = Normal
+    Mode = normal
     Address = 127.0.0.1
     Port = <%= @startingudp.to_i() + i %>
 <% end %>
 <% (0..(@udpinports.to_i()-1)).each do |i| -%>
 [UdpEndpoint <%= i -%>]
-    Mode = Eavesdropping
+    Mode = eavesdropping
     Address = 0.0.0.0
     Port = <%= (@startingudp.to_i() + @udpports.to_i()) + i %>
 <% end %>
