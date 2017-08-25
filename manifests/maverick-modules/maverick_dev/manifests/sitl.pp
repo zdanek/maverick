@@ -3,6 +3,7 @@ class maverick_dev::sitl (
     $jsbsim_source = "http://github.com/tridge/jsbsim.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
+    $mavlink_paramcontrol = true,
     $mavlink_startingtcp = 5780,
     $mavlink_tcpports = 3,
     $mavlink_startingudp = 14580,
@@ -194,11 +195,19 @@ class maverick_dev::sitl (
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
-        } ->
-        service_wrapper { "maverick-params@sitl":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
+        }
+        if $mavlink_paramcontrol == true {
+            service_wrapper { "maverick-params@sitl":
+                ensure      => running,
+                enable      => true,
+                require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"], Service_wrapper["maverick-sitl"] ],
+            }
+        } else {
+            service_wrapper { "maverick-params@sitl":
+                ensure      => stopped,
+                enable      => false,
+                require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
+            }
         }
     } else {
         service_wrapper { "maverick-sitl":

@@ -2,6 +2,7 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
+    $mavlink_paramcontrol = true,
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_baud = 115200,
     $mavlink_startingtcp = 5770,
@@ -78,7 +79,7 @@ class maverick_fc (
         source      => "puppet:///modules/maverick_fc/mavlink_params-fc.json",
         replace     => false,
     }
-    if $mavlink_active {
+    if $mavlink_active and $mavlink_paramcontrol {
         service_wrapper { "maverick-params@fc":
             ensure      => running,
             enable      => true,
