@@ -8,7 +8,6 @@ class maverick_gcs::qgroundcontrol (
         owner       => "mav",
         submodules  => true,
     }
-    
     ensure_packages(["espeak", "libespeak-dev", "libudev-dev", "libsdl2-dev", "qt5-default"])
     
 }
