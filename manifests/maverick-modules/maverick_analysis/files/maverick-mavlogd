@@ -230,7 +230,7 @@ class ProcessLog(ProcessEvent):
     def dashboard_errors(self):
         error_entries = []
         # Retrieve metadata
-        errorsrs = self.app.client.query('select * from events where "event_type"=\'err\';', epoch='ms')
+        errorsrs = self.app.client.query('select * from flightdata.events where "event_type"=\'err\';', epoch='ms')
         for error in list(errorsrs.get_points()):
             try:
                 fromdt=str(int(error['time']) - 30000)
