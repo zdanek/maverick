@@ -9,9 +9,7 @@ allow-hotplug <%= @interface %>
 <% if @options['wireless_mode'] -%>
     wireless-mode <%= @options['wireless_mode'] %>
 <% end -%>
-<% if @wpa_supplicant -%>
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-<% end -%>
 <% if @wpa_ssid -%>
     wpa-ssid <%= @wpa_ssid %>
 <% end -%>

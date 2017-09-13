@@ -228,13 +228,12 @@ class maverick_network (
     # Retrieve wireless auth data from hiera
     $wifi_ssid = lookup('wifi_ssid')
     $wifi_passphrase = lookup('wifi_passphrase')
-    if !empty($wifi_ssid) and !empty($wifi_passphrase) {
-        file { "/etc/wpa_supplicant/wpa_supplicant.conf":
-            content => template("maverick_network/wpa_supplicant.conf.erb"),
-            mode    => "600",
-            owner   => "root",
-            group   => "root",
-        }
+    file { "/etc/wpa_supplicant/wpa_supplicant.conf":
+        content => template("maverick_network/wpa_supplicant.conf.erb"),
+        mode    => "600",
+        owner   => "root",
+        group   => "root",
+        replace => false,
     }
 
     # Define and configure monitor-mode interface setup in systemd
