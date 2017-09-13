@@ -21,14 +21,14 @@ define maverick_network::interface_managed (
 	# Define first wireless interface
     if $ssid {
         $_ssid = $ssid
-    } elsif lookup('wifi_ssid') {
+    } elsif !empty(lookup('wifi_ssid')) {
         $_ssid = lookup('wifi_ssid')
     } else {
         $_ssid = undef
     }
     if $psk {
         $_psk = $psk
-    } elsif lookup('wifi_psk') {
+    } elsif !empty(lookup('wifi_psk')) {
         $_psk = lookup('wifi_psk')
     } else {
         $_psk = undef
@@ -55,7 +55,7 @@ define maverick_network::interface_managed (
                 auto            => true,
                 allow_hotplug   => true,
                 method          => "dhcp",
-                options         => {},
+                #options         => {},
             }
         }
     } elsif $addressing == "static" {
@@ -86,7 +86,7 @@ define maverick_network::interface_managed (
                 netmask         => $netmask,
                 gateway         => $gateway,
                 dns_nameservers => $nameservers,
-                options         => {}
+                #options         => {}
             }
         }
     } elsif $addressing == "master" {

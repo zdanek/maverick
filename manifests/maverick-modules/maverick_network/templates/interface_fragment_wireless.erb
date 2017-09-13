@@ -9,11 +9,13 @@ allow-hotplug <%= @interface %>
 <% if @options['wireless_mode'] -%>
     wireless-mode <%= @options['wireless_mode'] %>
 <% end -%>
+<% if !@options['wireless_mode'] or @options['wireless_mode'] == "managed" -%>
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-<% if @wpa_ssid -%>
+<% end -%>
+<% if @wpa_ssid and ! @wpa_ssid.empty? -%>
     wpa-ssid <%= @wpa_ssid %>
 <% end -%>
-<% if @wpa_psk -%>
+<% if @wpa_psk and ! @wpa_psk.empty? -%>
     wpa-psk  <%= @wpa_psk %>
 <% end -%>
 <% if @manage_address and ! @manage_address.empty? -%>
