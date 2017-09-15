@@ -5,7 +5,7 @@ Networking is a complex subject and the setup and configuration of networking is
 Maverick, by default, disables these Managers and uses the very simple but reliable Debian/Ubuntu networking model of configuring a single file - */etc/network/interfaces*.  This has proved to be simpler and more reliable to manage, particularly from the automated manifests that Maverick uses.
 
 ### Quick Start Wifi
-For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is only useful when Maverick is first installed or image first booted as it relies on having the sample data in place to find and replace.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).  Simply type: `wifi-setup`, enter your router SSID and passphrase:  
+For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is mostly useful when Maverick is first installed or image first booted as it only provides a very simple network configuration.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).  Simply type: `wifi-setup`, enter your router SSID and passphrase:  
 ```
 [dev] [mav@maverick-raspberry ~/var/build]$ wifi-setup
 Enter Wifi SSID: BTHub5-9FM7
@@ -31,6 +31,9 @@ In the documentation below about how to setup network interfaces, wifi passphras
 ```
 So from the above, the localconf parameter to set the AP psk would be:
 `"psk": "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d"`
+
+### wpa_supplicant
+For cases where multiple wifi networks need to be configured, or other wpa-supplicant customisations, each managed wifi interface is automatically configured to use /etc/wpa_supplicant/wpa_supplicant.conf.  A simple template is placed by Maverick if one doesn't already exist, but any changes thereafter are not touched or over-ridden by Maverick, so this file is safe to customise as you wish.
 
 ## Network Interfaces
 Any number of network interfaces can be defined in localconf, with a variety of parameters that change how each interface is configured.  The chosen model is to specify the MAC address and an interface name for each interface, so they are easy to identify.  For example, a simple wifi interface for normal connectivity might be defined:  
