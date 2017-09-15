@@ -279,9 +279,9 @@ class maverick_mavlink (
     
     # Install cuav
     if $cuav_install == true {
-        if $raspberry_present == "yes" {
-            ensure_packages(["libdc1394-22-dev", "python-wxgtk3.0", "libturbojpeg1-dev"])
-        } else {
+        if $::operatingsystem == "Debian" {
+            ensure_packages(["libdc1394-22-dev", "python-wxgtk3.0", "libturbojpeg-dev"])
+        } elsif $::operatingsystem = "Ubuntu" {
             ensure_packages(["libdc1394-22-dev", "libjpeg-turbo8-dev", "python-wxgtk3.0", "libusb-1.0-0-dev"])
         }
         install_python_module { "pip-gooey":
