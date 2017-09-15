@@ -1,7 +1,17 @@
 country=GB
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
+
 network={
-    #ssid="<%= @wifi_ssid %>"
-    #psk="<%= @wifi_psk %>"
+    # ssid="<%= @wifi_ssid %>"
+    # psk="<%= @wifi_psk %>"
+    # id_str="home"
+    # priority=1
+}
+
+network={
+    # ssid="<%= @wifi_ssid %>"
+    # psk="<%= @wifi_psk %>"
+    # id_str="outside"
+    # priority=2
 }
