@@ -280,7 +280,11 @@ class maverick_mavlink (
     # Install cuav
     if $cuav_install == true {
         if $::operatingsystem == "Debian" {
-            ensure_packages(["libdc1394-22-dev", "python-wxgtk3.0", "libturbojpeg-dev"])
+            exec { "libturbojpeg-install":
+                command     => "/usr/bin/apt install libturbojpeg-dev",
+                unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+            }
+            ensure_packages(["libdc1394-22-dev", "python-wxgtk3.0"])
         } elsif $::operatingsystem == "Ubuntu" {
             ensure_packages(["libdc1394-22-dev", "libjpeg-turbo8-dev", "python-wxgtk3.0", "libusb-1.0-0-dev"])
         }
