@@ -134,7 +134,7 @@ class maverick_analysis::collect (
     class { 'collectd::plugin::disk':
         disks          => ['/^dm/'],
         ignoreselected => true,
-        udevnameattr   => 'DM_NAME',
+        #udevnameattr   => 'DM_NAME',
     }
     class { 'collectd::plugin::interface':
         interfaces     => ['lo'],

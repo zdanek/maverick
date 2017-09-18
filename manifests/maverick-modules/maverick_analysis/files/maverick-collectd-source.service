@@ -1,20 +1,22 @@
 [Unit]
 Description=Maverick instance of Statistics collection and monitoring daemon
-After=local-fs.target network.target maverick-influxd.service
-Requires=local-fs.target network.target
+After=network-online.target multi-user.target maverick-influxd.service
+Requires=network-online.target multi-user.target maverick-influxd.service
 ConditionPathExists=/srv/maverick/data/config/analysis/collectd/collectd.conf
 Documentation=man:collectd(1)
 Documentation=man:collectd.conf(5)
 Documentation=https://collectd.org
 
 [Service]
-Type=notify
-NotifyAccess=main
+Type=forking
 EnvironmentFile=-/etc/default/collectd
 ExecStartPre=/srv/maverick/software/collectd/sbin/collectd -t -C /srv/maverick/data/config/analysis/collectd/collectd.conf
+ExecStartPre=/bin/sh -c 'while ! /usr/bin/influx -execute "show databases" </dev/null >/dev/null 2>&1; do sleep 0.2; done'
 ExecStart=/srv/maverick/software/collectd/sbin/collectd -C /srv/maverick/data/config/analysis/collectd/collectd.conf
-Restart=always
+Restart=on-failure
 RestartSec=10
+TimeoutSec=60
+TimeoutStartSec=60
 
 [Install]
 WantedBy=multi-user.target
