@@ -1,5 +1,5 @@
 class maverick_ros (
-    $installtype = "",
+    $installtype = "auto",
     $distribution = "kinetic",
     $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
     $binarytype = ["ros-kinetic-perception", "ros-kinetic-viz"], # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full, ros-kinetic-viz, ros-kinetic-perception
@@ -21,7 +21,7 @@ class maverick_ros (
         }
         $_installtype = "source"
     # First try and determine build type based on OS and architecture
-    } else {
+    } elsif $installtype == "auto" {
         if ($distribution == "kinetic") {
             if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "armv6l" or $architecture == "amd64" or $architecture == "i386")) or
                     ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
@@ -233,48 +233,49 @@ class maverick_ros (
 
     }
     
-    # Install rosmaster systemd manifest.  Note it's not activated here, other modules will call the rosmaster define
-    file { "/etc/systemd/system/maverick-rosmaster@.service":
-        ensure          => present,
-        source          => "puppet:///modules/maverick_ros/maverick-rosmaster@.service",
-        owner           => "root",
-        group           => "root",
-        mode            => "644",
-        notify          => Exec["maverick-systemctl-daemon-reload"],
-    }
-    # Create directory for ros config
-    file { "/srv/maverick/data/config/ros":
-        ensure          => directory,
-        owner           => "mav",
-        group           => "mav",
-        mode            => "755",
-    }
-    # Create a symlink to rosmaster launch script
-    file { "/srv/maverick/software/maverick/bin/rosmaster.sh":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
-    }
+    if $installtype {
+        # Install rosmaster systemd manifest.  Note it's not activated here, other modules will call the rosmaster define
+        file { "/etc/systemd/system/maverick-rosmaster@.service":
+            ensure          => present,
+            source          => "puppet:///modules/maverick_ros/maverick-rosmaster@.service",
+            owner           => "root",
+            group           => "root",
+            mode            => "644",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
+        }
+        # Create directory for ros config
+        file { "/srv/maverick/data/config/ros":
+            ensure          => directory,
+            owner           => "mav",
+            group           => "mav",
+            mode            => "755",
+        }
+        # Create a symlink to rosmaster launch script
+        file { "/srv/maverick/software/maverick/bin/rosmaster.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
+        }
+        
+        # Create log directories
+        file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc", "/srv/maverick/var/log/ros/sitl"]:
+            ensure      => directory,
+            mode        => "755",
+            owner       => "mav",
+            group       => "mav",
+        }
     
-    # Create log directories
-    file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc", "/srv/maverick/var/log/ros/sitl"]:
-        ensure      => directory,
-        mode        => "755",
-        owner       => "mav",
-        group       => "mav",
+        # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define
+        file { "/etc/systemd/system/maverick-mavros@.service":
+            source      => "puppet:///modules/maverick_ros/maverick-mavros@.service",
+            owner       => "root",
+            group       => "root",
+            mode        => "644",
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
+        # Create a symlink to mavros launch script
+        file { "/srv/maverick/software/maverick/bin/mavros.sh":
+            ensure      => link,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
+        }
     }
-
-    # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define
-    file { "/etc/systemd/system/maverick-mavros@.service":
-        source      => "puppet:///modules/maverick_ros/maverick-mavros@.service",
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    }
-    # Create a symlink to mavros launch script
-    file { "/srv/maverick/software/maverick/bin/mavros.sh":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
-    }
-
 }
