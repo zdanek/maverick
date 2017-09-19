@@ -10,6 +10,7 @@ GIMBAL=false # Set to true to enable MAVLink gimbal
 TRACKER=false # Set to true to start an antenna tracker instance
 TRACKER_LOCATION= # Set antenna tracker start location
 VEHICLE_TYPE=ArduCopter # This should normally be overridden by sitl-vehicle.conf
+SCREEN_NAME=sitl
 
 [ ! -r /srv/maverick/data/config/mavlink/sitl.conf ] || . /srv/maverick/data/config/mavlink/sitl.conf
 [ ! -r /srv/maverick/data/config/mavlink/sitl-vehicle.conf ] || . /srv/maverick/data/config/mavlink/sitl-vehicle.conf
@@ -53,4 +54,4 @@ else
     _TRACKER_LOCATION=""
 fi
 
-/srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION >/srv/maverick/var/log/sitl/sitl.log &
+/usr/bin/screen -L -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  
