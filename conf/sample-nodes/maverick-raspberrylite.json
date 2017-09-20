@@ -68,7 +68,7 @@
 	"maverick_vision::vision_landing": false,
     "maverick_vision::vision_seek": false,
     "maverick_vision::camera_streaming_daemon": false,
-	"maverick_vision::visiond::active": false,
+	"maverick_vision::visiond": false,
 	"maverick_vision::vision_landing::active": false,
 	
 	// "maverick_vision::orb_slam2": true,
