@@ -19,7 +19,13 @@ if hash tput 2>/dev/null; then
     reset=$(tput sgr0)
 fi
 
-ver=$(cat /srv/maverick/software/maverick/VERSION)
+if [ -f "/srv/maverick/software/maverick/VERSION" ]; then
+    ver=$(cat /srv/maverick/software/maverick/VERSION)
+elif [ -f "../VERSION" ]; then
+    ver=$(cat ../VERSION)
+else
+    ver=""
+fi
 if [ -z $ver ]; then
     $ver = "n/a"
 fi
