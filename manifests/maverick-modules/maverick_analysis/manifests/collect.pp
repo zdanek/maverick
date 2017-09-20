@@ -22,24 +22,25 @@ class maverick_analysis::collect (
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/configure",
                 timeout     => 0,
+                require     => [ Package["libopenipmi-dev"], Package["libsensors4-dev"] ],
             } ->
             exec { "collectd-configure":
                 user        => "mav",
-                command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd",
+                command     => "/srv/maverick/var/build/collectd/configure --prefix=/srv/maverick/software/collectd >/srv/maverick/var/log/build/collectd-configure.log 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/Makefile",
                 timeout     => 0,
             } ->
             exec { "collectd-make":
                 user        => "mav",
-                command     => "/usr/bin/make",
+                command     => "/usr/bin/make >/srv/maverick/var/log/build/collectd-make.log 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
                 timeout     => 0,
             } ->
             exec { "collectd-install":
                 user        => "mav",
-                command     => "/usr/bin/make install",
+                command     => "/usr/bin/make install >/srv/maverick/var/log/build/collectd-install 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/software/collectd/sbin/collectd",
             } ->
@@ -140,6 +141,7 @@ class maverick_analysis::collect (
         interfaces     => ['lo'],
         ignoreselected => true
     }
+    /*
     class { 'collectd::plugin::ipmi':
         # ignore_selected           => true,
         # sensors                   => ['temperature'],
@@ -147,6 +149,7 @@ class maverick_analysis::collect (
         notify_sensor_remove      => true,
         notify_sensor_not_present => true,
     }
+    */
     class { 'collectd::plugin::irq': }
     class { 'collectd::plugin::load': }
     class { 'collectd::plugin::memory': }
