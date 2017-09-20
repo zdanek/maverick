@@ -46,6 +46,8 @@ class maverick_ros (
         } elsif $_installtype == "source" and $ros_installed == "no" {
             notice("ROS: unsupported platform for ${distribution} distribution, installing from source")
         }
+    } else {
+        $_installtype = false
     }
     
     # Create symlink to usual vendor install directory
