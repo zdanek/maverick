@@ -72,7 +72,7 @@
 
 	// Add classes here
 	"classes":		[
-	    // "maverick_network"
+	    "maverick_network"
 	]
 	
 }
