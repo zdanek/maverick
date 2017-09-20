@@ -203,10 +203,14 @@ if [ "$SELFUPDATE" == "true" ]; then
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
         if [ $EUID -eq 0 ]; then
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"
-            su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
+            if [ -d "/srv/maverick/software/maverick-fcs" ]; then
+                su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
+            fi
         elif [ $USER == "mav" ]; then
             cd /srv/maverick/software/maverick; git pull origin;
-            cd /srv/maverick/software/maverick-fcs; git pull origin;
+            if [ -d "/srv/maverick/software/maverick-fcs" ]; then
+                cd /srv/maverick/software/maverick-fcs; git pull origin;
+            fi
         fi
         echo
         echo "${green}Maverick update completed${reset}"
