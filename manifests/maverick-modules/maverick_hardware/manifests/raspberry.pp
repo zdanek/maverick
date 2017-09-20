@@ -29,6 +29,9 @@ class maverick_hardware::raspberry (
         package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "libservlet2.5-java"]:
             ensure  => purged,
         }
+        package { ["libjs-mathjax", "fonts-mathjax", "python-picamera-docs", "libraspberrypi-doc", "libgl1-mesa-dri", "libllvm3.9", "libc6-dbg", "iso-codes"]:
+            ensure  => purged,
+        }
         if ! getvar("maverick_intelligence::tensorflow") == true {
             notice("Removing Raspberry jav packages")
             exec { "raspberry-remove-java":
