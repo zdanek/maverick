@@ -108,6 +108,7 @@ class maverick_mavlink (
     # Install mavlink-router from gitsource
     if $mavlink_router_install {
         if ! ("install_flag_mavlink-router" in $installflags) {
+            ensure_packages(["autoconf"])
             oncevcsrepo { "git-mavlink-router":
                 gitsource   => $mavlink_router_source,
                 dest        => "/srv/maverick/var/build/mavlink-router",
@@ -119,6 +120,7 @@ class maverick_mavlink (
                 command     => "/srv/maverick/var/build/mavlink-router/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlink-router/configure --prefix=/srv/maverick/software/mavlink-router --disable-systemd && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlink-router.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/mavlink-router",
                 creates     => "/srv/maverick/software/mavlink-router/bin/mavlink-routerd",
+                require     => Package["autoconf"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_mavlink-router":
                 ensure      => file,
