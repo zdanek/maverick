@@ -13,6 +13,7 @@ class maverick_hardware::raspberry (
     $auto_login = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     $remove_extrapackages = true,
+    $remove_glpackages = false,
     $swapsize = 1024, # /var/swap swapfile size in Mb
     ) {
 
@@ -29,7 +30,7 @@ class maverick_hardware::raspberry (
         package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "libservlet2.5-java"]:
             ensure  => purged,
         }
-        package { ["libjs-mathjax", "fonts-mathjax", "python-picamera-docs", "libraspberrypi-doc", "libgl1-mesa-dri", "libllvm3.9", "libc6-dbg", "iso-codes"]:
+        package { ["libjs-mathjax", "fonts-mathjax", "python-picamera-docs", "libraspberrypi-doc", "libllvm3.9", "libc6-dbg", "iso-codes"]:
             ensure  => purged,
         }
         if ! getvar("maverick_intelligence::tensorflow") == true {
@@ -40,6 +41,11 @@ class maverick_hardware::raspberry (
             }
         }
         
+    }
+    if $remove_glpackages == true {
+        package { ["libgl1-mesa-dri"]:
+            ensure  => purged,
+        }
     }
     
     # Install raspberry supporting utils

@@ -52,6 +52,7 @@
 	
 	"maverick_hardware::camera_picam_install": true,
 	"maverick_hardware::seekthermal_install": false,
+	"maverick_hardware::remove_glpackages": true,
 	"maverick_hardware::raspberry::swapsize": 100,
 	
 	"maverick_intelligence::tensorflow": false,
