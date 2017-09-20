@@ -44,11 +44,12 @@
 	"maverick_fc::mavlink_active": false, // Whether the mavlink proxy is active or not
 	"maverick_fc::mavlink_input": "/dev/ttyAMA0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	"maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
+	"maverick_fc::ros_instance": false,
 	"maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
 	"maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
 	"maverick_fc::mavros_startup_delay": 20,
 
-	"maverick_gcs::fcs": false,
+	"maverick_gcs::fcs": true,
 	
 	"maverick_hardware::camera_picam_install": true,
 	"maverick_hardware::seekthermal_install": false,
