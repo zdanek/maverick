@@ -486,7 +486,7 @@ class App():
         self.stdout_path = '/srv/maverick/var/log/analysis/maverick-mavlogd.daemon.log'
         self.stderr_path = '/srv/maverick/var/log/analysis/maverick-mavlogd.daemon.log'
         self.pidfile_path = '/srv/maverick/var/run/maverick-mavlogd.pid'
-        self.pidfile_timeout = 5
+        self.pidfile_timeout = 15
 
     def run(self):
         logger.info("")
