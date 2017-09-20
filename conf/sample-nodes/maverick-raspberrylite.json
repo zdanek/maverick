@@ -56,6 +56,9 @@
 	
 	"maverick_intelligence::tensorflow": false,
 	
+	"maverick_mavlink::mavcesium_install": false,
+	"maverick_mavlink::cuav_install": false,
+	
 	"maverick_ros::installtype": false,
 	
 	"maverick_vision::gstreamer": false,
