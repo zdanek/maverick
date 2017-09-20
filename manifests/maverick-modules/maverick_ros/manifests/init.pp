@@ -50,53 +50,55 @@ class maverick_ros (
         $_installtype = false
     }
     
-    # Create symlink to usual vendor install directory
-    file { ["/opt", "/opt/ros"]:
-        ensure      => directory,
-        mode        => "755",
-        owner       => "root",
-        group       => "root",
-    } ->
-    file { ["${installdir}", "${installdir}/${distribution}"]:
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    file { "/opt/ros/${distribution}":
-        ensure      => link,
-        target      => "${installdir}/${distribution}",
-        force       => true,
-    } ->
-    file { "${installdir}/current":
-        ensure      => link,
-        target      => "${installdir}/${distribution}",
-        force       => true,
-    } ->
-    # Install ROS bootstrap from ros.org packages
-    exec { "ros-repo-key":
-        command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
-        unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
-    } ->
-    exec { "ros-repo":
-        command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
-        creates     => "/etc/apt/sources.list.d/ros-latest.list",
-        notify      => Exec["maverick-aptget-update"],
-    } ->
-    exec { "ros-aptupdate":
-        command     => "/usr/bin/apt-get update",
-        unless      => "/bin/ls /var/lib/apt/lists/*ros.org*"
-    } ->
-    package { ["python-rosdep"]:
-        ensure      => installed,
-        require     => [Exec["maverick-aptget-update"], Exec["ros-aptupdate"]],
-    }
-    $wstool_package = $::operatingsystem ? {
-        'Ubuntu'        => 'python-wstool',
-        'Debian'        => 'python-wstools',
-    }
-    package { "python-wstool":
-        name        => $wstool_package
+    if $installtype {
+        # Create symlink to usual vendor install directory
+        file { ["/opt", "/opt/ros"]:
+            ensure      => directory,
+            mode        => "755",
+            owner       => "root",
+            group       => "root",
+        } ->
+        file { ["${installdir}", "${installdir}/${distribution}"]:
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
+        file { "/opt/ros/${distribution}":
+            ensure      => link,
+            target      => "${installdir}/${distribution}",
+            force       => true,
+        } ->
+        file { "${installdir}/current":
+            ensure      => link,
+            target      => "${installdir}/${distribution}",
+            force       => true,
+        } ->
+        # Install ROS bootstrap from ros.org packages
+        exec { "ros-repo-key":
+            command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
+            unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
+        } ->
+        exec { "ros-repo":
+            command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
+            creates     => "/etc/apt/sources.list.d/ros-latest.list",
+            notify      => Exec["maverick-aptget-update"],
+        } ->
+        exec { "ros-aptupdate":
+            command     => "/usr/bin/apt-get update",
+            unless      => "/bin/ls /var/lib/apt/lists/*ros.org*"
+        } ->
+        package { ["python-rosdep"]:
+            ensure      => installed,
+            require     => [Exec["maverick-aptget-update"], Exec["ros-aptupdate"]],
+        }
+        $wstool_package = $::operatingsystem ? {
+            'Ubuntu'        => 'python-wstool',
+            'Debian'        => 'python-wstools',
+        }
+        package { "python-wstool":
+            name        => $wstool_package
+        }
     }
 
     # Install from ros repos
