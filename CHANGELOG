@@ -1,5 +1,20 @@
 # Maverick Changelog
 
+## [2017-09-21] 1.1.3 'Wow that was a lot of bugs' release
+ - Added nginx webserver on port 80
+ - Moved grafana to <hostname>:80/analysis/grafana
+ - Added very basic website stub and mechanism (maverick-fcs), just links so far
+ - Improved startup reliability and ordering of analysis components
+ - Improved wifi-setup so it can be run more than once
+ - Various network fixes, including hybrid AP/associated config
+ - Fix SITL mavlink logging and mavlogd processing
+ - Move to InfluxDB TSI engine
+ - Added mavlink params service for FC and SITL that can easily configure params on the fly over mavlink
+ - Fix grafana annotations for correct influxdb datasource
+ - Change networking config to call wpa_supplicant.conf but don't control it, for manual override
+ - Lots of fixes for raspberry environment
+ - Added a version marker to top of maverick command
+
 ## [2017-08-05] 1.1.2 'Reconnect' Release
  - Lots more fixes and improvements to mavlink data analysis/graphing tool including automated housekeeping
  - Lots more fixes and improvements to network configuration
