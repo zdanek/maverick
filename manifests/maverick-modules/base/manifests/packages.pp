@@ -30,7 +30,12 @@ class base::packages {
     if $operatingsystem == "Ubuntu" {
         ensure_packages(["linux-firmware"])
     } elsif $operatingsystem == "Debian" {
-        ensure_packages(["firmware-linux", "firmware-atheros", "firmware-brcm80211", "firmware-ralink", "firmware-realtek"])
+        ensure_packages(["firmware-linux", "firmware-atheros", "firmware-brcm80211", "firmware-realtek"])
+        if $::operatingsystemmajrelease == 9 {
+            ensure_packages(["firmware-misc-nonfree", "firmware-linux-nonfree"])
+        } else {
+            ensure_packages(["firmware-ralink"])
+        }
     }
     
     # These packages should be removed from all installs.  
