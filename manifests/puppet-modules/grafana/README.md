@@ -12,6 +12,7 @@
 1. [Overview](#overview)
 1. [Module Description](#module-description)
 1. [Setup](#setup)
+    * [Requirements](#requirements)
     * [Beginning with Grafana](#beginning-with-grafana)
 1. [Usage](#usage)
     * [Classes and Defined Types](#classes-and-defined-types)
@@ -39,6 +40,15 @@ This module will:
 * Allow you to override the version of Grafana to be installed, and / or the
   package source
 * Perform basic configuration of Grafana
+
+### Requirements
+
+* If using an operating system of the Debian-based family, and the "repo"
+`install_method`, you will need to ensure that
+[puppetlabs-apt](https://forge.puppet.com/puppetlabs/apt) version 4.x is
+installed.
+* If using Docker, you will need the
+[garethr/docker](https://forge.puppet.com/garethr/docker) module version 5.x
 
 ### Beginning with Grafana
 
@@ -262,6 +272,11 @@ Grafana repositories are enabled on your host. If true, the official Grafana
 repositories will be enabled. If false, the module assumes you are managing your
 own package repository and will not set one up for you. Defaults to true.
 
+##### `plugins`
+
+Hash. This is a passthrough to call `create_resources()` on the
+`grafana_plugin` resource type.
+
 ##### `package_name`
 
 The name of the package managed with the 'package' install method. Defaults to
@@ -323,7 +338,7 @@ Example:
 
 #### Custom Types and Providers
 
-The module includes two custom types: `grafana_dashboard` and `grafana_datasource`
+The module includes several custom types:
 
 ##### `grafana_dashboard`
 
@@ -370,20 +385,51 @@ from the browser, or `proxy` to send requests via grafana.
 Authentication is optional, as is `database`; additional `json_data` can be
 provided to allow custom configuration options.
 
-##### `grafana::plugin`
+##### `grafana_plugin`
 
-There exists a custom defined resource which wraps grafana-cli to install
-plugins. Deinstallation isn't supported right now, also docker support
-completely missing. Example usage:
+An example is provided for convenience; for more details, please view the
+puppet strings docs.
 
 ```puppet
-grafana::plugin{'grafana-simple-json-datasource':}
+grafana_plugin { 'grafana-simple-json-datasource':
+  ensure => present,
+}
 ```
+
+##### `grafana::user`
+
+Creates and manages a global grafana user via the API.
+
+```puppet
+grafana_user { 'username':
+  grafana_url       => 'http://localhost:3000',
+  grafana_user      => 'admin',
+  grafana_password  => '5ecretPassw0rd',
+  full_name         => 'John Doe',
+  password          => 'Us3r5ecret',
+  email             => 'john@example.com',
+}
+```
+
 ## Limitations
 
 This module has been tested on Ubuntu 14.04, using each of the 'archive', 'docker'
 and 'package' installation methods. Other configurations should work with minimal,
 if any, additional effort.
+
+## Development
+
+This module is a fork of
+[bfraser/grafana](https://github.com/bfraser/puppet-grafana) maintained by [Vox
+Pupuli](https://voxpupuli.org/). Vox Pupuli welcomes new contributions to this
+module, especially those that include documentation and rspec tests. We are
+happy to provide guidance if necessary.
+
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for more details.
+
+### Authors
+* Bill Fraser <fraser@pythian.com>
+* Vox Pupuli Team
 
 ## Copyright and License
 

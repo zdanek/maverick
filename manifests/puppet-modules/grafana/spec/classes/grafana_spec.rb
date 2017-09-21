@@ -28,12 +28,10 @@ describe 'grafana' do
       context 'with default values' do
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_class('grafana') }
-        it { is_expected.to contain_anchor('grafana::begin') }
         it { is_expected.to contain_class('grafana::params') }
-        it { is_expected.to contain_class('grafana::install') }
-        it { is_expected.to contain_class('grafana::config') }
+        it { is_expected.to contain_class('grafana::install').that_comes_before('Class[grafana::config]') }
+        it { is_expected.to contain_class('grafana::config').that_notifies('Class[grafana::service]') }
         it { is_expected.to contain_class('grafana::service') }
-        it { is_expected.to contain_anchor('grafana::end') }
       end
 
       context 'with parameter install_method is set to package' do
@@ -47,9 +45,13 @@ describe 'grafana' do
         when 'Debian'
           download_location = '/tmp/grafana.deb'
 
-          describe 'use wget to fetch the package to a temporary location' do
-            it { is_expected.to contain_wget__fetch('grafana').with_destination(download_location) }
-            it { is_expected.to contain_wget__fetch('grafana').that_comes_before('Package[grafana]') }
+          describe 'use archive to fetch the package to a temporary location' do
+            it do
+              is_expected.to contain_archive('/tmp/grafana.deb').with_source(
+                'https://s3-us-west-2.amazonaws.com/grafana-releases/release/builds/grafana_4.5.1_amd64.deb'
+              )
+            end
+            it { is_expected.to contain_archive('/tmp/grafana.deb').that_comes_before('Package[grafana]') }
           end
 
           describe 'install dependencies first' do
@@ -69,6 +71,21 @@ describe 'grafana' do
             it { is_expected.to contain_package('grafana').with_provider('rpm') }
           end
         end
+      end
+
+      context 'with some plugins passed in' do
+        let(:params) do
+          {
+            plugins:
+            {
+              'grafana-wizzle' => { 'ensure' => 'present' },
+              'grafana-woozle' => { 'ensure' => 'absent' }
+            }
+          }
+        end
+
+        it { is_expected.to contain_grafana_plugin('grafana-wizzle').with(ensure: 'present') }
+        it { is_expected.to contain_grafana_plugin('grafana-woozle').with(ensure: 'absent').that_notifies('Class[grafana::service]') }
       end
 
       context 'with parameter install_method is set to repo' do
@@ -91,7 +108,7 @@ describe 'grafana' do
           end
 
           describe 'install the package' do
-            it { is_expected.to contain_package('grafana').with_ensure('2.5.0') }
+            it { is_expected.to contain_package('grafana').with_ensure('4.5.1') }
           end
         when 'RedHat'
           describe 'yum repo dependencies first' do
@@ -104,7 +121,7 @@ describe 'grafana' do
           end
 
           describe 'install the package' do
-            it { is_expected.to contain_package('grafana').with_ensure('2.5.0-1') }
+            it { is_expected.to contain_package('grafana').with_ensure('4.5.1-1') }
           end
         end
       end
@@ -151,7 +168,7 @@ describe 'grafana' do
 
         install_dir    = '/usr/share/grafana'
         service_config = '/usr/share/grafana/conf/custom.ini'
-        archive_source = 'https://grafanarel.s3.amazonaws.com/builds/grafana-2.5.0.linux-x64.tar.gz'
+        archive_source = 'https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-4.5.1.linux-x64.tar.gz'
 
         describe 'extract archive to install_dir' do
           it { is_expected.to contain_archive('/tmp/grafana.tar.gz').with_ensure('present') }
@@ -208,16 +225,6 @@ describe 'grafana' do
 
       context 'invalid parameters' do
         context 'cfg' do
-          describe 'should raise an error when cfg parameter is not a hash' do
-            let(:params) do
-              {
-                cfg: []
-              }
-            end
-
-            it { expect { is_expected.to contain_package('grafana') }.to raise_error(Puppet::Error, %r{cfg parameter must be a hash}) }
-          end
-
           describe 'should not raise an error when cfg parameter is a hash' do
             let(:params) do
               {
