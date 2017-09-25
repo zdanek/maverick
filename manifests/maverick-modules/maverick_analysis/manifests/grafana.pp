@@ -74,9 +74,9 @@ class maverick_analysis::grafana (
         ensure      => "stopped",
         enable      => false,
     } ->
-    exec { "grafana-postdelay":
+    exec {"grafana-postdelay":
+        command => "/usr/bin/wget --spider --tries 30 --waitretry=30 --retry-connrefused --no-check-certificate http://localhost:${webport}/public/img/grafana_icon.svg",
         refreshonly     => true,
-        command         => "/bin/sleep 10",
         subscribe       => Service["maverick-grafana"],
     } ->
     # Create maverick org in grafana
