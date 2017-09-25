@@ -36,6 +36,8 @@ The Raspberry Pi needs no introduction.  It is a very low cost computer and trad
 The setup for Raspberry Pis depend on which model, and which peripherals are being used.  Maverick sets up sensible defaults for the most likely usage scenario for UAVs, while providing parameters to control configuration if required.  To force installation of Raspberry platform support, set localconf parameter:  
 `"maverick_hardware::raspberry_install": true`
 
+!> Note: Maverick resets the default 'pi' user password to 'wingman', the same as the mav user.  This is because Raspbian checks if the default password is set and complains if it is.  This is a good idea, as otherwise there may be untold numbers of insecure Raspberries online with default passwords, ready to become zombies.  The default password can be set by specifying an encrypted string in the localconf parameter `"maverick_hardware::raspberry::pi_password"`.
+
 Maverick detects if the root filesystem/partition does not fill the entire disk (SD card), which is common when first booted from a flashed image.  In this case, the system is setup to expand the partition and filesystem on next boot.  This can be disabled by setting localconf parameter:  
 `"maverick_hardware::raspberry::expand_root": false`  
 The Raspberry GPU shares memory with the main memory pool and this memory split can be altered as desired with a localconf parameter:  
