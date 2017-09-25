@@ -13,7 +13,7 @@ class maverick_analysis::grafana (
         group       => "mav",
     }
     file { "/srv/maverick/software/grafana":
-        ensure      => asbent
+        ensure      => absent,
     }
     
     # Source build, disabled for now
