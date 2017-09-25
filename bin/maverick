@@ -54,6 +54,7 @@ usage () {
     echo " --env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
     echo " --dryrun                                  Configure dry run - just show what would be done"
     echo " --module=<module>                         Only make changes to module <module>"
+    echo " --confirm                                 Make changes without asking"
     echo
     echo "Commands"
     echo " status                                  Show current running status"
@@ -67,6 +68,7 @@ usage () {
     echo " enable                                  Enable Maverick service at boot"
     echo " disable                                 Disable Maverick service at boot"
     echo " log                                     Display realtime log for Maverick service"
+    echo " unshallow                               Unshallow a git repo"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
@@ -92,6 +94,10 @@ do
             ;;
         --module=*)
             MODULE="${i#*=}"
+            shift
+            ;;
+        --confirm)
+            CONFIRM="true"
             shift
             ;;
         configure)
@@ -136,6 +142,10 @@ do
             ;;
         log)
             LOG="true"
+            shift
+            ;;
+        unshallow)
+            UNSHALLOW="true"
             shift
             ;;
         *)
@@ -228,6 +238,50 @@ if [ "$SELFUPDATE" == "true" ]; then
     fi
 
     # Finally, exit
+    exit 0
+fi
+
+# If unshallow set, action and then exit
+if [ "$UNSHALLOW" == "true" ]; then
+
+    # Is the current directory a git repo?
+    reponame=$(basename `pwd`)
+    if [ ! -e ./.git ]; then
+        echo "${bgbl}${bold}${red}Error: current directory ${white}${reponame}${red} is not a git repo${reset}"
+        echo
+        exit 1
+    fi
+
+    # Is the current directory shallow?
+    if [ ! -e ./.git/shallow ]; then
+        echo "${bgbl}${bold}${red}Error: the git repo in the current directory ${white}${reponame}${red} is not shallow${reset}"
+        echo
+        exit 1
+    fi
+
+    echo "Current directory ${bold}${reponame}${reset} is a shallow git repo${reset}"
+    if [ "$CONFIRM" != "true" ]; then
+        echo "Do you want to unshallow this repo?"
+        select yn in "Yes" "No"; do
+            case $yn in
+                Yes ) 
+                    break;;
+                No ) 
+                    exit 1;;
+            esac
+        done
+    fi
+    
+    # If we get here, we're good to go   
+    git fetch --unshallow
+    git config remote.origin.fetch |grep '*:refs' >/dev/null 2>&1
+    if [ $? -eq 1 ]; then
+        echo
+        echo "Changing origin refs for all remote branches"
+        git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+    fi
+
+    echo
     exit 0
 fi
 
