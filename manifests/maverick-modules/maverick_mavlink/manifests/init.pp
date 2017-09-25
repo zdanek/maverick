@@ -286,10 +286,14 @@ class maverick_mavlink (
                 command     => "/usr/bin/apt install libturbojpeg-dev",
                 unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
             }
-            ensure_packages(["libdc1394-22-dev", "python-wxgtk3.0"])
         } elsif $::operatingsystem == "Ubuntu" {
-            ensure_packages(["libdc1394-22-dev", "libjpeg-turbo8-dev", "python-wxgtk3.0", "libusb-1.0-0-dev"])
+            ensure_packages(["libjpeg-turbo8-dev"])
         }
+        # Install dependencies for gooey/wxpython4/cuav
+        ensure_packages(
+            ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", "libgstreamer-plugins-base1.0-dev", "dpkg-dev", "build-essential", "python2.7-dev", "libjpeg-dev", "libtiff-dev", "libsdl1.2-dev", "libnotify-dev", "freeglut3", "freeglut3-dev", "libsm-dev", "libgtk2.0-dev", "libwebkitgtk-dev", "libwebkitgtk-3.0-dev"],
+            {'before' => Install_python_module["pip-gooey"]}
+            )
         install_python_module { "pip-gooey":
             pkgname     => "Gooey",
             ensure      => present,
@@ -311,7 +315,7 @@ class maverick_mavlink (
                 command     => "/usr/bin/python setup.py install",
                 cwd         => "/srv/maverick/var/build/cuav",
                 require     => [ Class["maverick_vision::opencv"], Package["libdc1394-22-dev"] ],
-                creates     => "/usr/local/lib/python2.7/dist-packages/cuav-1.4.0-py2.7-linux-x86_64.egg",
+                unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/cuav*",
             }
         }      
         #install_python_module { "pip-cuav":
