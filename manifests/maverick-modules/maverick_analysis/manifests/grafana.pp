@@ -14,31 +14,9 @@ class maverick_analysis::grafana (
     }
     file { "/srv/maverick/software/grafana":
         ensure      => absent,
+        force       => true,
     }
-    
-    # Source build, disabled for now
-    if (1 == 2) {
-        exec { "grafana-get":
-            environment     => ["GOPATH=/srv/maverick/software/grafana"],
-            command         => "/usr/bin/go get github.com/grafana/grafana",
-            creates         => "/srv/maverick/software/grafana/src/github.com/grafana/grafana/README.md",
-            user            => "mav",
-            returns         => [0, 1], # This returns an error, ignore it
-        } ->
-        exec { "grafana-setup":
-            environment     => ["GOPATH=/srv/maverick/software/grafana"],
-            cwd             => "/srv/maverick/software/grafana/src/github.com/grafana/grafana",
-            command         => "/usr/bin/go run build.go setup",
-            user            => "mav",
-        } ->
-        exec { "grafana-build":
-            environment     => ["GOPATH=/srv/maverick/software/grafana"],
-            cwd             => "/srv/maverick/software/grafana/src/github.com/grafana/grafana",
-            command         => "/usr/bin/go run build.go build",
-            user            => "mav",
-        }
-    }
-    
+
     if $joule_present == "yes" {
         $_dashboard = "system-dashboard-joule.json"
     } elsif $raspberry_present == "yes" {
