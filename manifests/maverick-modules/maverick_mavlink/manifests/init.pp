@@ -14,6 +14,7 @@ class maverick_mavlink (
     $mavcesium_port = "6790",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
     $cuav_install = true,
+    $gooey_version = "0.9.2.3",
 ) {
     
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
@@ -289,14 +290,25 @@ class maverick_mavlink (
         } elsif $::operatingsystem == "Ubuntu" {
             ensure_packages(["libjpeg-turbo8-dev"])
         }
-        # Install dependencies for gooey/wxpython4/cuav
-        ensure_packages(
-            ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", "libgstreamer-plugins-base1.0-dev", "dpkg-dev", "build-essential", "python2.7-dev", "libjpeg-dev", "libtiff5-dev", "libsdl1.2-dev", "libnotify-dev", "freeglut3", "freeglut3-dev", "libsm-dev", "libgtk2.0-dev", "libwebkitgtk-dev", "libwebkitgtk-3.0-dev"],
-            {'before' => Install_python_module["pip-gooey"]}
+
+        # Install dependencies based on version of gooey
+        if version_cmp($gooey_version, "0.9.3") > 0 {
+            # Install dependencies for gooey/wxpython4/cuav
+            ensure_packages(
+                ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", "libgstreamer-plugins-base1.0-dev", "dpkg-dev", "build-essential", "python2.7-dev", "libjpeg-dev", "libtiff5-dev", "libsdl1.2-dev", "libnotify-dev", "freeglut3", "freeglut3-dev", "libsm-dev", "libgtk2.0-dev", "libwebkitgtk-dev", "libwebkitgtk-3.0-dev"],
+                {'before' => Install_python_module["pip-gooey"]}
             )
+        } else {
+            # Install dependencies for gooey/wxpython3/cuav
+            ensure_packages(
+                ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", ],
+                {'before' => Install_python_module["pip-gooey"]}
+            )
+        }
         install_python_module { "pip-gooey":
             pkgname     => "Gooey",
-            ensure      => present,
+            ensure      => exactly,
+            version     => $gooey_version,
             timeout     => 0,
         } ->
         install_python_module { "pip-numpy":
