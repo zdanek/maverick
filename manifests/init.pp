@@ -56,7 +56,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout
             }
         } elsif versioncmp($version, $module_version) != 0 {
-            notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
+            notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 ensure => $version,
