@@ -14,6 +14,7 @@ class maverick_vision::vision_landing (
         gitsource   => $vision_landing_source,
         dest        => "/srv/maverick/software/vision_landing",
         revision    => $vision_landing_revision,
+        depth       => 0,
     } ->
     # Compile vision_landing
     exec { "vision_landing-compile":
