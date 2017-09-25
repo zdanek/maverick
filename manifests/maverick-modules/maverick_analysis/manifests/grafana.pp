@@ -68,16 +68,16 @@ class maverick_analysis::grafana (
       package_source        => $package_source,
       service_name          => "maverick-grafana",
       version               => $grafana_version,
-      notify                => Exec["grafana-postdelay"],
     } ->
     service_wrapper { "grafana-server":
         ensure      => "stopped",
         enable      => false,
     } ->
-    exec {"grafana-postdelay":
-        command => "/usr/bin/wget --spider --tries 30 --waitretry=30 --retry-connrefused --no-check-certificate http://localhost:${webport}/public/img/grafana_icon.svg",
-        refreshonly     => true,
-        subscribe       => Service["maverick-grafana"],
+    http_conn_validator { 'grafana-postdelay' :
+        host    => '127.0.0.1',
+        port    => $webport,
+        use_ssl => false,
+        test_url => '/public/img/grafana_icon.svg',
     } ->
     # Create maverick org in grafana
     exec { "grafana-maverickorg":
@@ -106,7 +106,7 @@ class maverick_analysis::grafana (
         database          => 'maverick',
         access_mode       => 'proxy',
         is_default        => true,
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'system_dashboard':
         title               => "System Dashboard",
@@ -114,7 +114,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/${_dashboard}"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'flight_dashboard':
         title               => "Flight Data Analysis",
@@ -122,7 +122,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-dashboard-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf2_dashboard':
         title               => "Flight EKF2 Analysis",
@@ -130,7 +130,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf3_dashboard':
         title               => "Flight EKF3 Analysis",
@@ -138,7 +138,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf3-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'ekf2ekf3_dashboard':
         title               => "Flight EKF2-EKF3 Analysis",
@@ -146,7 +146,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
     grafana_dashboard { 'mavexplorer_mavgraphs_dashboard':
         title               => "MAVExplorer Mavgraphs",
@@ -154,7 +154,7 @@ class maverick_analysis::grafana (
         grafana_user      => 'mav',
         grafana_password  => 'wingman',
         content           => template("maverick_analysis/mavexplorer-mavgraphs.json"),
-        require             => [ Service["maverick-grafana"], Exec["grafana-postdelay"] ],
+        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     }
 
     if defined(Class["::maverick_security"]) {
