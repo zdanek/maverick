@@ -291,7 +291,7 @@ class maverick_mavlink (
         }
         # Install dependencies for gooey/wxpython4/cuav
         ensure_packages(
-            ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", "libgstreamer-plugins-base1.0-dev", "dpkg-dev", "build-essential", "python2.7-dev", "libjpeg-dev", "libtiff-dev", "libsdl1.2-dev", "libnotify-dev", "freeglut3", "freeglut3-dev", "libsm-dev", "libgtk2.0-dev", "libwebkitgtk-dev", "libwebkitgtk-3.0-dev"],
+            ["libdc1394-22-dev", "python-wxgtk3.0", "libusb-1.0-0-dev", "libgstreamer-plugins-base1.0-dev", "dpkg-dev", "build-essential", "python2.7-dev", "libjpeg-dev", "libtiff5-dev", "libsdl1.2-dev", "libnotify-dev", "freeglut3", "freeglut3-dev", "libsm-dev", "libgtk2.0-dev", "libwebkitgtk-dev", "libwebkitgtk-3.0-dev"],
             {'before' => Install_python_module["pip-gooey"]}
             )
         install_python_module { "pip-gooey":
