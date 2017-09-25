@@ -21,7 +21,7 @@ class maverick_hardware::raspberry (
     user { "pi":
         password    => "${pi_password}",
     } ->
-    file { "/etc/profile.d/sshpasswd.sh":
+    file { ["/etc/profile.d/sshpassword.sh", "/etc/profile.d/sshpwd.sh"]:
         ensure      => absent
     }
     
