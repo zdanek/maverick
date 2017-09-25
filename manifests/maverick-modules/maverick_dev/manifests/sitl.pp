@@ -3,7 +3,7 @@ class maverick_dev::sitl (
     $jsbsim_source = "http://github.com/tridge/jsbsim.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
-    $mavlink_paramcontrol = true,
+    $mavlink_paramcontrol = false,
     $mavlink_startingtcp = 5780,
     $mavlink_tcpports = 3,
     $mavlink_startingudp = 14580,
