@@ -6,11 +6,14 @@ class maverick_analysis::grafana (
     
     ensure_packages(["sqlite3"])
 
-    file { ["/srv/maverick/software/grafana", "/srv/maverick/data/analysis/grafana", "/srv/maverick/var/log/analysis/grafana"]:
+    file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/var/log/analysis/grafana"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",
         group       => "mav",
+    }
+    file { "/srv/maverick/software/grafana":
+        ensure      => asbent
     }
     
     # Source build, disabled for now
