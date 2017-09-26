@@ -3,4 +3,4 @@ SCREEN_NAME=mavlink-<%= @name %>
 # MAVPROXY_PORT = FlightController -> CompanionComputer connection, should be autodetected but can be specified, eg: "/dev/ttyACM0".  /dev/ttySAC0 for odroid xu3/xu4.
 MAVPROXY_PORT=<%= @inputaddress %>
 <% if @inputbaud %>MAVPROXY_BAUD=<%= @inputbaud %><% end %>
-MAVPROXY_ARGS="<% (0..(@udpports.to_i()-1)).each do |i| -%> --out=udp:127.0.0.1:<%= @startingudp.to_i() + i -%><% end -%> <% (0..(@udpinports.to_i()-1)).each do |i| -%> --out=udpin:0.0.0.0:<%= (@startingudp.to_i()+@udpports.to_i()) + i -%><% end -%> <% (0..(@tcpports.to_i()-1)).each do |i| -%> --out=tcpin:0.0.0.0:<%= @startingtcp.to_i() + i -%><% end -%>"
+MAVPROXY_ARGS="<% (0..(@udpports.to_i()-1)).each do |i| -%> --out=udp:127.0.0.1:<%= @startingudp.to_i() + i -%><% end -%> <% (0..(@udpinports.to_i()-1)).each do |i| -%> --out=udpin:0.0.0.0:<%= (@startingudp.to_i()+@udpports.to_i()) + i -%><% end -%> <% (0..(@tcpports.to_i()-1)).each do |i| -%> --out=tcpin:0.0.0.0:<%= @startingtcp.to_i() + i -%><% end -%><% if @mavcesium_installed %> --load-module=cesium<% end -%>"

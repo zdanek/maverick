@@ -15,6 +15,11 @@ define maverick_mavlink::mavproxy (
     } else {
         $service_notify = undef
     }
+    if getvar("maverick_mavlink::mavcesium_install") == true {
+        $mavcesium_installed = true
+    } else {
+        $mavcesium_installed = false
+    }
     file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.service.conf":
         ensure      => present,
         owner       => "mav",

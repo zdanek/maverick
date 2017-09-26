@@ -11,7 +11,7 @@ class maverick_mavlink (
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
     $mavcesium_install = true,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
-    $mavcesium_port = "6790",
+    $mavcesium_port = "6791",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
     $cuav_install = true,
     $gooey_version = "0.9.2.3",
@@ -220,20 +220,10 @@ class maverick_mavlink (
             dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
             submodules  => true,
         } ->
-        install_python_module { "mav-flask":
-            pkgname     => "Flask",
+        install_python_module { "mav-tornado":
+            pkgname     => "tornado",
             ensure      => atleast,
-            version     => "0.12.2",
-        } ->
-        install_python_module { "mav-twisted":
-            pkgname     => "Twisted",
-            ensure      => atleast,
-            version     => "16.0.0"
-        } ->
-        install_python_module { "mav-autobahn":
-            pkgname     => "autobahn",
-            ensure      => atleast,
-            version     => "0.10.3",
+            version     => "4.5.2",
         } ->
         install_python_module { "mav-configparser":
             pkgname     => "configparser",
@@ -264,12 +254,14 @@ class maverick_mavlink (
             owner       => "mav",
             group       => "mav",
             mode        => "755",
-        } ->
+        }
+        /*
         file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/templates/index.html":
             ensure      => present,
             mode        => "644",
             source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
         }
+        */
         
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "mavcesium":
