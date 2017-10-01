@@ -39,10 +39,5 @@ class maverick_web::nginx (
         www_root    => '/srv/maverick/software/maverick-fcs/public',
         require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
     }
-    nginx::resource::location { "web-analysis-graphs":
-        location    => "/analysis/grafana/",
-        proxy       => 'http://localhost:6790/',
-        server      => "${::hostname}.local",
-        require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
-    }
+
 }

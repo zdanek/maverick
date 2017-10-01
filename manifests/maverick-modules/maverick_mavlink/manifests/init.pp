@@ -219,6 +219,7 @@ class maverick_mavlink (
             gitsource   => $mavcesium_source,
             dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
             submodules  => true,
+            owner       => "mav",
         } ->
         install_python_module { "mav-tornado":
             pkgname     => "tornado",
@@ -262,7 +263,28 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
         }
         */
-        
+
+        if defined(Class["::maverick_web"]) {
+            # Setup reverse proxy for websocket
+            nginx::resource::location { "web-mavcesium-websocket":
+                location                => "/mavlink/mavcesium/websocket/",
+                proxy                   => "http://127.0.0.1:${mavcesium_port}/mavlink/mavcesium/websocket/",
+            	proxy_connect_timeout   => "7d",
+            	#proxy_send_timeout      => "7d", # not supported by nginx puppet module
+            	proxy_read_timeout      => "7d",
+                proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"'],
+            	proxy_http_version      => "1.1",
+            	server                  => "${::hostname}.local",
+        	}
+            # Setup reverse proxy for static content
+            nginx::resource::location { "web-mavcesium":
+                location    => "/mavlink/mavcesium/",
+                proxy       => "http://127.0.0.1:${mavcesium_port}/mavlink/mavcesium/",
+                server      => "${::hostname}.local",
+                require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+            }
+        }
+
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "mavcesium":
                 ports       => $mavcesium_port,
