@@ -42,7 +42,7 @@ class Craft:
     def connect(self):
         try:
             print "Connecting to drone on: %s" % self.config["connect"]
-            self.vehicle = connect(self.config["connect"], wait_ready=True)
+            self.vehicle = connect(self.config["connect"], wait_ready=True, rate=1)
             self.connected = True
             print "Success: Connected to drone"
         except:
