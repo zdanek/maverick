@@ -156,7 +156,16 @@ class maverick_analysis::grafana (
         content           => template("maverick_analysis/mavexplorer-mavgraphs.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     }
-
+    
+    if defined(Class["::maverick_web"]) {
+        nginx::resource::location { "web-analysis-graphs":
+            location    => "/analysis/grafana/",
+            proxy       => 'http://localhost:6790/',
+            server      => "${::hostname}.local",
+            require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+        }
+    }
+    
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "grafana":
             ports       => $webport,
