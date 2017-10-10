@@ -1,7 +1,7 @@
 class maverick_analysis::grafana (
     $webport = "6790",
     $rootpath = "/analysis/grafana/",
-    $grafana_version = "4.3.2",
+    $grafana_version = "4.5.2",
 ) {
     
     ensure_packages(["sqlite3"])
