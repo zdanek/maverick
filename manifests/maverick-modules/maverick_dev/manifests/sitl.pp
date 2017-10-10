@@ -190,7 +190,8 @@ class maverick_dev::sitl (
         source      => "puppet:///modules/maverick_dev/mavlink_params-sitl.json",
         replace     => false,
     }
-    if $sitl_active {
+    
+    if $sitl_active == true {
         service_wrapper { "maverick-sitl":
             ensure      => running,
             enable      => true,
