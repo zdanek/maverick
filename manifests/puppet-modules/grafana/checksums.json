@@ -1,5 +1,5 @@
 {
-  "CHANGELOG.md": "bce2539a3eaba0d14927e4021e557d27",
+  "CHANGELOG.md": "f32a29cc3eb565d647f44a1e5640ca7a",
   "CONTRIBUTING.md": "dd3f7e07456a8ae60681e53854dde3aa",
   "CONTRIBUTORS": "3ead2c9db7c7d793ce53401187ad096f",
   "Gemfile": "3babe1649f3057e717e21f871e7a7e79",
@@ -22,7 +22,7 @@
   "manifests/install.pp": "0b05866648ad084e6888d251966f1d63",
   "manifests/params.pp": "31e1dbaf78dc2a0405dfdf6dcd4673b5",
   "manifests/service.pp": "70cb1b30587354aff9e2c29ff1c094d4",
-  "metadata.json": "fe7468860c3275b5eb30f0ccf2713030",
+  "metadata.json": "27d225d9f7cf346a06c4467a04dccfae",
   "spec/acceptance/class_spec.rb": "e2856dbe40885d4327cab5a9e564a3de",
   "spec/acceptance/grafana_plugin_spec.rb": "61992a08c596788becce6b773b855dd9",
   "spec/acceptance/nodesets/archlinux-2-x64.yml": "daafcfcb4c8c8766856f52cec6ae5e86",
