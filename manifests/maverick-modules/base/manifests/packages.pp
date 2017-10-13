@@ -69,20 +69,14 @@ class base::packages {
         ensure      => present
     } ->
 
-    # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
-    # Python::pip doesn't seem to work here, use exec instead
+    # Need to install/upgrade pip to a known version using easy_install, which is the only method that works reliably.
     exec { "upgrade-pip":
-        #command     => "pip install --upgrade pip==9.0.1",
         command     => "sudo easy_install -U pip==9.0.1",
-        unless      => "pip --version |grep 9.0.1",
+        # unless      => "pip --version |grep 9.0.1",
+        creates     => "/usr/local/lib/python2.7/dist-packages/pip-9.0.1.dist-info",
         path        => ["/usr/local/bin", "/usr/bin", "/bin"],
     } ->
-    #exec { "install-pyric":
-    #    command     => "pip install PyRIC",
-#        unless      => "pip list |grep PyRIC",
-#        require     => [ Class["python"], Class["locales"] ],
-#        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
-#    } ->
+    # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
     install_python_module { 'pip-pyric':
         pkgname     => 'PyRIC',
         ensure      => present,
