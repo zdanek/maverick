@@ -13,6 +13,7 @@ class maverick_hardware::raspberry (
     $auto_login = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     $remove_extrapackages = true,
+    $remove_more_extrapackages = false,
     $remove_glpackages = false,
     $swapsize = 1024, # /var/swap swapfile size in Mb
     ) {
@@ -27,20 +28,25 @@ class maverick_hardware::raspberry (
     
     # Remove large packages to save space
     if $remove_extrapackages == true {
-        package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "libservlet2.5-java"]:
+        package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot"]:
             ensure  => purged,
         }
-        package { ["libjs-mathjax", "fonts-mathjax", "python-picamera-docs", "libraspberrypi-doc", "libllvm3.9", "libc6-dbg", "iso-codes"]:
+        package { ["libjs-mathjax", "fonts-mathjax", "pyton-picamera-docs", "libraspberrypi-doc", "libllvm3.9", "libc6-dbg"]:
             ensure  => purged,
         }
         if ! getvar("maverick_intelligence::tensorflow") == true {
             notice("Removing Raspberry jav packages")
             exec { "raspberry-remove-java":
-                command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk openjdk-8-jre openjdk-7-jdk openjdk-7-jre java-common",
+                command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk* openjdk-8-jre* openjdk-7-jdk* openjdk-7-jre* java-common, libservlet2.5-java",
                 onlyif      => "/usr/bin/dpkg -s openjdk-8-jdk || /usr/bin/dpkg -s openjdk-7-jdk",
             }
         }
         
+    }
+    if $remove_more_extrapackages == true {
+        package {["chromium-browser"]:
+            ensure  => purged,
+        }
     }
     if $remove_glpackages == true {
         package { ["libgl1-mesa-dri"]:
