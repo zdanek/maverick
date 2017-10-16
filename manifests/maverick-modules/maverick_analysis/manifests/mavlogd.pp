@@ -24,7 +24,7 @@ class maverick_analysis::mavlogd (
         ensure          => link,
         target          => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/maverick-mavlogd",
     } ->
-    file { ["/srv/maverick/data/analysis", "/srv/maverick/data/analysis/inbox", "/srv/maverick/data/analysis/archive", "/srv/maverick/data/analysis/archive/inbox", "/srv/maverick/data/analysis/archive/fc", "/srv/maverick/data/analysis/archive/sitl"]:
+    file { ["/srv/maverick/data/analysis/inbox", "/srv/maverick/data/analysis/archive", "/srv/maverick/data/analysis/archive/inbox"]:
         mode            => "755",
         owner           => "mav",
         group           => "mav",
