@@ -43,18 +43,19 @@ Raspberry: `ssh maverick-raspberry.local`
 Odroid: `ssh maverick-odroidxu4.local`  
 Ubuntu VM: `ssh maverick-ubuntuvm.local`  
 
-You can also connect to the Web IDE from any web browser:  
-Joule: http://maverick-joule.local:6789/  
-Raspberry: http://maverick-raspberry.local:6789/  
-Odroid: http://maverick-odroidxu4.local:6789/  
-Ubuntu VM: http://maverick-ubuntuvm.local:6789/  
+You can also connect to the Web interface from any web browser:  
+Joule: http://maverick-joule.local/  
+Raspberry: http://maverick-raspberry.local/  
+Odroid: http://maverick-odroidxu4.local/  
+Ubuntu VM: http://maverick-ubuntuvm.local/  
 
-The Web IDE has a browser based SSH client which is open at the bottom of the window by default and logged in to the mav user, and is a very convenient tool for quick command line access.
+The Web IDE that is available as a link from the web interface has a browser based SSH client which is open at the bottom of the window by default and logged in to the mav user, and is a very convenient tool for quick command line access.
 
 **Note: The username is 'mav' and the default password is 'wingman' for both ssh and web access.**
 
 After logging in, it's strongly recommended to firstly update and configure Maverick, in particular this will expand the root filesystem to fill the SD card you are using:
 ```bash
+sudo apt update
 maverick self-update
 maverick configure
 sudo reboot
