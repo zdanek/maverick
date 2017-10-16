@@ -163,7 +163,7 @@ class ProcessLog(ProcessEvent):
         file = os.path.basename(filename)
         dirs = os.path.split(filename)
         dirfrags = dirs[0].split(os.path.sep)
-        destfile = os.path.sep.join(["/srv/maverick/data/mavlink/archive",dirfrags[-2],dirs[1]])
+        destfile = os.path.sep.join(["/srv/maverick/data/analysis/archive",dirfrags[-2],dirs[1]])
         shutil.move(filename, destfile)
         logger.info("Archiving file from " +filename+ " to " +destfile)
 

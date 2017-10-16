@@ -14,11 +14,17 @@ class maverick_analysis::mavlogd (
         pkgname     => 'grafana-api-client',
         ensure      => present,
     } ->
+    install_python_module { 'pip-mavlogd-pymavlink':
+        pkgname     => 'pymavlink',
+        ensure      => atleast,
+        version     => "2.2.5",
+        timeout     => 0,
+    } ->
     file { "/srv/maverick/software/maverick/bin/maverick-mavlogd":
         ensure          => link,
         target          => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/maverick-mavlogd",
     } ->
-    file { ["/srv/maverick/data/mavlink/inbox", "/srv/maverick/data/mavlink/archive", "/srv/maverick/data/mavlink/archive/inbox", "/srv/maverick/data/mavlink/archive/fc", "/srv/maverick/data/mavlink/archive/sitl"]:
+    file { ["/srv/maverick/data/analysis", "/srv/maverick/data/analysis/inbox", "/srv/maverick/data/analysis/archive", "/srv/maverick/data/analysis/archive/inbox", "/srv/maverick/data/analysis/archive/fc", "/srv/maverick/data/analysis/archive/sitl"]:
         mode            => "755",
         owner           => "mav",
         group           => "mav",
