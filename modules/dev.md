@@ -43,6 +43,10 @@ cd ~/code/ardupilot
 ## SITL
 Maverick provides a complete ArduPilot SITL environment, complete with a Mavlink proxy so multiple connection types can be made, and optionally a separate ROS environment and MAVRos connected to SITL.  
 In *dev* mode, SITL is automatically compiled and installed, and a system service is enabled and running by default.  In *flight* mode, all the SITL and associated services are disabled to ensure they do not conflict or take resources during flight.  
+The SITL service can be turned off by setting the localconf parameter:  
+`"maverick_dev::sitl:sitl_active": false`  
+SITL can be turned off in it's entirety during bootstrap by setting localconf parameter (but not recommended during normal usage):  
+`"maverick_dev::sitl": false`  
 There are no actual parameters or config to set within Maverick for SITL - all of this is set automatically by the ArduPilot vehicle type in the section above.  There is however a dynamic config file for SITL, in ~/data/config/mavlink/sitl.conf.  SITL is started using 'sim_vehicle.py', which is the [recommended way of starting SITL](http://ardupilot.org/dev/docs/setting-up-sitl-on-linux.html).  The *~/data/config/mavlink/sitl.conf* provides a simple way of setting the sim_vehicle.py startup parameters.  If this config is updated, the changes are activated by restarting SITL:  
 `maverick restart sitl`
 
