@@ -8,6 +8,8 @@ class maverick_analysis::collect (
     # Install from source
     if $install_type == "source" {
         $manage_package = false
+        # Ensure build dependencies are installed
+        ensure_packages(["build-essential", "autoconf", "automake", "libtool"])
         ensure_packages(["collectd", "collectd-core"], {'ensure'=>'absent'})
         unless "install_flag_collectd" in $installflags {
             ensure_packages(["flex", "bison", "libopenipmi-dev", "libsensors4-dev", "libsnmp-dev"])
