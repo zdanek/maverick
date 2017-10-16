@@ -27,7 +27,7 @@ else
     ver=""
 fi
 if [ -z $ver ]; then
-    $ver = "n/a"
+    ver="n/a"
 fi
 echo
 echo "${bgb}${bold}Maverick - UAV Companion Computer System - Version ${ver}${reset}"
