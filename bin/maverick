@@ -512,7 +512,11 @@ if  [ "z${_aptdpkg}" != "z" ]; then
 fi
 
 # Check that an apt update has been done recently
-last_aptupdate=$(date -d @$( stat -c %Y /var/lib/apt/periodic/update-success-stamp ) +%Y%m%d%H%M%S)
+if [ -f /var/lib/apt/periodic/update-success-stamp ]; then
+    last_aptupdate=$(date -d @$( stat -c %Y /var/lib/apt/periodic/update-success-stamp ) +%Y%m%d%H%M%S)
+else
+    last_aptupdate=0
+fi
 now_timestamp=$(date +%Y%m%d%H%M%S)
 update_diff=`expr $now_timestamp - $last_aptupdate`
 # If apt update hasn't been run within the last day, run an update
