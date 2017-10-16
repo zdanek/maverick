@@ -29,7 +29,6 @@ fi
 if [ -z $ver ]; then
     ver="n/a"
 fi
-
 echo
 echo "${bgb}${bold}Maverick - UAV Companion Computer System - Version ${ver}${reset}"
 
@@ -510,6 +509,20 @@ _aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq)
 if  [ "z${_aptdpkg}" != "z" ]; then
     echo "${red}Error: There are active apt/dpkg processes.  This will interfere with Maverick, please ensure there are no apt/dpkg processes before running Maverick.${reset}"
     exit 1
+fi
+
+# Check that an apt update has been done recently
+if [ -f /var/lib/apt/periodic/update-success-stamp ]; then
+    last_aptupdate=$(date -d @$( stat -c %Y /var/lib/apt/periodic/update-success-stamp ) +%Y%m%d%H%M%S)
+else
+    last_aptupdate=0
+fi
+now_timestamp=$(date +%Y%m%d%H%M%S)
+update_diff=`expr $now_timestamp - $last_aptupdate`
+# If apt update hasn't been run within the last day, run an update
+if [ "$update_diff" -gt "86400" ]; then
+    echo "Warning: apt package cache has not been updated within the last day, running update"
+    sudo apt update >/dev/null 2>&1
 fi
 
 # Check that puppet, hiera and facter are not installed through system packages
