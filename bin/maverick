@@ -218,14 +218,26 @@ if [ "$SELFUPDATE" == "true" ]; then
     # Next, do a git pull to update maverick code
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
         if [ $EUID -eq 0 ]; then
+            echo -n "Updating maverick: "
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+            echo -n "Updating maverick-fcs: "
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
             fi
+            echo -n "Updating maverick-docs: "
+            if [ -d "/srv/maverick/software/maverick-docs" ]; then
+                su mav -c "cd /srv/maverick/software/maverick-docs; git pull origin"
+            fi
         elif [ $USER == "mav" ]; then
+            echo -n "Updating maverick: "
             cd /srv/maverick/software/maverick; git pull origin;
+            echo -n "Updating maverick-fcs: "
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 cd /srv/maverick/software/maverick-fcs; git pull origin;
+            fi
+            echo -n "Updating maverick-docs: "
+            if [ -d "/srv/maverick/software/maverick-docs" ]; then
+                cd /srv/maverick/software/maverick-docs; git pull origin;
             fi
         fi
         echo

@@ -5,6 +5,7 @@ class maverick_web (
     $webserver_type = "nginx",
     $webserver_port = 80,
     $webserver_sslport = 443,
+    $maverick_docs = true,
 ) {
     
     if $nodejs == true {
@@ -37,6 +38,10 @@ class maverick_web (
             }
         }
 
+    }
+    
+    if $maverick_docs == true {
+        class { "maverick_web::maverick_docs": }
     }
     
 }
