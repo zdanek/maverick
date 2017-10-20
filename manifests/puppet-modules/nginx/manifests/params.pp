@@ -1,3 +1,8 @@
+# Class: nginx::params
+# ====================
+#
+# nginx default settings and according to operating system
+#
 class nginx::params {
   ### Operating System Configuration
   ## This is my hacky... no hiera system. Oh well. :)
@@ -35,7 +40,7 @@ class nginx::params {
         }
       }
     }
-    'FreeBSD': {
+    'DragonFly', 'FreeBSD': {
       $_module_os_overrides = {
         'conf_dir'    => '/usr/local/etc/nginx',
         'daemon_user' => 'www',

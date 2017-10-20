@@ -4,6 +4,7 @@ class maverick_security (
 	$fail2ban = false,
 	$rkhunter = false,
 	$clamav = false,
+	$ssl = true,
 	) {
     
     ### Turn selinux on to at least permissive by default
@@ -37,4 +38,7 @@ class maverick_security (
 		clamav			=> $clamav,
 	}
 	
+	### Configure base SSL environment
+	class { "maverick_security::ssl": }
+
 }

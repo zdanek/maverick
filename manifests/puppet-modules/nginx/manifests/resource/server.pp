@@ -154,7 +154,7 @@ define nginx::resource::server (
   Boolean $ssl_listen_option                                                     = true,
   Optional[Variant[String, Boolean]] $ssl_cert                                   = undef,
   Optional[String] $ssl_client_cert                                              = undef,
-  Optional[String] $ssl_verify_client                                            = 'on',
+  String $ssl_verify_client                                                      = 'on',
   Optional[String] $ssl_dhparam                                                  = $::nginx::ssl_dhparam,
   Boolean $ssl_redirect                                                          = false,
   Optional[Integer] $ssl_redirect_port                                           = undef,
@@ -195,12 +195,12 @@ define nginx::resource::server (
   Optional[String] $fastcgi                                                      = undef,
   Optional[String] $fastcgi_index                                                = undef,
   $fastcgi_param                                                                 = undef,
-  Optional[String] $fastcgi_params                                               = "${::nginx::conf_dir}/fastcgi.conf",
+  String $fastcgi_params                                                         = "${::nginx::conf_dir}/fastcgi.conf",
   Optional[String] $fastcgi_script                                               = undef,
   Optional[String] $uwsgi                                                        = undef,
-  Optional[String] $uwsgi_params                                                 = "${nginx::config::conf_dir}/uwsgi_params",
+  String $uwsgi_params                                                           = "${nginx::config::conf_dir}/uwsgi_params",
   Optional[String] $uwsgi_read_timeout                                           = undef,
-  Optional[Array] $index_files                                                   = [
+  Array $index_files                                                             = [
     'index.html',
     'index.htm',
     'index.php'],
@@ -253,6 +253,10 @@ define nginx::resource::server (
   Hash $locations_defaults                                                       = {}
 ) {
 
+  if ! defined(Class['nginx']) {
+    fail('You must include the nginx base class before using any defined resources')
+  }
+
   # Variables
   if $::nginx::confd_only {
     $server_dir = "${::nginx::conf_dir}/conf.d"
@@ -281,7 +285,7 @@ define nginx::resource::server (
 
   # Add IPv6 Logic Check - Nginx service will not start if ipv6 is enabled
   # and support does not exist for it in the kernel.
-  if $ipv6_enable and !$::ipaddress6 {
+  if $ipv6_enable and !$ipv6_listen_ip {
     warning('nginx: IPv6 support is not enabled or configured properly')
   }
 

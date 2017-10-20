@@ -16,16 +16,23 @@ class maverick_web (
         class { "maverick_web::cloud9": }
     }
     
+    file { "/srv/maverick/data/web":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    }
+    
     if $webserver == true {
         if $webserver_type == "nginx" {
             class { "maverick_web::nginx": 
                 port    => $webserver_port,
-                sslport => $webserver_sslport,
+                ssl_port => $webserver_sslport,
             }
         } elsif $webserver_type == "apache" {
             class { "maverick_web::apache":
                 port    => $webserver_port,
-                sslport => $webserver_sslport,
+                ssl_port => $webserver_sslport,
             }
         }
         

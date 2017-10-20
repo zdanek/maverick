@@ -159,7 +159,7 @@ define nginx::resource::location (
   String $server                                      = undef,
   Optional[String] $www_root                          = undef,
   Optional[String] $autoindex                         = undef,
-  Optional[Array] $index_files                        = [
+  Array $index_files                                  = [
     'index.html',
     'index.htm',
     'index.php'],
@@ -173,12 +173,12 @@ define nginx::resource::location (
   Optional[String] $fastcgi                           = undef,
   Optional[String] $fastcgi_index                     = undef,
   Optional[Hash] $fastcgi_param                       = undef,
-  Optional[String] $fastcgi_params                    = "${::nginx::conf_dir}/fastcgi.conf",
+  String $fastcgi_params                              = "${::nginx::conf_dir}/fastcgi.conf",
   Optional[String] $fastcgi_script                    = undef,
   Optional[String] $fastcgi_split_path                = undef,
   Optional[String] $uwsgi                             = undef,
   Optional[Hash] $uwsgi_param                         = undef,
-  Optional[String] $uwsgi_params                      = "${nginx::config::conf_dir}/uwsgi_params",
+  String $uwsgi_params                                = "${nginx::config::conf_dir}/uwsgi_params",
   Optional[String] $uwsgi_read_timeout                = undef,
   Boolean $ssl                                        = false,
   Boolean $ssl_only                                   = false,
@@ -213,6 +213,10 @@ define nginx::resource::location (
   Boolean $flv                                        = false,
   Optional[String] $expires                           = undef,
 ) {
+
+  if ! defined(Class['nginx']) {
+    fail('You must include the nginx base class before using any defined resources')
+  }
 
   $root_group = $::nginx::root_group
 
@@ -251,7 +255,12 @@ define nginx::resource::location (
   # Only try to manage these files if they're the default one (as you presumably
   # usually don't want the default template if you're using a custom file.
 
-  if $ensure == present and $fastcgi != undef and !defined(File[$fastcgi_params]) and $fastcgi_params == "${::nginx::conf_dir}/fastcgi.conf" {
+  if  (
+    $ensure == present              and
+    $fastcgi != undef               and
+    !defined(File[$fastcgi_params]) and
+    $fastcgi_params == "${::nginx::conf_dir}/fastcgi.conf"
+      ) {
     file { $fastcgi_params:
       ensure  => present,
       mode    => '0644',

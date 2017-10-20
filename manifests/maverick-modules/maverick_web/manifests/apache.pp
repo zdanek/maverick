@@ -1,6 +1,6 @@
 class maverick_web::apache (
     $port,
-    $sslport,
+    $ssl_port,
 ) {
     
     service_wrapper { "nginx":
