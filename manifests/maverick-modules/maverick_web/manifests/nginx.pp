@@ -42,25 +42,12 @@ class maverick_web::nginx (
         group       => "mav",
         mode        => "750",
     } ->
-    openssl::certificate::x509 { "${::hostname}.local-sslcert":
-        ensure          => present,
-        country         => 'GB',
-        state           => 'State of Being',
-        locality        => 'Moving, by definition',
-        organization    => 'Maverick',
-        commonname      => "${::hostname}.local",
-        altnames        => ["${::hostname}.home"],
-        days            => 9999,
-        base_dir        => '/srv/maverick/data/web/ssl',
-        owner           => 'mav',
-        group           => 'mav',
-    } ->
     nginx::resource::server { "${::hostname}.local":
         listen_port => $port,
         ssl         => true,
         ssl_port    => $ssl_port,
-        ssl_cert    => "/srv/maverick/data/web/ssl/${::hostname}.local-sslcert.crt",
-        ssl_key     => "/srv/maverick/data/web/ssl/${::hostname}.local-sslcert.key",
+        ssl_cert    => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.crt",
+        ssl_key     => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.key",
         www_root    => '/srv/maverick/software/maverick-fcs/public',
         require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
     }

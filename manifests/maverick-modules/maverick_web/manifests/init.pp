@@ -6,6 +6,7 @@ class maverick_web (
     $webserver_port = 80,
     $webserver_sslport = 443,
     $maverick_docs = true,
+    $ssl = true,
 ) {
     
     if $nodejs == true {
@@ -49,6 +50,10 @@ class maverick_web (
     
     if $maverick_docs == true {
         class { "maverick_web::maverick_docs": }
+    }
+    
+    if $ssl == true {
+        class { "maverick_web::ssl": }
     }
     
 }

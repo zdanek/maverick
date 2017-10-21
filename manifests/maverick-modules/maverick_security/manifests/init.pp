@@ -7,6 +7,14 @@ class maverick_security (
 	$ssl = true,
 	) {
     
+    # Create data directory
+    file { "/srv/maverick/data/security":
+    	ensure		=> directory,
+    	owner		=> "mav",
+    	group		=> "mav",
+    	mode		=> "750",
+    }
+    
     ### Turn selinux on to at least permissive by default
     if ($operatingsystem == "CentOS") or ($operatingsystem == "RedHat") or ($operatingsystem == "Fedora") {
 	    class { "selinux":
