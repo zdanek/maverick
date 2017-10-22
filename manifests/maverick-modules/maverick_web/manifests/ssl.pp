@@ -6,6 +6,14 @@ class maverick_web::ssl (
     $cert_orgunit = "Robots",
     $cert_cname = "${::hostname}.local",
 ) {
+
+    file { "/srv/maverick/data/web/ssl":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "750",
+    }
+
     # Retrieve CA passphrase for signing
     $ca_passphrase = getvar("maverick_security::ssl::ca_passphrase")
 

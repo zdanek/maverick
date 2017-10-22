@@ -12,7 +12,7 @@ class maverick_security (
     	ensure		=> directory,
     	owner		=> "mav",
     	group		=> "mav",
-    	mode		=> "750",
+    	mode		=> "755",
     }
     
     ### Turn selinux on to at least permissive by default

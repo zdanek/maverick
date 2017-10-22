@@ -15,7 +15,7 @@ class maverick_security::ssl (
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
-        mode        => "750",
+        mode        => "755",
     }
 
     if $create_ca == true {
@@ -23,7 +23,7 @@ class maverick_security::ssl (
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
-            mode        => "750",
+            mode        => "755",
         }
 
         # Create Diffie Hellman parameters
@@ -35,6 +35,9 @@ class maverick_security::ssl (
         exec { "create-ca-key":
             command     => "/usr/bin/openssl genrsa -passout pass:${ca_passphrase} -des3 -out /srv/maverick/data/security/ssl/ca/mavCA.key 2048",
             creates     => "/srv/maverick/data/security/ssl/ca/mavCA.key",
+        } ->
+        file { "/srv/maverick/data/security/ssl/ca/mavCA.key":
+            mode        => "600",
         } ->
         exec { "create-ca-rootcert":
             command     => "/usr/bin/openssl req -x509 -new -nodes -passin pass:${ca_passphrase} -key /srv/maverick/data/security/ssl/ca/mavCA.key -sha512 -days 9999 -out /srv/maverick/data/security/ssl/ca/mavCA.pem -subj \"/C=${ca_country}/ST=${ca_state}/L=${ca_locality}/O=${ca_orgname}/OU=${ca_orgunit}/CN=${ca_cname}\"",
