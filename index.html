@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Maverick documentation</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css">
 </head>
 <body>
   <nav>
@@ -17,8 +17,12 @@
 </body>
 <script>
   window.$docsify = {
+    repo: 'https://github.com/fnoop/maverick',
+    basePath: '/maverick/',
     coverpage: true,
-    loadSidebar: true,
+    loadNavbar: true,
+    navBar: true,
+    auto2top: true,
     subMaxLevel: 4,
     search : [
       '/',
@@ -29,8 +33,6 @@
 </script>
 <script
   src="//unpkg.com/docsify/lib/docsify.min.js"
-  data-max-level="4"
-  data-coverpage
   data-name="Maverick">
 </script>
 <script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
