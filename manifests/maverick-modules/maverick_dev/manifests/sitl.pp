@@ -223,6 +223,11 @@ class maverick_dev::sitl (
         }
     }
 
+    if $ros_instance == true {
+        $notifyResources = [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ]
+    } else {
+        $notifyResources = Service_wrapper["maverick-sitl"]
+    }
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "sitl":
             active      => false,
@@ -232,7 +237,7 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
-            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
+            notify      => $notifyResources,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
             inputtype   => "tcp",
@@ -254,7 +259,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
+            notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "sitl":
@@ -286,7 +291,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
+            notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "sitl":
@@ -297,7 +302,7 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
-            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
+            notify      => $notifyResources,
         } ->
         maverick_mavlink::mavproxy { "sitl":
             inputaddress => "tcp:localhost:5760",
@@ -319,7 +324,7 @@ class maverick_dev::sitl (
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             active      => $mavlink_active,
-            notify      => [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ],
+            notify      => $notifyResources,
         }
     }
 
