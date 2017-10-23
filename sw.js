@@ -6,12 +6,57 @@
  * Register service worker.
  * ========================================================== */
 
-const RUNTIME = 'docsify'
+const RUNTIME = 'docsify-v1'
 const HOSTNAME_WHITELIST = [
   self.location.hostname,
   'fonts.gstatic.com',
   'fonts.googleapis.com',
   'unpkg.com'
+]
+const filesToInstall = [
+  '.',
+  '/web/maverick-docs/README.md',
+  '/web/maverick-docs/_sidebar.md',
+  '/web/maverick-docs/_navbar.md',
+  '/web/maverick-docs/_coverpage.md'
+]
+const filesContent = [
+  '/web/maverick-docs/about.md',
+  //
+  '/web/maverick-docs/devdocs/intro.md',
+  '/web/maverick-docs/devdocs/distimages.md',
+  //
+  '/web/maverick-docs/modules/analysis.md',
+  '/web/maverick-docs/modules/base.md',
+  '/web/maverick-docs/modules/cloud9.md',
+  '/web/maverick-docs/modules/desktop.md',
+  '/web/maverick-docs/modules/dev.md',
+  '/web/maverick-docs/modules/fc.md',
+  '/web/maverick-docs/modules/hardware.md',
+  '/web/maverick-docs/modules/intelligence.md',
+  '/web/maverick-docs/modules/intro.md',
+  '/web/maverick-docs/modules/mavlink.md',
+  '/web/maverick-docs/modules/network.md',
+  '/web/maverick-docs/modules/ros.md',
+  '/web/maverick-docs/modules/security.md',
+  '/web/maverick-docs/modules/vision.md',
+  //
+  '/web/maverick-docs/media/joule-thermal.jpg',
+  '/web/maverick-docs/media/maverick-architecture.svg',
+  '/web/maverick-docs/media/maverick-logo.svg',
+  '/web/maverick-docs/media/maverick-snapshots.jpg',
+  '/web/maverick-docs/media/mavlink-proxy.svg',
+  '/web/maverick-docs/media/network-connection-sharing.svg',
+  '/web/maverick-docs/media/precland1.png',
+  '/web/maverick-docs/media/raspberryzw-seek.jpg',
+  '/web/maverick-docs/media/seekthermal-pic.jpg',
+  '/web/maverick-docs/media/thermal-lunch.jpg',
+  '/web/maverick-docs/media/analysis/dashboard-switcher.jpg',
+  '/web/maverick-docs/media/analysis/dashboard-zoomin.jpg',
+  '/web/maverick-docs/media/analysis/error-index.jpg',
+  '/web/maverick-docs/media/analysis/flightdata-dashboard.jpg',
+  '/web/maverick-docs/media/analysis/logs-index.jpg',
+  '/web/maverick-docs/media/analysis/panel.png'
 ]
 
 // The Util Function to hack URLs of intercepted requests
@@ -35,6 +80,20 @@ const getFixedUrl = (req) => {
   }
   return url.href
 }
+
+self.addEventListener('install', event => {
+  console.log("Installing content into cache")
+  event.waitUntil(
+    caches.open(RUNTIME).then(function(cache) {
+      cache.addAll(
+        filesContent
+      )
+      return cache.addAll(
+        filesToInstall
+      )
+    })
+  )
+})
 
 /**
  *  @Lifecycle Activate

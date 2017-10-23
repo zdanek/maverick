@@ -26,14 +26,29 @@
       '/modules': '/modules/intro',
       '/modules/_navbar.md': '/_navbar.md',
       '/modules/_sidebar.md': '/_sidebar.md',
+      '/modules/README.md': '/README.md',
       '/devdocs/_navbar.md': '/_navbar.md',
-      '/devdocs/_sidebar.md': '/_sidebar.md'
+      '/devdocs/_sidebar.md': '/_sidebar.md',
+      '/devdocs/README.md': '/README.md'
     },
+    /*
     search : [
       '/',
       '/about',
-      '/modules/'
+      '/devdocs/intro',
+      '/dev/docs/distimages'
     ],
+    */
+    search: {
+      paths: [
+        '/',
+        '/about',
+        '/devdocs/intro',
+        '/dev/docs/distimages',
+      ],
+      depth: 4
+
+    }
   }
 </script>
 <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
@@ -43,6 +58,7 @@
 <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
 <script>
   if (typeof navigator.serviceWorker !== 'undefined') {
+    console.log("Installing service worker")
     navigator.serviceWorker.register('sw.js')
   }
 </script>
