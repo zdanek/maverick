@@ -26,7 +26,7 @@ class maverick_intelligence::tensorflow (
             ensure      => present,
         }
     } elsif $_install_type == "source" {
-        if ! ("install_flag_tensorflow" in $installflags) and ! empty($java_home) {
+        if ! ("install_flag_tensorflow" in $installflags) {
             ensure_packages(["openjdk-8-jdk", "zlib1g-dev", "swig"])
             # Set variables per platform, tensorbuild is quite specific per platform due to the numebr of kludges necessary
             if $architecture == "amd64" {
