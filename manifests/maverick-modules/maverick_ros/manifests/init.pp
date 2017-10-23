@@ -51,6 +51,7 @@ class maverick_ros (
     }
     
     if $installtype {
+        ensure_packages(["dirmngr"])
         # Create symlink to usual vendor install directory
         file { ["/opt", "/opt/ros"]:
             ensure      => directory,
@@ -78,6 +79,7 @@ class maverick_ros (
         exec { "ros-repo-key":
             command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
             unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
+            require     => Package["dirmngr"],
         } ->
         exec { "ros-repo":
             command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
