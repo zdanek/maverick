@@ -19,10 +19,15 @@ if hash tput 2>/dev/null; then
     reset=$(tput sgr0)
 fi
 
+# Determine script path
+_path=$(dirname $0)
+_path=$(cd $_path && pwd)
+_path=$(dirname $_path)
+
 if [ -f "/srv/maverick/software/maverick/VERSION" ]; then
     ver=$(cat /srv/maverick/software/maverick/VERSION)
-elif [ -f "../VERSION" ]; then
-    ver=$(cat ../VERSION)
+elif [ -f "${_path}/VERSION" ]; then
+    ver=$(cat ${_path}/VERSION)
 else
     ver=""
 fi
@@ -40,11 +45,6 @@ if [[ $EUID -ne 0 && $USER != "mav" ]]; then
     echo
     exit 1
 fi
-
-# Determine script path
-_path=$(dirname $0)
-_path=$(cd $_path && pwd)
-_path=$(dirname $_path)
 
 # Define usage function
 usage () {
