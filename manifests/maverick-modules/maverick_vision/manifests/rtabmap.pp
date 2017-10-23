@@ -4,7 +4,11 @@ class maverick_vision::rtabmap (
 ) {
     
     if $raspberry_present == "yes" {
-        ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libqt4-dev", "libvtk5-qt4-dev"])
+        if lsbmajdistrelease == 8 {
+            ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libqt4-dev", "libvtk5-qt4-dev"])
+        } elsif lsbmajdistrelease == 9 {
+            ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libvtk6-qt-dev"])
+        }
     } else {
         ensure_packages(["libsqlite3-dev", "libpcl-dev", "cmake", "libfreenect-dev", "libopenni2-dev", "libproj-dev", "libqt5svg5-dev"])
     }
