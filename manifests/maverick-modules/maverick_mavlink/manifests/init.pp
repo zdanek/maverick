@@ -298,7 +298,7 @@ class maverick_mavlink (
     if $cuav_install == true {
         if $::operatingsystem == "Debian" {
             exec { "libturbojpeg-install":
-                command     => "/usr/bin/apt install libturbojpeg-dev",
+                command     => "/usr/bin/apt install -y libturbojpeg-dev",
                 unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
             }
         } elsif $::operatingsystem == "Ubuntu" {
