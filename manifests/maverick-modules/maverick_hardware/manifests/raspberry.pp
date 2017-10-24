@@ -37,7 +37,7 @@ class maverick_hardware::raspberry (
         if ! getvar("maverick_intelligence::tensorflow") == true {
             notice("Removing Raspberry java packages")
             exec { "raspberry-remove-java":
-                command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk* openjdk-8-jre* openjdk-7-jdk* openjdk-7-jre* java-common libservlet2.5-java",
+                command     => "/usr/bin/apt purge -y oracle-java8-jdk oracle-java7-jdk openjdk-8-jdk* openjdk-8-jre* openjdk-7-jdk* openjdk-7-jre* libservlet2.5-java",
                 onlyif      => "/usr/bin/dpkg -s openjdk-8-jdk || /usr/bin/dpkg -s openjdk-7-jdk",
             }
         }
