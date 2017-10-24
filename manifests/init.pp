@@ -157,7 +157,7 @@ define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
 
 # Define a function that only stops services if they exist
 define service_stop () {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
         $_provider = "systemd"
     } else {
         $_provider = undef
@@ -173,7 +173,7 @@ define service_stop () {
 
 # Define a function that only starts services if they exist
 define service_start () {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
         $_provider = "systemd"
     } else {
         $_provider = undef
@@ -189,7 +189,7 @@ define service_start () {
 
 # Define a function that only starts services if they exist
 define service_wrapper ($enable, $ensure, $service_name=$name) {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
         $_provider = "systemd"
     } else {
         $_provider = undef

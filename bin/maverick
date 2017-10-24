@@ -683,6 +683,17 @@ fi
 #	sudo dpkg --purge unity-greeter upstart >/dev/null 2>&1
 #fi
 
+# ^^ Better kludge fix: #469 #613 Hack puppet to use systemd service provider as default on recent Ubuntu
+puppet_systemd_provider=$(find /var/lib/gems -name 'systemd.rb' -exec grep '"16.10"]' {} \;)
+if [ ! -z "$puppet_systemd_provider" ]; then
+    echo "Fixing broken puppet systemd provider"
+    if [ $EUID -eq 0 ]; then
+        /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's/\"15.04\",\"15.10\",\"16.04\",\"16.10\"]/\"15.04\",\"15.10\",\"16.04\",\"16.10\", \"17.04\", \"17.10\", \"18.04\"]/' {} \;
+    else
+        sudo /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's/\"15.04\",\"15.10\",\"16.04\",\"16.10\"]/\"15.04\",\"15.10\",\"16.04\",\"16.10\", \"17.04\", \"17.10\", \"18.04\"]/' {} \;
+    fi
+fi
+
 # OK we're good to go!
 mavenv ${ENV}
 if [ "x${DRYRUN}" == "x" ]; then
