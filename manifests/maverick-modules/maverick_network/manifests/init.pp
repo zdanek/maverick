@@ -9,6 +9,7 @@ class maverick_network (
     $dnsclient = false, 
     $ntpclient = false,
     $ipv6 = undef,
+    $wpasupplicant_template = false,
     ) {
 
     # Install software 
@@ -228,14 +229,17 @@ class maverick_network (
     # Retrieve wireless auth data from hiera
     $wifi_ssid = lookup('wifi_ssid')
     $wifi_passphrase = lookup('wifi_passphrase')
-    file { "/etc/wpa_supplicant/wpa_supplicant.conf":
-        content => template("maverick_network/wpa_supplicant.conf.erb"),
-        mode    => "600",
-        owner   => "root",
-        group   => "root",
-        replace => false,
-    }
 
+    if $wpasupplicant_template == true {
+        file { "/etc/wpa_supplicant/wpa_supplicant.conf":
+            content => template("maverick_network/wpa_supplicant.conf.erb"),
+            mode    => "600",
+            owner   => "root",
+            group   => "root",
+            replace => false,
+        }
+    }
+    
     # Define and configure monitor-mode interface setup in systemd
     file { "/srv/maverick/data/config/network":
         ensure      => directory,
