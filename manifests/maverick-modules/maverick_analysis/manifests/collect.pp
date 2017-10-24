@@ -8,6 +8,7 @@ class maverick_analysis::collect (
     # Install from source
     if $install_type == "source" {
         $manage_package = false
+        $manage_repo = false
         # Ensure build dependencies are installed
         ensure_packages(["build-essential", "autoconf", "automake", "libtool"])
         ensure_packages(["collectd", "collectd-core"], {'ensure'=>'absent'})
@@ -86,13 +87,13 @@ class maverick_analysis::collect (
         $config_file = "${collectd_dir}/collectd.conf"
         $plugin_conf_dir = "${collectd_dir}/conf.d"
         $typesdb = "/usr/share/collectd/types.db"
-    }
     
-    # Collectd repos only provide i386/amd64 packages
-    if $::architecture == "i386" or $::architecture == "amd64" {
-        $manage_repo = true
-    } else {
-        $manage_repo = false
+        # Collectd repos only provide i386/amd64 packages
+        if $::architecture == "i386" or $::architecture == "amd64" and ($operatingsystem == "Ubuntu" and versioncmp($::operatingsystemrelease, "17.04") < 0) {
+            $manage_repo = true
+        } else {
+            $manage_repo = false
+        }
     }
 
     class { "collectd":
@@ -102,7 +103,7 @@ class maverick_analysis::collect (
         purge           => true,
         recurse         => true,
         purge_config    => true,
-        minimum_version => '5.5',
+        minimum_version => '5.7',
         manage_package  => $manage_package,
         manage_repo     => $manage_repo,
         manage_service  => true,
