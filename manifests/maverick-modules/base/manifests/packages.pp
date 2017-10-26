@@ -1,6 +1,8 @@
 class base::packages {
     
-    class { "apt": }
+    if !defined( Class['apt'] ) {
+        class { "apt": }
+    }
 
     # Remove some stuff that definitely doesn't belong in a robotics build
     package { ["kodi", "kodi-bin", "kodi-data", "libreoffice", "ubuntu-mate-libreoffice-draw-icons", "libreoffice-base-core", "libreoffice-common", "libreoffice-core"]:
