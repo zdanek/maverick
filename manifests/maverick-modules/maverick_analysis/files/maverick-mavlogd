@@ -31,6 +31,9 @@ class ProcessLog(ProcessEvent):
 
     def process(self, filename):
         logger.info("Processing data from "+filename)
+        if os.path.isfile(filename) and os.path.getsize(filename) == 0:
+            logger.info("Zero filesize, ignoring")
+            return False
         if filename.lower().endswith('.log') and "LASTLOG.TXT" not in filename:
             log = DFReader_text(filename, False)
             logger.info("Text mavlog detected, creating text parser")
