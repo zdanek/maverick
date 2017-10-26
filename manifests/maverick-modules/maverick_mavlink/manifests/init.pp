@@ -281,7 +281,7 @@ class maverick_mavlink (
                 location    => "/mavlink/mavcesium/",
                 proxy       => "http://127.0.0.1:${mavcesium_port}/mavlink/mavcesium/",
                 server      => "${::hostname}.local",
-                require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+                require     => [ Class["maverick_gcs::fcs"], Service["maverick-nginx"] ],
             }
         }
 
