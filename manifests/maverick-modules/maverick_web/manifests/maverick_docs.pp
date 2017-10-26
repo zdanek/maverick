@@ -15,7 +15,7 @@ class maverick_web::maverick_docs (
         location_alias  => "/srv/maverick/software/maverick-docs",
         index_files     => ["maverick.html"], # index.html is for github hosted docs
         server          => "${::hostname}.local",
-        require         => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+        require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
     
 }

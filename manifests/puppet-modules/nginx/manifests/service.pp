@@ -37,6 +37,14 @@ class nginx::service(
     $service_ensure_real = $service_ensure
   }
 
+  if $service_name != "nginx" {
+    service { "system-nginx":
+      name    => "nginx",
+      ensure  => "stopped",
+      enable  => false,
+    }
+  }
+  
   if $service_manage {
     case $::osfamily {
       'OpenBSD': {

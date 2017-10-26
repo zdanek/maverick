@@ -9,16 +9,11 @@ class maverick_web::nginx (
     } else {
         $manage_repo = true
     }
-    
-    # Make sure nginx and apache system services are stopped
+
+    # Make sure apache system services are stopped
     service_wrapper { "apache2":
         ensure      => stopped,
         enable      => false,
-    } ->
-    service_wrapper { "system-nginx":
-        service_name    => "nginx",
-        ensure          => stopped,
-        enable          => false,
     } ->
     file { "/etc/systemd/system/maverick-nginx.service":
         owner       => "root",
@@ -34,7 +29,7 @@ class maverick_web::nginx (
         service_manage  => true,
         service_name    => "maverick-nginx",
     }
-    
+
     nginx::resource::server { "${::hostname}.local":
         listen_port => $port,
         ssl         => true,
@@ -42,7 +37,8 @@ class maverick_web::nginx (
         ssl_cert    => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.crt",
         ssl_key     => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.key",
         www_root    => '/srv/maverick/software/maverick-fcs/public',
-        require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+        require     => [ Class["maverick_gcs::fcs"], ],
+        notify      => Service["maverick-nginx"],
     }
     
     nginx::resource::location { "mavca":
@@ -52,7 +48,8 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => "${::hostname}.local",
-        require         => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+        require         => [ Class["maverick_gcs::fcs"], ],
+        notify          => Service["maverick-nginx"],
     }
 
 }

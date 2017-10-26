@@ -162,7 +162,7 @@ class maverick_analysis::grafana (
             location    => "/analysis/grafana/",
             proxy       => 'http://localhost:6790/',
             server      => "${::hostname}.local",
-            require     => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+            require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
         }
     }
     
