@@ -22,11 +22,23 @@ class maverick_web::cloud9 (
         gitsource   => "https://github.com/c9/core.git",
         dest        => "/srv/maverick/software/cloud9",
         notify		=> Exec["install-cloud9"],
-        revision    => "c5d3f33749439f90b4e3f40d18854f1fde31b13a",
+        #revision    => "c5d3f33749439f90b4e3f40d18854f1fde31b13a",
         depth       => "",
     } ->
+    file { "/srv/maverick/software/cloud9/scripts/maverick.c9.install-sdk.sh":
+        source      => "puppet:///modules/maverick_web/maverick.c9.install-sdk.sh",
+        mode        => "755",
+        owner       => "mav",
+        group       => "mav",
+    } ->
+    file { "/srv/maverick/software/cloud9/scripts/maverick.c9.install.sh":
+        source      => "puppet:///modules/maverick_web/maverick.c9.install.sh",
+        mode        => "755",
+        owner       => "mav",
+        group       => "mav",
+    } ->
     exec { "install-cloud9":
-        command		=> "/srv/maverick/software/cloud9/scripts/install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
+        command		=> "/srv/maverick/software/cloud9/scripts/maverick.c9.install-sdk.sh >/srv/maverick/var/log/build/cloud9-sdk.build.log 2>&1",
         cwd		    => "/srv/maverick/software/cloud9",
         creates		=> [ "/srv/maverick/software/cloud9/node_modules/.gitignore", "/srv/maverick/.c9/node_modules" ],
         timeout		=> 0,
