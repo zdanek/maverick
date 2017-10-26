@@ -40,8 +40,8 @@
 	"maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
 	// Flight Controller (fc) mavlink setup
-	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	"maverick_fc::mavlink_active": false, // Whether the mavlink proxy is active or not
+	"maverick_fc::mavlink_proxy": "mavlink-router", // Default mavlink proxy type to use
+	"maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
 	"maverick_fc::mavlink_input": "/dev/ttyAMA0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	"maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
 	"maverick_fc::ros_instance": false,
@@ -63,13 +63,13 @@
 	
 	"maverick_ros::installtype": false,
 	
-	"maverick_vision::gstreamer": false,
+	"maverick_vision::gstreamer": true,
 	"maverick_vision::opencv": false,
 	"maverick_vision::aruco": false,
 	"maverick_vision::vision_landing": false,
     "maverick_vision::vision_seek": false,
     "maverick_vision::camera_streaming_daemon": false,
-	"maverick_vision::visiond": false,
+	"maverick_vision::visiond": true,
 	"maverick_vision::vision_landing::active": false,
 	
 	"maverick_vision::orb_slam2": false,
