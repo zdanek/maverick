@@ -1,5 +1,5 @@
 class maverick_vision::orb_slam2 (
-    $ros_build = true,
+    $ros_build = false,
 ) {
     
     ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni2-dev"])
@@ -104,7 +104,7 @@ class maverick_vision::orb_slam2 (
             cwd         => "/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2/build",
             command     => "/bin/bash -c 'source /srv/maverick/software/ros/current/setup.bash && export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2 && /usr/bin/cmake .. -DROS_BUILD_TYPE=Release -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv && /usr/bin/make >/srv/maverick/var/log/build/orb_slam2.ros.log 2>&1'",
             creates     => "/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2/Mono",
-            require     => Exec["compile-orb_slam2"],
+            require     => [ Exec["compile-orb_slam2"], Class["maverick_ros"] ]
         }
     }
     file { "/etc/profile.d/70-maverick-orb_slam2-ros_package_path.sh":
