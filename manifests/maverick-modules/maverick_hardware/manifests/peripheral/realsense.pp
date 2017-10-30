@@ -10,6 +10,7 @@ class maverick_hardware::peripheral::realsense (
         oncevcsrepo { "git-realsense-librealsense":
             gitsource   => "https://github.com/IntelRealSense/librealsense.git",
             dest        => "/srv/maverick/var/build/librealsense",
+            revision    => $librealsense_branch,
         } ->
         # Create build directory
         file { "/srv/maverick/var/build/librealsense/build":
