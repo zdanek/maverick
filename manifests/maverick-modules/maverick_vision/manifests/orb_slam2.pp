@@ -61,7 +61,12 @@ class maverick_vision::orb_slam2 (
         cwd         => "/srv/maverick/software/orb_slam2",
         onlyif      => "/bin/grep -e '^make -j$' build.sh",
     } ->
-    
+    # Hack orb_slam2 code to actually build, https://github.com/raulmur/ORB_SLAM2/pull/144
+    exec {"fix-orb_slam2-usleep":
+        user        => "mav",
+        command     => "/bin/sed -i -e 's/#include<string>/#include<string>\\n#include <unistd.h>/' /srv/maverick/software/orb_slam2/include/System.h",
+        unless      => "/bin/grep -e 'unistd.h' /srv/maverick/software/orb_slam2/include/System.h",
+    } ->
     file { ["/srv/maverick/software/orb_slam2/build", "/srv/maverick/software/orb_slam2/Examples/ROS/ORB_SLAM2/build", "/srv/maverick/software/orb_slam2/Thirdparty/DBoW2/build", "/srv/maverick/software/orb_slam2/Thirdparty/g2o/build"]:
         ensure      => directory,
         owner       => "mav",
