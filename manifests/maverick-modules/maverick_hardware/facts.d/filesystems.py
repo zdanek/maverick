@@ -18,7 +18,11 @@ for line in fsdata.split('\n'):
         data['blockdevices'][partfrags[6]] = partfrags[0]
 
 # Gather filesystem data
-fsdata = subprocess.check_output(["/bin/df"])
+try:
+    fnull = open(os.devnull, 'w')
+    fsdata = subprocess.check_output(["/bin/df"], stderr=fnull)
+except subprocess.CalledProcessError as e:
+    pass
 for line in fsdata.split('\n'):
     fsfrags = line.split()
     if fsfrags and fsfrags[0] != 'Filesystem' and len(fsfrags) == 6:
