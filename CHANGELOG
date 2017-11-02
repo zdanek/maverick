@@ -1,5 +1,20 @@
 # Maverick Changelog
 
+## [2017-11-02] 1.1.4 'That took a lot longer than I expected' release
+ - Update software components - opencv to 3.3, gstreamer to 1.12.3, puppet to 5.2, tensorflow to 1.3, collectd to 5.7, grafana to 4.5.2
+ - Expanded OS support - Raspbian Stretch, Ubuntu 17.04 (limited support for 14.04, 16.10, 17.10)
+ - Expanded hardware support - Minnowboard, Raspberry Pi Zero (and W)
+ - 'Raspberry Lite' profile and OS image targetting Pi Zero (and W)
+ - Improved python/pip handling
+ - 'maverick unshallow' mechanism for expanding shallow git repos
+ - Move MAVCesium install to new tornado server, move MAVCesium behind nginx reverse proxy
+ - Add auto creation of CA and webserver SSL certs, SSL checker on website index page
+ - Add Maverick Documentation to website
+ - Update Maverick Documentation content and add fulltext search
+ - Add automatic apt update if not run within last day
+ - Add maverick-analysis sample-node config to run only analysis components
+ - Network/wifi improvements
+
 ## [2017-09-21] 1.1.3 'Wow that was a lot of bugs' release
  - Added nginx webserver on port 80
  - Moved grafana to <hostname>:80/analysis/grafana
