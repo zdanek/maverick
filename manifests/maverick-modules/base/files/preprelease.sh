@@ -112,3 +112,5 @@ sudo sync
 #sudo systemctl poweroff
 echo "Please check the system is prepared as expected for imaging, then shutdown."
 echo
+echo "MAVERICK_BRANCH=stable" >/srv/maverick/software/maverick/conf/maverick-branch.conf
+echo "Warning: Maverick Branch has been reset to stable"
