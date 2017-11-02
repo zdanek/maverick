@@ -52,7 +52,7 @@
 	"maverick_gcs::fcs": true,
 	
 	"maverick_hardware::camera_picam_install": true,
-	"maverick_hardware::seekthermal_install": false,
+	"maverick_hardware::seekthermal_install": true,
 	"maverick_hardware::remove_glpackages": true,
 	"maverick_hardware::raspberry::swapsize": 100,
 	
@@ -65,10 +65,11 @@
 	"maverick_ros::installtype": false,
 	
 	"maverick_vision::gstreamer": true,
-	"maverick_vision::opencv": false,
-	"maverick_vision::aruco": false,
-	"maverick_vision::vision_landing": false,
-    "maverick_vision::vision_seek": false,
+	"maverick_vision::opencv": true,
+	"maverick_vision::opencv::armv7l_optimize": false,
+	"maverick_vision::aruco": true,
+	"maverick_vision::vision_landing": true,
+    "maverick_vision::vision_seek": true,
     "maverick_vision::camera_streaming_daemon": false,
 	"maverick_vision::visiond": true,
 	"maverick_vision::vision_landing::active": false,
