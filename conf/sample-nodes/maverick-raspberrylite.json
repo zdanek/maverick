@@ -56,8 +56,9 @@
 	"maverick_hardware::remove_glpackages": true,
 	"maverick_hardware::raspberry::swapsize": 100,
 	
-	"maverick_intelligence::tensorflow": false,
-	
+	"maverick_intelligence::tensorflow": true,
+	"maverick_intelligence::tensorflow::arch": "armv6l",
+
 	"maverick_mavlink::mavcesium_install": false,
 	"maverick_mavlink::cuav_install": false,
 	

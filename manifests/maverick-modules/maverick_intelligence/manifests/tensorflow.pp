@@ -1,14 +1,16 @@
 class maverick_intelligence::tensorflow (
     $source = "https://github.com/tensorflow/tensorflow.git",
-    $revision = "r1.2",
+    $revision = "r1.4",
+    $bazel_version = "0.7.0",
+    $arch = undef,
     $active = false,
-    $install_type = "",
+    $install_type = undef,
 ) {
     
     # Work out if source is install is necessary
     if ! empty($install_type) {
         $_install_type = $install_type
-    } if ($architecture == "amd64" or $architecture == "i386") {
+    } if ($architecture == "amd64" or $architecture == "i386" or $raspberry_present == "yes") {
         $_install_type = "pip"
     } else {
         $_install_type = "source"
@@ -19,11 +21,24 @@ class maverick_intelligence::tensorflow (
         pkgname     => "numpy",
         ensure      => present,
     }
-    
+    ensure_packages(["libblas-dev", "liblapack-dev", "libatlas-base-dev", "gfortran"])
+
     if $_install_type == "pip" {
-        install_python_module { "tensorflow-pip":
-            pkgname     => "tensorflow",
-            ensure      => present,
+        if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
+            install_python_module { "tensorflow-pip":
+                pkgname     => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.3.0-cp27-none-any.whl",
+                ensure      => present,
+            }
+        } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
+            install_python_module { "tensorflow-pip":
+                pkgname     => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.3.0-cp27-none-any.whl",
+                ensure      => present,
+            }
+        } else {
+            install_python_module { "tensorflow-pip":
+                pkgname     => "tensorflow",
+                ensure      => present,
+            }
         }
     } elsif $_install_type == "source" {
         if ! ("install_flag_tensorflow" in $installflags) {
@@ -45,9 +60,9 @@ class maverick_intelligence::tensorflow (
             } ->
             # Install bazel.  This is a bit hacky, due to the wierd way bazel decides to distribute itself..
             exec { "download-bazel":
-                command     => "/usr/bin/wget https://github.com/bazelbuild/bazel/releases/download/0.5.0/bazel-0.5.0-dist.zip",
+                command     => "/usr/bin/wget https://github.com/bazelbuild/bazel/releases/download/${bazel_version}/bazel-${bazel_version}-dist.zip",
                 cwd         => "/srv/maverick/var/build/tensorflow",
-                creates     => "/srv/maverick/var/build/tensorflow/bazel-0.5.0-dist.zip",
+                creates     => "/srv/maverick/var/build/tensorflow/bazel-${bazel_version}-dist.zip",
                 user        => "mav",
             } ->
             file { "/srv/maverick/var/build/tensorflow/bazel":
@@ -57,20 +72,18 @@ class maverick_intelligence::tensorflow (
                 ensure      => directory,
             } ->
             exec { "unzip-bazel":
-                command     => "/usr/bin/unzip /srv/maverick/var/build/tensorflow/bazel-0.5.0-dist.zip -d /srv/maverick/var/build/tensorflow/bazel",
+                command     => "/usr/bin/unzip /srv/maverick/var/build/tensorflow/bazel-${bazel_version}-dist.zip -d /srv/maverick/var/build/tensorflow/bazel",
                 cwd         => "/srv/maverick/var/build/tensorflow",
                 user        => "mav",
                 creates     => "/srv/maverick/var/build/tensorflow/bazel/README.md",
             }
-            if $odroid_present == "yes" or $raspberry_present == "yes" {
-                file { "/srv/maverick/var/build/tensorflow/bazel/scripts/bootstrap/compile.sh":
-                    ensure      => present,
-                    source      => "puppet:///modules/maverick_intelligence/bazel-compile-lowmem.sh",
-                    owner       => "mav",
-                    group       => "mav",
-                    mode        => "755",
-                    require     => Exec["unzip-bazel"],
+            if Numeric($::memorysize_mb) < 2000 {
+                exec { "patch-compilesh-lowmem":
+                    command     => "/bin/sed -i -e 's/-encoding UTF-8/-encoding UTF-8 -J-Xms256m -J-Xmx512m/' /srv/maverick/var/build/tensorflow/bazel/scripts/bootstrap/compile.sh",
+                    unless      => "/bin/grep -e '-J-Xms256m -J-Xmx512m' /srv/maverick/var/build/tensorflow/bazel/scripts/bootstrap/compile.sh",
+                    user        => "mav",
                     before      => Exec["compile-bazel"],
+                    require     => Exec["unzip-bazel"],
                 }
             }
             exec { "compile-bazel":
@@ -91,6 +104,7 @@ class maverick_intelligence::tensorflow (
             }
             # Do some hacks for arm build
             if $raspberry_present == "yes" or $odroid_present == "yes" {
+                /*
                 exec { "tfhack-lib64":
                     command     => "/bin/grep -Rl 'lib64' | xargs sed -i 's/lib64/lib/g'",
                     onlyif      => "/bin/grep lib64 /srv/maverick/var/build/tensorflow/tensorflow/tensorflow/core/platform/default/platform.bzl",
@@ -110,6 +124,7 @@ class maverick_intelligence::tensorflow (
                     user        => "mav",
                     before      => Exec["configure-tensorflow"],
                 }
+                */
                 $copts = '--copt="-mfpu=neon-vfpv4" --copt="-funsafe-math-optimizations" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer"'
                 $resources = '768,0.5,1.0'
             } else {
