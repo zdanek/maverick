@@ -49,7 +49,7 @@
 	
 	// "maverick_vision::visiond::active": true,
 	// "maverick_vision::vision_landing::active": false,
-	
+	"maverick_vision::opencv::armv7l_optimize": true,
 	"maverick_vision::orb_slam2": false,
 	"maverick_vision::rtabmap": false,
 
