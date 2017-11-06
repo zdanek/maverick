@@ -54,4 +54,4 @@ else
     _TRACKER_LOCATION=""
 fi
 
-/usr/bin/screen -L sitl.log -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  
+/usr/bin/screen -S $SCREEN_NAME -d -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  
