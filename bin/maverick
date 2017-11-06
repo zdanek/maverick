@@ -516,6 +516,17 @@ if [ "$CONFIGURE" != "true" ]; then
     usage
 fi
 
+# Ensure daily apt processes aren't running
+if [ $EUID -eq 0 ]; then
+    systemctl stop apt-daily.service >/dev/null 2>&1
+    systemctl stop apt-daily-upgrade.service >/dev/null 2>&1
+    pkill aptd >/dev/null 2>&1
+else 
+    sudo systemctl stop apt-daily.service >/dev/null 2>&1
+    sudo systemctl stop apt-daily-upgrade.service >/dev/null 2>&1
+    sudo pkill aptd >/dev/null 2>&1
+fi
+
 # Check that there are no apt/dpkg processes going on
 _aptdpkg=$(ps -ef |egrep 'apt|dpkg' |grep -v grep |grep -v dnsmasq |grep -v dirmngr)
 if  [ "z${_aptdpkg}" != "z" ]; then
