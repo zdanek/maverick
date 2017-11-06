@@ -7,7 +7,7 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global", $version=undef) {
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global", $version=undef, $url=undef) {
   $module_version = $python_modules[$env][$pkgname]
   if $python_modules {
     case $ensure {
@@ -16,6 +16,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
+                url => $url,
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -28,6 +29,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
+                url => $url,
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -37,6 +39,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
+                url => $url,
                 ensure => 'latest',
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -50,6 +53,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
+                url => $url,
                 ensure => $version,
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -59,6 +63,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
+                url => $url,
                 ensure => $version,
                 virtualenv => $virtualenv,
                 owner => $owner,
@@ -71,6 +76,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
         if $pkgname in $python_modules {
           python::pip { "${pkgname}":
             pkgname => "${pkgname}",
+            url => $url,
             ensure => absent,
             owner   => $owner,
             timeout => $timeout

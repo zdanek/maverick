@@ -26,12 +26,14 @@ class maverick_intelligence::tensorflow (
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
             install_python_module { "tensorflow-pip":
-                pkgname     => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.3.0-cp27-none-any.whl",
+                pkgname     => "tensorflow",
+                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.4.0rc1-cp27-none-any.whl",
                 ensure      => present,
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             install_python_module { "tensorflow-pip":
-                pkgname     => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.3.0-cp27-none-any.whl",
+                pkgname     => "tensorflow",
+                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.4.0rc1-cp27-none-any.whl",
                 ensure      => present,
             }
         } else {
