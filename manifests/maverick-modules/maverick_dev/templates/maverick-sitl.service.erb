@@ -5,8 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-Type=forking
-EnvironmentFile=/srv/maverick/data/config/mavlink/sitl.conf
+EnvironmentFile=/srv/maverick/data/config/dev/sitl.conf
 ExecStart=/srv/maverick/software/maverick/bin/sitl.sh
 User=mav
 

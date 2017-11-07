@@ -14,4 +14,4 @@ if [ "$ENABLE" == "false" ]; then
     exit 0
 fi
 
-/usr/bin/screen -c /srv/maverick/data/config/mavlink/mavproxy-$1.screen.conf -S $SCREEN_NAME -d -m /usr/local/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD --state-basedir=/srv/maverick/var/log/mavlink-$1 $MAVPROXY_ARGS
+/usr/bin/screen -c /srv/maverick/data/config/mavlink/mavproxy-$1.screen.conf -S $SCREEN_NAME -D -m /usr/local/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD --state-basedir=/srv/maverick/var/log/mavlink-$1 $MAVPROXY_ARGS

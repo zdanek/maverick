@@ -11,4 +11,4 @@ if [ "$ENABLE" == "false" ]; then
     exit 0
 fi
 
-/usr/bin/screen -c /srv/maverick/data/config/mavlink/cmavnode-$1.screen.conf -S $SCREEN_NAME -d -m /srv/maverick/software/cmavnode/bin/cmavnode -f /srv/maverick/data/config/mavlink/cmavnode-$1.conf -i -v
+/usr/bin/screen -c /srv/maverick/data/config/mavlink/cmavnode-$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/software/cmavnode/bin/cmavnode -f /srv/maverick/data/config/mavlink/cmavnode-$1.conf -i -v
