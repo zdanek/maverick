@@ -51,7 +51,9 @@ class maverick_ros (
     }
     
     if $installtype {
+        # Install dependencies
         ensure_packages(["dirmngr"])
+        ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
         # Create symlink to usual vendor install directory
         file { ["/opt", "/opt/ros"]:
             ensure      => directory,
@@ -192,7 +194,6 @@ class maverick_ros (
         if ! ("install_flag_ros_opencv" in $installflags) {
             if $module_opencv == true {
                 # Add opencv to the existing workspace through vision_opencv package
-                ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
                 exec { "ws_add_opencv":
                     command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
                     cwd             => "${builddir}",
@@ -219,15 +220,20 @@ class maverick_ros (
         
         if ! ("install_flag_ros_mavros" in $installflags) {
             if $module_mavros == true {
+                if "install_flag_ros" in $installflags {
+                    $_mavros_deps = undef
+                } else {
+                    $_mavros_deps = Exec["catkin_make"]
+                }
                 # Add mavros to the existing workspace, this also installs mavlink package as dependency
                 exec { "ws_add_mavros":
-                    command         => "/usr/bin/rosinstall_generator mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${builddir}/src/mavros",
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
-                    require         => Exec["catkin_make"], 
+                    require         => $_mavros_deps, 
                 } ->
                 exec { "catkin_make_mavros":
                     # Note must only use -j1 otherwise we get compiler errors
@@ -238,6 +244,11 @@ class maverick_ros (
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
                     require         => File["${installdir}/${distribution}"]
+                } ->
+                # Install mavros geographiclib dependencies
+                exec { "mavros_geoinstall":
+                    command         => "/bin/bash /srv/maverick/software/ros/${distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
+                    creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
