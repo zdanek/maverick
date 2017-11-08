@@ -125,6 +125,13 @@ class maverick_ros (
             user            => "mav",
             command         => "/usr/bin/rosdep update",
             creates         => "/srv/maverick/.ros/rosdep/sources.cache",
+        } ->
+        file { "/etc/profile.d/30-ros-env.sh":
+            ensure      => present,
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "source /opt/ros/${distribution}/setup.bash",
         }
         
     # Build from source
@@ -148,7 +155,8 @@ class maverick_ros (
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
                 creates         => "/etc/ros/rosdep/sources.list.d/20-default.list",
-                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"], Package["python-rosinstall-generator"] ]
+                require         => [ Package["python-rosdep"], Package["python-wstool"], Package["python-rosinstall"], Package["python-rosinstall-generator"] ],
+                before          => [ Exec["ws_add_mavros"], Exec["ws_add_opencv"] ],
             } ->
             exec { "rosdep-update":
                 user            => "mav",
@@ -172,10 +180,19 @@ class maverick_ros (
                 timeout         => 0,
                 require         => File["${installdir}/${distribution}"]
             } ->
+            file { "/etc/profile.d/30-ros-env.sh":
+                ensure      => present,
+                mode        => "644",
+                owner       => "root",
+                group       => "root",
+                content     => "source /opt/ros/${distribution}/setup.bash",
+            } ->
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
             }
-            
+        }
+        
+        if ! ("install_flag_ros_opencv" in $installflags) {
             if $module_opencv == true {
                 # Add opencv to the existing workspace through vision_opencv package
                 ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
@@ -186,7 +203,7 @@ class maverick_ros (
                     creates         => "${builddir}/src/vision_opencv",
                     timeout         => 0,
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
-                    require         => [ Package["libpoco-dev"], Exec["catkin_make"] ]
+                    require         => [ Package["libpoco-dev"], ]
                 } ->
                 exec { "catkin_make_vision_opencv":
                     command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
@@ -196,9 +213,14 @@ class maverick_ros (
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
                     require         => File["${installdir}/${distribution}"]
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_ros_opencv":
+                    ensure      => present,
                 }
             }
-            
+        }
+        
+        if ! ("install_flag_ros_mavros" in $installflags) {
             if $module_mavros == true {
                 # Add mavros to the existing workspace, this also installs mavlink package as dependency
                 exec { "ws_add_mavros":
@@ -208,7 +230,6 @@ class maverick_ros (
                     creates         => "${builddir}/src/mavros",
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
-                    require         => Exec["catkin_make"]
                 } ->
                 exec { "catkin_make_mavros":
                     # Note must only use -j1 otherwise we get compiler errors
@@ -219,22 +240,11 @@ class maverick_ros (
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
                     require         => File["${installdir}/${distribution}"]
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_ros_mavros":
+                    ensure      => present,
                 }
             }
-        } else {
-            # If we don't build ros, we still need something for other manifest dependencies
-            file { "/srv/maverick/var/build/.install_flag_ros":
-                ensure      => present,
-            }
-        }
-
-        file { "/etc/profile.d/30-ros-env.sh":
-            ensure      => present,
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => "source /opt/ros/${distribution}/setup.bash",
-            require         => File["/srv/maverick/var/build/.install_flag_ros"],
         }
 
     }
