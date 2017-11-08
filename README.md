@@ -10,18 +10,26 @@ There are two ways to get started with Maverick:
 
 Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All models)](http://www.maverick.one/downloads/maverick-1.1.1-raspberry.img.xz)
-- [Intel Joule (ISO)](http://www.maverick.one/downloads/maverick-1.1.1-joule.iso)
-- [Intel Joule (tar)](http://www.maverick.one/downloads/maverick-1.1.1-joule.tar)
-- [Ubuntu Dev VM (ova)](http://www.maverick.one/downloads/maverick-1.1.1-ubuntuvm.ova)
-- [Odroid XU3/XU4](http://www.maverick.one/downloads/maverick-1.0.4-odroidxu4.img.xz)
+- [Raspberry Pi (All models)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberry.img.xz)
+- [Raspberry Pi Lite (Pi Zero/W)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberrylite.img.xz)
+- [Ubuntu VM (ova)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-ubuntuvm.ova)
+- [Intel Joule (ISO)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
+- [Intel Joule (tar)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.tar)
+- [Odroid XU3/XU4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
-These initial images require an 8Gb or larger SD card.
+These images require a 16Gb or larger SD card, except for the Raspberry Lite image which requires 8Gb SD card.
 
 The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
-#### Joule Instructions
-Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Further efficiencies will be made in the future to leave more space.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
+#### Raspberry/Raspberry Lite/Odroid Instructions
+Getting Maverick working on the Raspberry or Odroid is straight forward.
+- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
+- Boot from the SD card
+- (Optionally) Run 'wifi-setup' to setup wireless networking
+- [Get Started](#get-Started)
+
+#### Intel Joule Instructions
+Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
 - Write the ISO file to an SD card (like the one that comes with the Joule), or write the tar file to a USB stick, and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
 - Reboot, take the SD card out and boot to the newly flashed OS
 - Login as 'mav' user (default password is 'wingman')
@@ -29,25 +37,20 @@ Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onbo
 - Reboot again to activate the new network settings
 - [Get Started](#get-Started)
 
-####  Raspberry/Odroid Instructions
-Getting Maverick working on the Raspberry or Odroid is straight forward.
-- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
-- Boot from the SD card
-- (Optionally) Run 'wifi-setup' to setup wireless networking
-- [Get Started](#get-Started)
-
 #### Get Started
-If the installation and network setup was successful, you should now be able to connect over ssh:  
-Joule: `ssh maverick-joule.local`  
+If the installation and network setup was successful, you should now be able to connect over ssh (if you're using an OS that talks zeroconf like MacOS or Linux):  
 Raspberry: `ssh maverick-raspberry.local`  
-Odroid: `ssh maverick-odroidxu4.local`  
+Raspberry Lite: `ssh maverick-raspberrylite.local`  
 Ubuntu VM: `ssh maverick-ubuntuvm.local`  
+Joule: `ssh maverick-joule.local`  
+Odroid: `ssh maverick-odroidxu4.local`  
 
 You can also connect to the Web interface from any web browser:  
-Joule: http://maverick-joule.local/  
 Raspberry: http://maverick-raspberry.local/  
-Odroid: http://maverick-odroidxu4.local/  
+Raspberry Lite: http://maverick-raspberrylite.local/  
 Ubuntu VM: http://maverick-ubuntuvm.local/  
+Joule: http://maverick-joule.local/  
+Odroid: http://maverick-odroidxu4.local/  
 
 The Web IDE that is available as a link from the web interface has a browser based SSH client which is open at the bottom of the window by default and logged in to the mav user, and is a very convenient tool for quick command line access.
 
@@ -55,7 +58,6 @@ The Web IDE that is available as a link from the web interface has a browser bas
 
 After logging in, it's strongly recommended to firstly update and configure Maverick, in particular this will expand the root filesystem to fill the SD card you are using:
 ```bash
-sudo apt update
 maverick self-update
 maverick configure
 sudo reboot
