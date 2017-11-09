@@ -13,7 +13,7 @@ The *base* module controls the following resources:
 ---
 ## Locale
 ### System Locale
-The default locale is 'en_GU.UTF8'.  To change it, set a localconf parameter:  
+The default locale is 'en_GB.UTF8' (English Unicode).  To change it, set a localconf parameter:  
 `"base::locale::locale": "fr_FR.UTF8"`
 If the language pack/locale data does not already exist on the system, it will be installed.  Unless specified, it will do this by installing '*locales-all*' package which includes all locales and is quite large.  If you would like to specify a particular package that contains just the locale you want, you can specify it by setting localconf parameter:  
 `"base::locale::language_pack": "language-pack-fr"`
@@ -28,10 +28,13 @@ To change it, set a localconf parameter:
 ### Mav User
 Almost everything in the Maverick environment is run or performed as the *mav* system user.  The default password is 'wingman'.  To change this, set a localconf parameter with a new password hash:  
 `"base::users::mav_password": "$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1"`
-By default, the *mav* user does not need to use a password to perform root actions.  To change this, set localconf parameter:  
+By default, the *mav* user does not need to use a password to perform root actions through sudo.  To change this, set localconf parameter:  
 `"base::users::mav_sudopass": true`
 ### Root User
+The root password is _not_ managed by default.  To manage the root password, set localconf parameter:  
+`"base::users::manage_root_password": true"`  
 To set the system root password, set localconf parameter:  
 `"base::users::root_password": "$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1"`
+
 The password hashes can be created with the mkpasswd tool:  
 `mkpasswd  -m sha-512 -s`
