@@ -1,6 +1,6 @@
 # Desktop Module
 
-All of the OS Images that are distributed os far for Maverick contain a complete desktop environment, but it is turned off by default.
+All of the OS Images that are distributed os far for Maverick contain a complete desktop environment (except for the raspberrylite image), but it is turned off by default.
 
 - Joule (Ubuntu Desktop)
 - Odroid (Ubuntu Desktop)
