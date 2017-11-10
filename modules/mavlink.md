@@ -85,7 +85,8 @@ The github source repo for the source install can be changed by setting localcon
 
 ## Mavlink Applications
 ### MAVCesium
-MAVCesium is a great realtime HUD/map display system for autopilots.  It is currently based on MAVProxy and has a few limitations in it's implementation so is marked 'experimental', but is still a very interesting Proof of Concept.  It is installed by default (but not activated), but this can be disabled by setting localconf parameter:  
+MAVCesium is a great realtime HUD/map display system for autopilots.  It is currently based on MAVProxy and has a few limitations in the implementation so is marked 'experimental', but is still a very interesting Proof of Concept.  It is installed by default but because it is based on MAVProxy will only be available when MAVproxy is the selected mavlink proxy (which is not by default).  MAVCeisum runs it's own webserver (tornado) but like other Maverick components is reverse proxied to the standard web port under the URL /mavlink/mavcesium/websocket/.  
+MAVCesium install can be disabled by setting localconf parameter:  
 `"maverick_mavlink::mavcesium_install": false`  
 The default web port is 6790, but this can be altered by setting localconf parameter:  
 `"maverick_mavlink::mavcesium_port": 1234`  
