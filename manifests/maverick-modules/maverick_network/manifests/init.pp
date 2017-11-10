@@ -60,8 +60,9 @@ class maverick_network (
             ensure      => stopped,
             enable      => false
         } ->
-        package { "dhcpcd5":
-            ensure      => absent,
+        service_wrapper { "dhcpcd":
+            ensure      => stopped,
+            enable      => false,
         }
     }
 

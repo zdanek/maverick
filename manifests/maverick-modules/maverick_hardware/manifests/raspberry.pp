@@ -54,7 +54,7 @@ class maverick_hardware::raspberry (
     }
     
     # Install raspberry supporting utils
-    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio"])
+    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio", "raspberrypi-net-mods", "raspberrypi-sys-mods"])
     # Install wiringpi through pip as it's not always available through apt
     install_python_module { 'pip-wiringpi':
         pkgname     => 'wiringpi',
