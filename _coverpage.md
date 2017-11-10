@@ -12,7 +12,7 @@
 - Computer Vision, Video Streaming, Vision Landing
 
 [What is Maverick?](/about)
-[Modules Config](/modules/intro)
+[Modules](/modules/intro)
 [Quick Start](/#installation)
 
 <!-- background image

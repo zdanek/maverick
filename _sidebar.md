@@ -16,6 +16,7 @@
   - [ROS](/modules/ros)
   - [Security](/modules/security)
   - [Vision](/modules/vision)
+  - [Web](/modules/web)
 
 - Developers
   - [Overview](/devdocs/intro)

@@ -1,6 +1,6 @@
 - [Installation](/?id=installation)
 - [About](/about)
-- [Config](/modules/intro)
+- [Modules](/modules/intro)
 - [Developers](/devdocs/intro)
 - [Gitter](https://gitter.im/companioncomputers/Lobby)
 - [Github](https://github.com/fnoop/maverick)
