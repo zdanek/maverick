@@ -24,8 +24,9 @@ The easiest way to write the images to SD card is using the excellent [Etcher](h
 #### Raspberry/Raspberry Lite/Odroid Instructions
 Getting Maverick working on the Raspberry or Odroid is straight forward.
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
+- (Optionally) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
 - Boot from the SD card
-- (Optionally) Run 'wifi-setup' to setup wireless networking
+- (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
 #### Intel Joule Instructions

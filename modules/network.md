@@ -8,13 +8,27 @@ Maverick, by default, disables these Managers and uses the very simple but relia
 For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is mostly useful when Maverick is first installed or image first booted as it only provides a very simple network configuration.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).  Simply type: `wifi-setup`, enter your router SSID and passphrase:  
 ```
 [dev] [mav@maverick-raspberry ~/var/build]$ wifi-setup
-Enter Wifi SSID: BTHub5-9FM7
+Enter Wifi SSID: MySSID
 Enter Wifi Passphrase:
 
 Updated config, restarting networking.. (If you do not see 'Done' below shortly, reset the power)
 
 Done
 ```
+
+### Raspberry Quick Start Wifi
+Maverick Raspberry OS images are based on the standard Raspbian.  Raspbian has a small /boot FAT partition which can be easily accessed from any Windows, Mac or Linux computer.  A file '*wpa_supplicant.conf*' can be placed on this partition which will be used at boot time to configure wifi.  The contents should be like this:
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={ 
+    ssid="MySSID" 
+    psk="MyPassword" 
+}
+```
+
+This is particularly useful for the Pi Zero which has no ethernet port and is more difficult to attach keyboard and screen to.
 
 ### PSKs - Pre Shared Keys
 In the documentation below about how to setup network interfaces, wifi passphrases are represented by 'psk'.  A PSK (Pre Shared Key) is an encrypted form of the wifi passphrase, and the unencrypted passphrase form is not used anywhere for better security.  A PSK is generated from a combination of the SSID and the passphrase and can be easily generated from Maverick:  
@@ -105,6 +119,8 @@ There are additional parameters to the 'managed' mode interface.  Here is an int
 }
 ```
 For ethernet interfaces, just change 'type' to 'ethernet' and ommit ssid/psk.
+
+A config file is placed in */srv/maverick/data/config/network* for each managed interface that controls the setting of the data rate and frequency for the interface at boot.  The file is named by interface, so for the *wman0* interface, the file would be */srv/maverick/data/config/network/interface-wman0.conf*.
 
 ### AP Interface
 The example above to setup an AP interface is quite simple.  There are additional parameters that can be set however:
