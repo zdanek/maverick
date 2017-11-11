@@ -8,6 +8,7 @@ class maverick_hardware (
     $camera_picam_install = false,
     $camera_realsense_install = false,
     $seekthermal_install = false,
+    $flirone_install = false,
 ) {
 	
 	# Setup hardware sensors (lmsensors)
@@ -49,6 +50,11 @@ class maverick_hardware (
 	# Setup Seek thermal cameras
 	if $seekthermal_present == "yes" or $seekthermal_install == true {
 		class { "maverick_hardware::peripheral::seekthermal": }
+	}
+	
+	# Setup FlirOne thermal cameras
+	if $flirone_present == "yes" or $flirone_install == true {
+		class { "maverick_hardware::peripheral::flirone": }
 	}
 	
 }
