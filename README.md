@@ -21,16 +21,38 @@ These images require a 16Gb or larger SD card, except for the Raspberry Lite ima
 
 The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
-#### Raspberry/Raspberry Lite/Odroid Instructions
-Getting Maverick working on the Raspberry or Odroid is straight forward.
+#### Raspberry/Raspberry Lite Instructions
+Getting Maverick working on the Raspberry is straight forward.  There are two images - Rasspberry Pi and Raspberry Pi Lite.  The 'Lite' version is targeted mainly at the single-core Raspberrys like the Zero/Zero W/Model A.  
+
+   | Raspberry | Raspberry Lite
+--- | :---: | :---:
+OpenCV | Pi2/3 only | All CPUs
+Tensorflow | Pi2/3 only | All CPUs
+Gstreamer | x | x
+Analysis | x | x
+Cloud9 IDE | x | x
+Desktop | x |
+ROS | x |
+
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
 - (Optionally) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
 - Boot from the SD card
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
+### Ubuntu VM Instructions
+Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.
+
+### Odroid Instructions
+The Odroid XU4 installation is similar to the Raspberry.  Running from eMMC is not supported (at least not tested).
+- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
+- Boot from the SD card
+- (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
+- [Get Started](#get-Started)
+Note: The Odroid OS image is an old version, but should be upgradable to the latest version.  If anyone is interested in contributing an updated image, please get in touch.
+
 #### Intel Joule Instructions
-Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
+The Intel Joule is/was a fantastic tiny embedded platform which Intel inexplicably killed off.  Like the Odroid, the OS image is an old version but should upgrade to the latest after installation.  Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
 - Write the ISO file to an SD card (like the one that comes with the Joule), or write the tar file to a USB stick, and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
 - Reboot, take the SD card out and boot to the newly flashed OS
 - Login as 'mav' user (default password is 'wingman')
