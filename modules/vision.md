@@ -45,8 +45,41 @@ OpenCV in the 'maverick-raspberry' profile or the 'Raspberry Pi (All models)' OS
 
 ### Visiond
 Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in ~/data/config/vision/maverick-visiond.conf that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
-`maverick restart visiond`
-This service is started by default.
+`maverick restart visiond`  
+This service is started by default.  
+Visiond tries to autodetect the connected camera, the stream type (raw,mjpeg,h264), then optimal encoding type and the payloading, and also tries to autodetect and utilise any connected hardware encoding capabilities.  The config file can be used to override any part of the autodetected pipeline construction.  
+For example, the Raspberry Pi with the Pi camera has a very specific set of requirements to stream video - it requires Raw stream from the first v4l2 video source with pixel format I420, attached directly to the hardware OMX h264 encoder, then rtph264pay payloading before sending to the udp output sink.  Visiond makes the best effort to detect all this, but the config file can be used to specifically set these requirements, eg:
+```
+camera_device = /dev/video0
+format = yuv
+pixelformat = I420
+encoder = h264
+width = 1280
+height = 720
+framerate = 30
+```
+#### Connecting to visiond
+Currently, visiond (as with most gstreamer based video services) sends out video to a specified target, rather than multiple clients being able to connect to it.  This will change in the future, but for now you must specify the target IP address in the 'output_dest' parameter of the /srv/maverick/data/config/vision/maverick-visiond.conf config file, and the target IP address is the IP address of the computer that the video will be displayed on.  Typically on Linux or MacOS this can be found with `ifconfig` or `ip a` commands, or `ipconfig` under windows.  The IP address should then be set in the visiond config along with the desired port and output type:  
+```
+output = udp
+output_dest = 192.168.1.243
+output_port = 5000
+```
+##### Gstreamer client
+Gstreamer is the technology that is used to capture, transcode and stream the video from the onboard computer running Maverick, and a gstreamer client is needed to display the video.  This can be downloaded for most platforms from https://gstreamer.freedesktop.org/, and is often installed already on a Linux OS (or easily installed from the system software packages).  A client pipeline then needs to be constructed that closely matches the sending pipeline.  This is often a source of great confusion, but for the default autodetected pipelines constructed by maverick-visiond, a client pipeline like this should work:  
+```
+gst-launch-1.0 udpsrc port=5000 buffer-size=0 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! queue ! decodebin ! autovideosink sync=false
+```
+##### GCS client
+Most GCS (Ground Control Station) software used by Ardupilot/PX4 users such as Mission Planner and QGroundControl now support video streaming.  Their pipelines are set in the software (although at least with Mission Planner the pipeline can be specified) and most default to udp port 5600 with h264 encoding and rtp264 payload.  GQroundControl works with the default h264 udp stream that visiond presents, so the output can be set to:
+```
+output = udp
+output_dest = 192.168.1.243
+output_port = 5600
+```
+In QGroundControl General Application settings, in the Video section, the Video Source should be set to 'UDP Video Stream', UDP Port to 5600 and the video should show up in the HUD video window.
+##### Troubleshooting
+The first place to look is in the visiond logs, found in ~/var/log/vision/maverick_visiond.log and ~/var/log/vision/maverick_visiond.daemon.log.  These can show any errors, bugs or hardware problems but also shows the pipeline that has been constructed through specified or autodetected configuration.
 
 ### Vision_seek
 Vision_seek is a service similar to visiond, for the Seek Thermal Compact and CompactPro thermal image cameras.  It captures the thermal data, transcodes and processes the data into a format suitable for visualisation, and then streams or saves the images or video to the network or file.  A nice simple setup is to plug the Seek camera directly into the USB port of a Raspberry Pi Zero (W).  
