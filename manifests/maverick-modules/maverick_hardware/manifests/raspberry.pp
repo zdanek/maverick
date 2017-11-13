@@ -11,6 +11,7 @@ class maverick_hardware::raspberry (
     $v4l2 = true,
     $overpower_usb = false,
     $auto_login = false,
+    $manage_pi_password = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     $remove_extrapackages = true,
     $remove_more_extrapackages = false,
@@ -19,11 +20,13 @@ class maverick_hardware::raspberry (
     ) {
 
     # https://github.com/fnoop/maverick/issues/234
-    user { "pi":
-        password    => "${pi_password}",
-    } ->
-    file { ["/etc/profile.d/sshpassword.sh", "/etc/profile.d/sshpwd.sh"]:
-        ensure      => absent
+    if $manage_pi_password == true {
+        user { "pi":
+            password    => "${pi_password}",
+        } ->
+        file { ["/etc/profile.d/sshpassword.sh", "/etc/profile.d/sshpwd.sh"]:
+            ensure      => absent
+        }
     }
     
     # Remove large packages to save space

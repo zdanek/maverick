@@ -55,6 +55,7 @@
 	"maverick_hardware::seekthermal_install": true,
 	"maverick_hardware::remove_glpackages": true,
 	"maverick_hardware::raspberry::swapsize": 100,
+	"maverick_hardware::raspberry::manage_pi_password": true,
 	
 	"maverick_intelligence::tensorflow": true,
 	"maverick_intelligence::tensorflow::arch": "armv6l",
