@@ -507,6 +507,7 @@ if [ "$CONFIGURE" != "true" ]; then
     echo
     usage
 fi
+### If we get here, we are doing a configure run.  Everything below is part of configure pre-checks and run
 
 # Ensure daily apt processes aren't running
 aptpgrep=$(pgrep aptd)
@@ -700,6 +701,15 @@ if [ ! -z "$puppet_systemd_provider" ]; then
     else
         sudo /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's/\"15.04\",\"15.10\",\"16.04\",\"16.10\"]/\"15.04\",\"15.10\",\"16.04\",\"16.10\", \"17.04\", \"17.10\", \"18.04\"]/' {} \;
     fi
+fi
+
+# Check that maverick configure or puppet apply is not already running
+_puppet_apply=$(ps -ef |grep 'puppet apply' |grep -v grep)
+if [ ! -z "$_puppet_apply" ]; then
+    echo
+    echo "${red}Error: maverick configure or puppet apply is already running${reset}"
+    echo
+    exit 1
 fi
 
 # OK we're good to go!
