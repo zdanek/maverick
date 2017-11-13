@@ -2,6 +2,7 @@ class maverick_analysis::grafana (
     $webport = "6790",
     $rootpath = "/analysis/grafana/",
     $grafana_version = "4.5.2",
+    $grafana_firewall_rules = false,
 ) {
     
     ensure_packages(["sqlite3"])
@@ -165,12 +166,14 @@ class maverick_analysis::grafana (
             require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
         }
     }
-    
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "grafana":
-            ports       => $webport,
-            ips         => lookup("firewall_ips"),
-            proto       => "tcp"
+
+    if $grafana_firewall_rules == true {
+        if defined(Class["::maverick_security"]) {
+            maverick_security::firewall::firerule { "grafana":
+                ports       => $webport,
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp"
+            }
         }
     }
     
