@@ -4,7 +4,7 @@ class maverick_security::firewall (
     
     ### Purge any existing iptables rules
     resources { "firewall":
-        purge => false,
+        purge => true,
     }
 	
 	Firewall {
