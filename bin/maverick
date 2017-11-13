@@ -231,10 +231,6 @@ if [ "$SELFUPDATE" == "true" ]; then
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 cd /srv/maverick/software/maverick-fcs; git pull origin;
             fi
-            echo -n "Updating maverick-docs: "
-            if [ -d "/srv/maverick/software/maverick-docs" ]; then
-                cd /srv/maverick/software/maverick-docs; git pull origin;
-            fi
         fi
         echo
         echo "${green}Maverick update completed${reset}"
