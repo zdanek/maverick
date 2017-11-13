@@ -478,6 +478,7 @@ class App():
         # Check the camera has a valid input
         try:
             self.vd = open(cameradev, 'rw')
+            cp = v4l2.v4l2_capability()
         except:
             logger.critical('Camera not specified in config, or camera not valid')
             sys.exit(1)
@@ -491,7 +492,6 @@ class App():
         # Try and autodetect MFC device
         self.mfcdev = None
         for devicepath in devicepaths:
-            cp = v4l2.v4l2_capability()
             ioctl(open(devicepath, 'rw'), v4l2.VIDIOC_QUERYCAP, cp)
             if cp.card == "s5p-mfc-enc":
                 self.mfcdev = open(devicepath, 'rw')
@@ -532,8 +532,14 @@ class App():
         if not encoder:
             encoder = "h264"
         
-        # If raw pixelformat set in config use it, otherwise set to YUY2 by default
+        # If raspberry camera detected set pixelformat to I420, otherwise set to YUY2 by default
         pixelformat = "YUY2"
+        ioctl(self.vd, v4l2.VIDIOC_QUERYCAP, cp) 
+        if cp.driver == "bm2835 mmal":
+            logger.info("Raspberry Pi Camera detected, setting pixel format to I420")
+            pixelformat = "I420"
+            
+        # If raw pixelformat set in config override the defaults
         if 'pixelformat' in self.config:
                 pixelformat = self.config['pixelformat']
 
