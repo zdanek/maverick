@@ -224,10 +224,6 @@ if [ "$SELFUPDATE" == "true" ]; then
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
             fi
-            echo -n "Updating maverick-docs: "
-            if [ -d "/srv/maverick/software/maverick-docs" ]; then
-                su mav -c "cd /srv/maverick/software/maverick-docs; git pull origin"
-            fi
         elif [ $USER == "mav" ]; then
             echo -n "Updating maverick: "
             cd /srv/maverick/software/maverick; git pull origin;
