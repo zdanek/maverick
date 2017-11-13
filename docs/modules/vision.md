@@ -63,12 +63,12 @@ Currently, visiond (as with most gstreamer based video services) sends out video
 ```
 output = udp
 output_dest = 192.168.1.243
-output_port = 5000
+output_port = 5600
 ```
 ##### Gstreamer client
 Gstreamer is the technology that is used to capture, transcode and stream the video from the onboard computer running Maverick, and a gstreamer client is needed to display the video.  This can be downloaded for most platforms from https://gstreamer.freedesktop.org/, and is often installed already on a Linux OS (or easily installed from the system software packages).  A client pipeline then needs to be constructed that closely matches the sending pipeline.  This is often a source of great confusion, but for the default autodetected pipelines constructed by maverick-visiond, a client pipeline like this should work:  
 ```
-gst-launch-1.0 udpsrc port=5000 buffer-size=0 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! queue ! decodebin ! autovideosink sync=false
+gst-launch-1.0 udpsrc port=5600 buffer-size=0 caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! queue ! decodebin ! autovideosink sync=false
 ```
 ##### GCS client
 Most GCS (Ground Control Station) software used by Ardupilot/PX4 users such as Mission Planner and QGroundControl now support video streaming.  Their pipelines are set in the software (although at least with Mission Planner the pipeline can be specified) and most default to udp port 5600 with h264 encoding and rtp264 payload.  GQroundControl works with the default h264 udp stream that visiond presents, so the output can be set to:
