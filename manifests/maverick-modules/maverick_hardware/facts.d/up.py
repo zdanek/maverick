@@ -9,31 +9,40 @@ class Up(object):
         
     def boarddata(self):
         count = 0
-        with open('/sys/devices/virtual/dmi/id/board_vendor', 'r') as f:
-            vendor = f.readline().strip()
-            if vendor == "AAEON":
-                self.data['vendor'] = 'Aaeon'
-                self.data['present'] = 'yes'
-            else:
-                self.data['vendor'] = None
         
-        with open('/sys/devices/virtual/dmi/id/board_name', 'r') as f:
-            board = f.readline().strip()
-            if board == "UP-CHCR1":
-                self.data['model'] = 'Up Core'
-            elif board == "UP-APL01":
-                self.data['model'] = 'Up Squared'
-            elif board == "UP-CHT01":
-                self.data['model'] = 'Up'
-            else:
-                self.data['model'] = None
-
-        with open('/sys/devices/virtual/dmi/id/bios_version', 'r') as f:
-            self.data['bios_version'] = f.readline().strip()
-
-        with open('/sys/devices/virtual/dmi/id/bios_date', 'r') as f:
-            self.data['bios_date'] = f.readline().strip()
-
+        try:
+            with open('/sys/devices/virtual/dmi/id/board_vendor', 'r') as f:
+                vendor = f.readline().strip()
+                if vendor == "AAEON":
+                    self.data['vendor'] = 'Aaeon'
+                    self.data['present'] = 'yes'
+                else:
+                    self.data['vendor'] = None
+        except:
+            pass
+        
+        try:
+            with open('/sys/devices/virtual/dmi/id/board_name', 'r') as f:
+                board = f.readline().strip()
+                if board == "UP-CHCR1":
+                    self.data['model'] = 'Up Core'
+                elif board == "UP-APL01":
+                    self.data['model'] = 'Up Squared'
+                elif board == "UP-CHT01":
+                    self.data['model'] = 'Up'
+                else:
+                    self.data['model'] = None
+        except:
+            pass
+        
+        try:
+            with open('/sys/devices/virtual/dmi/id/bios_version', 'r') as f:
+                self.data['bios_version'] = f.readline().strip()
+            with open('/sys/devices/virtual/dmi/id/bios_date', 'r') as f:
+                self.data['bios_date'] = f.readline().strip()
+        except:
+            pass
+        
         # Define main data container
         f = open('/proc/cpuinfo', 'r')
         for line in f:
