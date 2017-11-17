@@ -37,6 +37,10 @@ from joule import Joule
 joule = Joule()
 joule.runall()
 
+from up import Up
+up = Up()
+up.runall()
+
 from camera import Camera
 camera = Camera()
 camera.runall()
@@ -79,6 +83,12 @@ elif joule.data['present'] == 'yes':
     print twocols('Vendor', '\t\t\tIntel')
     print twocols('Model', '\t\t\t'+joule.data['model'])
 
+elif up.data['present'] == 'yes':
+    print twocols('Vendor', '\t\t\tAaeon')
+    print twocols('Model', '\t\t\t'+up.data['model'])
+    print twocols('BIOS Version', '\t\t'+up.data['bios_version'])
+    print twocols('BIOS Date', '\t\t'+up.data['bios_date'])
+    
 elif baseos.data['is_virtual'] == "true":
     print twocols('System Type','\t\tVirtual Machine (VM)')
     if baseos.data['virtual']:
