@@ -10,7 +10,13 @@ class maverick_analysis::influx (
 
     # Install influx repo
     if $::operatingsystem == "Debian" {
-        $_influx_command = "/bin/bash -c 'source /etc/os-release; test \$VERSION_ID = \"7\" && echo \"deb https://repos.influxdata.com/debian wheezy stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list; test \$VERSION_ID = \"8\" && echo \"deb https://repos.influxdata.com/debian jessie stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list; test \$VERSION_ID = \"9\" && echo \"deb https://repos.influxdata.com/debian stretch stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+        if $::operatingsystemmajrelease == "7" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian wheezy stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } elsif $::operatingsystemmajrelease == "8" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian jessie stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } elsif $::operatingsystemmajrelease == "9" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian stretch stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        }
     } elsif $::operatingsystem == "Ubuntu" {
         $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
     }
