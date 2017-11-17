@@ -80,10 +80,12 @@ class maverick_vision::opencv (
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_TBB=OFF -DBUILD_TBB=OFF -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
     
-        if $raspberry_present == yes {
+        if Numeric($memorysize_mb) < 1000 {
+            $_makej = 1
+        } elsif Numeric($memorysize_mb) < 2000 {
             $_makej = 2
         } else {
-            $_makej = $processorcount
+            $_makej = Numeric($processorcount)
         }
         exec { "opencv-prepbuild":
             user        => "mav",
