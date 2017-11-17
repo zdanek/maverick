@@ -153,26 +153,24 @@ class maverick_network (
         }
     }
     
-    # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
-    # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
-    if $netman == false and $netman_connmand == "yes" {
-        warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
-        file { "/etc/resolv.conf":
-            ensure      => file,
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
-        } ->
+    if $netman == false {
+        # Remove connman - ubuntu/intel connection manager.  Ugly and unwielding, we want a more controllable, consistent interface to networking.
+        # Ensure This is done after the rest of wireless is setup otherwise we lose access to everything.
+        if $netman_connmand == "yes" {
+            warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
+        }
         service_wrapper { "connman.service":
             ensure      => undef,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
         }
-    } 
-    
-    # Remove NetworkManager
-    if $netman == false and $netman_networkmanager == "yes" {
-        warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
+        package { ["cmst", "connman"]:
+            ensure      => purged,
+        }
+        # Remove NetworkManager
+        if $netman_networkmanager == "yes" {
+            warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
+        }
         service_wrapper { "NetworkManager.service":
             ensure      => stopped,
             enable      => false,
@@ -184,6 +182,11 @@ class maverick_network (
         }
         package { "network-manager":
             ensure      => absent, # remove but don't purge, so it can be restored later
+        }
+        # Reset resolv.conf to resolvconf
+        file { "/etc/resolv.conf":
+            ensure      => symlink,
+            target      => "/etc/resolvconf/run/resolv.conf",
         }
     }
     
