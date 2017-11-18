@@ -1,7 +1,8 @@
 class maverick_analysis::grafana (
     $webport = "6790",
     $rootpath = "/analysis/grafana/",
-    $grafana_version = undef,
+    $grafana_version = latest,
+    $grafana_raspberry_version = "4.6.1",
     $grafana_firewall_rules = false,
 ) {
     
@@ -28,15 +29,8 @@ class maverick_analysis::grafana (
 
     if $raspberry_present == "yes" {
         $manage_package_repo = false
-        /*
-        if $::raspberry_model =~ "Zero" or $::raspberry_model =~ "^A" or $::raspberry_model =~ "^B" {
-            $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
-        } else {
-            $package_source = "https://github.com/fg2it/grafana-on-raspberry/releases/download/v${grafana_version}/grafana_${grafana_version}_armhf.deb"
-        }
-        */
         # Don't use autodetect above, because we want OS images to be compatible with Zero
-        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
+        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_raspberry_version}_armhf.deb"
         $install_method = "package"
     } else {
         $manage_package_repo = true
