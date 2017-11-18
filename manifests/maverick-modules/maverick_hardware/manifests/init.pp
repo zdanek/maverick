@@ -4,6 +4,7 @@ class maverick_hardware (
     $beagle_install = false,
     $odroid_install = false,
     $joule_install = false,
+    $up_install = false,
     $camera_ocam_install = false,
     $camera_picam_install = false,
     $camera_realsense_install = false,
