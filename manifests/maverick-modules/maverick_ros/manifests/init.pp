@@ -1,6 +1,6 @@
 class maverick_ros (
     $installtype = "auto",
-    $distribution = "kinetic",
+    $distribution = "auto",
     $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
     $binarytype = ["ros-kinetic-perception", "ros-kinetic-viz"], # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full, ros-kinetic-viz, ros-kinetic-perception
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
@@ -22,38 +22,92 @@ class maverick_ros (
         $_installtype = "source"
     # First try and determine build type based on OS and architecture
     } elsif $installtype == "auto" {
-        if ($distribution == "kinetic") {
-            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "xenial" and ($architecture == "armv7l" or $architecture == "armv6l" or $architecture == "amd64" or $architecture == "i386")) or
-                    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "wily" and ($architecture == "amd64" or $architecture == "i386")) or
-                    ($operatingsystem == "Debian" and $lsbdistcodename == "jessie" and ($architecture == "amd64" or $architecture == "arm64"))
-            ) {
-                $_installtype = "native"
-            } else {
-                $_installtype = "source"
+        case $::operatingsystem {
+            "Ubuntu": {
+                case $::lsbdistcodename {
+                    "wily": {
+                        $autodist = "kinetic"
+                        case $architecture {
+                            "amd64", "i386": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    "xenial": {
+                        $autodist = "kinetic"
+                        case $architecture {
+                            "amd64", "i386", "armhf", "arm64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    "yakkety": {
+                        $autodist = "lunar"
+                        case $architecture {
+                            "amd64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    "zesty": {
+                        $autodist = "lunar"
+                        case $architecture {
+                            "amd64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    default: {
+                        $autodist = undef
+                        $_installtype = undef
+                    }
+                }
             }
-        } elsif $distribution == "jade" {
-            if (    ($operatingsystem == "Ubuntu" and $lsbdistcodename == "trusty" and ($architecture == "armv7l" or $architecture == "armv6l")) or
-                    ($operatingsystem == "Ubuntu" and ($lsbdistcodename =="trusty" or $lsbdistcodename == "utopic" or $lsbdistcodename == "vivid") and ($architecture == "amd64" or $architecture == "i386"))
-            ) {
-                $_installtype = "native"
-            } else {
-                $_installtype = "source"
+            "Debian": {
+                case $::operatingsystemmajrelease {
+                    # For Debian OS use version number instead of codename, for derivatives like rasbian and ubilinux
+                    "8": { # jessie
+                        $autodist = "kinetic"
+                        case $::architecture {
+                            "amd64", "arm64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    "9": { # stretch
+                        $autodist = "lunar"
+                        case $::architecture {
+                            "amd64", "arm64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    default: {
+                        $autodist = undef
+                        $_installtype = undef
+                    }
+                }
             }
         }
-    
         if $_installtype == "native" and $ros_installed == "no" {
-            notice("ROS: supported platform detected for ${distribution} distribution, using native packages")
+            notice("ROS: supported platform detected for ${autodist} distribution, using native packages")
         } elsif $_installtype == "source" and $ros_installed == "no" {
-            notice("ROS: unsupported platform for ${distribution} distribution, installing from source")
+            notice("ROS: unsupported platform for ${autodist} distribution, installing from source")
         }
     } else {
         $_installtype = false
     }
     
-    if $installtype {
+    if $distribution == "auto" and $installtype == "auto" {
+        $_distribution = $autodist
+    } else {
+        $_distribution = $distribution
+    }
+    
+    if $installtype and $_distribution {
         # Install dependencies
         ensure_packages(["dirmngr"])
         ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
+        # Work out distro name
+        if $::lsbdistid == "ubilinux" and $::lsbmajdistrelease == "4" {
+            $_distro = "stretch"
+        } else {
+            $_distro = $::lsbdistcodename
+        }
         # Create symlink to usual vendor install directory
         file { ["/opt", "/opt/ros"]:
             ensure      => directory,
@@ -61,20 +115,20 @@ class maverick_ros (
             owner       => "root",
             group       => "root",
         } ->
-        file { ["${installdir}", "${installdir}/${distribution}"]:
+        file { ["${installdir}", "${installdir}/${_distribution}"]:
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
             mode        => "755",
         } ->
-        file { "/opt/ros/${distribution}":
+        file { "/opt/ros/${_distribution}":
             ensure      => link,
-            target      => "${installdir}/${distribution}",
+            target      => "${installdir}/${_distribution}",
             force       => true,
         } ->
         file { "${installdir}/current":
             ensure      => link,
-            target      => "${installdir}/${distribution}",
+            target      => "${installdir}/${_distribution}",
             force       => true,
         } ->
         # Install ROS bootstrap from ros.org packages
@@ -84,8 +138,8 @@ class maverick_ros (
             require     => Package["dirmngr"],
         } ->
         exec { "ros-repo":
-            command     => '/bin/echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list',
-            creates     => "/etc/apt/sources.list.d/ros-latest.list",
+            command     => "/bin/echo \"deb http://packages.ros.org/ros/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros-latest.list",
+            unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros-latest.list",
             notify      => Exec["maverick-aptget-update"],
         } ->
         exec { "ros-aptupdate":
@@ -107,13 +161,18 @@ class maverick_ros (
 
     # Install from ros repos
     if $_installtype == "native" {
-        package { [$binarytype, "ros-${distribution}-mavros", "ros-${distribution}-mavros-extras", "ros-${distribution}-mavros-msgs", "ros-${distribution}-test-mavros"]:
+        package { ["ros-${_distribution}-perception", "ros-${_distribution}-viz", "ros-${_distribution}-mavros", "ros-${_distribution}-mavros-extras", "ros-${_distribution}-mavros-msgs", "ros-${_distribution}-test-mavros"]:
             ensure      => installed,
-            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"], File["/opt/ros/${distribution}"], ],
+            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"], File["/opt/ros/${_distribution}"], ],
+        } ->
+        # Download latest geographiclib install script
+        exec { "download_geoinstall":
+            command         => "/usr/bin/wget -O /srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.master.sh https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh",
+            creates         => "/srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.master.sh",
         } ->
         # Install mavros geographiclib dependencies
         exec { "mavros_geoinstall":
-            command         => "/bin/bash /srv/maverick/software/ros/${distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
+            command         => "/bin/bash /srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.master.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
             creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
         } ->
         # Initialize rosdep
@@ -131,7 +190,7 @@ class maverick_ros (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => "source /opt/ros/${distribution}/setup.bash",
+            content     => "source /opt/ros/${_distribution}/setup.bash",
         }
         
     # Build from source
@@ -165,26 +224,26 @@ class maverick_ros (
             } ->
             exec { "catkin_rosinstall":
                 environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command         => "/usr/bin/rosinstall_generator ${buildtype} --rosdistro ${distribution} --deps --wet-only --tar > ${distribution}-${buildtype}-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${distribution}-${buildtype}-wet.rosinstall",
+                command         => "/usr/bin/rosinstall_generator ${buildtype} --rosdistro ${_distribution} --deps --wet-only --tar > ${_distribution}-${buildtype}-wet.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${_distribution}-${buildtype}-wet.rosinstall",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${builddir}/src/.rosinstall"
             } ->
             exec { "catkin_make":
                 environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
                 cwd             => "${builddir}",
                 user            => "mav",
-                creates         => "${installdir}/${distribution}/lib/rosbag/topic_renamer.py",
+                creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
                 timeout         => 0,
-                require         => File["${installdir}/${distribution}"]
+                require         => File["${installdir}/${_distribution}"]
             } ->
             file { "/etc/profile.d/30-ros-env.sh":
                 ensure      => present,
                 mode        => "644",
                 owner       => "root",
                 group       => "root",
-                content     => "source /opt/ros/${distribution}/setup.bash",
+                content     => "source /opt/ros/${_distribution}/setup.bash",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
@@ -195,7 +254,7 @@ class maverick_ros (
             if $module_opencv == true {
                 # Add opencv to the existing workspace through vision_opencv package
                 exec { "ws_add_opencv":
-                    command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
+                    command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${_distribution} --deps --wet-only --tar >${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${builddir}/src/vision_opencv",
@@ -204,13 +263,13 @@ class maverick_ros (
                     require         => [ Package["libpoco-dev"], Exec["catkin_make"] ],
                 } ->
                 exec { "catkin_make_vision_opencv":
-                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
                     cwd             => "${builddir}",
                     user            => "mav",
-                    creates         => "${installdir}/${distribution}/lib/libopencv_optflow3.so",
+                    creates         => "${installdir}/${_distribution}/lib/libopencv_optflow3.so",
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
-                    require         => File["${installdir}/${distribution}"]
+                    require         => File["${installdir}/${_distribution}"]
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_opencv":
                     ensure      => present,
@@ -227,7 +286,7 @@ class maverick_ros (
                 }
                 # Add mavros to the existing workspace, this also installs mavlink package as dependency
                 exec { "ws_add_mavros":
-                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${distribution} --deps --wet-only --tar >${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${distribution} --deps --wet-only --tar >>${distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --deps --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge -t src ${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${builddir}/src/mavros",
@@ -237,17 +296,17 @@ class maverick_ros (
                 } ->
                 exec { "catkin_make_mavros":
                     # Note must only use -j1 otherwise we get compiler errors
-                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${distribution} -DCMAKE_BUILD_TYPE=Release -j1",
+                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1",
                     cwd             => "${builddir}",
                     user            => "mav",
-                    creates         => "${installdir}/${distribution}/lib/libmavros.so",
+                    creates         => "${installdir}/${_distribution}/lib/libmavros.so",
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
-                    require         => File["${installdir}/${distribution}"]
+                    require         => File["${installdir}/${_distribution}"]
                 } ->
                 # Install mavros geographiclib dependencies
                 exec { "mavros_geoinstall":
-                    command         => "/bin/bash /srv/maverick/software/ros/${distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
+                    command         => "/bin/bash /srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
                     creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
@@ -258,7 +317,7 @@ class maverick_ros (
 
     }
     
-    if $installtype {
+    if $installtype and $_distribution {
         # Install rosmaster systemd manifest.  Note it's not activated here, other modules will call the rosmaster define
         file { "/etc/systemd/system/maverick-rosmaster@.service":
             ensure          => present,
