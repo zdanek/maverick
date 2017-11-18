@@ -32,6 +32,10 @@ class maverick_hardware (
 		class { "maverick_hardware::joule": }
 	}
 	
+	if $up_present == "yes" or $up_install == true {
+		class { "maverick_hardware::up": }
+	}
+	
 	# Setup ocam software
 	if $camera_ocam == "yes" or $camera_ocam_install == true {
 		class { "maverick_hardware::peripheral::ocam": }
