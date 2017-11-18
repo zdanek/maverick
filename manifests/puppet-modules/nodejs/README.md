@@ -437,7 +437,7 @@ to `present` and may also be set to `absent`.
 #### `repo_pin`
 
 Whether to perform APT pinning to pin the Node.js repository with a specific
-value. Defaults to `false`.
+value. Defaults to `undef`.
 
 #### `repo_priority`
 
@@ -470,25 +470,23 @@ the NodeSource URL structure - NodeSource might remove old versions (such as
 0.10 and 0.12) or add new ones (such as 8.x) at any time.
 
 The following are ``repo_url_suffix`` values that reflect NodeSource versions
-that were available on 2017-01-08:
+that were available on 2017-11-14:
 
 * Debian 7 (Wheezy) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x```
-* Debian 8 (Jessie) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
-* Debian (Sid) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
-* Ubuntu 10.04 (Lucid) ```0.10```
+* Debian 8 (Jessie) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* Debian 9 (Stretch) ```4.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* Debian (Sid) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Ubuntu 12.04 (Precise) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x```
-* Ubuntu 13.10 (Saucy) ```0.10```
-* Ubuntu 14.04 (Trusty) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
-* Ubuntu 14.10 (Utopic) ```0.10``` ```0.12```
-* Ubuntu 15.04 (Vivid) ```0.10``` ```0.12``` ```4.x``` ```5.x```
-* Ubuntu 15.10 (wily) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x```
-* Ubuntu 16.04 (Xenial) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
-* Ubuntu 16.10 (Yakkety) ```0.12``` ```4.x``` ```6.x``` ```7.x```
+* Ubuntu 14.04 (Trusty) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* Ubuntu 16.04 (Xenial) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* Ubuntu 16.10 (Yakkety) ```0.12``` ```4.x``` ```6.x``` ```7.x``` ```8.x```
+* Ubuntu 17.10 (Artful) ```4.x``` ```6.x``` ```8.x``` ```9.x```
 * RHEL/CentOS 5 ```0.10``` ```0.12```
-* RHEL/CentOS 6 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
-* RHEL/CentOS 7 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x```
+* RHEL/CentOS 6 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* RHEL/CentOS 7 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Amazon Linux - See RHEL/CentOS 7
-* Fedora 25 ```4.x``` ```6.x``` ```7.x```
+* Fedora 25 ```4.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
+* Fedora 26 ```6.x``` ```8.x``` ```9.x```
 
 #### `use_flags`
 
@@ -521,7 +519,7 @@ This module is not supported on Debian Squeeze.
 
 This modules uses `puppetlabs-apt` for the management of the NodeSource
 repository. If using an operating system of the Debian-based family, you will
-need to ensure that `puppetlabs-apt` version 2.x is installed.
+need to ensure that `puppetlabs-apt` version 2.x or above is installed.
 
 If using CentoOS/RHEL 5, you will need to ensure that the `stahnma-epel`
 module is installed.

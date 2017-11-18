@@ -5,11 +5,18 @@ class nodejs::repo::nodesource::apt {
   $ensure     = $nodejs::repo::nodesource::ensure
   $pin        = $nodejs::repo::nodesource::pin
   $url_suffix = $nodejs::repo::nodesource::url_suffix
+  $release    = $nodejs::repo::nodesource::release
 
   ensure_packages(['apt-transport-https', 'ca-certificates'])
 
   include ::apt
 
+  if empty($release) {
+    $_release = $::lsbdistcodename
+  } else {
+    $_release = $release
+  }
+  
   if ($ensure != 'absent') {
     apt::source { 'nodesource':
       include  => {
@@ -20,8 +27,8 @@ class nodejs::repo::nodesource::apt {
         'source' => 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key',
       },
       location => "https://deb.nodesource.com/node_${url_suffix}",
-      #pin      => $pin,
-      release  => $::lsbdistcodename,
+      pin      => $pin,
+      release  => $_release,
       repos    => 'main',
       require  => [
         Package['apt-transport-https'],

@@ -5,12 +5,13 @@ class nodejs::params {
   $nodejs_package_ensure       = 'present'
   $repo_enable_src             = false
   $repo_ensure                 = 'present'
-  $repo_pin                    = false
+  $repo_pin                    = undef
   $repo_priority               = 'absent'
   $repo_proxy                  = 'absent'
   $repo_proxy_password         = 'absent'
   $repo_proxy_username         = 'absent'
   $repo_url_suffix             = '0.10'
+  $repo_release                = undef
   $use_flags                   = ['npm', 'snapshot']
 
   # The full path to cmd.exe is required on Windows. The system32 fact is only
@@ -25,7 +26,7 @@ class nodejs::params {
       if $::operatingsystemrelease =~ /^6\.(\d+)/ {
         fail("The ${module_name} module is not supported on Debian Squeeze.")
       }
-      elsif $::operatingsystemrelease =~ /^[78]\.(\d+)/ {
+      elsif $::operatingsystemrelease =~ /^[789]\.(\d+)/ {
         $legacy_debian_symlinks    = false
         $manage_package_repo       = true
         $nodejs_debug_package_name = 'nodejs-dbg'
