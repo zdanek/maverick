@@ -10,6 +10,13 @@ class maverick_web::nginx (
         $manage_repo = true
     }
 
+    # Workaround for ubilinux
+    if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {
+        $_release = "stretch"
+    } else {
+        $_release = $::lsbdistcodename
+    }
+    
     # Make sure apache system services are stopped
     service_wrapper { "apache2":
         ensure      => stopped,
@@ -26,6 +33,7 @@ class maverick_web::nginx (
         confd_purge     => true,
         server_purge    => true,
         manage_repo     => $manage_repo,
+        repo_release    => $_release,
         service_manage  => true,
         service_name    => "maverick-nginx",
     }

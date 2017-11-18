@@ -37,18 +37,10 @@ class nginx::service(
     $service_ensure_real = $service_ensure
   }
 
-  if $service_name != "nginx" {
-    service { "system-nginx":
-      name    => "nginx",
-      ensure  => "stopped",
-      enable  => false,
-    }
-  }
-  
   if $service_manage {
     case $::osfamily {
       'OpenBSD': {
-        service { 'puppet-nginx':
+        service { 'nginx':
           ensure     => $service_ensure_real,
           name       => $service_name,
           enable     => $service_enable,
@@ -58,7 +50,7 @@ class nginx::service(
         }
       }
       default: {
-        service { 'puppet-nginx':
+        service { 'nginx':
           ensure     => $service_ensure_real,
           name       => $service_name,
           enable     => $service_enable,

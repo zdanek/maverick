@@ -1,6 +1,6 @@
 {
   "name": "puppet-nginx",
-  "version": "0.8.0",
+  "version": "0.9.1-rc0",
   "author": "Vox Pupuli",
   "summary": "Puppet NGINX management module",
   "license": "MIT",
@@ -17,7 +17,6 @@
       "version_requirement": ">= 3.0.0 <5.0.0"
     }
   ],
-  "data_provider": null,
   "requirements": [
     {
       "name": "puppet",
@@ -28,7 +27,6 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "7",
         "8"
       ]
     },
@@ -66,7 +64,6 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "12.04",
         "14.04",
         "16.04"
       ]
