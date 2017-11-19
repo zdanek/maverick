@@ -9,7 +9,7 @@ class maverick_network (
     $dnsclient = false, 
     $ntpclient = false,
     $ipv6 = undef,
-    $wpasupplicant_template = false,
+    $wpasupplicant_template = true,
     ) {
 
     # Install software 
