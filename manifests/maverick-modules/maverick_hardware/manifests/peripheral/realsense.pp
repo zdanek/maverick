@@ -2,7 +2,7 @@ class maverick_hardware::peripheral::realsense (
     $librealsense_branch = "legacy",
 ) {
 
-    ensure_packages(["libglfw3", "libglfw3-dev", "libusb-1.0-0", "libusb-1.0-0-dev", "pkg-config", "libssl-dev", "liblz4-dev", "liblog4cxx-dev", "libgtk-3-dev"])
+    ensure_packages(["libglfw3", "libglfw3-dev", "libusb-1.0-0", "libusb-1.0-0-dev", "pkg-config", "libssl-dev", "liblz4-dev", "liblog4cxx-dev", "libgtk-3-dev", "libglu1-mesa-dev", "freeglut3-dev"])
 
     if ! ("install_flag_librealsense" in $installflags) {
     
