@@ -15,6 +15,14 @@ class maverick_network (
     # Install software 
     ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload", "hostapd"])
     
+    # Create log directory
+    file { "/srv/maverick/var/log/network":
+        ensure      => directory,
+        mode        => "755",
+        owner       => "mav",
+        group       => "mav",
+    }
+    
     # Install/setup wifibroadcast
     class { "maverick_network::wifibroadcast": }
     
