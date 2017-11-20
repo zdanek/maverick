@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to measure power consumption of Intel Joule module, taken from Intel Joule Thermal Management document
+# Script to measure power consumption from Intel RAPL, taken from Intel Joule Thermal Management document
 
 HOSTNAME="${COLLECTD_HOSTNAME:-localhost}"
 INTERVAL="${COLLECTD_INTERVAL:-10}"

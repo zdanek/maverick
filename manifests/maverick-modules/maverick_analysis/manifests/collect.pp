@@ -177,12 +177,13 @@ class maverick_analysis::collect (
     #    verbose => true,
     #}
 
-    # Configure an exec plugin to run power script on Joule platform, to retrieve power consumption
-    if $joule_present == "yes" {
-        collectd::plugin::exec::cmd { 'joule-power':
+    # Configure an exec plugin to run power script on Intel RAPL platform, to retrieve power consumption
+    if $rapl_present == "yes" {
+        ensure_packages(["bc"])
+        collectd::plugin::exec::cmd { 'rapl-power':
             user => mav,
             group => mav,
-            exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/joule-power.sh"],
+            exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/rapl-power.sh"],
         }
     }
 
