@@ -33,6 +33,13 @@ rm -f /var/log/btmp* /var/log/wtmp*
 rm -rf /home/tmp
 userdel tmp >/dev/null 2>&1
 
+# Clean up ublinux home directory
+if [ -d /home/ubilinux ]; then
+    rm -rf /home/ubilinux maverick
+    rm -f /home/ubilinux/.bash_history /home/ubilinux/.Xauthority /home/ubilinux/.xsession-errors
+    rm -rf /home/ubilinux/.cache /home/ubilinux/.config /home/ubilinux/.gnupg /home/ubilinux/.local
+]
+
 # Remove initial bootstrap maverick from common locations
 rm -rf /root/maverick
 rm -rf /home/pi/maverick
