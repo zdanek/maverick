@@ -15,7 +15,7 @@ class RAPL(object):
                 self.data['enabled'] = f.readline().strip()
             with open('/sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj', 'r') as f:
                 self.data['energyuj'] = f.readline().strip()
-            if int(self.data['enabled']) == 1 and int(self.data['energuj'] > 1):
+            if int(self.data['enabled']) == 1 and int(self.data['energuj']) > 1:
                 self.data['present'] = "yes"
         except:
             pass
