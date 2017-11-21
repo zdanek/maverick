@@ -1,6 +1,8 @@
 class maverick_network::zerotier (
     $libzt = false,
     $active = false,
+    $join_network = true,
+    $network_id = "8056c2e21c000001",
 ) {
  
     # Workaround for ubilinux
@@ -25,6 +27,24 @@ class maverick_network::zerotier (
     package { "zerotier-one":
         ensure      => installed,
         require     => Exec["apt_update"],
+    } ->
+    file { "/usr/bin/zerotier-cli":
+        target      => "/usr/sbin/zerotier-cli",
+    } ->
+    
+    # Create initial crypto keys and register, and copy private key to mav user for user control
+    exec { "zt-createkeys":
+        command     => "/bin/systemctl start zerotier-one; sleep 10; /bin/systemctl stop zerotier-one",
+        creates     => "/var/lib/zerotier-one/authtoken.secret",
+    } ->
+    exec { "mav-ztkey":
+        command     => "/bin/cat /var/lib/zerotier-one/authtoken.secret >>/srv/maverick/.zeroTierOneAuthToken",
+        creates     => "/srv/maverick/.zeroTierOneAuthToken",
+    } ->
+    file { "/srv/maverick/.zeroTierOneAuthToken":
+        owner       => "mav",
+        group       => "mav",
+        mode        => "600",
     }
     
     # Install libzt - library is a WIP
@@ -48,12 +68,34 @@ class maverick_network::zerotier (
         service { "zerotier-one":
             ensure      => running,
             enable      => true,
+            require     => Package["zerotier-one"],
+        }
+        if $join_network == true {
+            exec { "zt-controlnetwork":
+                command     => "/usr/sbin/zerotier-cli join ${network_id}",
+                unless      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                require     => Service["zerotier-one"],
+            }
+        } else {
+            exec { "zt-controlnetwork":
+                command     => "/usr/sbin/zerotier-cli leave ${network_id}",
+                onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                require     => Service["zerotier-one"],
+            }
         }
     } else {
+        if $join_network == false {
+            exec { "zt-controlnetwork":
+                command     => "/usr/sbin/zerotier-cli leave ${network_id}",
+                onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                before      => Service["zerotier-one"],
+            }
+        }
         service { "zerotier-one":
             ensure      => stopped,
             enable      => false,
+            require     => Package["zerotier-one"],
         }
     }
-    
+
 }
