@@ -140,15 +140,11 @@ class maverick_ros (
         exec { "ros-repo":
             command     => "/bin/echo \"deb http://packages.ros.org/ros/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros-latest.list",
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros-latest.list",
-            notify      => Exec["maverick-aptget-update"],
-        } ->
-        exec { "ros-aptupdate":
-            command     => "/usr/bin/apt-get update",
-            unless      => "/bin/ls /var/lib/apt/lists/*ros.org*"
+            notify      => Exec["apt_update"],
         } ->
         package { ["python-rosdep"]:
             ensure      => installed,
-            require     => [Exec["maverick-aptget-update"], Exec["ros-aptupdate"]],
+            require     => Exec["apt_update"],
         }
         $wstool_package = $::operatingsystem ? {
             'Ubuntu'        => 'python-wstool',
@@ -163,7 +159,7 @@ class maverick_ros (
     if $_installtype == "native" {
         package { ["ros-${_distribution}-perception", "ros-${_distribution}-viz", "ros-${_distribution}-mavros", "ros-${_distribution}-mavros-extras", "ros-${_distribution}-mavros-msgs", "ros-${_distribution}-test-mavros"]:
             ensure      => installed,
-            require     => [ Exec["ros-aptupdate"], Package["python-rosdep"], File["/opt/ros/${_distribution}"], ],
+            require     => [ Exec["apt_update"], Package["python-rosdep"], File["/opt/ros/${_distribution}"], ],
         } ->
         # Download latest geographiclib install script
         exec { "download_geoinstall":

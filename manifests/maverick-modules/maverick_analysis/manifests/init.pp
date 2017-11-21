@@ -30,7 +30,7 @@ class maverick_analysis (
     
     if $grafana == true {
         class { "maverick_analysis::grafana":
-            require     => [ Class["maverick_analysis::collect"], Class["maverick_analysis::influx"] ],
+            require     => Class["maverick_analysis::collect"],
         }
     }
     

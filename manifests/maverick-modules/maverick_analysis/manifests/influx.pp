@@ -29,16 +29,12 @@ class maverick_analysis::influx (
     exec { "influx-repo":
         command         => $_influx_command,
         creates         => "/etc/apt/sources.list.d/influxdb.list",
-    } ->
-    # Do an apt update if necessary
-    exec { "influx-aptupdate":
-        command     => "/usr/bin/apt update",
-        unless      => "/usr/bin/apt-cache showpkg influxdb |grep influxdata.com"
-    } ->
+        notify          => Exec["apt_update"],
+    }
     # Install influxdb
     package { "influxdb":
         ensure      => latest,
-        require     => [ Exec["influx-repo"], Exec["influx-aptupdate"] ],
+        require     => [ Exec["influx-repo"], Exec["apt_update"] ],
     } ->
     file { "/srv/maverick/data/config/analysis/influxdb.conf":
         content     => template("maverick_analysis/influxdb.conf.erb"),
