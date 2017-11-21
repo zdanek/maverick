@@ -10,6 +10,7 @@ class maverick_network (
     $ntpclient = false,
     $ipv6 = undef,
     $wpasupplicant_template = true,
+    $zerotier = true,
     ) {
 
     # Install software 
@@ -296,6 +297,10 @@ class maverick_network (
             }
         }
 
+	}
+	
+	if $zerotier == true {
+	    class { "maverick_network::zerotier": }
 	}
     
 }
