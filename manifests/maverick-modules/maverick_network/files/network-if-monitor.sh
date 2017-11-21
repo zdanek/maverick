@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set defaults, can be overriden in /srv/maverick/data/config/interface-.conf
+# Set defaults, can be overriden in /srv/maverick/config/interface-.conf
 RATE=24
 CHAN5G=149
 CHAN2G=13
@@ -13,7 +13,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Load defaults if they exist
-[ ! -r /srv/maverick/data/config/network/interface-$2.conf ] || . /srv/maverick/data/config/network/interface-$2.conf
+[ ! -r /srv/maverick/config/network/interface-$2.conf ] || . /srv/maverick/config/network/interface-$2.conf
 
 # Check for required wireless utils
 if hash ifconfig; then

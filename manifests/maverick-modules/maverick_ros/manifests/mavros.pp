@@ -5,7 +5,7 @@ define maverick_ros::mavros (
     $mavros_startup_delay = 10,
 ) {
     
-    file { "/srv/maverick/data/config/ros/mavros-${name}.conf":
+    file { "/srv/maverick/config/ros/mavros-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

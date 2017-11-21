@@ -3,7 +3,7 @@ class maverick_dev (
     $ardupilot = true,
 ) {
    
-    file { ["/srv/maverick/data/dev", "/srv/maverick/data/config/dev"]:
+    file { ["/srv/maverick/data/dev", "/srv/maverick/config/dev"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",

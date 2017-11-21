@@ -72,7 +72,7 @@ class maverick_fc (
     }
     
     # Install default params config
-    file { "/srv/maverick/data/config/mavlink/mavlink_params-fc.json":
+    file { "/srv/maverick/config/mavlink/mavlink_params-fc.json":
         owner       => "mav",
         group       => "mav",
         mode        => "644",
@@ -195,7 +195,7 @@ class maverick_fc (
         }
     }
 
-    file { "/srv/maverick/data/config/mavlink/dataflash_logger.conf":
+    file { "/srv/maverick/config/mavlink/dataflash_logger.conf":
         owner       => "mav",
         group       => "mav",
         mode        => "644",

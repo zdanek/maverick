@@ -36,7 +36,7 @@ class maverick_analysis::influx (
         ensure      => latest,
         require     => [ Exec["influx-repo"], Exec["apt_update"] ],
     } ->
-    file { "/srv/maverick/data/config/analysis/influxdb.conf":
+    file { "/srv/maverick/config/analysis/influxdb.conf":
         content     => template("maverick_analysis/influxdb.conf.erb"),
         owner       => "mav",
         group       => "mav",

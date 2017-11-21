@@ -3,7 +3,7 @@ Description=Maverick - Seek Thermal Vision
 Requires=network-online.target
 
 [Service]
-EnvironmentFile=/srv/maverick/data/config/vision/vision_seek.conf
+EnvironmentFile=/srv/maverick/config/vision/vision_seek.conf
 ExecStart=/srv/maverick/software/maverick/bin/vision_seek.sh
 TimeoutStartSec=0
 User=mav

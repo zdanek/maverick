@@ -20,7 +20,7 @@ define maverick_mavlink::mavproxy (
     } else {
         $mavcesium_installed = false
     }
-    file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.service.conf":
+    file { "/srv/maverick/config/mavlink/mavproxy-${name}.service.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -28,7 +28,7 @@ define maverick_mavlink::mavproxy (
         content     => template("maverick_mavlink/mavproxy.service.conf.erb"),
         notify      => $service_notify,
     }
-    file { "/srv/maverick/data/config/mavlink/mavproxy-${name}.screen.conf":
+    file { "/srv/maverick/config/mavlink/mavproxy-${name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

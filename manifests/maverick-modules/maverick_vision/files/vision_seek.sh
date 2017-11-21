@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set defaults, can be overriden in /srv/maverick/data/config/vision/vision_seek.conf
+# Set defaults, can be overriden in /srv/maverick/config/vision/vision_seek.conf
 FPS=
 FFC=
 SCALE=1.0
@@ -10,7 +10,7 @@ CAMTYPE=seek
 OUTPUT=window
 
 # Override values from config file
-[ ! -r /srv/maverick/data/config/vision/vision_seek.conf ] || . /srv/maverick/data/config/vision/vision_seek.conf
+[ ! -r /srv/maverick/config/vision/vision_seek.conf ] || . /srv/maverick/config/vision/vision_seek.conf
 
 # Parse config options
 if [ ! -z $FPS ]; then

@@ -20,7 +20,7 @@ class maverick_mavlink (
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
 
     # Create config directory for all mavlink configs
-    file { "/srv/maverick/data/config/mavlink":
+    file { "/srv/maverick/config/mavlink":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
@@ -250,7 +250,7 @@ class maverick_mavlink (
             mode        => "644",
             content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
         } ->
-        file { "/srv/maverick/data/config/mavlink/cesium":
+        file { "/srv/maverick/config/mavlink/cesium":
             ensure      => directory,
             owner       => "mav",
             group       => "mav",

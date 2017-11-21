@@ -27,7 +27,7 @@ class maverick_vision::camera_streaming_daemon (
             ensure      => file,
             owner       => "mav",
         } ->
-        file { "/srv/maverick/data/config/vision/csd.conf":
+        file { "/srv/maverick/config/vision/csd.conf":
             source      => "puppet:///modules/maverick_vision/csd.conf",
             owner       => "mav",
             group       => "mav",

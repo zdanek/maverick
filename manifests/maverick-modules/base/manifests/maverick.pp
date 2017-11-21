@@ -4,7 +4,7 @@ class base::maverick (
    
    # Note: The mav user is setup in base::users
    
-   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/data/config", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib"]:
+   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib"]:
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
@@ -39,11 +39,11 @@ class base::maverick (
         onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
         command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
     } ->
-    file { "/srv/maverick/data/config/maverick":
+    file { "/srv/maverick/config/maverick":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/conf",
     }
-    file { "/srv/maverick/data/config/maverick/localconf.json":
+    file { "/srv/maverick/config/maverick/localconf.json":
         mode        => "644",
         owner       => "mav",
         group       => "mav",
@@ -61,7 +61,7 @@ class base::maverick (
     }
     
     # Add environment marker
-    file { "/srv/maverick/data/config/maverick/maverick-environment.conf":
+    file { "/srv/maverick/config/maverick/maverick-environment.conf":
         ensure      => file,
         owner       => "mav",
         group       => "mav",
@@ -98,11 +98,11 @@ class base::maverick (
     
     # Remove old branch file
     exec { "move-oldbranchfile":
-        command     => "/bin/mv /srv/maverick/data/config/maverick-branch.conf /srv/maverick/data/config/maverick",
-        onlyif      => "/bin/ls /srv/maverick/data/config/maverick-branch.conf",
+        command     => "/bin/mv /srv/maverick/config/maverick-branch.conf /srv/maverick/config/maverick",
+        onlyif      => "/bin/ls /srv/maverick/config/maverick-branch.conf",
     } ->
     # Add maverick git branch config
-    file { "/srv/maverick/data/config/maverick/maverick-branch.conf":
+    file { "/srv/maverick/config/maverick/maverick-branch.conf":
         owner   => "mav",
         group   => "mav",
         content => "MAVERICK_BRANCH=stable",

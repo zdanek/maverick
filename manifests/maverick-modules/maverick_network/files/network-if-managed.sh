@@ -6,13 +6,13 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-if [ ! -f /srv/maverick/data/config/network/interface-$1.conf ]; then
+if [ ! -f /srv/maverick/config/network/interface-$1.conf ]; then
     echo "Error: config file does not exist"
     exit 0
 fi
 
 # Load defaults if they exist
-[ ! -r /srv/maverick/data/config/network/interface-$1.conf ] || . /srv/maverick/data/config/network/interface-$1.conf
+[ ! -r /srv/maverick/config/network/interface-$1.conf ] || . /srv/maverick/config/network/interface-$1.conf
 
 # Check for required wireless utils
 if hash ifconfig; then

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source /srv/maverick/software/ros/current/setup.bash
-[ ! -r /srv/maverick/data/config/ros/mavros-$1.conf ] || . /srv/maverick/data/config/ros/mavros-$1.conf
+[ ! -r /srv/maverick/config/ros/mavros-$1.conf ] || . /srv/maverick/config/ros/mavros-$1.conf
 export ROS_LOG_DIR
 
 echo "Waiting a few seconds for rosmaster to fully launch"

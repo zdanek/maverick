@@ -496,7 +496,7 @@ class App():
         logger.info("--------------------------------")
         logger.info("Starting maverick-mavlogd daemon")
         # Get config
-        self.config = self.config_parse("/srv/maverick/data/config/analysis/maverick-mavlogd.conf")
+        self.config = self.config_parse("/srv/maverick/config/analysis/maverick-mavlogd.conf")
         self.influx_database = self.config['influx_database']
         self.client = InfluxDBClient(self.config['influx_server'], self.config['influx_port'], self.config['influx_user'], self.config['influx_password'], self.influx_database)
         if not self.client:

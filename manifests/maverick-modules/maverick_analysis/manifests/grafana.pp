@@ -45,7 +45,7 @@ class maverick_analysis::grafana (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     class { "::grafana": 
-        cfg_location        => "/srv/maverick/data/config/analysis/grafana.ini",
+        cfg_location        => "/srv/maverick/config/analysis/grafana.ini",
         cfg => {
             app_mode => 'production',
             server   => {

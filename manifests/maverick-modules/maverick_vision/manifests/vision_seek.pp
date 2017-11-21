@@ -56,7 +56,7 @@ class maverick_vision::vision_seek (
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/vision_seek.sh",
     } ->
     # Place a default config file
-    file { "/srv/maverick/data/config/vision/vision_seek.conf":
+    file { "/srv/maverick/config/vision/vision_seek.conf":
         owner       => "mav",
         group       => "mav",
         mode        => "644",

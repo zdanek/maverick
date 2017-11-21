@@ -12,7 +12,7 @@ class maverick_vision (
     $rtabmap = false,
 ) {
 
-    file { ["/srv/maverick/data/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:
+    file { ["/srv/maverick/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

@@ -17,7 +17,7 @@ define maverick_mavlink::mavlink_router (
     } else {
         $service_notify = undef
     }
-    file { "/srv/maverick/data/config/mavlink/mavlink-router-${name}.conf":
+    file { "/srv/maverick/config/mavlink/mavlink-router-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

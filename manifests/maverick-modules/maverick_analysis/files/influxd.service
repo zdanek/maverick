@@ -10,7 +10,7 @@ User=mav
 Group=mav
 LimitNOFILE=65536
 EnvironmentFile=-/etc/default/influxdb
-ExecStart=/usr/bin/influxd -config /srv/maverick/data/config/analysis/influxdb.conf $INFLUXD_OPTS
+ExecStart=/usr/bin/influxd -config /srv/maverick/config/analysis/influxdb.conf $INFLUXD_OPTS
 KillMode=control-group
 Restart=on-failure
 

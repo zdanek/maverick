@@ -3,7 +3,7 @@ define maverick_ros::rosmaster (
     $active = true,
 ) {
     
-    file { "/srv/maverick/data/config/ros/rosmaster-${name}.conf":
+    file { "/srv/maverick/config/ros/rosmaster-${name}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",

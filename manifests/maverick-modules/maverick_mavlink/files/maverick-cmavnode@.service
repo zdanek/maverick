@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-EnvironmentFile=/srv/maverick/data/config/mavlink/cmavnode-%I.service.conf
+EnvironmentFile=/srv/maverick/config/mavlink/cmavnode-%I.service.conf
 ExecStart=/srv/maverick/software/maverick/bin/cmavnode.sh %I
 User=mav
 

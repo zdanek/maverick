@@ -24,8 +24,8 @@ then
 fi
 
 SHORTHOST=$(hostname -s)
-if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
-  ENVIRONMENT=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
+if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
+  ENVIRONMENT=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
 else
   ENVIRONMENT=<%= @environment %>
 fi

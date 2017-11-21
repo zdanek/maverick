@@ -172,12 +172,21 @@ mavenv () {
     fi
 }
 
-# If git branch config file exists, source it
-if [ -e /srv/maverick/data/config/maverick/maverick-branch.conf ]; then
-    source /srv/maverick/data/config/maverick/maverick-branch.conf
+# Migrate old config location
+if [ -d /srv/maverick/data/config ]; then
+    if [ ! -d /srv/maverick/config ]; then
+        echo "Migrating config from /srv/maverick/data/config to /srv/maverick/config"
+        mv /srv/maverick/data/config /srv/maverick/config
+        ln -s /srv/maverick/config /srv/maverick/data/config
+    fi
 fi
-if [ -e /srv/maverick/data/config/maverick-branch.conf ]; then
-    source /srv/maverick/data/config/maverick-branch.conf
+
+# If git branch config file exists, source it
+if [ -e /srv/maverick/config/maverick/maverick-branch.conf ]; then
+    source /srv/maverick/config/maverick/maverick-branch.conf
+fi
+if [ -e /srv/maverick/config/maverick-branch.conf ]; then
+    source /srv/maverick/config/maverick-branch.conf
 fi
 # If git branch not set by now, set it to stable by default
 if [ -z $MAVERICK_BRANCH ]; then
@@ -191,7 +200,7 @@ fi
 
 # Migrate old environment marker to new location
 if [ -e /srv/maverick/.environment ]; then
-    mv -f /srv/maverick/.environment /srv/maverick/data/config/maverick/maverick-environment.conf
+    mv -f /srv/maverick/.environment /srv/maverick/config/maverick/maverick-environment.conf
 fi
 
 # If self-update set, action and then exit
@@ -291,8 +300,8 @@ fi
 
 # If info set, action and then exit
 if [ "$INFO" == "true" ]; then
-    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
-        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
+    if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -303,8 +312,8 @@ fi
 
 # If netinfo set, action and then exit
 if [ "$NETINFO" == "true" ]; then
-    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
-        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
+    if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -328,8 +337,8 @@ if [ "$STATUS" == "true" ]; then
         fi
         echo "$1:$2:$_status | $_atboot\n"
     }
-    if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
-        environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
+    if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
+        environment=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
     fi
     mavenv ${environment}
     echo
@@ -482,8 +491,8 @@ if [ "$DISABLE" == "true" ]; then
 fi
 
 # Read environment marker if it exists
-if [ -e /srv/maverick/data/config/maverick/maverick-environment.conf ]; then
-    environment=$(cat /srv/maverick/data/config/maverick/maverick-environment.conf)
+if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
+    environment=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
     if [[ $environment && "$ENV" != "" ]]; then
         echo "Environment marker set but is being ignored as --env is set"
     elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "flight" ]]; then
@@ -732,7 +741,7 @@ echo
 # If /boot/maverick and /srv/maverick exists, move the contents and use them
 if [ -e /srv/maverick -a -e /boot/maverick ]; then
     echo "Migrating supplied config to maverick location"
-    sudo rsync -K -a /boot/maverick/* /srv/maverick/data/config >/dev/null 2>&1
+    sudo rsync -K -a /boot/maverick/* /srv/maverick/config >/dev/null 2>&1
     if [ $? -eq 0 ]; then
         sudo rm -rf /boot/maverick
     fi

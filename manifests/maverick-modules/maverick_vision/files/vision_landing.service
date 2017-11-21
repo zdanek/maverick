@@ -4,7 +4,7 @@ Requires=network-online.target
 After=maverick-mavproxy@fc.service maverick-mavproxy@sitl.service maverick-mavlink-router@fc.service maverick-mavlink-router@sitl.service maverick-cmavnode@fc.service maverick-cmavnode@sitl.service
 
 [Service]
-ExecStart=/srv/maverick/software/vision_landing/vision_landing -c /srv/maverick/data/config/vision/vision_landing.conf
+ExecStart=/srv/maverick/software/vision_landing/vision_landing -c /srv/maverick/config/vision/vision_landing.conf
 TimeoutStartSec=0
 User=mav
 

@@ -4,7 +4,7 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-ExecStart=/srv/maverick/software/camera-streaming-daemon/bin/csd -c /srv/maverick/data/config/vision/csd.conf
+ExecStart=/srv/maverick/software/camera-streaming-daemon/bin/csd -c /srv/maverick/config/vision/csd.conf
 TimeoutStartSec=0
 User=mav
 

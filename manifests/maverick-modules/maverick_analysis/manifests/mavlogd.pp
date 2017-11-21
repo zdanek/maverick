@@ -30,7 +30,7 @@ class maverick_analysis::mavlogd (
         group           => "mav",
         ensure          => directory,
     } ->
-    file { "/srv/maverick/data/config/analysis/maverick-mavlogd.conf":
+    file { "/srv/maverick/config/analysis/maverick-mavlogd.conf":
         ensure          => file,
         mode            => "644",
         owner           => "mav",

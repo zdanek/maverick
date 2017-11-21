@@ -62,14 +62,14 @@ class maverick_analysis::collect (
             notify          => Exec["maverick-systemctl-daemon-reload"],
             before          => Class["collectd"],
         }
-        file { "/srv/maverick/data/config/analysis/collectd":
+        file { "/srv/maverick/config/analysis/collectd":
             ensure          => directory,
             mode            => "755",
             owner           => "mav",
             group           => "mav",
         }
-        $config_file = "/srv/maverick/data/config/analysis/collectd/collectd.conf"
-        $plugin_conf_dir = "/srv/maverick/data/config/analysis/collectd/conf.d"
+        $config_file = "/srv/maverick/config/analysis/collectd/collectd.conf"
+        $plugin_conf_dir = "/srv/maverick/config/analysis/collectd/conf.d"
         $collectd_dir = '/srv/maverick/software/collectd'
         $typesdb = "${collectd_dir}/share/collectd/types.db"
     } else {

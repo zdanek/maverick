@@ -32,7 +32,7 @@ class maverick_vision::vision_landing (
         group       => root,
     } ->
     # Place a default config file
-    file { "/srv/maverick/data/config/vision/vision_landing.conf":
+    file { "/srv/maverick/config/vision/vision_landing.conf":
         owner       => "mav",
         group       => "mav",
         mode        => "644",

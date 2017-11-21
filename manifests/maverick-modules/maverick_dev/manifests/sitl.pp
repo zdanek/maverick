@@ -162,14 +162,14 @@ class maverick_dev::sitl (
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/sitl.sh",
     } ->
-    file { "/srv/maverick/data/config/dev/sitl.screen.conf":
+    file { "/srv/maverick/config/dev/sitl.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         content     => template("maverick_dev/sitl.screen.conf.erb"),
         notify      => Service_wrapper["maverick-sitl"],
     }
-    file { "/srv/maverick/data/config/dev/sitl.conf":
+    file { "/srv/maverick/config/dev/sitl.conf":
         source      => "puppet:///modules/maverick_dev/sitl.conf",
         owner       => "mav",
         group       => "mav",
@@ -177,7 +177,7 @@ class maverick_dev::sitl (
         replace     => false,
         notify      => Service_wrapper["maverick-sitl"],
     } ->
-    file { "/srv/maverick/data/config/dev/sitl-vehicle.conf":
+    file { "/srv/maverick/config/dev/sitl-vehicle.conf":
         content     => "VEHICLE_TYPE=${ardupilot_type}",
         owner       => "mav",
         group       => "mav",
@@ -191,7 +191,7 @@ class maverick_dev::sitl (
         mode        => "644",
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-sitl"] ]
     } ->
-    file { "/srv/maverick/data/config/mavlink/mavlink_params-sitl.json":
+    file { "/srv/maverick/config/mavlink/mavlink_params-sitl.json":
         owner       => "mav",
         group       => "mav",
         mode        => "644",

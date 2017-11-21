@@ -324,7 +324,7 @@ class maverick_ros (
             notify          => Exec["maverick-systemctl-daemon-reload"],
         }
         # Create directory for ros config
-        file { "/srv/maverick/data/config/ros":
+        file { "/srv/maverick/config/ros":
             ensure          => directory,
             owner           => "mav",
             group           => "mav",

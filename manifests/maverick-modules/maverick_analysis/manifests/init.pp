@@ -5,7 +5,7 @@ class maverick_analysis (
     $mavlogd = true,
 ) {
     
-    file { ["/srv/maverick/data/analysis", "/srv/maverick/data/config/analysis"]:
+    file { ["/srv/maverick/data/analysis", "/srv/maverick/config/analysis"]:
         owner       => "mav",
         group       => "mav",
         mode        => "755",

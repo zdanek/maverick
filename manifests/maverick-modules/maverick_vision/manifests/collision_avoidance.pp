@@ -38,7 +38,7 @@ class maverick_vision::collision_avoidance (
         }
     }
  
-    file { "/srv/maverick/data/config/vision/coav.conf":
+    file { "/srv/maverick/config/vision/coav.conf":
         source          => "puppet:///modules/maverick_vision/coav.conf",
         replace         => false,
         owner           => "mav",

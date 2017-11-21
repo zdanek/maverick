@@ -15,8 +15,8 @@ apt-get autoremove --purge -y >/dev/null 2>&1
 apt-get clean >/dev/null 2>&1
 
 # Ensure maverick set to stable branch
-echo "MAVERICK_BRANCH=stable" >/srv/maverick/data/config/maverick/maverick-branch.conf
-chown mav:mav /srv/maverick/data/config/maverick/maverick-branch.conf
+echo "MAVERICK_BRANCH=stable" >/srv/maverick/config/maverick/maverick-branch.conf
+chown mav:mav /srv/maverick/config/maverick/maverick-branch.conf
 
 echo "Removing logs, config and data"
 # Clean as much of /var/log as possible
@@ -72,7 +72,7 @@ rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
 
 # Remove maverick config
-find /srv/maverick/data/config -type f -delete
+find /srv/maverick/config -type f -delete
 rm -f /srv/maverick/software/maverick/conf/localconf.json
 rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
 # Restore localconf.json

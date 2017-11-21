@@ -434,7 +434,7 @@ class App():
         logger.info("Starting maverick-visiond")
 
         # Get config
-        self.config = self.config_parse("/srv/maverick/data/config/vision/maverick-visiond.conf")
+        self.config = self.config_parse("/srv/maverick/config/vision/maverick-visiond.conf")
 
         # If on/off switch is off, exit
         if self.config['enable'].lower() == 'false':

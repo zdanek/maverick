@@ -254,7 +254,7 @@ class maverick_network (
     }
     
     # Define and configure monitor-mode interface setup in systemd
-    file { "/srv/maverick/data/config/network":
+    file { "/srv/maverick/config/network":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

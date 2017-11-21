@@ -16,7 +16,7 @@ class maverick_vision::visiond (
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/maverick-visiond",
     }
-    file { "/srv/maverick/data/config/vision/maverick-visiond.conf":
+    file { "/srv/maverick/config/vision/maverick-visiond.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
