@@ -22,6 +22,12 @@ class maverick_web::nginx (
         ensure      => stopped,
         enable      => false,
     } ->
+    # Make sure nginx system service is stopped
+    service_wrapper { "system-nginx":
+        service_name    => "nginx",
+        ensure          => stopped,
+        enable          => false,
+    } ->
     file { "/etc/systemd/system/maverick-nginx.service":
         owner       => "root",
         group       => "root",
