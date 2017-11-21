@@ -73,10 +73,8 @@ rm -rf /srv/maverick/.ros/log/*
 
 # Remove maverick config
 find /srv/maverick/config -type f -delete
-rm -f /srv/maverick/software/maverick/conf/localconf.json
-rm -f /srv/maverick/software/maverick/conf/local-nodes/*.json
-# Restore localconf.json
-cd /srv/maverick/software/maverick; git checkout conf/localconf.json
+rm -f /srv/maverick/config/maverick/localconf.json
+rm -f /srv/maverick/config/maverick/local-nodes/*.json
 
 # Create generic EFI boot
 if [ -e /boot/efi ]; then

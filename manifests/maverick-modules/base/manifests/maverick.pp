@@ -33,20 +33,13 @@ class base::maverick (
         gitsource   => "https://github.com/fnoop/maverick.git",
         dest        => "/srv/maverick/software/maverick",
 	    revision    => $maverick_branch,
-    } ->
-    exec { "gitfreeze-localconf":
-        cwd         => "/srv/maverick/software/maverick",
-        onlyif      => "/usr/bin/git ls-files -v conf/localconf.json |grep '^H'",
-        command     => "/usr/bin/git update-index --assume-unchanged conf/localconf.json"
-    } ->
-    file { "/srv/maverick/config/maverick":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/conf",
     }
     file { "/srv/maverick/config/maverick/localconf.json":
+        source      => "puppet:///modules/base/maverick-localconf.json",
         mode        => "644",
         owner       => "mav",
         group       => "mav",
+        replace     => false,
     } ->
     file { "/etc/profile.d/maverick-call.sh":
         ensure      => present,

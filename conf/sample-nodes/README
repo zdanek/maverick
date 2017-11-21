@@ -3,6 +3,6 @@ Files starting with 'maverick-' (like maverick-odroidxu4.json) are the actual co
 
 These files can be used by simply changing the hostname of the computer to match, before running maverick configure, eg. `sudo hostname maverick-odroidxu4`.
 
-It is strongly recommended not to alter any files here.  If you wish to alter configuration, copy one of these files to ../local-nodes and alter it there.  All files in ../local-nodes (ie. /srv/maverick/software/maverick/conf/local-nodes) are .gitignored and will not be commited back to git in any way.  Files in this directory will, by default, be committed back to git.
+It is strongly recommended not to alter any files here.  If you wish to alter configuration, copy one of these files to ~/config/maverick/local-nodes and alter it there.  All files in ~/config/maverick/local-nodes (ie. /srv/maverick/config/maverick/local-nodes) are .gitignored and will not be commited back to git in any way.  Files in this directory will, by default, be committed back to git.
 
 Files must have .json extension.

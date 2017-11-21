@@ -21,8 +21,8 @@ read -s -p "Enter Wifi Passphrase: " passphrase
 echo
 psk=$(echo $passphrase | wpa_passphrase $ssid |grep -e '\spsk=' |awk -F= {'print $2'})
 
-sed -i -e "s/ssid\":[[:space:]]\+\".*\"/ssid\":    \"$ssid\"/" /srv/maverick/software/maverick/conf/localconf.json
-sed -i -e "s/psk\":[[:space:]]\+\".*\"/psk\":    \"$psk\"/" /srv/maverick/software/maverick/conf/localconf.json
+sed -i -e "s/ssid\":[[:space:]]\+\".*\"/ssid\":    \"$ssid\"/" /srv/maverick/config/maverick/localconf.json
+sed -i -e "s/psk\":[[:space:]]\+\".*\"/psk\":    \"$psk\"/" /srv/maverick/config/maverick/localconf.json
 
 sudo sed -i -e "s/wpa-ssid[[:space:]]\+.*/wpa-ssid $ssid/" /etc/network/interfaces
 sudo sed -i -e "s/wpa-psk[[:space:]]\+.*/wpa-psk $psk/" /etc/network/interfaces
@@ -30,7 +30,7 @@ sudo sed -i -e "s/wpa-psk[[:space:]]\+.*/wpa-psk $psk/" /etc/network/interfaces
 # If we detect wlan0 (default interface) mac address, use it to define wman0
 mac=$(ip link show wlan0 2>/dev/null|grep link/ether |awk {'print $2'})
 if [ "x${mac}" != "x" ]; then
-    sed -i -e "s/macaddress\":\s\"xx:xx:xx:xx:xx:xx\"/macaddress\": \"$mac\"/" /srv/maverick/software/maverick/conf/localconf.json
+    sed -i -e "s/macaddress\":\s\"xx:xx:xx:xx:xx:xx\"/macaddress\": \"$mac\"/" /srv/maverick/config/maverick/localconf.json
 fi
 
 echo

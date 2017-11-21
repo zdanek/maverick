@@ -172,13 +172,24 @@ mavenv () {
     fi
 }
 
-# Migrate old config location
+# Migrate old config location - #637
 if [ -d /srv/maverick/data/config ]; then
     if [ ! -d /srv/maverick/config ]; then
         echo "Migrating config from /srv/maverick/data/config to /srv/maverick/config"
         mv /srv/maverick/data/config /srv/maverick/config
         ln -s /srv/maverick/config /srv/maverick/data/config
     fi
+fi
+
+# Migrate maverick local config to /srv/maverick/config/maverick
+if [ -L /srv/maverick/config/maverick ]; then
+    echo "Migrating maverick local config from /srv/maverick/software/maverick/conf to /srv/maverick/config/maverick"
+    rm -f /srv/maverick/config/maverick
+    mkdir /srv/maverick/config/maverick
+    mv /srv/maverick/software/maverick/conf/localconf.json /srv/maverick/config/maverick
+    mv /srv/maverick/software/maverick/conf/local-nodes /srv/maverick/config/maverick
+    mv /srv/maverick/software/maverick/conf/maverick-branch.conf /srv/maverick/config/maverick
+    mv /srv/maverick/software/maverick/conf/maverick-environment.conf /srv/maverick/config/maverick
 fi
 
 # If git branch config file exists, source it
@@ -777,7 +788,7 @@ fi
 # If maverick not running from expected home assume we want to migrate local-node files
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ x"$DIR" != x"/srv/maverick/software/maverick/bin" ]; then
-    cp -unp $DIR/../conf/local-nodes/*.json /srv/maverick/software/maverick/conf/local-nodes >/dev/null 2>&1
+    cp -unp $DIR/../conf/local-nodes/*.json /srv/maverick/config/maverick/local-nodes >/dev/null 2>&1
 fi
 
 # If bootstrap environment, print a reboot warning
