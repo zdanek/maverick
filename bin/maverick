@@ -48,27 +48,26 @@ fi
 
 # Define usage function
 usage () {
-    echo "maverick [--options] command [command option]"
-    echo
-    echo "Options"
-    echo " --env=[bootstrap|dev|flight]              Environment to configure: bootstrap, dev or flight"
-    echo " --dryrun                                  Configure dry run - just show what would be done"
-    echo " --module=<module>                         Only make changes to module <module>"
-    echo " --confirm                                 Make changes without asking"
+    echo "Usage: ${green}maverick command [parameter] [--options]${reset}"
     echo
     echo "Commands"
-    echo " status                                  Show status of all services, optional service name for status of single service"
+    echo " status       [service]                  Show status of all services, optional service name for status of single service"
     echo " info                                    Display system information"
     echo " netinfo                                 Display network information"
     echo " self-update                             Update to latest maverick code"
-    echo " configure                               Configure system - ${bold}BEWARE this may do major changes to your existing system${reset}"
-    echo " start                                   Start Maverick service"
-    echo " stop                                    Stop Maverick service"
-    echo " restart                                 Restart Maverick service"
-    echo " enable                                  Enable Maverick service at boot"
-    echo " disable                                 Disable Maverick service at boot"
-    echo " log                                     Display realtime log for Maverick service"
-    echo " unshallow                               Unshallow a git repo"
+    echo " configure    [options]                  Configure system - ${bold}BEWARE this may make major changes to your existing system${reset}"
+    echo " start        [service | all]            Start Maverick service, "
+    echo " stop         [service | all]            Stop Maverick service"
+    echo " restart      [service]                  Restart Maverick service"
+    echo " enable       [service]                  Enable Maverick service at boot"
+    echo " disable      [service]                  Disable Maverick service at boot"
+    echo " log          [service]                  Display realtime log for Maverick service"
+    echo " unshallow    [directory]                Unshallow a git repo"
+    echo
+    echo "Configure Options"
+    echo " --env=[bootstrap|dev|flight]            Environment to configure: bootstrap, dev or flight"
+    echo " --dryrun                                Configure dry run - just show what would be done"
+    echo " --module=<module>                       Only make changes to module <module>"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
