@@ -6,7 +6,7 @@ class maverick_security::ssl (
     $ca_locality = "Moving frequently",
     $ca_orgname = "Maverick CA",
     $ca_orgunit = "Security",
-    $ca_cname = "maverick-ca-${::hostname}",
+    $ca_cname = "MaverickCA ${::hostname}",
 ) {
 
     class { "openssl": }

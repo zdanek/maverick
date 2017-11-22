@@ -33,6 +33,7 @@ class maverick_web::ssl (
         command     => "/usr/bin/openssl x509 -req -passin pass:${ca_passphrase} -in /srv/maverick/data/web/ssl/${::hostname}.local-webssl.csr -CA /srv/maverick/data/security/ssl/ca/mavCA.pem -CAkey /srv/maverick/data/security/ssl/ca/mavCA.key -CAcreateserial -out /srv/maverick/data/web/ssl/${::hostname}.local-webssl.crt -days 365 -sha512 -extfile /srv/maverick/data/web/ssl/${::hostname}.local-webssl.ext",
         creates     => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.crt",
         require     => Exec["create-ca-rootcert"],
+        notify      => Service["maverick-nginx"]
     }
 
 }
