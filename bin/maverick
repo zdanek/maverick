@@ -351,7 +351,7 @@ if [ "$STATUS" == "true" ]; then
     if [ ! -z "$SERVICE" ]; then
         echo "Status of service: ${SERVICE}"
         systemctl -l -q --no-pager status "maverick-${SERVICE}"
-        if [ $? -gt 0 ]; then
+        if [ $? -eq 4 ]; then
             echo
             exit 0
         fi
@@ -449,7 +449,7 @@ if [ "$STATUS" == "true" ]; then
 fi
 
 startservice() {
-    srvresult=$(sudo systemctl start "maverick-$1" 2>&1)
+    srvresult=$(sudo systemctl start "$1" 2>&1)
     if [ $? -eq 0 ]; then
         echo " Start: ${green}Success${reset}"
     else
@@ -458,7 +458,7 @@ startservice() {
 }
 
 stopservice() {
-    srvresult=$(sudo systemctl stop "maverick-$1" 2>&1)
+    srvresult=$(sudo systemctl stop "$1" 2>&1)
     if [ $? -eq 0 ]; then
         echo " Stop: ${green}Success${reset}"
     else
@@ -466,18 +466,53 @@ stopservice() {
     fi
 }
 
+getservices() {
+    services=$(systemctl list-units -a -q --plain --no-pager |grep -e 'maverick-.*.service' |awk {'print $1'})
+    echo $services
+}
+
 # If start requested, action and then exit
 if [ "$START" == "true" ]; then
-    echo "Starting service: ${SERVICE}"
-    startservice "${SERVICE}"
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name or 'all' not specified"
+    elif [ "${SERVICE}" == "all" ]; then
+        echo "Starting all services"
+        services=$(getservices)
+        for service in $services; do
+            if [ $(systemctl is-enabled $service) == "enabled" ]; then
+                echo -n "Starting service $service: "
+                startservice "$service"
+            else
+                echo "$service is disabled, not starting"
+            fi
+        done
+    else
+        echo "Starting service: ${SERVICE}"
+        startservice "maverick-${SERVICE}"
+    fi
     echo
     exit 0
 fi
 
 # If stop requested, action and then exit
 if [ "$STOP" == "true" ]; then
-    echo "Stopping service: ${SERVICE}"
-    stopservice ${SERVICE}
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name or 'all' not specified"
+    elif [ "${SERVICE}" == "all" ]; then
+        echo "Stopping all services"
+        services=$(getservices)
+        for service in $services; do
+            if [ $(systemctl is-enabled $service) == "enabled" ]; then
+                echo -n "Starting service $service: "
+                stopservice "$service"
+            else
+                echo "$service is disabled, not starting"
+            fi
+        done
+    else
+        echo "Stopping service: ${SERVICE}"
+        stopservice "maverick-${SERVICE}"
+    fi
     echo
     exit 0
 fi
