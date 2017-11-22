@@ -397,7 +397,7 @@ if [ "$STATUS" == "true" ]; then
         (systemctl status maverick-params@fc >/dev/null 2>&1); fc=$?; (systemctl is-enabled maverick-params@fc >/dev/null 2>&1); fcen=$?; statusout+=$(status "params@fc" "Parameter Control (FC)" $fc $fcen)
         (systemctl status maverick-rosmaster@fc >/dev/null 2>&1); rosmfc=$?; (systemctl is-enabled maverick-rosmaster@fc >/dev/null 2>&1); rosmfcen=$?; statusout+=$(status "rosmaster@fc" "ROS (FC)" $rosmfc $rosmfcen)
         (systemctl status maverick-mavros@fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros@fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros@fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
-        if [ "$environment" == "dev" -a -d "/srv/maverick/code/sitl" -a -d "/srv/maverick/config/dev/sitl.conf" ]; then
+        if [ "$environment" == "dev" -a -d "/srv/maverick/code/sitl" -a -f "/srv/maverick/config/dev/sitl.conf" ]; then
             statusout+='------------:------------:------------------\n'
             statusout+="${blue}Dev SITL Services${reset}\n"
             (systemctl status maverick-sitl >/dev/null 2>&1); sitl=$?; (systemctl is-enabled maverick-sitl >/dev/null 2>&1); sitlen=$?; statusout+=$(status "sitl" "SITL" $sitl $sitlen)
