@@ -6,7 +6,7 @@ class maverick_security::ssl (
     $ca_locality = "Moving frequently",
     $ca_orgname = "Maverick CA",
     $ca_orgunit = "Security",
-    $ca_cname = "maverick-ca",
+    $ca_cname = "maverick-ca-${::hostname}",
 ) {
 
     class { "openssl": }
@@ -29,6 +29,7 @@ class maverick_security::ssl (
         # Create Diffie Hellman parameters
         openssl::dhparam { "/srv/maverick/data/security/ssl/dhparam.pem": 
             size        => 2048,
+            fastmode    => true,
         }
         
         # Create CA.  openssl provider doesn't do CAs, so we have to do it manually
