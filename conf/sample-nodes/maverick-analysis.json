@@ -3,8 +3,13 @@
 {
 
     "maverick_analysis::influxdb": true,
+
     "maverick_analysis::collectd": true,
+
     "maverick_analysis::grafana": true,
+    "maverick_analysis::grafana::grafana_firewall_rules": true,
+    "maverick_analysis::grafana::webport": 80,
+
     "maverick_analysis::mavlogd": true,
 
 	// Add classes here
