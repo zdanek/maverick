@@ -6,7 +6,7 @@ class maverick_analysis::influx (
 ) {
     
     # Install Go
-    ensure_packages(["golang"])
+    ensure_packages(["golang", "curl"])
 
     # Install influx repo
     if $::operatingsystem == "Debian" {
