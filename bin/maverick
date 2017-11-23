@@ -841,7 +841,7 @@ if [ -e /srv/maverick/var/log/maverick ]; then
 else
     LOGPATH=/var/tmp
 fi
-if [ -e ./conf/puppet.conf ]; then
+if [ -e ./conf/puppet.conf -a ! -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
         STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
