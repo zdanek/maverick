@@ -1,7 +1,7 @@
 class maverick_analysis::mavlogd (
     $active = true,
 ) {
-    ensure_packages(["python-lockfile"])
+    ensure_packages(["python-lockfile", "python-daemon"])
     install_python_module { 'pip-pyinotify':
         pkgname     => 'pyinotify',
         ensure      => present,
