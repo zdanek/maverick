@@ -305,7 +305,7 @@ if [ "$UNSHALLOW" == "true" ]; then
         echo "Changing origin refs for all remote branches"
         git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
     fi
-
+    git fetch
     echo
     exit 0
 fi
