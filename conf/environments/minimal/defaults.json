@@ -1,0 +1,9 @@
+// These are defaults for the minimal environment.  
+// The minimal environment is designed to interfere with an existing system as little as possible
+{
+    
+	"classes" : [
+		"base::minimal"
+	]
+	
+}

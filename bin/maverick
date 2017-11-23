@@ -65,7 +65,7 @@ usage () {
     echo " unshallow    [directory]                Unshallow a git repo"
     echo
     echo "Configure Options"
-    echo " --env=[bootstrap|dev|flight]            Environment to configure: bootstrap, dev or flight"
+    echo " --env=[bootstrap|dev|flight|minimal]    Environment to configure: bootstrap, dev, flight or minimal"
     echo " --dryrun                                Configure dry run - just show what would be done"
     echo " --module=<module>                       Only make changes to module <module>"
     echo
@@ -168,6 +168,8 @@ mavenv () {
         echo "Maverick Environment:   ${bgg}${white}${bold} flight ${reset}"
     elif [ "x$1" == "xbootstrap" ]; then
         echo "Maverick Environment:   ${bgb}${white}${bold} bootstrap ${reset}"
+    elif [ "x$1" == "xminimal" ]; then
+        echo "Maverick Environment:   ${bgb}${white}${bold} minimal ${reset}"
     fi
 }
 
@@ -564,7 +566,7 @@ if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
     environment=$(cat /srv/maverick/config/maverick/maverick-environment.conf)
     if [[ $environment && "$ENV" != "" ]]; then
         echo "Environment marker set but is being ignored as --env is set"
-    elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "flight" ]]; then
+    elif [[ "$environment" == "bootstrap" || "$environment" == "dev" || "$environment" == "flight" || "$environment" == "minimal" ]]; then
         echo "Environment marker set and is being used to set maverick environment: ${environment}"
         ENV=$environment
     else
@@ -573,8 +575,8 @@ if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
 fi
 
 # If environment not set to dev or flight, exit
-if [[ "$ENV" != "dev" && "$ENV" != "flight" && "$ENV" != "bootstrap" ]]; then 
-    echo "Error: --env not set to a recognised environment (bootstrap, dev or flight)"
+if [[ "$ENV" != "dev" && "$ENV" != "flight" && "$ENV" != "bootstrap" && "$ENV" != "minimal" ]]; then 
+    echo "Error: --env not set to a recognised environment (bootstrap, dev, flight or minimal)"
     echo
     usage
 fi
