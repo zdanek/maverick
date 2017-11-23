@@ -744,6 +744,18 @@ if ! $pythoninstalled; then
     exit 1
 fi
 
+# Check that python-pip is installed
+if ! hash pip 2>/dev/null; then
+    echo 'Python Pip not installed, attempting to install..'
+    if hash apt-get 2>/dev/null; then
+        if [ $EUID -eq 0 ]; then
+            DEBIAN_FRONTEND=noninteractive apt-get -y install python-pip >/dev/null 2>&1
+        elif [ $USER == "mav" ]; then
+            sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python-pip >/dev/null 2>&1
+        fi
+    fi
+fi
+
 # Check that openssh-server is installed
 _pkg=$(dpkg -s openssh-server 2>/dev/null)
 if [ "z$_pkg" == "z" ]; then
