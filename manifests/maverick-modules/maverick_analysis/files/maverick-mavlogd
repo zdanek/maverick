@@ -21,6 +21,9 @@ class ProcessLog(ProcessEvent):
         logger.debug("Starting ProcessLog.__init__")
         logger.debug("App influx_database:" + app.influx_database)
         self.app = app
+        # Run dashboard methods once at init to create blank index dashboards
+        self.dashboard_links()
+        self.dashboard_errors()
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
@@ -177,33 +180,37 @@ class ProcessLog(ProcessEvent):
         cursor = conn.cursor()
         cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3 FROM logfiles ORDER by datetime(\"finish\") DESC")
         rows = cursor.fetchall()
-        for row in rows:
-            try:
-                fromdt=str(int(float(row[1]))*1000)
-                todt=str(int(float(row[2]))*1000)
-                link="<tr><td>"+row[3]+"</td><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
-                link += "<td>"
-                link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
-                link += "&nbsp;"
-                link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
-                link += "</td>"
-                if row[4] == 1:
-                    link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
-                else:
-                    link += "<td></td>"
-                if row[5] == 1:
-                    link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
-                else:
-                    link += "<td></td>"
-                if row[6] == 1:
-                    link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
-                else:
-                    link += "<td></td>"
-                link += "</tr>"
-                logentries.append(link)
-            # If dates are in old format, skip entry
-            except:
-                pass
+        if rows:
+            for row in rows:
+                try:
+                    fromdt=str(int(float(row[1]))*1000)
+                    todt=str(int(float(row[2]))*1000)
+                    link="<tr><td>"+row[3]+"</td><td>"+row[0]+"</td><td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td><td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
+                    link += "<td>"
+                    link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                    link += "&nbsp;"
+                    link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                    link += "</td>"
+                    if row[4] == 1:
+                        link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                    else:
+                        link += "<td></td>"
+                    if row[5] == 1:
+                        link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                    else:
+                        link += "<td></td>"
+                    if row[6] == 1:
+                        link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                    else:
+                        link += "<td></td>"
+                    link += "</tr>"
+                    logentries.append(link)
+                # If dates are in old format, skip entry
+                except:
+                    pass
+        else:
+            nodata ="<tr><td colspan=8 align='center'><b><i>No log entries have been processed yet</i></b></td></tr>"
+            logentries.append(nodata)
         conn.close()
         # Construct the dashboard
         dashboard = {
@@ -234,24 +241,30 @@ class ProcessLog(ProcessEvent):
         error_entries = []
         # Retrieve metadata
         errorsrs = self.app.client.query('select * from flightdata.events where "event_type"=\'err\';', epoch='ms')
-        for error in list(errorsrs.get_points()):
-            try:
-                fromdt=str(int(error['time']) - 30000)
-                todt=str(int(error['time']) + 30000)
-                link = "<tr><td>"+error['text']+"</td><td>"+datetime.datetime.fromtimestamp(int(error['time'])/1000).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
-                link += "<td>"
-                link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
-                link += "&nbsp;"
-                link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
-                link += "</td>"
-                link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
-                link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
-                link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
-                link += "</tr>"
-                error_entries.append(link)
-            # If dates are in old format, skip entry
-            except:
-                pass
+        errors = list(errorsrs.get_points())
+        if errors:
+            for error in errors:
+                try:
+                    fromdt=str(int(error['time']) - 30000)
+                    todt=str(int(error['time']) + 30000)
+                    link = "<tr><td>"+error['text']+"</td><td>"+datetime.datetime.fromtimestamp(int(error['time'])/1000).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
+                    link += "<td>"
+                    link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                    link += "&nbsp;"
+                    link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                    link += "</td>"
+                    link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                    link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                    link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                    link += "</tr>"
+                    error_entries.append(link)
+                # If dates are in old format, skip entry
+                except:
+                    pass
+        else:
+            nodata ="<tr><td colspan=8 align='center'><b><i>No log entries have been processed yet</i></b></td></tr>"
+            error_entries.append(nodata)
+
         # Construct the dashboard
         dashboard = {
             "editable": False,
@@ -553,7 +566,7 @@ class App():
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
         # Create logfiles table if it doesn't exist
-        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT, source TEXT, ekf2 INTEGER, ekf3 INTEGER, ekf2ekf3 INTEGER)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT, source TEXT, ekf2 INTEGER, ekf3 INTEGER, ekf2ekf3 INTEGER, description TEXT)')
         # Add source column if it doesn't exist
         try:
             cursor.execute("ALTER TABLE logfiles ADD COLUMN source TEXT");
@@ -574,6 +587,12 @@ class App():
             cursor.execute("ALTER TABLE logfiles ADD COLUMN ekf2ekf3 INTEGER");
         except:
             pass
+        # Add description column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN description TEXT");
+        except:
+            pass
+        
         conn.commit()
         conn.close()
 
