@@ -51,6 +51,10 @@ class base {
     # End Bootstrap stage
     ###################################
 
+    if !defined( Class['apt'] ) {
+        class { "apt": }
+    }
+
     ### Include useful functions
     class { "base::functions": }
         
