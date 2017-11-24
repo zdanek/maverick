@@ -521,8 +521,8 @@ fi
 # If restart requested, action stop then start
 if [ "$RESTART" == "true" ]; then
     echo "Restarting service: ${SERVICE}"
-    stopservice ${SERVICE}
-    startservice ${SERVICE}
+    stopservice "maverick-${SERVICE}"
+    startservice "maverick-${SERVICE}"
     echo
     exit 0
 fi
