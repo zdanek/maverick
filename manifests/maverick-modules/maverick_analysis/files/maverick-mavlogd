@@ -54,17 +54,43 @@ class ProcessLog(ProcessEvent):
         if os.path.isfile(filename) and os.path.getsize(filename) == 0:
             logger.info("Zero filesize, ignoring")
             return False
-        if filename.lower().endswith('.log') and "LASTLOG.TXT" not in filename:
-            log = DFReader_text(filename, False)
-            logger.info("Text mavlog detected, creating text parser")
-        elif filename.lower().endswith('.bin') and "LASTLOG.TXT" not in filename:
-            log = DFReader_binary(filename, False)
-            logger.info("Binary mavlog detected, creating binary parser")
-        elif "LASTLOG.TXT" not in filename:
-            logger.info("Logfile extension not recognised, skipping log")
-            return False
-        else:
-            return False
+
+        # Detect logfile format by trying text and binary readers, trying to read 10 entries
+        #  and see if data is successfully counted.
+        if "LASTLOG.TXT" not in filename:
+            self.logtype = None
+            try:
+                log = DFReader_text(filename, False)
+                counter = 0
+                for i in range(10):
+                    entry = log.recv_msg()
+                    if entry:
+                        counter += 1
+                if counter >= 5:
+                    self.logtype = "text"
+                log._rewind()
+            except Exception as e:
+                logger.debug("DFReader_text exception:"+repr(e))
+            if not self.logtype:
+                try:
+                    log = DFReader_binary(filename, False)
+                    counter = 0
+                    for i in range(10):
+                        entry = log.recv_msg()
+                        if entry:
+                            counter += 1
+                    if counter >= 5:
+                        self.logtype = "binary"
+                    log._rewind()
+                except Exception as e:
+                    logger.debug("DFReader_binary exception:"+repr(e))
+            if not self.logtype:
+                logger.info("Log file format not recognised")
+                return False
+            else:
+                logger.info("Log file format detected as: "+str(self.logtype))
+
+        # If we get here, logfile format has been detected so setup containers and attributes and carry on
         parameters = {}
         formats = {}
         json_points = []
