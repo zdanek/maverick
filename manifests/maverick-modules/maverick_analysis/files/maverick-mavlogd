@@ -24,6 +24,8 @@ class ProcessLog(ProcessEvent):
         # Run dashboard methods once at init to create blank index dashboards
         self.dashboard_links()
         self.dashboard_errors()
+        # Set favourite dashboards for the mav user
+        self.star_dashboards()
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
@@ -173,6 +175,33 @@ class ProcessLog(ProcessEvent):
         shutil.move(filename, destfile)
         logger.info("Archiving file from " +filename+ " to " +destfile)
 
+    def star_dashboards(self):
+        # This method queries the grafana database directly for starred dashboards and creates them if necessary
+        # A bit hacky, should be refactored through the API eventually
+        conn = sqlite3.connect("/srv/maverick/data/analysis/grafana/grafana.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT id from user where login='mav'")
+        userid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='Flight Logs Index'")
+        flightindexid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='Error Events Index'")
+        errorindexid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='System Dashboard'")
+        systemdashid = cursor.fetchone()[0]
+        # If star doesn't exist for flight index dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(flightindexid))
+        if not cursor.fetchone() and userid and flightindexid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, flightindexid))
+        # If star doesn't exist for error index dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(errorindexid))
+        if not cursor.fetchone() and userid and errorindexid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, errorindexid))
+        # If star doesn't exist for system dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(systemdashid))
+        if not cursor.fetchone() and userid and systemdashid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, systemdashid))
+        conn.commit()
+        
     def dashboard_links(self):
         # Retrieve metadata
         logentries = []
