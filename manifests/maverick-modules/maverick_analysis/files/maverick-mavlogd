@@ -42,6 +42,15 @@ class ProcessLog(ProcessEvent):
         conn.close()
         # Start processing data
         logger.info("Processing data from "+filename)
+        anonymise = False
+        [latOffset,lngOffset] = [0,0]
+        try:
+            logger.debug("anonymous directory:"+str(self.app.config['anonymous_directory']))
+            if self.app.config['anonymous_directory'] and self.app.config['anonymous_directory'] in filename:
+                anonymise = True
+                logger.info("Anonymising Log Data")
+        except:
+            pass
         if os.path.isfile(filename) and os.path.getsize(filename) == 0:
             logger.info("Zero filesize, ignoring")
             return False
@@ -130,6 +139,18 @@ class ProcessLog(ProcessEvent):
                             ekf_data['ekf3_imu1'] = True
                         elif msgtype.lower() == "xkf6":
                             ekf_data['lef3_imu2'] = True
+                        elif msgtype.lower() == "gps" or msgtype.lower() == "gps2" and anonymise == True:
+                            # Calculate the latitudinal offset if not already set
+                            if latOffset == 0:
+                                latOffset = _fields['Lat']
+                                logger.debug("Anonymising GPS Lat offset:"+str(latOffset))
+                            # Calculate the longitudinal offset if not already set
+                            if lngOffset == 0:
+                                lngOffset = _fields['Lng']
+                                logger.debug("Anonymising GPS Lng offset:"+str(lngOffset))
+                            # Apply offsets
+                            _fields['Lat'] = _fields['Lat'] - latOffset
+                            _fields['Lng'] = _fields['Lng'] - lngOffset
                         json_body = {
                             "database": self.app.influx_database,
                             "time_precision": "ns",
