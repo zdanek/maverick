@@ -35,6 +35,12 @@ class ProcessLog(ProcessEvent):
         self.process(event.pathname)
 
     def process(self, filename):
+        # Clear out any previously failed processing entries from meta database
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM logfiles WHERE state LIKE 'processing%'")
+        conn.close()
+        # Start processing data
         logger.info("Processing data from "+filename)
         if os.path.isfile(filename) and os.path.getsize(filename) == 0:
             logger.info("Zero filesize, ignoring")
@@ -220,7 +226,7 @@ class ProcessLog(ProcessEvent):
         logentries = []
         conn = sqlite3.connect(self.app.config['meta_database'])
         cursor = conn.cursor()
-        cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state FROM logfiles ORDER by datetime(\"finish\") DESC")
+        cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state FROM logfiles ORDER by finish DESC")
         rows = cursor.fetchall()
         if rows:
             for row in rows:
