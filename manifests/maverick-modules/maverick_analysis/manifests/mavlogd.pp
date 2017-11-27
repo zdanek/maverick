@@ -62,6 +62,10 @@ class maverick_analysis::mavlogd (
             ensure      => atleast,
             version     => "4.5.2",
         } ->
+        install_python_module { "uploader-sqlite3":
+            pkgname     => "sqlite3",
+            ensure      => present,
+        } ->
         file { "/etc/systemd/system/maverick-uploader.service":
             ensure          => present,
             mode            => "644",

@@ -273,7 +273,7 @@ class ProcessLog(ProcessEvent):
         logentries = []
         conn = sqlite3.connect(self.app.config['meta_database'])
         cursor = conn.cursor()
-        cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state FROM logfiles ORDER by finish DESC")
+        cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state,description FROM logfiles ORDER by finish DESC")
         rows = cursor.fetchall()
         if rows:
             for row in rows:
@@ -283,7 +283,6 @@ class ProcessLog(ProcessEvent):
                         fromdt=str(int(float(row[1]))*1000)
                         todt=str(int(float(row[2]))*1000)
                         link="<tr>"
-                        link += "<td>"+row[3]+"</td>"
                         link += "<td>"+row[0]+"</td>"
                         link += "<td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
                         link += "<td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
@@ -308,12 +307,19 @@ class ProcessLog(ProcessEvent):
                             link += "<td>"+str(row[7][0].upper() + row[7][1:])+"</td>"
                         except:
                             link += "<td>n/a</td>"
+                        if row[8]:
+                            link += "<td>"+str(row[8])+"</td>"
+                        else:
+                            link += "<td>-</td>"
                         link += "</tr>"
                     else:
                         link="<tr>"
-                        link += "<td>"+row[3]+"</td>"
                         link += "<td>"+row[0]+"</td>"
                         link += "<td colspan='7' align='center'>"+str(row[7][0].upper() + row[7][1:])+"</td>"
+                        if row[8]:
+                            link += "<td>"+str(row[8])+"</td>"
+                        else:
+                            link += "<td>-</td>"
                         link += "</tr>"
                     logentries.append(link)
                 # If dates are in old format, skip entry
@@ -328,7 +334,7 @@ class ProcessLog(ProcessEvent):
             "editable": False,
             "hideControls": True,
             "rows": [{"panels": [{
-                  "content": "<table><thead><tr><th>Source</th><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table><script language='javascript'>setTimeout(function(){location.reload(true)}, 15000)</script>",
+                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table><script language='javascript'>setTimeout(function(){location.reload(true)}, 15000)</script>",
                   "mode": "html",
                   "span": 12,
                   "title": "Flight Logs",
