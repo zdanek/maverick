@@ -221,7 +221,7 @@ class maverick_mavlink (
             submodules  => true,
             owner       => "mav",
         } ->
-        install_python_module { "mav-tornado":
+        install_python_module { "mavcesium-tornado":
             pkgname     => "tornado",
             ensure      => atleast,
             version     => "4.5.2",

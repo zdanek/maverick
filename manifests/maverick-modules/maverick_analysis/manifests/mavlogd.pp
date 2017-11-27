@@ -55,8 +55,13 @@ class maverick_analysis::mavlogd (
     }
     
     if defined(Class["::maverick_web"]) {
-        # Add a temporary service to run mavlog uplaoder
+        # Add a temporary service to run mavlog uploader
         # Note the paths and webport are hardcoded into /srv/maverick/software/maverick-fcs/file_upload.py
+        install_python_module { "uploader-tornado":
+            pkgname     => "tornado",
+            ensure      => atleast,
+            version     => "4.5.2",
+        } ->
         file { "/etc/systemd/system/maverick-uploader.service":
             ensure          => present,
             mode            => "644",
