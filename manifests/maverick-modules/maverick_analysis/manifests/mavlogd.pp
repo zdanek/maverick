@@ -67,12 +67,14 @@ class maverick_analysis::mavlogd (
     service_wrapper{ "maverick-uploader":
         ensure          => running,
         enable          => true,
-    } ->
-    nginx::resource::location { "web-analysis-uploader":
-        location    => "/analysis/uploader/",
-        proxy       => 'http://localhost:6792/',
-        server      => "${::hostname}.local",
-        require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
 
+    if defined(Class["::maverick_web"]) {
+        nginx::resource::location { "web-analysis-uploader":
+            location    => "/analysis/uploader/",
+            proxy       => 'http://localhost:6792/',
+            server      => "${::hostname}.local",
+            require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["maverick-uploader"], ],
+        }
+    }
 }
