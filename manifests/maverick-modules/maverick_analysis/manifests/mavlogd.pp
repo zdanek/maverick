@@ -54,22 +54,21 @@ class maverick_analysis::mavlogd (
         require         => Package["python-lockfile"],
     }
     
-    # Add a temporary service to run mavlog uplaoder
-    # Note the paths and webport are hardcoded into /srv/maverick/software/maverick-fcs/file_upload.py
-    file { "/etc/systemd/system/maverick-uploader.service":
-        ensure          => present,
-        mode            => "644",
-        owner           => "mav",
-        group           => "mav",
-        source          => "puppet:///modules/maverick_analysis/maverick-uploader.service",
-        notify          => Exec["maverick-systemctl-daemon-reload"],
-    } ->
-    service_wrapper{ "maverick-uploader":
-        ensure          => running,
-        enable          => true,
-    }
-
     if defined(Class["::maverick_web"]) {
+        # Add a temporary service to run mavlog uplaoder
+        # Note the paths and webport are hardcoded into /srv/maverick/software/maverick-fcs/file_upload.py
+        file { "/etc/systemd/system/maverick-uploader.service":
+            ensure          => present,
+            mode            => "644",
+            owner           => "mav",
+            group           => "mav",
+            source          => "puppet:///modules/maverick_analysis/maverick-uploader.service",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        service_wrapper{ "maverick-uploader":
+            ensure          => running,
+            enable          => true,
+        } ->
         nginx::resource::location { "web-analysis-uploader":
             location    => "/analysis/uploader/",
             proxy       => 'http://localhost:6792/',
