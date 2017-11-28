@@ -9,7 +9,7 @@ class maverick_vision::gstreamer (
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
             # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
-            if ! ("install_flag_gst-rtsp-server" in $installflags) {
+            if ! ("install_flag_gst-rtsp-server" in $installflags) and $::operatingsystemmajrelease == 8 {
                 file { "/srv/maverick/var/build/gstreamer":
                     ensure      => directory,
                     owner       => "mav",
@@ -35,6 +35,8 @@ class maverick_vision::gstreamer (
                     group       => "mav",
                     mode        => "644",
                 }
+            } else {
+                ensure_packages(["gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0"])
             }
         }
         # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
