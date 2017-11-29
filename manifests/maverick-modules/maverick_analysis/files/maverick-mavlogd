@@ -355,7 +355,7 @@ class ProcessLog(ProcessEvent):
             "editable": False,
             "hideControls": True,
             "rows": [{"panels": [{
-                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table><script language='javascript'>setTimeout(function(){location.reload(true)}, 15000)</script>",
+                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table><!--<script language='javascript'>setTimeout(function(){location.reload(true)}, 15000)</script>-->",
                   "mode": "html",
                   "span": 12,
                   "title": "Flight Logs",
