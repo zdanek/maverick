@@ -183,7 +183,7 @@ class ProcessLog(ProcessEvent):
                             ekf_data['ekf3_imu1'] = True
                         elif msgtype.lower() == "xkf6":
                             ekf_data['lef3_imu2'] = True
-                        elif msgtype.lower() == "gps" or msgtype.lower() == "gps2" and anonymise == True:
+                        elif (msgtype.lower() == "gps" or msgtype.lower() == "gps2") and anonymise == True:
                             # Calculate the latitudinal offset if not already set
                             if latOffset == 0:
                                 latOffset = _fields['Lat']
