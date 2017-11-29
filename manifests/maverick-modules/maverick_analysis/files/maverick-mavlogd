@@ -3,7 +3,7 @@
 # Script to import ArduPilot logs into influxdb for analysis/display
 # https://github.com/fnoop/maverick
 
-import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re, ConfigParser, traceback, subprocess, glob
+import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re, ConfigParser, traceback, subprocess, glob, math
 import lockfile, signal, grp
 import asyncore, pyinotify
 import sqlite3
@@ -141,7 +141,15 @@ class ProcessLog(ProcessEvent):
                 formats[entry.Name] = {'format': list(entry.Format), 'columns': entry.Columns.split(",")}
             else:
                 if msgtype in formats:
-                    _fields = {column:getattr(entry, column) for column in formats[msgtype]['columns']}
+                    #_fields = { column:getattr(entry, column) for column in formats[msgtype]['columns'] }
+                    _fields = {}
+                    for column in formats[msgtype]['columns']:
+                        # Skip NaNs, otherwise add data to _fields
+                        if isinstance(getattr(entry, column), float):
+                            if not math.isnan(getattr(entry, column)):
+                                _fields[column] = getattr(entry,column)
+                        else:
+                            _fields[column] = getattr(entry,column)
                     last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%fZ')
                     last_epoch = int(float(entry._timestamp)*1000000000)
                     if not first_timestamp:
