@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# (c) 2016 Fnoop
+# (c) 2016-2017 Fnoop
 # http://github.com/fnoop/maverick
 # This is an experimental daemon that controls a video source, transmutes formats and transmits it over wireless
 
@@ -13,9 +13,8 @@ import lockfile, signal, grp
 from daemon import runner
 
 gi.require_version('Gst', '1.0')
-#gi.require_version('GstRtspServer', '1.0')
-#from gi.repository import GObject,GLib,Gst,GstRtspServer
-from gi.repository import GObject,GLib,Gst
+gi.require_version('GstRtspServer', '1.0')
+from gi.repository import GObject,GLib,Gst,GstRtspServer
 GObject.threads_init()
 Gst.init(None)
 
@@ -28,6 +27,10 @@ class Streamer(object):
         self.format = format
         self.encoder = encoder
         self.payload = None # This is worked out later based on encoding and output type
+        self.width = width
+        self.height = height
+        self.framerate = framerate
+        self.output = output
 
         # Start with creating a pipeline from source element
         if input == "appsrc":
@@ -64,7 +67,7 @@ class Streamer(object):
             return
         
         # Then work out which payload we want.  We only want a payload for unicast udp
-        if output == "udp":
+        if output == "udp" or output == "rtsp":
             if encoder == "h264":
                 self.payload = "rtp264pay"
                 self.payload_h264()
@@ -85,7 +88,14 @@ class Streamer(object):
             self.output_rtsp(dest, port)
         elif output == "wcast":
             self.output_wcast(dest, port)
-        
+
+        # Start the pipeline
+        self.show_pipeline()
+        self.bus()
+        self.start()
+
+
+    def show_pipeline(self):        
         # Output the resulting pipeline construction to log
         pipeline_iterator = Gst.Bin.iterate_elements(self.pipeline)
         pipe_elements = []
@@ -105,11 +115,7 @@ class Streamer(object):
             if res[0] == Gst.IteratorResult.DONE:
                 break
         logger.info("Pipeline: \"" + " ! ".join(list(reversed(pipe_elements))) +"\"")
-
-        # Start the pipeline
-        self.bus()
-        self.start()
-
+        
     ### Input methods
     def input_appsrc(self):
         logger.info("Attaching input 'appsrc'")
@@ -262,7 +268,15 @@ class Streamer(object):
             self.h264enc.set_property('tune', 0x00000004)
         self.pipeline.add(self.h264enc)
         self.source_attach.link(self.h264enc)
-        self.encode_attach = self.h264enc
+        # If using raspberry hardware encoder, specify caps explicitly otherwise it can get upset when using rtspserver
+        if Gst.ElementFactory.find("omxh264enc"):
+            x264capsfilter = Gst.ElementFactory.make("capsfilter", "x264capsfilter")
+            x264capsfilter.set_property('caps', Gst.Caps.from_string("video/x-h264,profile=high,width={},height={},framerate={}/1".format(self.width,self.height,self.framerate)))
+            self.pipeline.add(x264capsfilter)
+            self.h264enc.link(x264capsfilter)
+            self.encode_attach = x264capsfilter
+        else:
+            self.encode_attach = self.h264enc
         
     def encode_mjpeg(self):
         # TODO: Add actual mjpeg encoding, currently we just pass through the source to the encoder attach points
@@ -359,28 +373,20 @@ class Streamer(object):
         self.rtspserver = GstRtspServer.RTSPServer()
         self.rtspserver.set_address(dest)
         self.rtspserver.set_service(str(port))
-        # self.server.connect("client-connected",self.client_connected)
+
+        try:
+            # Here we override RTSPMediaFactory to use the constructed object pipeline rather than the usual
+            #  set_launch which parses a pipeline string.
+            self.rtspfactory = MavRTSPMediaFactory(self.pipeline)
+        except Exception as e:
+            logger.critical("Error creating rstpfactory: "+repr(e))
         
-        #factory = GstRtspServer.RTSPMediaFactory()
-        #factory.set_launch("( rpicamsrc name=src bitrate=0 quantisation-parameter=24 intra-refresh-type=cyclic metering-mode=matrix annotation-mode=13 preview=false  ! video/x-h264,profile=high,width=640,height=480,framerate=30/1 ! h264parse ! rtph264pay pt=96 name=pay0 )")
-        #factory.set_shared(True)
-        #factory.connect("media-configure", on_media_configure)
-
-        self.rtspmedia = GstRtspServer.RTSPMedia()
-        self.rtspmedia.take_pipeline(self.pipeline) # Attach the constructed pipeline to the new instance
-        self.rtspmedia.collect_streams() # Find payloaders and create streams
-        self.rtspmedia.set_shared(True)
-        self.rtspmedia.prepare()
-        self.rtspmedia.set_transport_mode(GstRtspServer.RTSPTransportMode.PLAY)
-
+        # Add the /video endpoint.  More/dynamic endpoints will be added in the future
         self.rtspmounts = self.rtspserver.get_mount_points()
-        #self.rtspmounts.add_factory('/video', self.rtspmedia)
+        self.rtspmounts.add_factory('/video', self.rtspfactory)
+        self.rtspserver.attach(None)
 
-        self.rtspserver.attach(None)  
-
-        logger.debug("rtsp status:" + str(self.rtspmedia.get_status()))
-        logger.debug("rtsp streams:" + str(self.rtspmedia.n_streams()))
-        logger.info("RTSP stream running at rtsp://<hostname>:"+port+"/stream")
+        logger.info("RTSP stream running at rtsp://"+str(dest)+":"+str(port)+"/video")
 
     ### Misc methods (glib introspection)
     def on_message(self, bus, message):
@@ -401,9 +407,11 @@ class Streamer(object):
 
     ### Action methods
     def start(self):
-        self.pipeline.set_state(Gst.State.PLAYING)
-        self.playing = True
+        if self.output != "rtsp":
+            self.pipeline.set_state(Gst.State.PLAYING)
+            self.playing = True
         logger.info('Starting camera stream')
+        GObject.MainLoop().run()
 
     def write(self,s):
         gstbuff = Gst.Buffer.new_wrapped(s)
@@ -420,6 +428,25 @@ class Streamer(object):
     def shutdown_tx(self, signum, frame):
         os.kill(self.wcast_tx.pid, signal.SIGTERM)
         sys.exit()
+
+
+### Create an RTSP Media Factory from an existing pipeline
+class MavRTSPMediaFactory(GstRtspServer.RTSPMediaFactory):
+    def __init__(self, pipeline):
+        GstRtspServer.RTSPMediaFactory.__init__(self)
+        self.set_shared(True)
+        #self.set_reusable(True)
+        self.set_eos_shutdown(False)
+        self.set_buffer_size(0)
+        #self.set_suspend_mode(GstRtspServer.RTSPMedia.GST_RTSP_SUSPEND_MODE_NONE)
+        self.set_property('latency', 0)
+        self.set_transport_mode(GstRtspServer.RTSPTransportMode.PLAY)
+        self.pipeline = pipeline
+
+    def do_create_element(self, url):
+        logger.info("Creating RTSP factory element: {}".format(url))
+        return self.pipeline
+
 
 ### Main App Class (initial concept)
 class App():
@@ -440,6 +467,10 @@ class App():
         if self.config['enable'].lower() == 'false':
             logger.critical('Off switch is activated, exiting')
             sys.exit(0)
+
+        if 'debug' in self.config and self.config['debug']:
+            Gst.debug_set_active(True)
+            Gst.debug_set_default_threshold(self.config['debug'])
         
         if 'pipeline_override' in self.config:
             self.manualconstruct()
@@ -548,7 +579,7 @@ class App():
             logger.info("Creating stream object - camera:"+cameradev+", stream:"+streamtype+", pixelformat:"+pixelformat+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output']+", brightness:"+self.config['brightness'])
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, pixelformat, encoder, self.config['input'], cameradev, int(self.config['brightness']), self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
-            # logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
+            logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
             logger.critical('Error creating '+streamtype+' stream: ' + str(repr(e)))
             sys.exit(1)
 
@@ -652,7 +683,7 @@ class App():
 
  
 if __name__ == "__main__":
-    print "Starting maverick-visiond daemon"
+    print "Starting maverick-visiond"
 
     # Setup logging
     logger = logging.getLogger("DaemonLog")
@@ -664,6 +695,8 @@ if __name__ == "__main__":
     
     # Create app instance and daemonize
     app = App()
+    app.run()
+    """
     daemon_runner = runner.DaemonRunner(app)
     daemon_runner.daemon_context.files_preserve=[handler.stream]
     try:
@@ -677,6 +710,6 @@ if __name__ == "__main__":
             print " - starting visiond"
             daemon_runner.action = "start"
             daemon_runner.do_action()
-            
+    """            
     # logger.info("Stopping maverick-visiond")
     print "Stopped maverick-visiond daemon"

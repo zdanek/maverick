@@ -44,24 +44,23 @@ class maverick_vision::camera_streaming_daemon (
         }
     }
 
-    # Punch some holes in the firewall for rtsp
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "vision-rtsp-udp":
-            ports       => [$rtsp_port],
-            ips         => lookup("firewall_ips"),
-            proto       => "udp", # allow both tcp and udp for rtsp and rtp
-        }
-        maverick_security::firewall::firerule { "vision-rtsp-tcp":
-            ports       => [$rtsp_port],
-            ips         => lookup("firewall_ips"),
-            proto       => "tcp", # allow both tcp and udp for rtsp and rtp
-        }
-    }
-    
     if $active == true {
         service_wrapper { "maverick-csd":
             ensure      => running,
             enable      => true,
+        }
+        # Punch some holes in the firewall for rtsp
+        if defined(Class["::maverick_security"]) {
+            maverick_security::firewall::firerule { "vision-rtsp-udp":
+                ports       => [$rtsp_port],
+                ips         => lookup("firewall_ips"),
+                proto       => "udp", # allow both tcp and udp for rtsp and rtp
+            }
+            maverick_security::firewall::firerule { "vision-rtsp-tcp":
+                ports       => [$rtsp_port],
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp", # allow both tcp and udp for rtsp and rtp
+            }
         }
     } else {
         service_wrapper { "maverick-csd":

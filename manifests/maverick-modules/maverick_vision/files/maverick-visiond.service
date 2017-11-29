@@ -5,9 +5,9 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/srv/maverick/software/maverick/bin/maverick-visiond start
-ExecStop=/srv/maverick/software/maverick/bin/maverick-visiond stop
+ExecStart=/srv/maverick/software/maverick/bin/maverick-visiond
 User=mav
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target

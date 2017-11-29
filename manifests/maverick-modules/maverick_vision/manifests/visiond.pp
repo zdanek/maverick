@@ -1,5 +1,6 @@
 class maverick_vision::visiond (
     $active = true,
+    $rtsp_port = 5600,
 ) {
 
     # Setup standard packages for all platforms
@@ -26,7 +27,7 @@ class maverick_vision::visiond (
     
     # Add visiond as a service
     file { "/etc/systemd/system/maverick-visiond.service":
-        content     => template("maverick_vision/maverick-visiond.service.erb"),
+        source      => "puppet:///modules/maverick_vision/maverick-visiond.service",
         owner       => "root",
         group       => "root",
         mode        => "644",
@@ -56,6 +57,19 @@ class maverick_vision::visiond (
             ensure      => running,
             enable      => true,
             require     => Class["maverick_vision::gstreamer"],
+        }
+        # Punch some holes in the firewall for rtsp
+        if defined(Class["::maverick_security"]) {
+            maverick_security::firewall::firerule { "visiond-rtsp-udp":
+                ports       => [$rtsp_port],
+                ips         => lookup("firewall_ips"),
+                proto       => "udp", # allow both tcp and udp for rtsp and rtp
+            }
+            maverick_security::firewall::firerule { "visiond-rtsp-tcp":
+                ports       => [$rtsp_port],
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp", # allow both tcp and udp for rtsp and rtp
+            }
         }
     } else {
         service_wrapper { "maverick-visiond":
