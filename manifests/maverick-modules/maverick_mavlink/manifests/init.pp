@@ -12,7 +12,9 @@ class maverick_mavlink (
     $mavcesium_install = true,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6791",
+    $mavcesium_mavlink_port = "5770",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
+    $mavcesium_active = false,
     $cuav_install = true,
     $gooey_version = "0.9.2.3",
 ) {
@@ -210,6 +212,7 @@ class maverick_mavlink (
         package { "libffi-dev":
             ensure      => installed,
         } ->
+        /*
         exec { "remove-mavproxy-mavcesium":
             command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
             unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
@@ -218,6 +221,13 @@ class maverick_mavlink (
         oncevcsrepo { "git-mavcesium":
             gitsource   => $mavcesium_source,
             dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
+            submodules  => true,
+            owner       => "mav",
+        } ->
+        */
+        oncevcsrepo { "git-mavcesium":
+            gitsource   => $mavcesium_source,
+            dest        => "/srv/maverick/software/mavcesium",
             submodules  => true,
             owner       => "mav",
         } ->
@@ -245,24 +255,47 @@ class maverick_mavlink (
             command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
             onlyif      => "/bin/ls /usr/local/lib/python2.7/dist-packages/configparser/__init__.py",
         } ->
+        /*
         file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
             owner       => "mav",
             mode        => "644",
             content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
         } ->
-        file { "/srv/maverick/config/mavlink/cesium":
-            ensure      => directory,
+        */
+        file { "/srv/maverick/software/mavcesium/app/mavcesium_default.ini":
+            owner       => "mav",
+            mode        => "644",
+            content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
+        } ->
+        file { "/srv/maverick/config/mavlink/mavcesium.conf":
+            ensure      => present,
             owner       => "mav",
             group       => "mav",
-            mode        => "755",
-        }
-        /*
-        file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/templates/index.html":
-            ensure      => present,
             mode        => "644",
-            source      => "puppet:///modules/maverick_mavlink/mavcesium-index.html",
+            content     => template("maverick_mavlink/mavcesium.conf.erb"),
+        } ->
+        file { "/srv/maverick/software/mavcesium/app/cesium_web_server.py":
+            mode        => "755",
+        } ->
+        file { "/etc/systemd/system/maverick-mavcesium.service":
+            ensure      => present,
+            source      => "puppet:///modules/maverick_mavlink/maverick-mavcesium.service",
+            notify      => Exec["maverick-systemctl-daemon-reload"],
         }
-        */
+        
+        if $mavcesium_active == true {
+            service_wrapper { "maverick-mavcesium":
+                ensure      => running,
+                enable      => true,
+                require     => [ File["/etc/systemd/system/maverick-mavcesium.service"], Exec["maverick-systemctl-daemon-reload"] ],
+            }
+        } else {
+            service_wrapper { "maverick-mavcesium":
+                ensure      => stopped,
+                enable      => false,
+                require     => [ File["/etc/systemd/system/maverick-mavcesium.service"], Exec["maverick-systemctl-daemon-reload"] ],
+            }
+        }
 
         if defined(Class["::maverick_web"]) {
             # Setup reverse proxy for websocket
@@ -285,6 +318,8 @@ class maverick_mavlink (
             }
         }
 
+        /*
+        # This is disabled now as mavcesium will be reverse proxied through nginx
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "mavcesium":
                 ports       => $mavcesium_port,
@@ -292,6 +327,7 @@ class maverick_mavlink (
                 proto       => "tcp"
             }
         }
+        */
     }
     
     # Install cuav

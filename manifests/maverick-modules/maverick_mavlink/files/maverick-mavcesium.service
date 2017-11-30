@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick MavCesium service
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/srv/maverick/config/mavlink/mavcesium.conf
+ExecStart=/srv/maverick/software/mavcesium/app/cesium_web_server.py --connection $MAVLINK_CONNECT
+User=mav
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

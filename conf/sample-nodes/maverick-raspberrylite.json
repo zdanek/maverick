@@ -60,7 +60,7 @@
 	"maverick_intelligence::tensorflow": true,
 	"maverick_intelligence::tensorflow::arch": "armv6l",
 
-	"maverick_mavlink::mavcesium_install": false,
+	"maverick_mavlink::mavcesium_install": true,
 	"maverick_mavlink::cuav_install": false,
 	
 	"maverick_ros::installtype": false,
