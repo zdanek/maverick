@@ -2,6 +2,9 @@ class maverick_hardware::up (
     $swapsize = 1000,
 ) {
  
+    # Include Intel platform manifest
+    class { "maverick_hardware::intel": }
+
     # A big chunk of memory stolen by shared graphics RAM, so create a swapfile
     ensure_packages(["util-linux"]) # contains swapon
     exec { "create-swap":

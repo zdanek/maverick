@@ -36,6 +36,7 @@ class base::packages {
         } else {
             ensure_packages(["firmware-ralink"])
         }
+        ensure_packages(["software-properties-common"])
     }
     
     # These packages should be removed from all installs.  

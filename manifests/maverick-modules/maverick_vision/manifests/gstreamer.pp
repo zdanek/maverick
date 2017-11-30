@@ -248,8 +248,8 @@ class maverick_vision::gstreamer (
                 ensure      => present,
             }
     
-            # Install vaapi for joule platform
-            if $joule_present == "yes" {
+            # Install vaapi for Intel platform
+            if $::hardwaremodel == "x86_64" {
                 ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
                 oncevcsrepo { "git-gstreamer_vaapi":
                     gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",

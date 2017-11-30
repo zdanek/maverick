@@ -23,7 +23,7 @@ class maverick_vision::opencv (
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
     # ensure_packages(["qtbase5-dev"])
-    if $architecture == "amd64" { # https://github.com/fnoop/maverick/issues/233
+    if $::hardwaremodel == "x86_64" { # https://github.com/fnoop/maverick/issues/233
         ensure_packages(["libtbb-dev", "libtbb2"])
     }
     
@@ -73,7 +73,7 @@ class maverick_vision::opencv (
             $_armopts = "-DENABLE_NEON=OFF -DENABLE_VFPV3=OFF"
         }
         
-        if $architecture == "amd64" {
+        if $::hardwaremodel == "x86_64" {
             # $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON -DOPENVX_ROOT=/opt/intel/computer_vision_sdk_2017.0.087/openvx -DWITH_OPENVX=YES .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DENABLE_NEON=ON -DWITH_TBB=ON -DBUILD_TBB=ON -DENABLE_VFPV3=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
