@@ -44,7 +44,7 @@ class maverick_web::cloud9 (
         timeout		=> 0,
         user        => "mav",
         environment => ["HOME=/srv/maverick"],
-        require     => Package["nodejs"],
+        require     => Class["maverick_web::nodejs"],
     } ->
     file { "/srv/maverick/.c9":
         ensure      => directory,
