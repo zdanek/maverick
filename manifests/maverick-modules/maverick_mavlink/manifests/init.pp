@@ -273,6 +273,7 @@ class maverick_mavlink (
             group       => "mav",
             mode        => "644",
             content     => template("maverick_mavlink/mavcesium.conf.erb"),
+            replace     => false,
         } ->
         file { "/srv/maverick/software/mavcesium/app/cesium_web_server.py":
             mode        => "755",
