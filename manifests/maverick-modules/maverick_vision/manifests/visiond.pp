@@ -1,7 +1,7 @@
 class maverick_vision::visiond (
     $active = true,
     $rtsp_port = 5600,
-    $webvision = true,
+    $webvision_active = true,
 ) {
 
     # Setup standard packages for all platforms
@@ -80,33 +80,41 @@ class maverick_vision::visiond (
         }
     }
     
-    if $webvision == true {
-        if defined(Class["::maverick_web"]) {
-            # Add a temporary service to run web vision
-            install_python_module { "webvision-tornado":
-                pkgname     => "tornado",
-                ensure      => atleast,
-                version     => "4.5.2",
-            } ->
-            file { "/etc/systemd/system/maverick-webvision.service":
-                ensure          => present,
-                mode            => "644",
-                owner           => "mav",
-                group           => "mav",
-                source          => "puppet:///modules/maverick_vision/maverick-webvision.service",
-                notify          => Exec["maverick-systemctl-daemon-reload"],
-            } ->
-            service_wrapper{ "maverick-webvision":
+    if defined(Class["::maverick_web"]) {
+        # Add a temporary service to run web vision
+        install_python_module { "webvision-tornado":
+            pkgname     => "tornado",
+            ensure      => atleast,
+            version     => "4.5.2",
+        } ->
+        file { "/etc/systemd/system/maverick-webvision.service":
+            ensure          => present,
+            mode            => "644",
+            owner           => "mav",
+            group           => "mav",
+            source          => "puppet:///modules/maverick_vision/maverick-webvision.service",
+            notify          => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        nginx::resource::location { "web-webvision":
+            location    => "/vision/webvision/",
+            proxy       => 'http://localhost:6793/',
+            server      => "${::hostname}.local",
+            require     => [ Class["maverick_gcs::fcs"], Class["nginx"], ],
+        }
+
+        if $webvision_active == true {
+            service_wrapper { "maverick-webvision":
                 ensure          => running,
                 enable          => true,
-            } ->
-            nginx::resource::location { "web-webvision":
-                location    => "/vision/webvision/",
-                proxy       => 'http://localhost:6793/',
-                server      => "${::hostname}.local",
-                require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["maverick-webvision"], ],
+                require         => Exec["maverick-systemctl-daemon-reload"],
+            }
+        } else {
+            service_wrapper { "maverick-webvision":
+                ensure          => stopped,
+                enable          => false,
+                require         => Exec["maverick-systemctl-daemon-reload"],
             }
         }
     }
-
+    
 }
