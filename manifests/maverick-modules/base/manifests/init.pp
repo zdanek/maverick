@@ -23,6 +23,12 @@ class base {
         require		=> Class["base::defaults", "base::locale"],
     }
     
+    ### Setup python
+    class { "base::python": 
+        stage	=> "bootstrap",
+        require		=> Class["base::defaults"],
+    }
+    
     ### Bootstrap puppet
     class { "maverick_puppet::client":
         stage   => "bootstrap",

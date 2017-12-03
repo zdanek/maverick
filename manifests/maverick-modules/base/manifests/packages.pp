@@ -48,48 +48,11 @@ class base::packages {
         package { "libfprint": ensure => absent } 
     }
 
-    # Remove upstart as it breaks ubuntu which is now systemd
-    # This is done in maverick shell script but make sure here
-    #package { ["upstart", "unity-greeter"]:
-	#    ensure		=> purged
-    #}
-
     # Remove ModeManager which conflicts with APM/Pixhawk
     package { "modemmanager":
         ensure      => purged
     }
-    
-    # Install python using python module
-    class { "python":
-        version    => 'system',
-        dev        => 'present',
-        virtualenv => 'present',
-        gunicorn   => 'absent',
-    } ->
-    package { ["python-setuptools", "virtualenvwrapper", "python-numpy", "python3-numpy", "python-lockfile", "python-daemon"]:
-        ensure      => present
-    } ->
 
-    # Need to install/upgrade pip to a known version using easy_install, which is the only method that works reliably.
-    exec { "upgrade-pip":
-        command     => "sudo easy_install -U pip==9.0.1",
-        unless      => "ls /usr/local/lib/python2.7/dist-packages/pip-9.0.1*",
-        path        => ["/usr/local/bin", "/usr/bin", "/bin"],
-    } ->
-    # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
-    install_python_module { 'pip-pyric':
-        pkgname     => 'PyRIC',
-        ensure      => present,
-    } ->
-    install_python_module { 'pip-netifaces':
-        pkgname     => 'netifaces',
-        ensure      => present,
-    } ->
-    install_python_module { 'pip-future':
-        pkgname     => 'future',
-        ensure      => present,
-    }
-    
     # Disable unattended upgrades
     package { "unattended-upgrades":
         ensure      => purged,
