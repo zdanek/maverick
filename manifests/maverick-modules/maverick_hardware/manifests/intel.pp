@@ -50,7 +50,7 @@ class maverick_hardware::intel (
     if $opencl == true {
         # Install dependencies
         ensure_packages(["cmake", "pkg-config", "ocl-icd-dev", "libegl1-mesa-dev", "ocl-icd-opencl-dev", "libdrm-dev", "libxfixes-dev", "libxext-dev", "libtinfo-dev", "libedit-dev", "zlib1g-dev", "clinfo"])
-        if $::operatingsystem == "Debian" and $::operatingsystemmajrelease == 9 {
+        if $::operatingsystem == "Debian" and $::operatingsystemmajrelease == "9" {
             ensure_packages(["llvm-3.8-dev", "clang-3.8", "libclang-3.8-dev"], {'before'=>Exec["beignet-prepbuild"]})
         } elsif $::operatingsystem == "Ubuntu" and $::operatingsystemrelease == "16.04" {
             ensure_packages(["llvm-3.6-dev", "clang-3.6", "libclang-3.6-dev"], {'before'=>Exec["beignet-prepbuild"]})
