@@ -187,8 +187,12 @@ class maverick_ros (
             owner       => "root",
             group       => "root",
             content     => "source /opt/ros/${_distribution}/setup.bash",
+        } ->
+        # Install python3 packages
+        package { ["python3-rospkg", "python3-rospkg-modules"]:
+            ensure      => present,
         }
-        
+
     # Build from source
     } elsif $_installtype == "source" {
 
