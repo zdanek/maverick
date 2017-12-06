@@ -12,7 +12,7 @@ class collectd::plugin::postgresql (
 
   $_manage_package = pick($manage_package, $::collectd::manage_package)
 
-  if $::osfamily == 'Redhat' {
+  if $facts['os']['family'] == 'RedHat' {
     if $_manage_package {
       package { 'collectd-postgresql':
         ensure => $ensure,
@@ -30,7 +30,7 @@ class collectd::plugin::postgresql (
     mode           => '0640',
     owner          => 'root',
     group          => $collectd::root_group,
-    notify         => Service['collectd_service'],
+    notify         => Service[$collectd::service_name],
     ensure_newline => true,
   }
 

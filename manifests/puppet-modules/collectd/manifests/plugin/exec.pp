@@ -1,15 +1,12 @@
 # See http://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_exec
 class collectd::plugin::exec (
-  $commands          = {},
-  $interval          = undef,
-  $ensure            = 'present',
-  $globals           = false,
+  Hash $commands   = {},
+  $interval        = undef,
+  $ensure          = 'present',
+  Boolean $globals = false,
 ) {
 
   include ::collectd
-
-  validate_hash($commands)
-  validate_bool($globals)
 
   collectd::plugin { 'exec':
     ensure   => $ensure,
@@ -25,7 +22,7 @@ class collectd::plugin::exec (
     mode           => '0640',
     owner          => 'root',
     group          => $collectd::root_group,
-    notify         => Service['collectd_service'],
+    notify         => Service[$collectd::service_name],
     ensure_newline => true,
   }
 

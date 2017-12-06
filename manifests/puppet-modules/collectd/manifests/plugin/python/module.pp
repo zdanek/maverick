@@ -1,22 +1,25 @@
 # Single module definition
 define collectd::plugin::python::module (
-  $config        = [],
-  $ensure        = 'present',
-  $module        = $title,
-  $modulepath    = undef,
-  $script_source = undef,
+  Array $config                              = [],
+  $ensure                                    = 'present',
+  $module                                    = $title,
+  $module_import                             = undef,
+  Optional[Stdlib::Absolutepath] $modulepath = undef,
+  $script_source                             = undef,
 ) {
 
   include ::collectd
   include ::collectd::plugin::python
 
-  validate_array($config)
-
   $module_dir = $modulepath ? {
     undef   => $collectd::python_dir,
     default => $modulepath
   }
-  validate_absolute_path($module_dir)
+
+  $_module_import = $module_import ? {
+    undef   => $module,
+    default => $module_import
+  }
 
   if $script_source {
     file { "${module}.script":
@@ -27,7 +30,7 @@ define collectd::plugin::python::module (
       mode    => '0640',
       source  => $script_source,
       require => File[$module_dir],
-      notify  => Service['collectd_service'],
+      notify  => Service[$collectd::service_name],
     }
   }
 

@@ -1,8 +1,8 @@
 #
 define collectd::plugin::tail::file (
-  $filename,
-  $instance,
-  $matches,
+  Stdlib::Absolutepath $filename,
+  String $instance,
+  Array[Hash] $matches,
   $ensure = 'present',
 ) {
 
@@ -11,11 +11,6 @@ define collectd::plugin::tail::file (
 
   $conf_dir = $collectd::plugin_conf_dir
 
-  validate_absolute_path($filename)
-  validate_string($instance)
-  validate_array($matches)
-  validate_hash($matches[0])
-
   file { "${name}.conf":
     ensure  => $ensure,
     path    => "${conf_dir}/tail-${name}.conf",
@@ -23,6 +18,6 @@ define collectd::plugin::tail::file (
     owner   => 'root',
     group   => $collectd::root_group,
     content => template('collectd/tail-file.conf.erb'),
-    notify  => Service['collectd_service'],
+    notify  => Service[$collectd::service_name],
   }
 }

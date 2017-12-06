@@ -3,16 +3,12 @@
 class collectd::repo {
 
   if $collectd::manage_repo {
-    if $::collectd::ci_package_repo != undef {
-      validate_re($::collectd::ci_package_repo, [ '^5.4', '^5.5', '^5.6', '5.7', '^master' ], "ci_package_repo has to match '5.4', '5.5', '5.6', '5.7' or 'master' (RC for next release), got: ${::collectd::ci_package_repo}")
-    }
-
-    $osfamily_downcase = downcase($::osfamily)
+    $osfamily_downcase = downcase($facts['os']['family'])
 
     if defined("::collectd::repo::${osfamily_downcase}") {
-      include "::collectd::repo::${osfamily_downcase}"
+      require "::collectd::repo::${osfamily_downcase}"
     } else {
-      notify{"You have asked to manage_repo on a system that doesn't have a repo class specified: ${::osfamily}":}
+      notify{"You have asked to manage_repo on a system that doesn't have a repo class specified: ${facts['os']['family']}":}
     }
   }
 

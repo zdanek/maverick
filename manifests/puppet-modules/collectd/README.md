@@ -106,6 +106,7 @@ documentation for each plugin for configurable attributes.
 * `cpu`  (see [collectd::plugin::cpu](#class-collectdplugincpu) below)
 * `cpufreq`  (see [collectd::plugin::cpufreq](#class-collectdplugincpufreq) below)
 * `csv`  (see [collectd::plugin::csv](#class-collectdplugincsv) below)
+* `cuda` (see [collectd::plugin::cuda](#class-collectdplugincuda) below)
 * `curl` (see [collectd::plugin::curl](#class-collectdplugincurl) below)
 * `curl_json` (see [collectd::plugin::curl_json](#class-collectdplugincurl_json)
   below)
@@ -127,6 +128,7 @@ documentation for each plugin for configurable attributes.
   below)
 * `ipmi` (see [collectd::plugin::ipmi](#class-collectdpluginipmi) below)
 * `iptables` (see [collectd::plugin::iptables](#class-collectdpluginiptables) below)
+* `iscdhcp` (see [collectd::plugin::iscdhcp](#class-collectdpluginiscdhcp) below)
 * `irq` (see [collectd::plugin::irq](#class-collectdpluginirq) below)
 * `java` (see [collectd::plugin::java](#class-collectdpluginjava) below)
 * `load` (see [collectd::plugin::load](#class-collectdpluginload) below)
@@ -195,15 +197,16 @@ documentation for each plugin for configurable attributes.
 * `write_tsdb` (see [collectd::plugin::write_tsdb](#class-collectdpluginwrite_tsdb)
   below)
 * `zfs_arc` (see [collectd::plugin::zfs_arc](#class-collectdpluginzfs_arc) below)
+* `zookeeper` (see
+  [collectd::plugin::zookeeper](#class-collectdzookeeper) below)
 
 ### Class: `collectd::plugin::aggregation`
 
 ```puppet
-collectd::plugin::aggregation::aggregator {
-  cpu':
+collectd::plugin::aggregation::aggregator { 'cpu':
     plugin           => 'cpu',
     agg_type         => 'cpu',
-    groupby          => ["Host", "TypeInstance",],
+    groupby          => ['Host', 'TypeInstance',],
     calculateaverage => true,
 }
 ```
@@ -213,7 +216,7 @@ You can as well configure this plugin with a parameterized class :
 ```puppet
 class { 'collectd::plugin::aggregation':
   aggregators => {
-    cpu' => {
+    'cpu' => {
       plugin           => 'cpu',
       agg_type         => 'cpu',
       groupby          => ["Host", "TypeInstance",],
@@ -357,6 +360,15 @@ class { 'collectd::plugin::csv':
 }
 ```
 
+
+### Class: `collectd::plugin::cuda`
+
+```puppet
+class { 'collectd::plugin::cuda':
+}
+```
+
+
 ### Class: `collectd::plugin::curl`
 
 ```puppet
@@ -402,10 +414,20 @@ class { 'collectd::plugin::curl':
 ```puppet
 collectd::plugin::curl_json {
   'rabbitmq_overview':
-    url => 'http://localhost:55672/api/overview',
-    instance => 'rabbitmq_overview',
-    interval => '300',
-    keys => {
+    url        => 'http://localhost:55672/api/overview',
+    host       => 'rabbitmq.example.net',
+    instance   => 'rabbitmq_overview',
+    interval   => '300',
+    user       => 'user',
+    password   => 'password',
+    digest     => 'false',
+    verifypeer => 'false',
+    verifyhost => 'false',
+    cacert     => '/path/to/ca.crt',
+    header     => 'Accept: application/json',
+    post       => '{secret: \"mysecret\"}',
+    timeout    => '1000',
+    keys       => {
       'message_stats/publish' => {
         'type'     => 'gauge',
         'instance' => 'overview',
@@ -462,6 +484,7 @@ class { 'collectd::plugin::dbi':
 
 ```puppet
 class { 'collectd::plugin::df':
+  devices        => ['proc','sysfs'],
   mountpoints    => ['/u'],
   fstypes        => ['nfs','tmpfs','autofs','gpfs','proc','devpts'],
   ignoreselected => true,
@@ -590,6 +613,13 @@ class { 'collectd::plugin::ethstat':
 class { 'collectd::plugin::fhcount':
   valuesabsolute   => true,
   valuespercentage => false,
+}
+```
+
+#### Class: `collectd::plugin::fscache`
+
+```puppet
+class { 'collectd::plugin::fscache':
 }
 ```
 
@@ -786,7 +816,7 @@ collectd::plugin::genericjmx::mbean {
   'garbage_collector':
     object_name     => 'java.lang:type=GarbageCollector,*',
     instance_prefix => 'gc-',
-    instance_from   => 'name',
+    instance_from   => ['name'],
     values          => [
       {
         mbean_type => 'invocations',
@@ -856,9 +886,18 @@ class { 'collectd::plugin::ipmi':
 class { 'collectd::plugin::iptables':
   chains  => {
     'nat'    => 'In_SSH',
-    'filter' => 'HTTP'
+    'filter' => 'HTTP',
+  },
+  chains6 => {
+    'filter' => 'HTTP6',
   },
 }
+```
+
+#### Class: `collectd::plugin::iscdhcp`
+
+```puppet
+class { 'collectd::plugin::iscdhcp': }
 ```
 
 #### Class: `collectd::plugin::java`
@@ -948,6 +987,7 @@ collectd::plugin::mysql::database { 'betadase':
   password    => 'secret',
   port        => '3306',
   masterstats => true,
+  wsrepstats  => true,
 }
 ```
 
@@ -1224,6 +1264,7 @@ collectd::plugin::postgresql::database{'monitoring_node1':
 }
 collectd::plugin::postgresql::query{'log_delay':
   statement => 'SELECT * FROM log_delay_repli;',
+  params    => ['database'],
   results   => [{
     type           => 'gauge',
     instanceprefix => 'log_delay',
@@ -1317,6 +1358,8 @@ class { 'collectd::plugin::protocols':
   that reads from and writes to the terminal (default: `false`)
 * `logtraces` if a Python script throws an exception it will be logged by
   collectd with the name of the exception and the message (default: `false`)
+* `conf_name` name of the file that will contain the python module configuration
+  (default: `python-config.conf`)
 
  See [collectd-python documentation](https://collectd.org/documentation/manpages/collectd-python.5.shtml)
  for more details.
@@ -1348,9 +1391,9 @@ Or define single module:
 ```puppet
 collectd::plugin::python::module {'zk-collectd':
   script_source => 'puppet:///modules/myorg/zk-collectd.py',
-  config        => {
-    'Hosts' => "localhost:2181"
-  }
+  config        => [
+    {'Hosts' => "localhost:2181"}
+  ]
 }
 ```
 
@@ -1362,9 +1405,9 @@ are included in `collectd::plugin::python` variable `modulepaths`. If no
 collectd::plugin::python::module {'my-module':
   modulepath    => '/var/share/collectd',
   script_source => 'puppet:///modules/myorg/my-module.py',
-  config        => {
-    'Key' => "value"
-  }
+  config        => [
+    {'Key' => "value"}
+  ]
 }
 ```
 
@@ -1416,7 +1459,7 @@ class { '::collectd::plugin::rabbitmq':
     'Password' => $admin_pass,
     'Scheme'   => 'https',
     'Port'     => '15671',
-    'Host'     => $::fqdn,
+    'Host'     => $facts['fqdn'],
     'Realm'    => '"RabbitMQ Management"',
   },
 }
@@ -1450,6 +1493,7 @@ class { 'collectd::plugin::rrdtool':
 
 ```puppet
 class {'collectd::plugin::sensors':
+  sensors        => ['sensors-coretemp-isa-0000/temperature-temp2', 'sensors-coretemp-isa-0000/temperature-temp3'],
   ignoreselected => false,
 }
 ```
@@ -1485,6 +1529,33 @@ class {'collectd::plugin::snmp':
       'collect'   => ['amavis_incoming_messages'],
       'interval'  => 10
     }
+  },
+}
+```
+
+```puppet
+class { 'collectd::plugin::snmp':
+  data  => {
+    hc_octets => {
+      'type'     => 'if_octets',
+      'table'    => true,
+      'instance' => 'IF-MIB::ifName',
+      'values'   => ['IF-MIB::ifHCInOctets', 'IF-MIB::ifHCOutOctets'],
+    },
+  },
+  hosts => {
+    router => {
+      'address'            => '192.0.2.1',
+      'version'            => 3,
+      'security_level'     => 'authPriv',
+      'username'           => 'collectd',
+      'auth_protocol'      => 'SHA',
+      'auth_passphrase'    => 'mekmitasdigoat',
+      'privacy_protocol'   => 'AES',
+      'privacy_passphrase' => 'mekmitasdigoat',
+      'collect'            => ['hc_octets'],
+      'interval'           => 10,
+    },
   },
 }
 ```
@@ -1560,7 +1631,7 @@ collectd::plugin::tail::file { 'exim-log':
 }
 ```
 
-####Class: `collectd::plugin::thermal`
+#### Class: `collectd::plugin::thermal`
 
 ```puppet
 class { '::collectd::plugin::thermal':
@@ -1576,7 +1647,7 @@ class { 'collectd::plugin::threshold':
 }
 ```
 
-####Class: `collectd::plugin::unixsock`
+#### Class: `collectd::plugin::unixsock`
 
 ```puppet
 class {'collectd::plugin::unixsock':
@@ -1761,6 +1832,15 @@ class { 'collectd::plugin::write_tsdb':
 
 ```puppet
 class { 'collectd::plugin::zfs_arc':
+}
+```
+
+#### Class: `collectd::plugin::zookeeper`
+
+```puppet
+class { 'collectd::plugin::zookeeper':
+  zookeeper_host  => 'localhost',
+  zookeeper_port  => '2181',
 }
 ```
 

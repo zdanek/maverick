@@ -21,18 +21,17 @@ class collectd::params {
   $service_enable            = true
   $minimum_version           = '4.8'
   $manage_package            = true
-  $manage_repo               = true
   $manage_service            = true
   $package_install_options   = undef
   $plugin_conf_dir_mode      = '0750'
   $ci_package_repo           = undef
 
-  case getvar('::kernel') {
-    'OpenBSD': { $has_wordexp   = false }
-    default: { $has_wordexp   = true }
+  case $facts['kernel'] {
+    'OpenBSD': { $has_wordexp = false }
+    default:   { $has_wordexp = true }
   }
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       $package_name       = [ 'collectd', 'collectd-core' ]
       $package_provider   = 'apt'
@@ -43,6 +42,7 @@ class collectd::params {
       $root_group         = 'root'
       $java_dir           = '/usr/share/collectd/java'
       $default_python_dir = '/usr/local/lib/python2.7/dist-packages'
+      $manage_repo        = true
     }
     'Solaris': {
       $package_name       = 'CSWcollectd'
@@ -54,8 +54,9 @@ class collectd::params {
       $root_group         = 'root'
       $java_dir           = undef
       $default_python_dir = '/opt/csw/share/collectd/python'
+      $manage_repo        = false
     }
-    'Redhat': {
+    'RedHat': {
       $package_name       = 'collectd'
       $package_provider   = 'yum'
       $collectd_dir       = '/etc/collectd.d'
@@ -65,6 +66,7 @@ class collectd::params {
       $root_group         = 'root'
       $java_dir           = '/usr/share/collectd/java'
       $default_python_dir = '/usr/lib/python2.7/site-packages'
+      $manage_repo        = true
     }
     'Suse': {
       $package_name       = 'collectd'
@@ -76,6 +78,7 @@ class collectd::params {
       $root_group         = 'root'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
+      $manage_repo        = false
     }
     'FreeBSD': {
       $package_name       = 'collectd5'
@@ -87,6 +90,7 @@ class collectd::params {
       $root_group         = 'wheel'
       $java_dir           = undef
       $default_python_dir = '/usr/local/share/collectd/python'
+      $manage_repo        = false
     }
     'OpenBSD': {
       $package_name       = 'collectd'
@@ -98,6 +102,7 @@ class collectd::params {
       $root_group         = '_collectd'
       $java_dir           = undef
       $default_python_dir = '/usr/local/share/collectd/python'
+      $manage_repo        = false
     }
     'Archlinux': {
       $package_name       = 'collectd'
@@ -109,6 +114,7 @@ class collectd::params {
       $root_group         = 'wheel'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
+      $manage_repo        = false
     }
     'Gentoo': {
       $package_name       = 'app-admin/collectd'
@@ -120,13 +126,14 @@ class collectd::params {
       $root_group         = 'collectd'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
+      $manage_repo        = false
     }
 
     default: {
-      fail("${::osfamily} is not supported.")
+      fail("${facts['os']['family']} is not supported.")
     }
   }
 
   # Override with custom fact value (present only if python is installed)
-  $python_dir            = pick($::python_dir, $default_python_dir)
+  $python_dir = pick($facts['python_dir'], $default_python_dir)
 }

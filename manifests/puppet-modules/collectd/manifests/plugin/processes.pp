@@ -1,16 +1,13 @@
 # See http://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_processes
 class collectd::plugin::processes (
-  $ensure          = 'present',
-  $order           = 10,
-  $interval        = undef,
-  $processes       = undef,
-  $process_matches = undef,
+  $ensure                          = 'present',
+  $order                           = 10,
+  $interval                        = undef,
+  Optional[Array] $processes       = undef,
+  Optional[Array] $process_matches = undef,
 ) {
 
   include ::collectd
-
-  if $processes { validate_array($processes) }
-  if $process_matches { validate_array($process_matches) }
 
   collectd::plugin { 'processes':
     ensure   => $ensure,
@@ -18,18 +15,12 @@ class collectd::plugin::processes (
     interval => $interval,
   }
 
-  if ( $processes or $process_matches ) {
-    $process_config_ensure = 'present'
-  } else {
-    $process_config_ensure = absent
-  }
-
   concat { "${collectd::plugin_conf_dir}/processes-config.conf":
-    ensure         => $process_config_ensure,
+    ensure         => $ensure,
     mode           => '0640',
     owner          => 'root',
     group          => $collectd::root_group,
-    notify         => Service['collectd_service'],
+    notify         => Service[$collectd::service_name],
     ensure_newline => true,
   }
   concat::fragment { 'collectd_plugin_processes_conf_header':
