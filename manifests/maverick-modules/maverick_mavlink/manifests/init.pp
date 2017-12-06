@@ -9,6 +9,7 @@ class maverick_mavlink (
     $dronekit_install = true,
     $dronekit_la_install = true,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
+    $mavcesium = true,
     $mavcesium_install = true,
     $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     $mavcesium_port = "6791",
@@ -212,19 +213,6 @@ class maverick_mavlink (
         package { "libffi-dev":
             ensure      => installed,
         } ->
-        /*
-        exec { "remove-mavproxy-mavcesium":
-            command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
-            unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/.git",
-            require     => File["/srv/maverick/software/maverick/bin/mavproxy.sh"],
-        } ->
-        oncevcsrepo { "git-mavcesium":
-            gitsource   => $mavcesium_source,
-            dest        => "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium",
-            submodules  => true,
-            owner       => "mav",
-        } ->
-        */
         oncevcsrepo { "git-mavcesium":
             gitsource   => $mavcesium_source,
             dest        => "/srv/maverick/software/mavcesium",
@@ -255,14 +243,7 @@ class maverick_mavlink (
             command     => "/bin/rm -rf /usr/local/lib/python2.7/dist-packages/configparser",
             onlyif      => "/bin/ls /usr/local/lib/python2.7/dist-packages/configparser/__init__.py",
         } ->
-        /*
-        file { "/usr/local/lib/python2.7/dist-packages/MAVProxy/modules/mavproxy_cesium/app/mavcesium_default.ini":
-            owner       => "mav",
-            mode        => "644",
-            content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
-        } ->
-        */
-        file { "/srv/maverick/software/mavcesium/app/mavcesium_default.ini":
+        file { "/srv/maverick/config/mavlink/mavcesium.ini":
             owner       => "mav",
             mode        => "644",
             content     => template("maverick_mavlink/mavcesium_default.ini.erb"),
@@ -274,9 +255,6 @@ class maverick_mavlink (
             mode        => "644",
             content     => template("maverick_mavlink/mavcesium.conf.erb"),
             replace     => false,
-        } ->
-        file { "/srv/maverick/software/mavcesium/app/cesium_web_server.py":
-            mode        => "755",
         } ->
         file { "/etc/systemd/system/maverick-mavcesium.service":
             ensure      => present,
@@ -335,7 +313,7 @@ class maverick_mavlink (
             regex => 'python /srv/maverick/software/mavcesium/app/cesium_web_server.py'
         }
     }
-    
+
     # Install cuav
     if $cuav_install == true {
         if $::operatingsystem == "Debian" {
