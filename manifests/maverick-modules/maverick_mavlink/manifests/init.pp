@@ -329,6 +329,11 @@ class maverick_mavlink (
             }
         }
         */
+        
+        # Temporary collectd process entry to profile mavcesium memory usage
+        collectd::plugin::processes::processmatch { 'mavcesium' :
+            regex => 'python /srv/maverick/software/mavcesium/app/cesium_web_server.py'
+        }
     }
     
     # Install cuav
