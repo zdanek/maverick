@@ -66,4 +66,25 @@ class maverick_web::nginx (
         notify          => Service["maverick-nginx"],
     }
 
+    # Add a location to stub stats - used by collectd to collect nginx metrics
+    $local_config = {
+        'access_log' => 'off',
+        'allow'      => '127.0.0.1',
+        'deny'       => 'all'
+    }
+    nginx::resource::location { "status":
+        ensure              => present,
+        location            => "/nginx_status",
+        stub_status         => true,
+        location_cfg_append => $local_config,
+        server              => "${::hostname}.local",
+        notify              => Service["maverick-nginx"],
+    }
+    
+    if defined(Class["maverick_analysis::collect"]) {
+        class { 'collectd::plugin::nginx':
+          url      => 'http://localhost/nginx_status?auto',
+        }
+    }
+
 }
