@@ -15,6 +15,10 @@ class base::python (
     # Install python3 packages
     package { ["python3-numpy", "python3-yaml"]:
         ensure      => present,
+    } ->
+    # Install pylint for cloud9 linting
+    package { ["pylint", "pylint3"]:
+        ensure      => present,
     }
     
     # Need to install/upgrade pip to a known version using easy_install, which is the only method that works reliably.
