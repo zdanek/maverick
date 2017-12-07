@@ -6,7 +6,8 @@ class maverick_analysis::grafana (
     $grafana_firewall_rules = false,
     $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
     $mav_salt = 'ry48G1ZHyi',
-    $admin_password = '0a66a2e243118cc863cbcaa5c1bae486a57a008e5b17b68f5c00cabd7dcc6b6974af6806348d75f17fb709762cda2038c05c',
+    $admin_hash = '0a66a2e243118cc863cbcaa5c1bae486a57a008e5b17b68f5c00cabd7dcc6b6974af6806348d75f17fb709762cda2038c05c',
+    $admin_password = 'theneedforspeed',
     $admin_salt = 'F3FAxVm33R',
 ) {
     
@@ -107,7 +108,7 @@ class maverick_analysis::grafana (
     # Create admin user in grafana
     exec { "grafana-adminuser":
         unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep admin",
-        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(101,0,'admin','admin','Maverick Admin','${admin_password}','${admin_salt}','yICOZzT82L','',10,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43')\"",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(101,0,'admin','admin','Maverick Admin','${admin_hash}','${admin_salt}','yICOZzT82L','',10,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43')\"",
         user            => "mav",
     } ->
     # Link admin user to org
@@ -119,7 +120,7 @@ class maverick_analysis::grafana (
     grafana_datasource { 'influxdb':
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         type              => 'influxdb',
         url               => 'http://localhost:8086',
         database          => 'maverick',
@@ -131,7 +132,7 @@ class maverick_analysis::grafana (
         title               => "System Dashboard",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/${_dashboard}"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
@@ -139,7 +140,7 @@ class maverick_analysis::grafana (
         title               => "Flight Data Analysis",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/flight-dashboard-ardupilot.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
@@ -147,7 +148,7 @@ class maverick_analysis::grafana (
         title               => "Flight EKF2 Analysis",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
@@ -155,7 +156,7 @@ class maverick_analysis::grafana (
         title               => "Flight EKF3 Analysis",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/flight-ekf3-ardupilot.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
@@ -163,7 +164,7 @@ class maverick_analysis::grafana (
         title               => "Flight EKF2-EKF3 Analysis",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     } ->
@@ -171,7 +172,7 @@ class maverick_analysis::grafana (
         title               => "MAVExplorer Mavgraphs",
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
-        grafana_password  => 'theneedforspeed',
+        grafana_password  => $admin_password,
         content           => template("maverick_analysis/mavexplorer-mavgraphs.json"),
         require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
     }
