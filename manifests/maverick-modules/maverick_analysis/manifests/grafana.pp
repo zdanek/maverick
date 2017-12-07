@@ -105,6 +105,12 @@ class maverick_analysis::grafana (
         command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','10','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
         user            => "mav",
     } ->
+    # Delete old admin user
+    exec { "grafana-deloldadminuser":
+        onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where id=1' |grep admin",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"delete from main.user where id=1\"",
+        user            => "mav",
+    } ->
     # Create admin user in grafana
     exec { "grafana-adminuser":
         unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep admin",
