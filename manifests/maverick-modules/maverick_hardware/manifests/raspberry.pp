@@ -1,6 +1,6 @@
 class maverick_hardware::raspberry (
     $expand_root = true,
-    $gpumem = 64,
+    $gpumem = 128,
     $overclock = "None", # "None", "High", "Turbo"
     $devicetree = true,
     $spi = true,
