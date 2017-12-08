@@ -23,6 +23,7 @@ bin/rosmaster.sh
 bin/vision_seek.sh
 bin/sitl.sh
 bin/wifi-setup
+bin/flirone_v4l2.sh
 conf/local-nodes/
 conf/maverick-branch.conf
 conf/maverick-environment.conf

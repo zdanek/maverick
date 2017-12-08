@@ -1,0 +1,11 @@
+[Unit]
+Description=Maverick - FlirOne v4l2 support
+Requires=network-online.target
+
+[Service]
+ExecStart=/srv/maverick/software/maverick/bin/flirone_v4l2.sh
+TimeoutStartSec=0
+User=root
+
+[Install]
+WantedBy=multi-user.target
