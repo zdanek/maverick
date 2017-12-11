@@ -186,7 +186,7 @@ class maverick_analysis::grafana (
     if defined(Class["::maverick_web"]) {
         nginx::resource::location { "web-analysis-graphs":
             location    => "/analysis/grafana/",
-            proxy       => 'http://localhost:6790/',
+            proxy       => "http://localhost:${webport}/",
             server      => "${::hostname}.local",
             require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
         }
