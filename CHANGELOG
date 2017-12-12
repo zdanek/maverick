@@ -1,6 +1,24 @@
 # Maverick Changelog
 
-## [2017-11-xx] 1.1.5 - in progress
+## [2017-12-12] 1.1.5 'This was not supposed to exist' release
+ - Add RTSP support to visiond, change default port to 5600, support GCS video
+ - Added 'WebVision' - realtime video through web browser
+ - Add support for FLIR One thermal imaging devices
+ - Add support for Zerotier networking
+ - Add local copy of Maverick docs
+ - Add support and download images for Up boards (Up, Up Squared, Up Core)
+ - Refactor MAVCesium to work without Mavproxy
+ - Add support for hardware codec (VAAPI) and OpenCL (beignet) on Intel platforms
+ - Analysis improvements - better grafana security model, autodetect log format, add blank indexes, add processing entry while log processing, add option to randomise gps, added web log uploader, added description field, handle log processing errors gracefully, RAPL power monitoring to Intel platforms
+ - Allow Analysis components (metrics, grafana graphing, mavlog import) to be run standalone without affecting the base system
+ - New 'minimal' environment doesn't touch base system
+ - Move all config to ~/config (/srv/maverick/config)
+ - Add 'maverick start all' and 'maverick stop all' shortcuts to start and stop all services at once
+ - Improve firewall security by closing ports that are reverse proxied
+ - Various updates and improvements to visiond
+ - Improve support for ROS on newer platforms, use whatever binary release available, eg. Debian stretch uses ROS Lunar
+ - Lots of small bugfixes and improvements
+This release was closing out various outstanding issues and laying some of the groundwork for the major 2.0 work.
 
 ## [2017-11-02] 1.1.4 'That took a lot longer than I expected' release
  - Update software components - opencv to 3.3, gstreamer to 1.12.3, puppet to 5.2, tensorflow to 1.4, collectd to 5.7, grafana to 4.5.2
