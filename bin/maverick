@@ -62,7 +62,7 @@ usage () {
     echo " enable       [service]                  Enable Maverick service at boot"
     echo " disable      [service]                  Disable Maverick service at boot"
     echo " log          [service]                  Display realtime log for Maverick service"
-    echo " unshallow    [directory]                Unshallow a git repo"
+    echo " unshallow                               Unshallow a git repo"
     echo
     echo "Configure Options"
     echo " --env=[bootstrap|dev|flight|minimal]    Environment to configure: bootstrap, dev, flight or minimal"
