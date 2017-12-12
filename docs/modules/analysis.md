@@ -11,18 +11,32 @@ It uses best-of-breed components:
  - *Mavlogd*: Custom process to translate dataflash logs into InfluxDB time database
 
 *Grafana* is automatically setup as a web dashboard service, and 'Index' dashboards are automatically created and updated whenever data is added to the system.  Access the dashboards by going to Maverick homepage in a web browser and following the link to 'Grafana - System and Flight Analysis', eg:  
-http://maverick-raspberry.local/analysis/grafana/
+http://maverick-raspberry.local/analysis/grafana/  
+The default login is username: `mav`, password: `wingman`.  It is possible to set the password as a localconf parameter `"maverick_analysis::grafana::mav_password"` but difficult at this time as the hashing is not easily available.  A new hash can be obtained by changing the password through the web gui and looking in the user table in the sqlite database.
 
-The actual Grafana service runs it's own webservice on a custom port (default port is 6790), and the main Maverick webserver provides a reverse proxy to access it on the standard port 80 (default proxy URL is /analysis/grafana).  The default grafana web service port can be altered if required by setting a localconf parameter (it is recommended not to change this parameter):  
-`"maverick_analysis::grafana::webport": "1234"`
+The actual Grafana service runs it's own webservice on a custom port (default port is 6790), and the main Maverick webserver provides a reverse proxy to access it on the standard ports http:80 and https:443 (default proxy URL is /analysis/grafana).  The default grafana web service port can be altered if required by setting a localconf parameter (it is recommended not to change this parameter):  
+`"maverick_analysis::grafana::webport": "1234"`  
+Note that by default there are no firewall rules created for this port as the service is exposed through the standard website on port 80/443.  These firewall rules can be opened by setting localconf parameter:  
+`"maverick_analysis::grafana::grafana_firewall_rules": true`  
 
 ### Flight Data
-Flight data in the form of dataflash or telemetry logs can be easily imported by simply dropping them into an 'inbox' folder: `~/data/analysis/inbox`.  Whenever a file is copied or moved into this location, the Maverick 'mavlogd' service will automatically import it and then archive it into `~/data/analysis/archive/inbox`.  The mavlogd service also watches other directories for data, by default:  
+Flight data in the form of dataflash or telemetry logs can be easily imported by simply dropping them into an 'inbox' folder: `~/data/analysis/inbox`.  Whenever a file is copied or moved into this location, the Maverick 'mavlogd' service will automatically import it and then add entries into the Grafana index dashboards.  A similar folder `~/data/analysis/anonybox` exists and is watched the same as the inbox - the difference is that anonybox will attempt to anonymise any GPS data while importing the data.  The mavlogd service also watches other directories for data, by default:  
  - ~/data/analysis/inbox
- - ~/data/mavlink/fc
- - ~/data/mavlink/sitl
+ - ~/data/analysis/anonybox
+ - ~/data/mavlink/fc/logs
+ - ~/data/mavlink/sitl/logs
 
-The last two entries are the locations that 'mavlink-router' mavlink proxy logs flight data to automatically.  The mavlogd service waits until the data files are closed (which usually happens when the flight controller is disarmed or shut down), and then automatically processes and archives them.  So a few seconds after each flight is completed, the data is automatically processed and ready to view through the dashboards, although on slower platforms like Raspberry it can take a few minutes for each log to process.
+The last two entries are the locations that 'mavlink-router' mavlink proxy logs flight data to automatically.  The mavlogd service waits until the data files are closed (which usually happens when the flight controller is disarmed or shut down), and then automatically processes.  So a few seconds after each flight is completed, the data is automatically processed and ready to view through the dashboards, although on slower platforms like Raspberry it can take a few minutes for each log to process.  
+In order to get Ardupilot to log data over mavlink (and thus for Maverick to automatically download and process it), a parameter must be set and the autopilot rebooted to take effect:
+`LOG_BACKEND_TYPE=3`  
+Also check that the telemetry port settings are compatible with your companion computer.  Recommended settings are:  
+```
+SERIAL1_BAUD=921
+SERIAL1_PROTOCOL=1
+BRD_SER1_RTSCTS=0
+```
+#### Web log uploader
+Starting from Maverick 1.1.5, a simple logfile uploader was added to the web interface.  Linked from the front page, the page */analysis/uploader* provides a quick and simple way to upload flight logs, with the option to anonymise GPS data as it imports into the timeseries database, and add a Description to each logfile entry.
 
 ### System Metrics
 System metrics are automatically configured, collected, translated and stored into the InfluxDB database using *collectd*.  It is a very lightweight system and should not interfere with the running of Maverick services.  However, on very resource-limited platforms (eg. Raspberry Pi Zero), collectd can be disabled by setting a localconf parameter:  

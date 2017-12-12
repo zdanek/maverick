@@ -13,15 +13,15 @@ Vision is an important (and fun) part of UAVs.  Maverick provides preinstalled a
 - [**Orb_Slam2**](/modules/vision#orb_slam2): Fast library for performing monocular and stereo SLAM
 - [**RTAB-Map**](/modules/vision#rtab-map): RGB-D Graph-Based SLAM
 
-One key advantage of Maverick is that wherever possible it provides the same versions of software across all platforms.  This is very useful for porting code and functionality across platforms, as the underlying components often vary widely in their APIs/features.  As of Maverick 1.1.4, the component versions are:  
-- Gstreamer: **1.12.3**
-- OpenCV: **3.3**
+One key advantage of Maverick is that wherever possible it provides the same versions of software across all platforms.  This is very useful for porting code and functionality across platforms, as the underlying components often vary widely in their APIs/features.  As of Maverick 1.1.5, the component versions are:  
+- Gstreamer: **1.12.4**
+- OpenCV: **3.3.1**
 - ROS: **Kinetic**  
 
-There are a few exceptions, eg. Raspberry gstreamer has extensive modifications made to support the Raspberry VPU that handles the hardware video encoding so this platform is stuck with a very old version of gstreamer (1.4), although the recent Raspbian Stretch version has updated this to 1.10.
+There are a few exceptions, eg. Raspberry gstreamer has extensive modifications made to support the Raspberry VPU that handles the hardware video encoding so this platform is stuck with an  old version of gstreamer (1.10.4), and very recent versions of Ubuntu on Intel platforms use ROS Lunar.
 
 ### Gstreamer
-Apart from the Raspberry platform as mentioned above, Gstreamer is a set version compiled from source on all platforms.  It includes certain optimizations and extra modules where appropriate for the platform - relevant hardware encoding modules for Odroid and Joule platforms.
+Apart from the Raspberry platform as mentioned above, Gstreamer is a set version compiled from source on all platforms.  It includes certain optimizations and extra modules where appropriate for the platform - relevant hardware encoding modules for Odroid and Intel platforms.
 
 The standard source-compiled gstreamer is installed into ~/software/gstreamer, and the necessary supporting environment is automatically set.  All other standard source-compiled Maverick software components such as OpenCV, ROS, Aruco, visiond, vision_landing etc all use this version of gstreamer.
 
@@ -44,7 +44,7 @@ OpenCV is installed into ~/software/opencv and the necessary supporting environm
 OpenCV in the 'maverick-raspberry' profile or the 'Raspberry Pi (All models)' OS image is optimised for the Raspberry Pi 2/3 and the ARM NEON instruction set, and will not work on the single-core variants of the Raspberry (Pi Zero, Model A, original Model B).  OpenCV in the 'maverick-raspberrylite' or the 'Raspberry Pi Lite (Pi Zero/W)' OS image is less optimised but will run on any Raspberry variant.
 
 ### Visiond
-Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in ~/data/config/vision/maverick-visiond.conf that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
+Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in *~/config/vision/maverick-visiond.conf* that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
 `maverick restart visiond`  
 This service is started by default.  
 Visiond tries to autodetect the connected camera, the stream type (raw,mjpeg,h264), then optimal encoding type and the payloading, and also tries to autodetect and utilise any connected hardware encoding capabilities.  The config file can be used to override any part of the autodetected pipeline construction.  
@@ -59,7 +59,7 @@ height = 720
 framerate = 30
 ```
 #### Connecting to visiond
-Currently, visiond (as with most gstreamer based video services) sends out video to a specified target, rather than multiple clients being able to connect to it.  This will change in the future, but for now you must specify the target IP address in the 'output_dest' parameter of the /srv/maverick/data/config/vision/maverick-visiond.conf config file, and the target IP address is the IP address of the computer that the video will be displayed on.  Typically on Linux or MacOS this can be found with `ifconfig` or `ip a` commands, or `ipconfig` under windows.  The IP address should then be set in the visiond config along with the desired port and output type:  
+Currently, visiond (as with most gstreamer based video services) sends out video to a specified target, rather than multiple clients being able to connect to it.  This will change in the future, but for now you must specify the target IP address in the 'output_dest' parameter of the /srv/maverick/config/vision/maverick-visiond.conf config file, and the target IP address is the IP address of the computer that the video will be displayed on.  Typically on Linux or MacOS this can be found with `ifconfig` or `ip a` commands, or `ipconfig` under windows.  The IP address should then be set in the visiond config along with the desired port and output type:  
 ```
 output = udp
 output_dest = 192.168.1.243
@@ -84,7 +84,7 @@ The first place to look is in the visiond logs, found in ~/var/log/vision/maveri
 ### Vision_seek
 Vision_seek is a service similar to visiond, for the Seek Thermal Compact and CompactPro thermal image cameras.  It captures the thermal data, transcodes and processes the data into a format suitable for visualisation, and then streams or saves the images or video to the network or file.  A nice simple setup is to plug the Seek camera directly into the USB port of a Raspberry Pi Zero (W).  
 <img src="media/seekthermal-pic.jpg" width="100%">
-There is a config file in ~/data/config/vision/vision_seek.conf that allows a simple way to alter settings - to activate the changes,  restart the service:  
+There is a config file in ~/config/vision/vision_seek.conf that allows a simple way to alter settings - to activate the changes,  restart the service:  
 `maverick restart vision_seek`  
 This service is not started by default.  To start it:  
 `maverick start vision_seek`  
@@ -100,14 +100,14 @@ Image of Intel Joule before and after some hard work (running Maverick vision_la
 
 #### Flat Field Correction (FFC)  
 To create an FFC image that can be applied to vision_seek to improve image quality, first run the camera for a while to warm it up, then cover the lens with something thermally consistent (eg. a book, or DVD cover) and run:  
-`~/software/libseek-thermal/bin/seek_create_flat_field -c seek ~/data/config/vision/seek_ffc.png`  
-Then set the *FFC* setting in *~/data/config/vision/vision_seek.conf* to point to this file:  
-`FFC=/srv/maverick/data/config/vision/seek_ffc.png`  
+`~/software/libseek-thermal/bin/seek_create_flat_field -c seek ~/config/vision/seek_ffc.png`  
+Then set the *FFC* setting in *~/config/vision/vision_seek.conf* to point to this file:  
+`FFC=/srv/maverick/config/vision/seek_ffc.png`  
 If FFC is set in the config file, vision_seek will automatically apply it.  
 More information about this FFC procedure can be found in the github project of the main supporting library behind vision_seek:  
 https://github.com/maartenvds/libseek-thermal
 #### Output
-Vision_seek has three methods of output, all controlled by setting the *OUTPUT* parameter in the *~/data/config/vision/vision_seek.conf* config file.
+Vision_seek has three methods of output, all controlled by setting the *OUTPUT* parameter in the *~/config/vision/vision_seek.conf* config file.
  - _window_: This outputs to a local window.  This will not work when running vision_seek as a service, as the service is disconnected from any terminal and does not know where to create the window.  Instead, run `vision_seek.sh` from the command line, either logged into the desktop or through ssh with X-forwarding enabled (*ssh -X* or *ssh -Y*).
  - _filename.avi_: This outputs a raw video file to specified filename/path.  Raw video files can be very large but because of the relatively low resolution of the Seek devices this should not be a problem.
  - _appsrc gstreamer pipeline_: It is also possible to specify a gstreamer pipeline - _Note: the pipeline must start with 'appsrc ! '_.  This can be very useful for compressing the video, transcoding or converting the video format, or streaming over the network.  Several examples are given in the config file.
@@ -119,7 +119,7 @@ vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense co
 
 It is a work in progress (as is the support for vision based landing in ArduPilot) - the main project page is https://github.com/fnoop/vision_landing.
 
-Like visiond, it has a dynamic config in ~/data/config/vision/vision_landing.conf, and to activate any config changes, restart the service:  
+Like visiond, it has a dynamic config in ~/config/vision/vision_landing.conf, and to activate any config changes, restart the service:  
 `maverick restart vision_landing`  
 This service is not started by default, as it contends for camera usage with visiond.  To use it, first turn off visiond (`maverick stop visiond`).  It can be started a boot by setting a localconf parameter:  
 `"maverick_vision::vision_landing::active": true`  
@@ -140,7 +140,7 @@ Maverick provides collision-avoidance-library as a pre-installed and pre-configu
 The coav-tool is controlled by maverick service *coav*, so to start and stop the service:  
 `maverick start coav`  
 `maverick stop coav`  
-To configure it, alter configuration file *~/data/config/vision/coav.conf* and restart to activate the changes: `maverick restart coav`.  
+To configure it, alter configuration file *~/config/vision/coav.conf* and restart to activate the changes: `maverick restart coav`.  
 
 ### Orb_slam2
 Orb_slam2 is installed and configured as part of the OS images, but is not installed by default when building Maverick from scratch, as it takes a lot of resource and is really an experimental/academic project - of limited real-world use.  To enable it, set localconf parameter:  

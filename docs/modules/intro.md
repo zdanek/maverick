@@ -20,4 +20,4 @@ Depending on the environment and what other classes are included by configuratio
   - [Vision](/modules/vision)
   - [Web](/modules/web)
 
-!> Note:  Throughout the module documentation, it refers to 'localconf parameters'.  This generally refers to the file ~/data/config/maverick/localconf.json, although there are other ways to set localconf such as local-nodes and sample-nodes.  More information can be [obtained here](/about#local-configuration).
+!> Note:  Throughout the module documentation, it refers to 'localconf parameters'.  This generally refers to the file ~/config/maverick/localconf.json, although there are other ways to set localconf such as local-nodes and sample-nodes.  More information can be [obtained here](/about#local-configuration).

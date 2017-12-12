@@ -8,7 +8,7 @@ Maverick sets two proxy environments out of the box - one for FC (Flight Control
 
   | Env | Port | Status
 --- | :---: | :---: | ---
-TCP | FC | 5770 | Used by MAVROS
+TCP | FC | 5770 | TCP allows multiple connections to a port
 TCP | FC | 5771 | <font color='gray'>available</font>
 TCP | FC | 5772 | <font color='gray'>available</font>
 UDP | FC | 14570 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>
@@ -18,7 +18,7 @@ UDPin | FC | 14573 | <font color='gray'>available</font>
 UDPin | FC | 14574 | <font color='gray'>available</font>
 UDPin | FC | 14575 | <font color='gray'>available</font>
 --- | --- | --- | ---
-TCP | SITL | 5780 | Used by MAVROS
+TCP | SITL | 5780 | TCP allows multiple connections to a port
 TCP | SITL | 5781 | <font color='gray'>available</font>
 TCP | SITL | 5782 | <font color='gray'>available</font>
 UDP | SITL | 14580 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>
@@ -85,12 +85,17 @@ The github source repo for the source install can be changed by setting localcon
 
 ## Mavlink Applications
 ### MAVCesium
-MAVCesium is a great realtime HUD/map display system for autopilots.  It is currently based on MAVProxy and has a few limitations in the implementation so is marked 'experimental', but is still a very interesting Proof of Concept.  It is installed by default but because it is based on MAVProxy will only be available when MAVproxy is the selected mavlink proxy (which is not by default).  MAVCeisum runs it's own webserver (tornado) but like other Maverick components is reverse proxied to the standard web port under the URL /mavlink/mavcesium/websocket/.  
+MAVCesium is a great realtime HUD/map display system for autopilots, based on Cesium.  It used to be based on MAVProxy but has recently been separated so it can run on its own.  It is installed by default, and points to the flight controller mavlink proxy.  MAVCesium runs it's own webserver (tornado) but like other Maverick components is reverse proxied to the standard web port under the URL /mavlink/mavcesium/websocket/.  
 MAVCesium install can be disabled by setting localconf parameter:  
 `"maverick_mavlink::mavcesium_install": false`  
-The default web port is 6790, but this can be altered by setting localconf parameter:  
+The default web port is 6791, but this can be altered by setting localconf parameter:  
 `"maverick_mavlink::mavcesium_port": 1234`  
 MAVCesium uses Bing to retrieve map tiles from.  To specify your own Bing api key, set localconf parameter:  
 `"maverick_mavlink::mavcesium_apikey": "xxx"`  
 The github source can be changed by setting localconf parameter:  
 `"maverick_mavlink::mavcesium_source": "http://github.com/myfork/MAVCesium.git"`  
+The default mavlink port that MAVCesium connects to can be set by localconf parameter:  
+`"maverick_mavlink::mavcesium_mavlink_port": "5770"`
+This changes the port specified in *~/config/mavlink/mavcesium.conf*.  Note that this config file is only written if it doesn't already exist - once it exists it is not updated by Maverick.  This is deliberate, so users can change the port dynamically without having to run Maverick.  
+MAVCesium is *not* set to run by default.  To start it, and enable it at boot time, set localconf parameter:  
+`"maverick_mavlink::mavcesium_active": true`

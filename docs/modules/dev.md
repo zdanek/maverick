@@ -47,7 +47,7 @@ The SITL service can be turned off by setting the localconf parameter:
 `"maverick_dev::sitl:sitl_active": false`  
 SITL can be turned off in it's entirety during bootstrap by setting localconf parameter (but not recommended during normal usage):  
 `"maverick_dev::sitl": false`  
-There are no actual parameters or config to set within Maverick for SITL - all of this is set automatically by the ArduPilot vehicle type in the section above.  There is however a dynamic config file for SITL, in ~/data/config/mavlink/sitl.conf.  SITL is started using 'sim_vehicle.py', which is the [recommended way of starting SITL](http://ardupilot.org/dev/docs/setting-up-sitl-on-linux.html).  The *~/data/config/mavlink/sitl.conf* provides a simple way of setting the sim_vehicle.py startup parameters.  If this config is updated, the changes are activated by restarting SITL:  
+There are no actual parameters or config to set within Maverick for SITL - all of this is set automatically by the ArduPilot vehicle type in the section above.  There is however a dynamic config file for SITL, in ~/config/mavlink/sitl.conf.  SITL is started using 'sim_vehicle.py', which is the [recommended way of starting SITL](http://ardupilot.org/dev/docs/setting-up-sitl-on-linux.html).  The *~/config/mavlink/sitl.conf* provides a simple way of setting the sim_vehicle.py startup parameters.  If this config is updated, the changes are activated by restarting SITL:  
 `maverick restart sitl`
 
 ### SITL Mavlink Proxy
@@ -76,7 +76,7 @@ The SITL ROS master can be turned off by setting localconf parameter:
 `"maverick_dev::sitl::rosmaster_active": false`  
 Note this is different from disabling the ROS build altogether (the $ros_instance referred to above) - the $rosmaster_active parameter just stops and deactivates the ROS Master so it does not start at boot.  
 Note that when using *roslaunch* to start ROS nodes that should communicate with this ROS master, the environment must be altered to find the SITL ROS master on the non-standard port.  A config file is automatically generated and updated that contains the necessary environment variables and can be used as a convenience:  
-`source ~/data/config/ros/rosmaster-sitl.conf`  (or `. ~/data/config/ros/rosmaster-sitl.conf`)  
+`source ~/config/ros/rosmaster-sitl.conf`  (or `. ~/config/ros/rosmaster-sitl.conf`)  
 
 ### MAVROS
 MAVROS is provided to interface ROS with SITL through Mavlink.  By default it uses the first tcp endpoint (5780).  This can be set with localconf parameter:  

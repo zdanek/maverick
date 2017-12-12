@@ -16,6 +16,9 @@ Maverick uses the Desktop Joule image found here: https://developer.ubuntu.com/c
 The customised kernel includes support for the Gumstix/Intel CSI cameras for the Joule (https://www.gumstix.com/blog/tiny-4k-hd-cameras-intel-joule/).  This support is rather clunky in Ubuntu and floods the v4l2 subsystem with dozens of confusing and unnecessary video devices.  So the support for these cameras is disabled by default by blacklisting the relevent kernel modules.  This can be disabled (thus re-enabling the cameras) by setting localconf parameter:  
 `"maverick_hardware::joule::ipu4_blacklist": false`  
 
+### Aaeon Up
+The Up boards (http://www.up-board.org/) are Intel CPU based small, inexpensive SBCs (Single Board Computers).  As they are Intel based, they share a lot of the hardware components and therefore OS support as the Intel Joule platform.  All of the current Up boards are supported from a single OS image.
+
 ### Intel RealSense
 Intel RealSense is a very interesting technology from Intel primarily involving depth cameras and sensors that provides intruiging possibilities for robotics, drones and VR.  The cameras are available relatively cheaply and offload a lot of work from the host computer onto the custom camera hardware.  Support is already included in Maverick, including setting up the camera hardware, drivers and supporting software.  If a RealSense camera is attached, Maverick will automatically detect it and install and configure the necessary drivers and software.  The provided Maverick OS image for Joule includes RealSense support.  To force install of RealSense support, set localconf parameter:  
 `"maverick_hardware::camera_realsense_install": true`

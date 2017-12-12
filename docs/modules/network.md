@@ -120,7 +120,7 @@ There are additional parameters to the 'managed' mode interface.  Here is an int
 ```
 For ethernet interfaces, just change 'type' to 'ethernet' and ommit ssid/psk.
 
-A config file is placed in */srv/maverick/data/config/network* for each managed interface that controls the setting of the data rate and frequency for the interface at boot.  The file is named by interface, so for the *wman0* interface, the file would be */srv/maverick/data/config/network/interface-wman0.conf*.
+A config file is placed in */srv/maverick/config/network* for each managed interface that controls the setting of the data rate and frequency for the interface at boot.  The file is named by interface, so for the *wman0* interface, the file would be */srv/maverick/config/network/interface-wman0.conf*.
 
 ### AP Interface
 The example above to setup an AP interface is quite simple.  There are additional parameters that can be set however:
@@ -158,7 +158,7 @@ Support for monitor/injection wifi mode and wifibroadcast software is installed 
     "macaddress": "00:af:af:ff:ff:xx"
 }
 ```
-This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/data/config/network/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.  
+This will add a config file named by the interface, so for the above definition the config would be */srv/maverick/config/network/monitor-interface-wcast0.conf*.  This config controls the frequency and rate of the monitor interface.  It also installs a service to control the interface at boot, and after configuring a new monitor interface a reboot is necessary to activate the config.  
 
 After a reboot, `maverick netinfo` should show a configured *Monitor* interface:  
 ```
@@ -182,7 +182,7 @@ Wireless RSS:       None
 ```
 Now this interface is ready to be used for monitor/injection purposes, most commonly in this environment for wifibroadcast.  wifibroadcast software is installed into */srv/maverick/software/wifibroadcast* and can be setup and run as normal.  Alternatively, it can also easily be configured through [Maverick visiond](/modules/vision#visiond)
 
-## Network components
+## Network components
 ### Avahi
 Avahi is automatically installed and configured, in order to provide 'zeroconf' multicast DNS.  Under normal networking circumstances, the Maverick system should respond to any requests for <hostname>.local, eg. maverick-raspberry.local.  Avahi 'publish-addresses' is disabled by default but can be enabled by setting localconf parameter:  
 `"maverick_network::avahi::explicit_naming"`
@@ -194,3 +194,10 @@ By default, Maverick leaves ipv6 configuration as is.  However, ipv6 can sometim
 ### Predictable Naming
 'Predictable Naming' is a feature of newer Linux kernels that enumerates network devices into names that are 'predictable' based on the type of hardware and bus/address location.  These names can be useful in certain circumstances, but for embedded systems where the most common network interfaces are USB wireless interfaces, these names are useless and awkward.  So this feature is disabled by default, and traditional simple naming like 'eth0' and 'wlan0' is used instead.  To restore predictable naming, set localconf parameter:  
 `"maverick_network::predictable": true`  
+
+### ZeroTier
+ZeroTier is a really interesting networking system that is very useful to connect devices to the internet and makes them contactable where they don't have a public IP, such as a lot of 4G/mobile/cell modems in widespread use in UAVs.  ZeroTier is a commercial company that runs a proprietary network, however the protocol and source code is open.  It can add considerable latency to the connection and CPU usage on the source, but does make a system reachable where it is not normally reachable.  
+Maverick installs ZeroTier software by default but does not start it.  To start the client and enable at boot, set localconf parameter:  
+`"maverick_network::zerotier::active": true`  
+By default, Zerotier is set to join the public 'Earth' network.  To join a different network, set localconf parameter:  
+`"maverick_network::zerotier::network_id": "ztnetworkhash"`  

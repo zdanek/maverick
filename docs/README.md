@@ -140,8 +140,10 @@ There are three optional parameters for configure:
 
 ### Status/Info
 Maverick gives some useful info/status:
-- Status of running Maverick services:  
-`maverick status`
+- Status of all Maverick services:  
+`maverick status`  
+Status of a single Maverick service:  
+`maverick status <service>`  
 - System info:  
 `maverick info`
 - Network info:  
@@ -167,6 +169,10 @@ maverick status
 ```
 - Restart service is a convenience shortcut to stop and start a service:  
 `maverick restart visiond`
+- Stop all enabled services:  
+`maverick stop all`  
+- Start all enabled services:  
+`maverick start all`  
 
 ### Log
 While a lot of service output is logged to /srv/maverick/var/log, as the services are controlled through systemd some output is (only) available from the system journal.  Maverick provides a shortcut to view the latest live output for a service journal (equivalent to `sudo journalctl -u maverick-<service>`):  
@@ -179,6 +185,11 @@ As well as starting and stopping services, Maverick can also set the services st
 `maverick enable visiond`  
  or
 `maverick disable visiond`  
+
+### Unshallow Git Repos
+Most software components in Maverick that are installed directly from Git repos are installed as 'shallow' clone.  Shallow clones have a very limited history and a single specified branch, are much more efficient than full clones.  However, other branches cannot be changed to and any changes cannot be committed.  To allow full usage of a repo it must be un-shallowed.  Maverick provides a simple command to unshallow a clone:  
+`maverick unshallow`  
+This can only be run from the directory that will be un-shallowed.  
 
 ---
 
@@ -198,13 +209,13 @@ Within /srv/maverick (the home directory for mav user), there are four main area
 These areas are designed so that the ~/code and ~/data directories will contain files that you will want to backup.  The ~/software directory and all the components within are installed as part of maverick install, do not need to be backed up and should not be altered.  The ~/var directory does not need to be backed up and contains temporary files created by various software components or running processes.
 
 ### Maverick Config
-There are numerous methods of changing maverick config, and the config itself is extensive and complex.  The underlying mechanisms and various config options are explored further in [About](/about#about-maverick) and [Modules](/modules/intro).  However, to get started a single config file can be used: **~/data/config/maverick/localconf.json**.
+There are numerous methods of changing maverick config, and the config itself is extensive and complex.  The underlying mechanisms and various config options are explored further in [About](/about#about-maverick) and [Modules](/modules/intro).  However, to get started a single config file can be used: **~/config/maverick/localconf.json**.
 
 #### localconf.json
 This file can be used to set any parameter within the Maverick manifests.  It contains some basic sample config entries to get you started, but any class::parameter setting can be used here.  This file is 'frozen' from git and can never be committed back, so is a good place to put settings like passwords and wifi access details.  A helper utility 'wifi-setup' will help you setup wifi settings within localconf.json more easily.  If any settings are changed, added or removed in localconf.json, `maverick configure` needs to be run to activate these changes.
 
 #### Maverick code branch
-The `maverick self-update` command updates the Maverick software itself from github, which is the primary mechanism for updating Maverick.  By default it updates from the 'stable' branch, which contains the latest code that has had at least some testing and review.  The config file *~/data/config/maverick-branch.conf* contains the github branch that Maverick will use to update.  Simply change this from 'stable' to 'master' and run `maverick self-update` to switch to the latest development code.  Unless you want to test changes to Maverick under development, it is strongly recommended to leave this as stable.
+The `maverick self-update` command updates the Maverick software itself from github, which is the primary mechanism for updating Maverick.  By default it updates from the 'stable' branch, which contains the latest code that has had at least some testing and review.  The config file *~/config/maverick-branch.conf* contains the github branch that Maverick will use to update.  Simply change this from 'stable' to 'master' and run `maverick self-update` to switch to the latest development code.  Unless you want to test changes to Maverick under development, it is strongly recommended to leave this as stable.
 
 ### App Config
 
@@ -214,6 +225,6 @@ The `maverick self-update` command updates the Maverick software itself from git
 Why have Controlled Config?  In some circumstances, the config for an app or component can be quite complex and difficult to setup, or once set is unlikely to be changed much.  Maverick tries to automate as much as possible for the end user and automating configuration is part of this process.  In addition, controlling config through localconf parameters allows the possibility of complete automation for building or cloning companion computers, all with consistent and repeatable settings.
 
 #### Uncontrolled config
-Uncontrolled config are traditional config files for apps or components that are not controlled by Maverick and can be altered by traditional editing.  In most cases default config files are provided by Maverick into ~/data/config, from which point on they are left for the end user to change as they wish.  This makes more sense where the user will want to quickly and easily alter settings, for example camera resolution.
+Uncontrolled config are traditional config files for apps or components that are not controlled by Maverick and can be altered by traditional editing.  In most cases default config files are provided by Maverick into ~/config, from which point on they are left for the end user to change as they wish.  This makes more sense where the user will want to quickly and easily alter settings, for example camera resolution.
 
 All config settings are described in details in the [Modules](/modules/intro) documentation.
