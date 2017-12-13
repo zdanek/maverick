@@ -6,6 +6,7 @@ Vision is an important (and fun) part of UAVs.  Maverick provides preinstalled a
 - **Aruco**: Fiducial Tag library, for recognising tags/markers in video
 - [**Visiond**](/modules/vision#visiond): A dynamic service that detects camera and encoding hardware, and automatically generates a gstreamer pipeline to transmit the video over the network - eg. wifi.  Very useful for FPV, it will in the future be useful for transmitting CV and other video
 - [**Vision_seek**](/modules/vision#vision_seek): Similar to visiond, a daemon for streaming/saving video stream from a Seek Thermal imaging device.
+- [**Flir One**](/modules/vision#flirone): Support for Flir One thermal imaging camera
 - [**Vision_landing**](/modules/vision#vision_landing): Software that uses tags/markers (Aruco) as landing patterns, and controls Precision Landing in ArduCopter
 - [**Camera-streaming-daemon**](/modules/vision#camera-streaming-daemon): RTSP Video server with service discovery publishing.
 - [**Wifibroadcast**](/modules/vision#wifibroadcast): Innovative software that uses monitor/inject mode of compatible wifi adapters to provide connection-less wifi video with graceful degradation, similar to traditional analogue FPV.
@@ -48,7 +49,7 @@ Visiond is a Maverick-specific (python-based) daemon that automates the process 
 `maverick restart visiond`  
 This service is started by default.  
 Visiond tries to autodetect the connected camera, the stream type (raw,mjpeg,h264), then optimal encoding type and the payloading, and also tries to autodetect and utilise any connected hardware encoding capabilities.  The config file can be used to override any part of the autodetected pipeline construction.  
-For example, the Raspberry Pi with the Pi camera has a very specific set of requirements to stream video - it requires Raw stream from the first v4l2 video source with pixel format I420, attached directly to the hardware OMX h264 encoder, then rtph264pay payloading before sending to the udp output sink.  Visiond makes the best effort to detect all this, but the config file can be used to specifically set these requirements, eg:
+For example, the Raspberry Pi with the Pi camera has a very specific set of requirements to stream video - it requires Raw stream from the first v4l2 video source with pixel format I420, attached directly to the hardware OMX h264 encoder, then rtph264pay payloading before sending to the udp output sink.  Visiond usually automatically detects all of this, but the config file can be used to specifically set these requirements, eg:
 ```
 camera_device = /dev/video0
 format = yuv
@@ -58,8 +59,39 @@ width = 1280
 height = 720
 framerate = 30
 ```
-#### Connecting to visiond
-Currently, visiond (as with most gstreamer based video services) sends out video to a specified target, rather than multiple clients being able to connect to it.  This will change in the future, but for now you must specify the target IP address in the 'output_dest' parameter of the /srv/maverick/config/vision/maverick-visiond.conf config file, and the target IP address is the IP address of the computer that the video will be displayed on.  Typically on Linux or MacOS this can be found with `ifconfig` or `ip a` commands, or `ipconfig` under windows.  The IP address should then be set in the visiond config along with the desired port and output type:  
+
+#### Connecting to visiond - RTSP mode
+As of Maverick 1.1.5, visiond can be used as a central video server (RTSP Server), and multiple clients can connect over UDP/RTSP.  This is a much more convenient method of connection as the client IP addresses do not need to be known and set in the configuration file.  RTSP is now enabled and set by default in new config files.  To set older config files (~/config/vision/maverick-visiond.conf) to serve RTSP, set:  
+```
+output = rtsp
+output_dest = 0.0.0.0
+output_port = 5600
+```
+
+##### Maverick WebVision - RTSP
+Maverick 1.1.5 introduces 'WebVision', a browser-based client for viewing video from visiond.  This uses a Chrome plugin from VXG that proxies the RTSP source into the browser, and requires a recent version of Chrome.  Future versions of WebVision will support mjpeg and webrtc streams.  From the Maverick front index web page, choose the 'WebVision - Live Video' link.  
+WebVision runs a small Tornado web service and is reverse proxied from port 6793 to the main web port (80/443 by default).  To turn the tornado service off, set a localconf parameter:  
+`"maverick_vision::webvision_active": false`  
+WebVision reads the visiond config file (~/config/vision/maverick-visiond.conf) to determine the RTSP port, and takes the FQDN of the server from the server itself.  If this detected fqdn is not available from the browser clients, it can be manually set in the config file by setting the paramter:  
+`webvision_hostname = maverick-raspberry.local`  
+
+<img src="media/webvision-stove.jpg" width="100%">
+WebVision streaming in realtime visual representation of thermal data from Flir One imager.
+
+##### Gstreamer client - RTSP
+A gstreamer client pipeline like this should work to act as an RTSP client:  
+```
+gst-launch-1.0 rtspsrc location=rtsp://maverick-raspberrylite.local:5600/video latency=0 drop-on-latency=true caps="application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! application/x-rtp,encoding-name=H264,payload=96 ! rtph264depay ! queue ! decodebin ! autovideosink sync=false
+```
+##### GCS client - RTSP
+Mission Planner and QGroundControl support video streaming through RTSP.  Their pipelines are set in the software (although at least with Mission Planner the pipeline can be specified) and most default to udp port 5600 with h264 encoding and rtp264 payload.
+In GQroundControl->Application Settings->General->Video, set the Video Source to 'RTSP Video Stream' and the RTSP URL to something like   'rtsp://192.168.1.xxx:5600/video'  
+Note that in both QGC and Mission Planner, you have to specify the IP address of the maverick device, not the zeroconf hostname.  For some reason even on zeroconf enabled platforms this does not seem to work.
+##### VLC - RTSP
+VLC supports RTSP although extra effort is required to obtain decent latency as a 2 second buffer is added by default.  A simple client connection can be made by going to File->Network Connection, and in the URL box enter 'rtsp://maverick-raspberrylite.local:5600/video' and hit Open.  To reduce the latency in VLC, <a href='https://github.com/01org/camera-streaming-daemon/issues/45#issuecomment-303958941' target=_ghbug>refer here</a>.
+
+#### Connecting to visiond - Outbound mode
+Visiond (as with most gstreamer based video services) can send out video to a specified target, rather than multiple clients being able to connect to it - this is the traditional model for digital FPV video.  In this model you must specify the target IP address in the 'output_dest' parameter of the ~/config/vision/maverick-visiond.conf config file, and the target IP address is the IP address of the computer that the video will be displayed on.  Typically on Linux or MacOS this can be found with `ifconfig` or `ip a` commands, or `ipconfig` under windows.  The IP address should then be set in the visiond config along with the desired port and output type:  
 ```
 output = udp
 output_dest = 192.168.1.243
@@ -78,12 +110,13 @@ output_dest = 192.168.1.243
 output_port = 5600
 ```
 In QGroundControl General Application settings, in the Video section, the Video Source should be set to 'UDP Video Stream', UDP Port to 5600 and the video should show up in the HUD video window.
+
 ##### Troubleshooting
 The first place to look is in the visiond logs, found in ~/var/log/vision/maverick_visiond.log and ~/var/log/vision/maverick_visiond.daemon.log.  These can show any errors, bugs or hardware problems but also shows the pipeline that has been constructed through specified or autodetected configuration.
 
 ### Vision_seek
 Vision_seek is a service similar to visiond, for the Seek Thermal Compact and CompactPro thermal image cameras.  It captures the thermal data, transcodes and processes the data into a format suitable for visualisation, and then streams or saves the images or video to the network or file.  A nice simple setup is to plug the Seek camera directly into the USB port of a Raspberry Pi Zero (W).  
-<img src="media/seekthermal-pic.jpg" width="100%">
+<img src="media/pizero-seekthermal.jpg" width="100%">
 There is a config file in ~/config/vision/vision_seek.conf that allows a simple way to alter settings - to activate the changes,  restart the service:  
 `maverick restart vision_seek`  
 This service is not started by default.  To start it:  
@@ -111,6 +144,33 @@ Vision_seek has three methods of output, all controlled by setting the *OUTPUT* 
  - _window_: This outputs to a local window.  This will not work when running vision_seek as a service, as the service is disconnected from any terminal and does not know where to create the window.  Instead, run `vision_seek.sh` from the command line, either logged into the desktop or through ssh with X-forwarding enabled (*ssh -X* or *ssh -Y*).
  - _filename.avi_: This outputs a raw video file to specified filename/path.  Raw video files can be very large but because of the relatively low resolution of the Seek devices this should not be a problem.
  - _appsrc gstreamer pipeline_: It is also possible to specify a gstreamer pipeline - _Note: the pipeline must start with 'appsrc ! '_.  This can be very useful for compressing the video, transcoding or converting the video format, or streaming over the network.  Several examples are given in the config file.
+
+### Flir One
+Maverick supports the Flir One thermal imaging camera.  
+<img src="media/pizero-flirone.jpg" width="100%">  
+Unlike the Seek Thermal camera which is supported entirely in userspace through OpenCV, Flir One support is achieved through v4l2 loopback devices.  Although a bit harder to set up, this method is easier and more flexible to use as the imager is accessed through standard v4l2 interfaces.  
+Flir One support is disabled by default.  To enable support, set localconf parameter:  
+`"maverick_hardware::flirone_install": true`  
+To start the flir one service at boot, set localconf parameter:  
+`"maverick_hardware::flirone::active": true`  
+Once the flirone service is started, three v4l2 devices should be present and working:
+ - /dev/video1: Greyscale stream of thermal data
+ - /dev/video2: RGB camera
+ - /dev/video3: Colourised stream of thermal data  
+
+To stream the colourised thermal stream, visiond must have specific config set:  
+```
+camera_device = /dev/video3
+format = yuv
+pixelformat =
+width = 160
+height = 128
+framerate = 8
+output = rtsp
+output_dest = 0.0.0.0
+output_port = 5600
+```
+<img src="media/flirone-radiator.jpg" width="100%">  
 
 ### Vision_landing
 vision_landing combines the Aruco, Gstreamer, OpenCV and optionally RealSense components to create a system that analyses video in realtime for landing markers (Aruco/April fiducial markers, or tags) and uses these markers to estimate the position and distance of the landing marker compared to the UAV and passes this data to the flight controller to achieve Precision Landing.  The flight controller applies corrections according to the attitude of the UAV to work out what needs to be done to land directly on the marker.  A well tuned setup can achieve reliable accuracy to within a couple of centimeters.  
