@@ -31,12 +31,11 @@
 
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	"maverick_fc::mavlink_active": false, // Whether the mavlink proxy is active or not
+	// "maverick_fc::mavlink_active": false, // Whether the mavlink proxy is active or not
 	// "maverick_fc::mavlink_input": "/dev/ttyS1", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	// "maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
 	// "maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
 	// "maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
-	"maverick_hardware::raspberry::gpumem": 128,
 	// Dev SITL mavlink setup - note this requires dev environment to be active
 	// "maverick_dev::sitl::mavlink_proxy": "mavlink-router", // Default mavlink proxy type to use
 	// "maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
@@ -45,11 +44,7 @@
 	// "maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 	
 	// "maverick_dev::ardupilot::armeabi_packages": false, // Set to true to install packages that allow px4 firmware to be compiled and uploaded to fc
-	"maverick_network::zerotier::active": true,
-	
-	"maverick_hardware::flirone_install": true,
-	
-	"maverick_vision::visiond::active": false, // Whether visiond is active or not
+	// "maverick_vision::visiond::active": false, // Whether visiond is active or not
 	// "maverick_vision::vision_landing::active": false, // Whether vision_landing is active or not
 	
 	// Add classes here
