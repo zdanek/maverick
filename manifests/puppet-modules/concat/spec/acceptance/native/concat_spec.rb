@@ -18,7 +18,7 @@ else
   groupname = 'root'
 end
 
-describe 'basic concat test' do
+describe 'basic concat_file test' do
   basedir = default.tmpdir('concat')
 
   shared_examples 'successfully_applied' do |pp|
@@ -38,19 +38,19 @@ describe 'basic concat test' do
       apply_manifest(pp)
     end
     pp = <<-EOS
-      concat { '#{basedir}/file':
+      concat_file { '#{basedir}/file':
         owner => '#{username}',
         group => '#{groupname}',
         mode  => '0644',
       }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/file',
         content => '1',
         order   => '01',
       }
 
-      concat::fragment { '2':
+      concat_fragment { '2':
         target  => '#{basedir}/file',
         content => '2',
         order   => '02',
@@ -85,12 +85,12 @@ describe 'basic concat test' do
       apply_manifest(pp)
     end
     pp = "
-      concat { 'file':
+      concat_file { 'file':
         ensure => present,
         path   => '#{basedir}/file',
         mode   => '0644',
       }
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => 'file',
         content => '1',
         order   => '01',
@@ -117,12 +117,12 @@ describe 'basic concat test' do
       apply_manifest(pp)
     end
     pp = "
-      concat { 'file':
+      concat_file { 'file':
         ensure => absent,
         path   => '#{basedir}/file',
         mode   => '0644',
       }
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => 'file',
         content => '1',
         order   => '01',
@@ -150,12 +150,12 @@ describe 'basic concat test' do
       apply_manifest(pp)
     end
     pp = "
-      concat { '#{filename}':
+      concat_file { '#{filename}':
         ensure => present,
         path   => '#{basedir}/#{filename}',
         mode   => '0644',
       }
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{filename}',
         content => '1',
         order   => '01',
@@ -182,13 +182,13 @@ describe 'basic concat test' do
       apply_manifest(pp)
     end
     pp = "
-      concat { 'file':
+      concat_file { 'file':
         ensure => present,
         path   => '#{basedir}/file',
         mode   => '0644',
         noop   => true,
       }
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => 'file',
         content => '1',
         order   => '01',

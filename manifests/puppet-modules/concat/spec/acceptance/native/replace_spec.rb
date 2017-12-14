@@ -1,8 +1,8 @@
 require 'spec_helper_acceptance'
 
-describe 'replacement of' do
+describe 'concat_file' do
   basedir = default.tmpdir('concat')
-  context 'file should not succeed' do
+  context 'file with replace => false' do
     before(:all) do
       pp = <<-EOS
           file { '#{basedir}':
@@ -15,16 +15,16 @@ describe 'replacement of' do
       apply_manifest(pp)
     end
     pp = <<-EOS
-        concat { '#{basedir}/file':
+        concat_file { '#{basedir}/file':
           replace => false,
         }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -49,7 +49,7 @@ describe 'replacement of' do
     end
   end
 
-  context 'file should succeed' do
+  context 'file with replace => true' do
     before(:all) do
       pp = <<-EOS
           file { '#{basedir}':
@@ -62,16 +62,16 @@ describe 'replacement of' do
       apply_manifest(pp)
     end
     pp = <<-EOS
-        concat { '#{basedir}/file':
+        concat_file { '#{basedir}/file':
           replace => true,
         }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -114,16 +114,16 @@ describe 'replacement of' do
     end
 
     pp = <<-EOS
-        concat { '#{basedir}/file':
+        concat_file { '#{basedir}/file':
           replace => false,
         }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -164,16 +164,16 @@ describe 'replacement of' do
     end
 
     pp = <<-EOS
-        concat { '#{basedir}/file':
+        concat_file { '#{basedir}/file':
           replace => true,
         }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -193,7 +193,7 @@ describe 'replacement of' do
         is_expected.to match '2'
       end
     end
-  end
+  end # symlink
 
   context 'directory should not succeed' do
     before(:all) do
@@ -208,14 +208,14 @@ describe 'replacement of' do
       apply_manifest(pp)
     end
     pp = <<-EOS
-        concat { '#{basedir}/file': }
+        concat_file { '#{basedir}/file': }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -242,15 +242,15 @@ describe 'replacement of' do
   # replacement.
   context 'directory should succeed', pending: 'not yet implemented' do
     pp = <<-EOS
-        concat { '#{basedir}/file':
+        concat_file { '#{basedir}/file':
         }
 
-        concat::fragment { '1':
+        concat_fragment { '1':
           target  => '#{basedir}/file',
           content => '1',
         }
 
-        concat::fragment { '2':
+        concat_fragment { '2':
           target  => '#{basedir}/file',
           content => '2',
         }
@@ -265,5 +265,5 @@ describe 'replacement of' do
       it { is_expected.to be_file }
       its(:content) { is_expected.to match '1' }
     end
-  end
+  end # directory
 end

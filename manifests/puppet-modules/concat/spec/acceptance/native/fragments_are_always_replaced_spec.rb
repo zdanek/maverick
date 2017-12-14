@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'concat::fragment replace' do
+describe 'concat_fragment replace' do
   basedir = default.tmpdir('concat')
 
   context 'should create fragment files' do
@@ -14,17 +14,17 @@ describe 'concat::fragment replace' do
     end
 
     pp1 = <<-EOS
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace unset run 1',
       }
     EOS
     pp2 = <<-EOS
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace unset run 2',
       }
@@ -60,18 +60,18 @@ describe 'concat::fragment replace' do
 
     pp1 = <<-EOS
       File { replace=>true }
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace true set run 1',
       }
     EOS
     pp2 = <<-EOS
       File { replace=>true }
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace true set run 2',
       }
@@ -107,18 +107,18 @@ describe 'concat::fragment replace' do
 
     pp1 = <<-EOS
       File { replace=>false }
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace false set run 1',
       }
     EOS
     pp2 = <<-EOS
       File { replace=>false }
-      concat { '#{basedir}/foo': }
+      concat_file { '#{basedir}/foo': }
 
-      concat::fragment { '1':
+      concat_fragment { '1':
         target  => '#{basedir}/foo',
         content => 'caller has replace false set run 2',
       }
