@@ -7,7 +7,7 @@
 # It must be run as root, otherwise it will fail dismally.
 
 # First stop maverick services
-systemctl stop maverick-*
+systemctl stop maverick-* >/dev/null 2>&1
 
 # Clean packages and cache
 echo "Cleaning dpkg and apt"
@@ -35,10 +35,10 @@ userdel tmp >/dev/null 2>&1
 
 # Clean up ublinux home directory
 if [ -d /home/ubilinux ]; then
-    rm -rf /home/ubilinux maverick
+    rm -rf /home/ubilinux/maverick
     rm -f /home/ubilinux/.bash_history /home/ubilinux/.Xauthority /home/ubilinux/.xsession-errors
     rm -rf /home/ubilinux/.cache /home/ubilinux/.config /home/ubilinux/.gnupg /home/ubilinux/.local
-]
+fi
 
 # Remove initial bootstrap maverick from common locations
 rm -rf /root/maverick
@@ -72,7 +72,7 @@ rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
 
 # Remove maverick config
-find /srv/maverick/config -type f -delete
+find /srv/maverick/config -path /srv/maverick/config/maverick -prune -o -type f -exec rm -f {} \;
 rm -f /srv/maverick/config/maverick/localconf.json
 rm -f /srv/maverick/config/maverick/local-nodes/*.json
 
@@ -83,6 +83,7 @@ if [ -e /boot/efi ]; then
 fi
 
 rm -f /etc/network/interfaces
+rm -f /etc/wpa_supplicant/wpa_supplicant.conf
 
 # Clean up maverick data
 find /srv/maverick/data/logs -type f -delete
@@ -97,7 +98,7 @@ su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
 echo
 echo "Running maverick to regenerate any removed files or config"
 maverick configure
-systemctl stop maverick-*
+systemctl stop maverick-* >/dev/null 2>&1
 
 # Final clean up of var data
 find /srv/maverick/data/logs -type f -delete
@@ -117,5 +118,3 @@ sudo sync
 #sudo systemctl poweroff
 echo "Please check the system is prepared as expected for imaging, then shutdown."
 echo
-echo "MAVERICK_BRANCH=stable" >/srv/maverick/software/maverick/conf/maverick-branch.conf
-echo "Warning: Maverick Branch has been reset to stable"
