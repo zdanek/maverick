@@ -46,6 +46,12 @@ class maverick_web::cloud9 (
         environment => ["HOME=/srv/maverick"],
         require     => Class["maverick_web::nodejs"],
     } ->
+    exec { "reset-cloud9":
+        command     => "/usr/bin/git reset --hard",
+        cwd         => "/srv/maverick/software/cloud9",
+        creates     => "/srv/maverick/software/cloud9/node_modules/treehugger",
+        user        => "mav",
+    } ->
     file { "/srv/maverick/.c9":
         ensure      => directory,
         owner       => "mav",
