@@ -142,22 +142,12 @@ clamav::freshclam_options:
 
 ##Limitations
 
-This module has been built on and tested against Puppet 3.2.4 and higher.  
+This module has been built on and tested against Puppet 3.8 and higher.  
 While I am sure other versions work, I have not tested them.
 
 This module supports modern RedHat and Debian based systems.  
-This module has been tested on Oracle Linux 6.x and Ubuntu 12.04.
-
 No plans to support other versions (unless you add it :)..
 
 ##Development
 
 Pull Requests welcome
-
-##Contributors
-
-Chris Edester (edestecd)  
-Patrick Schönfeld (aptituz)  
-(bergkatten)  
-Daniel Rosenbloom (flyinbutrs)  
-Brian Schonecker (bschonec)

@@ -2,13 +2,10 @@
 # Installs clamav package
 #
 
-class clamav::install (
-  $clamav_package = $::clamav::clamav_package,
-){
+class clamav::install {
 
   package { 'clamav':
-    ensure => installed,
-    name   => $clamav_package,
+    ensure => $clamav::clamav_version,
+    name   => $clamav::clamav_package,
   }
-
 }

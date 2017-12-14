@@ -2,48 +2,61 @@
 # Set up freshclam config and service.
 #
 
-class clamav::freshclam (
-  $freshclam_package        = $clamav::freshclam_package,
-  $freshclam_config         = $clamav::freshclam_config,
-  $freshclam_service        = $clamav::freshclam_service,
-  $freshclam_service_ensure = $clamav::freshclam_service_ensure,
-  $freshclam_service_enable = $clamav::freshclam_service_enable,
-  $freshclam_options        = $clamav::_freshclam_options,
-) {
+class clamav::freshclam {
+
+  $config_options = $clamav::_freshclam_options
+  $freshclam_delay = $clamav::freshclam_delay
 
   # NOTE: In RedHat this is part of the base clamav_package
   # NOTE: In Debian this is a dependency of the base clamav_package
-  if $freshclam_package {
+  if $clamav::freshclam_package {
     package { 'freshclam':
-      ensure => installed,
-      name   => $freshclam_package,
+      ensure => $clamav::freshclam_version,
+      name   => $clamav::freshclam_package,
       before => File['freshclam.conf'],
     }
   }
 
   file { 'freshclam.conf':
     ensure  => file,
-    path    => $freshclam_config,
+    path    => $clamav::freshclam_config,
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
-    content => template("${module_name}/freshclam.conf.${::osfamily}.erb"),
+    content => template("${module_name}/clamav.conf.erb"),
+  }
+
+  if $clamav::freshclam_sysconfig {
+    file { 'freshclam_sysconfig':
+      ensure  => file,
+      path    => $clamav::freshclam_sysconfig,
+      mode    => '0644',
+      owner   => 'root',
+      group   => 'root',
+      content => template("${module_name}/sysconfig/freshclam.erb"),
+    }
+
+    $service_subscribe = [
+      File['freshclam.conf'],
+      File['freshclam_sysconfig'],
+    ]
+  } else {
+    $service_subscribe = File['freshclam.conf']
   }
 
   # NOTE: RedHat comes with /etc/cron.daily/freshclam instead of a service
-  if $freshclam_service {
+  if $clamav::freshclam_service {
     service { 'freshclam':
-      ensure     => $freshclam_service_ensure,
-      name       => $freshclam_service,
-      enable     => $freshclam_service_enable,
+      ensure     => $clamav::freshclam_service_ensure,
+      name       => $clamav::freshclam_service,
+      enable     => $clamav::freshclam_service_enable,
       hasrestart => true,
       hasstatus  => true,
-      subscribe  => File['freshclam.conf'],
+      subscribe  => $service_subscribe,
     }
   }
 
-  if $freshclam_package and $freshclam_service {
+  if $clamav::freshclam_package and $clamav::freshclam_service {
     Package['freshclam'] ~> Service['freshclam']
   }
-
 }
