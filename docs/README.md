@@ -11,7 +11,7 @@ There are two ways to get started with Maverick:
 Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
 - [Raspberry Pi (All Models)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberry.img.xz)
-- [Raspberry Pi Lite (Pi Zero/W)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberrylite.img.xz)
+- [Raspberry Pi Lite (Pi Zero/W)](http://www.maverick.one/maverick/downloads/maverick-1.1.5-raspberrylite.img.xz)
 - [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
 - [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
 - [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
