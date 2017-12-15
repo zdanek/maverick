@@ -41,7 +41,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 read -e -p "Specify partition to shrink: " srcpart
-srcpath=${srcdisk}p${srcpart}
+srcpath=${srcdisk}${srcpart}
 echo "Partition data (${srcpath}):" $(lsblk -nOr /dev/${srcpath})
 
 grep $srcpath /proc/mounts >/dev/null
