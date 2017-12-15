@@ -10,12 +10,13 @@ There are two ways to get started with Maverick:
 
 Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All models)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberry.img.xz)
+- [Raspberry Pi (All Models)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberry.img.xz)
 - [Raspberry Pi Lite (Pi Zero/W)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberrylite.img.xz)
-- [Ubuntu VM (ova)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-ubuntuvm.ova)
-- [Intel Joule (ISO)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
-- [Intel Joule (tar)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.tar)
-- [Odroid XU3/XU4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
+- [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
+- [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
+- [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
+- [Intel Joule - 1.1.1)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
+- [Odroid XU3/XU4 - 1.0.4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
 These images require a 16Gb or larger SD card, except for the Raspberry Lite image which requires 8Gb SD card.
 
