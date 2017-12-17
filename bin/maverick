@@ -507,7 +507,7 @@ if [ "$STOP" == "true" ]; then
         services=$(getservices)
         for service in $services; do
             if [ $(systemctl is-enabled $service) == "enabled" ]; then
-                echo -n "Starting service $service: "
+                echo -n "Stopping service $service: "
                 stopservice "$service"
             else
                 echo "$service is disabled, not starting"
