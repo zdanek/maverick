@@ -88,7 +88,7 @@ class maverick_vision::gstreamer (
         } elsif $architecture == "amd64" {
             $libpython_path = "/usr/lib/x86_64-linux-gnu"
         } else {
-            $libpython_path == "${::architecture}-linux-gnu"
+            $libpython_path = "${::architecture}-linux-gnu"
         }
 
         # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
