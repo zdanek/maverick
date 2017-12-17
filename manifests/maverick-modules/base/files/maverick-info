@@ -41,6 +41,10 @@ from up import Up
 up = Up()
 up.runall()
 
+from tegra import Tegra
+tegra = Tegra()
+tegra.runall()
+
 from camera import Camera
 camera = Camera()
 camera.runall()
@@ -74,6 +78,15 @@ elif odroid.data['present'] == 'yes':
     print twocols('Memory', '\t\t\t' +odroid.data['memory'])
     print twocols('Swap', '\t\t\t' +odroid.data['swap'])
     print twocols('SD Card Size', '\t\t' +str(odroid.data['sdsize']) +' Mb')
+
+
+elif tegra.data['present'] == 'yes':
+    print twocols('Vendor', '\t\t\tNvidia')
+    print twocols('Model', '\t\t\t' +tegra.data['model'])
+    print twocols('CPU Cores', '\t\t' +str(tegra.data['cpucores']))
+    print twocols('Memory', '\t\t\t' +tegra.data['memory'])
+    print twocols('Swap', '\t\t\t' +tegra.data['swap'])
+    print twocols('SD Card Size', '\t\t' +str(tegra.data['sdsize']) +' Mb')
 
 elif beagle.data['present'] == 'yes':
     print twocols('Vendor', '\t\t\tBeaglebone')
