@@ -65,6 +65,8 @@ start() {
     *armv7l*) arch=armv6l ;;
     *x86_64*) arch=x64 ;;
     *i*86*) arch=x86 ;;
+    *arm64*) arch=arm64 ;;
+    *aarch*) arch=arm64 ;;
     *)
       echo "Unsupported Architecture: $os $arch" 1>&2
       exit 1

@@ -35,6 +35,8 @@ case "$uname" in
     *i*86*) arch=x86 ;;
     *armv6l*) arch=arm-pi ;;
     *armv7l*) arch=arm-pi ;;
+    *arm64*) arch=arm64 ;;
+    *aarch*) arch=arm64 ;;
 esac
 
 red=$'\e[01;31m'
