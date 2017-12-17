@@ -42,12 +42,14 @@ class maverick_security::firewall (
     }
 
     define firerule ($ports, $ips, $proto = "tcp") {
-		firewall { "100 allow ${name} access from ${ips}":
-			dport       => $ports,
-			proto       => $proto,
-			action      => accept,
-			source      => $ips,
-		}
+    	any2array($ports).each |$port| {
+			firewall { "100 allow ${name} access for ${proto}:${port} from ${ips}":
+				dport       => $port,
+				proto       => $proto,
+				action      => accept,
+				source      => $ips,
+			}
+    	}
 	}
     
 }
