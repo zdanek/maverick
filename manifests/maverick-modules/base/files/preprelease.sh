@@ -84,6 +84,7 @@ fi
 
 rm -f /etc/network/interfaces
 rm -f /etc/wpa_supplicant/wpa_supplicant.conf
+rm -f /etc/udev/rules.d/10-network-customnames.rules
 
 # Clean up maverick data
 find /srv/maverick/data/logs -type f -delete
