@@ -32,7 +32,15 @@ class maverick_analysis::grafana (
         $_dashboard = "system-dashboard-generic.json"
     }
 
-    if $raspberry_present == "yes" {
+    if $raspberry_present == "yes" or $tegra_present == "yes" {
+        # If we're on tegra, need to do a bit of hackery
+        if $tegra_present == "yes" {
+            exec { "tegra-armhf":
+                command     => "/usr/bin/dpkg --add-architecture armhf && apt update",
+                unless      => "/usr/bin/dpkg --print-foreign-architectures |grep armhf",
+                notify      => Exec["apt_update"],
+            }
+        }
         $manage_package_repo = false
         # Don't use autodetect above, because we want OS images to be compatible with Zero
         $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_raspberry_version}_armhf.deb"
@@ -71,7 +79,7 @@ class maverick_analysis::grafana (
       service_name          => "maverick-grafana",
       version               => $grafana_version,
     } ->
-    service_wrapper { "grafana-server":
+    service_wrapper { "grafana":
         ensure      => "stopped",
         enable      => false,
     } ->

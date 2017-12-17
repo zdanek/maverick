@@ -35,7 +35,7 @@ class maverick_ros (
                     "xenial": {
                         $autodist = "kinetic"
                         case $architecture {
-                            "amd64", "i386", "armhf", "arm64": { $_installtype = "native" }
+                            "amd64", "i386", "armhf", "arm64", "aarch64": { $_installtype = "native" }
                             default: { $_installtype = "source" }
                         }
                     }

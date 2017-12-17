@@ -29,14 +29,20 @@ class maverick_analysis (
     }
     
     if $grafana == true {
+        if defined(Class["mavlogd"]) {
+            $_before = Class["mavlogd"]
+        } else {
+            $_before = undef
+        }
         class { "maverick_analysis::grafana":
             require     => Class["maverick_analysis::collect"],
+            before      => $_before,
         }
     }
     
     if $mavlogd == true {
         class { "maverick_analysis::mavlogd":
-            require     => [ Class["maverick_analysis::collect"], Class["maverick_analysis::influx"], Class["maverick_analysis::grafana"] ],
+            require     => [ Class["maverick_analysis::collect"], Class["maverick_analysis::influx"], ],
         }
     }
     
