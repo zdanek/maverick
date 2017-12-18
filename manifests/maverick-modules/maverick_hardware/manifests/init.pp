@@ -5,6 +5,7 @@ class maverick_hardware (
     $odroid_install = false,
     $joule_install = false,
     $up_install = false,
+    $tegra_install = false,
     $camera_ocam_install = false,
     $camera_picam_install = false,
     $camera_realsense_install = false,
@@ -37,6 +38,10 @@ class maverick_hardware (
 		class { "maverick_hardware::up": }
 	}
 	
+	if $tegra_present == "yes" or $tegra_install == true {
+		class { "maverick_hardware::tegra": }
+	}
+
 	# Setup ocam software
 	if $camera_ocam == "yes" or $camera_ocam_install == true {
 		class { "maverick_hardware::peripheral::ocam": }
