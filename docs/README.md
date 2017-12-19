@@ -15,7 +15,8 @@ OS images are available for the following platforms.  Volunteers to produce imag
 - [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
 - [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
 - [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
-- [Nvidia Tegra Tx1 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
+- [Nvidia Tegra TX1 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
+- [Nvidia Tegra TX2 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
 - [Intel Joule - 1.1.1)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
 - [Odroid XU3/XU4 - 1.0.4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
@@ -42,11 +43,14 @@ ROS | x |
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
+#### Aaeon Up Boards
+A single image is provided for the Up board, Up^2 (Up Squared) and Up Core boards.  These boards run the OS from onboard eMMC, so the image is a 'flash' system - on boot it runs a utility (Clonezilla) that flashes the image to the boards eMMC storage.  The boards do not always boot from removeable storage by default, so it may be necessary to reconfigure the BIOS to boot from USB/SD card.
+
 #### Ubuntu VM Instructions
 Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.  A Parallels VM image is also included for running under Parallels on a Mac.
 
-#### Nvidia Tegra TX1 Instructions
-An experimental image is provided for the Nvidia Tegra TX1 (although it should also support the TX2 with a small modification).  This downloaded image includes everything needed to flash the TX1 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
+#### Nvidia Tegra TX1/TX2 Instructions
+Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images include everything needed to flash the TX1 or TX2 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
  - Unpack image: 
    ```
    tar xf maverick-1.1.5-tegratx1.tgz
@@ -62,6 +66,8 @@ An experimental image is provided for the Nvidia Tegra TX1 (although it should a
    ```
    sudo ./flash.sh jetson-tx1 mmcblk0p1
    ```
+
+If you have a TX2, replace references in the above instructions from 'tx1' to 'tx2'.
 
 !> Warning: This is a very early release of Maverick for the Tegra and has limited support for the hardware.  It does include OpenCV 3.3.1 with CUDA extensions, but does not include Tensorflow GPU yet.
 
