@@ -62,6 +62,7 @@ An experimental image is provided for the Nvidia Tegra TX1 (although it should a
    ```
    sudo ./flash.sh jetson-tx1 mmcblk0p1
    ```
+
 !> Warning: This is a very early release of Maverick for the Tegra and has limited support for the hardware.  It does include OpenCV 3.3.1 with CUDA extensions, but does not include Tensorflow GPU yet.
 
 #### Odroid Instructions
