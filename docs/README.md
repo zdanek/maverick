@@ -8,13 +8,14 @@ There are two ways to get started with Maverick:
 
 ### OS Images
 
-Initial images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
+OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All Models)](http://www.maverick.one/maverick/downloads/maverick-1.1.4-raspberry.img.xz)
-- [Raspberry Pi Lite (Pi Zero/W)](http://www.maverick.one/maverick/downloads/maverick-1.1.5-raspberrylite.img.xz)
+- [Raspberry Pi (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-raspberry.img.xz)
+- [Raspberry Pi Lite (Pi Zero/W) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-raspberrylite.img.xz)
 - [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
 - [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
 - [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
+- [Nvidia Tegra Tx1 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
 - [Intel Joule - 1.1.1)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
 - [Odroid XU3/XU4 - 1.0.4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
@@ -41,10 +42,29 @@ ROS | x |
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
-### Ubuntu VM Instructions
-Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.
+#### Ubuntu VM Instructions
+Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.  A Parallels VM image is also included for running under Parallels on a Mac.
 
-### Odroid Instructions
+#### Nvidia Tegra TX1 Instructions
+An experimental image is provided for the Nvidia Tegra TX1 (although it should also support the TX2 with a small modification).  This downloaded image includes everything needed to flash the TX1 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
+ - Unpack image: 
+   ```
+   tar xf maverick-1.1.5-tegratx1.tgz
+   cd Maverick_for_Tegra
+   ```
+ - Put the module into recovery mode:
+   - Unplug power.  Replug power.
+   - Plug USB2 cable from Ubuntu host into carrier/development board.
+   - Press power button.  Power lights should come on.
+   - Press and hold recovery button, press and release reset button, wait 2 seconds and release recovery button.
+   - `lsusb` should now show Nvidia device.
+ - Flash Maverick image to module eMMC:
+   ```
+   sudo ./flash.sh jetson-tx1 mmcblk0p1
+   ```
+!> Warning: This is a very early release of Maverick for the Tegra and has limited support for the hardware.  It does include OpenCV 3.3.1 with CUDA extensions, but does not include Tensorflow GPU yet.
+
+#### Odroid Instructions
 The Odroid XU4 installation is similar to the Raspberry.  Running from eMMC is not supported (at least not tested).
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
 - Boot from the SD card
