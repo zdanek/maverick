@@ -186,5 +186,21 @@ class maverick_analysis::collect (
             exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/rapl-power.sh"],
         }
     }
+    
+    # Configure an exec plugin to run power script on Nvidia Tegra platform, to retrieve power consumption
+    if $tegra_present == "yes" {
+        ensure_packages(["bc"])
+        # Hack mav user into i2c group so it can access the INA i2c device
+        exec { "mav-i2c-group":
+            command     => "/usr/sbin/usermod -a -G i2c mav",
+            unless      => "/bin/grep i2c /etc/group |grep mav",
+        } ->
+        collectd::plugin::exec::cmd { 'tegra-power':
+            user        => "mav",
+            group       => "i2c",
+            exec        => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/tegra-power.sh"],
+            notify      => Service["maverick-collectd"],
+        }
+    }
 
 }
