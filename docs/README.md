@@ -53,9 +53,11 @@ Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive. 
 Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images include everything needed to flash the TX1 or TX2 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
  - Unpack image: 
    ```
-   tar xf maverick-1.1.5-tegratx1.tgz
+   sudo tar xf maverick-1.1.5-tegratx1.tgz
    cd Maverick_for_Tegra
    ```
+   
+   !> Important: Ensure the maverick tar image is unpacked as root (through sudo or otherwise), otherwise permissions for the tegra root filesystem are not preserved and it will not work.
  - Put the module into recovery mode:
    - Unplug power.  Replug power.
    - Plug USB2 cable from Ubuntu host into carrier/development board.
