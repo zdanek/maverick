@@ -10,7 +10,7 @@ class maverick_intelligence::tensorflow (
     # Work out if source is install is necessary
     if ! empty($install_type) {
         $_install_type = $install_type
-    } if ($architecture == "amd64" or $architecture == "i386" or $raspberry_present == "yes") {
+    } if ($architecture == "amd64" or $architecture == "i386" or $raspberry_present == "yes" or $tegra_present == "yes") {
         $_install_type = "pip"
     } else {
         $_install_type = "source"
@@ -34,6 +34,18 @@ class maverick_intelligence::tensorflow (
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
                 url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.4.0rc1-cp27-none-any.whl",
+                ensure      => present,
+            }
+        } elsif ($::tegra_present == "yes" and $::tegra_model == "TX1") {
+            install_python_module { "tensorflow-pip":
+                pkgname     => "tensorflow",
+                url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX1/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
+                ensure      => present,
+            }
+        } elsif ($::tegra_present == "yes" and $::tegra_model == "TX2") {
+            install_python_module { "tensorflow-pip":
+                pkgname     => "tensorflow",
+                url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX2/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
                 ensure      => present,
             }
         } else {
