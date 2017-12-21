@@ -71,8 +71,6 @@ Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images
 
 If you have a TX2, replace references in the above instructions from 'tx1' to 'tx2'.
 
-!> Warning: This is a very early release of Maverick for the Tegra and has limited support for the hardware.  It does include OpenCV 3.3.1 with CUDA extensions, but does not include Tensorflow GPU yet.
-
 #### Odroid Instructions
 The Odroid XU4 installation is similar to the Raspberry.  Running from eMMC is not supported (at least not tested).
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
