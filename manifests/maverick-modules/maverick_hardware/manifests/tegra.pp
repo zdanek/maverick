@@ -1,6 +1,12 @@
 class maverick_hardware::tegra (
 ) {
 
+    ### Disable nvidia report_ip_to_host
+    exec { "tegra-disable-report":
+        command         => "/bin/mv -f /etc/rc.local /etc/rc.local.report",
+        onlyif          => "/bin/grep report_ip_to_host /etc/rc.local",
+    }
+    
     if ! ("install_flag_jtx1inst" in $installflags) {
         # Pull aruco from git mirror
         oncevcsrepo { "git-aruco":
