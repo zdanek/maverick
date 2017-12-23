@@ -68,6 +68,7 @@ usage () {
     echo " --env=[bootstrap|dev|flight|minimal]    Environment to configure: bootstrap, dev, flight or minimal"
     echo " --dryrun                                Configure dry run - just show what would be done"
     echo " --module=<module>                       Only make changes to module <module>"
+    echo " --debug                                 Debug output"
     echo
     echo "${bgr}${bold}WARNING: Maverick may make major changes to the system is it running on.${reset}"
     echo "${bgr}${bold}Please do not run without understanding what it does.${reset}"
@@ -89,6 +90,10 @@ do
             ;;
         --dryrun)
             DRYRUN="--noop"
+            shift
+            ;;
+        --debug)
+            DEBUG="--debug"
             shift
             ;;
         --module=*)
@@ -826,6 +831,12 @@ if [ ! -z $MODULE ]; then
 else
     TAGS=""
 fi
+if [ ! -z $DEBUG ]; then
+    echo "${bgbl}${bold}${red}Debug specified, very verbose logging enabled${reset}"
+    DEBUG="--debug"
+else
+    DEBUG=""
+fi
 echo
 
 # If /boot/maverick and /srv/maverick exists, move the contents and use them
@@ -846,17 +857,17 @@ else
 fi
 if [ -e ./conf/puppet.conf -a ! -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     if [ $EUID -eq 0 ]; then
-        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
+        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE $DEBUG manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --config=./conf/puppet-bootstrap.conf --environmentpath=$_path/conf/environments --environment $ENV --modulepath=$_path/manifests/maverick-modules:$_path/manifests/puppet-modules $TAGS $RUNMODE $DEBUG manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
 elif [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
     cwd=$(pwd)
     cd /srv/maverick/software/maverick
     if [ $EUID -eq 0 ]; then
-        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
+        STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE $DEBUG manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     elif [ $USER == "mav" ]; then
-        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
+        sudo -H STDLIB_LOG_DEPRECATIONS=false puppet apply --color=true --confdir=conf --environment $ENV $TAGS $RUNMODE $DEBUG manifests/init.pp 2>&1 |tee $LOGPATH/maverick.$ENV.$DT.log
     fi
     cd $cwd
 else
