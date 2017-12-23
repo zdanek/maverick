@@ -23,6 +23,10 @@
 	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
 	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
+	"maverick_intelligence::redtail": true,
+	"maverick_mavlink::mavcesium_active": true,
+	"maverick_mavlink::mavcesium_mavlink_port": "5780",
+	
 	// "maverick_mavlink::cuav_install": true,
 	
 	// "maverick_vision::visiond::active": true,
