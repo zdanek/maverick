@@ -25,6 +25,13 @@ class maverick_desktop (
             onlyif      => "/bin/grep 'GRUB_CMDLINE_LINUX_DEFAULT=\"\"' /etc/default/grub",
         }
         
+        # Tegra graphical/multi-user systemd target is broken
+        if $tegra_present == "yes" {
+            service { "lightdm":
+                ensures     => running,
+                enable      => true,
+            }
+        }
     } elsif $enable == false {
         exec { "stop-desktop-target":
             unless      => "/bin/systemctl status graphical.target |grep inactive",
@@ -34,6 +41,14 @@ class maverick_desktop (
         exec { "disable-desktop-target":
             unless      => "/bin/systemctl get-default |grep multi-user;",
             command     => "/bin/systemctl set-default multi-user.target",
+        }
+
+        # Tegra graphical/multi-user systemd target is broken
+        if $tegra_present == "yes" {
+            service { "lightdm":
+                ensure      => stopped,
+                enable      => false,
+            }
         }
 
         # Disable grub splash, which ensures tty1 is displayed by default on console at boot, otherwise we get a blank screen
