@@ -15,8 +15,8 @@ OS images are available for the following platforms.  Volunteers to produce imag
 - [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
 - [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
 - [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
-- [Nvidia Tegra TX1 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
-- [Nvidia Tegra TX2 - 1.1.5 Experimental](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
+- [Nvidia Tegra TX1 - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
+- [Nvidia Tegra TX2 - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
 - [Intel Joule - 1.1.1)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
 - [Odroid XU3/XU4 - 1.0.4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
 
@@ -66,7 +66,7 @@ Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images
    - `lsusb` should now show Nvidia device.
  - Flash Maverick image to module eMMC:
    ```
-   sudo ./flash.sh jetson-tx1 mmcblk0p1
+   sudo ./flash.sh -r jetson-tx1 mmcblk0p1
    ```
 
 If you have a TX2, replace references in the above instructions from 'tx1' to 'tx2'.
