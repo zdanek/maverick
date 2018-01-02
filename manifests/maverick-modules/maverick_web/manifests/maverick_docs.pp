@@ -4,7 +4,7 @@ class maverick_web::maverick_docs (
     /*
     # Install maverick docs
     oncevcsrepo { "github-maverick_docs":
-        gitsource   => "https://github.com/fnoop/maverick",
+        gitsource   => "https://github.com/goodrobots/maverick",
         dest        => "/srv/maverick/software/maverick-docs",
         revision    => "gh-pages",
     }

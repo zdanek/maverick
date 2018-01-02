@@ -183,7 +183,7 @@ All these json config files have the same syntax and scope, so a good workflow i
 A library of pre-set configs are included in /srv/maverick/software/conf/sample-nodes.  For example, there is a raspberrylcd.json that configures a Raspberry Pi with an LCD screen.  So the installation steps from scratch into flight mode would be:
 ```
 sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git
+sudo apt-get install -y git && git clone https://github.com/goodrobots/maverick.git
 hostname raspberrylcd
 cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot

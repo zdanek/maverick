@@ -21,7 +21,7 @@ class maverick_network::dnsmasq (
         content     => template("maverick_network/dnsmasq-README"),
         before      => File["/lib/systemd/system/dnsmasq.service"],
     }
-    # Add a fix in the for systemd dependency, see https://github.com/fnoop/maverick/issues/521
+    # Add a fix in the for systemd dependency, see https://github.com/goodrobots/maverick/issues/521
     file { "/lib/systemd/system/dnsmasq.service":
         ensure      => present,
         source      => "puppet:///modules/maverick_network/dnsmasq.service.fixed",

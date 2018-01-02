@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # mavlink_sitlparams
-# https://github.com/fnoop/maverick/manifests/maverick-modules/maverick_mavlink/files
+# https://github.com/goodrobots/maverick/manifests/maverick-modules/maverick_mavlink/files
 #
 # This is an experimental script to connect to arducopter using dronekit, to control parameter setup.
 

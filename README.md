@@ -5,7 +5,7 @@ UAV Companion Computer System
 
 Maverick is a system for creating, maintaining and controlling UAV Companion Computers.  The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol, specifically ArduPilot (PX4 support planned).
 
-Please see <a href='https://fnoop.github.io/maverick/' target="maverick_docs">the documentation</a> for more info and how to install it.
+Please see <a href='https://goodrobots.github.io/maverick/' target="maverick_docs">the documentation</a> for more info and how to install it.
 
 What does Maverick do?
 
@@ -24,5 +24,5 @@ What does Maverick do?
  - ArduPllot development environment, compiled ArduPilot for SITL, everything necessary setup to compile and upload to Flight Controllers direct from companion computer
  - Vision functions - automatic detection and configuration of attached digital cameras for FPV (visiond), Precision Landing with vision_landing, experimental collision avoidance with RealSense depth cameras, Thermal Image streaming with Seek Thermal devices (support for Flir One coming soon), experimental SLAM components ORB_SLAM2 and RTABMAP
 
-<img src="https://fnoop.github.io/maverick/media/maverick-snapshots.jpg" width="100%">
-<img src="https://fnoop.github.io/maverick/media/maverick-architecture.svg" width="100%">
+<img src="https://goodrobots.github.io/maverick/media/maverick-snapshots.jpg" width="100%">
+<img src="https://goodrobots.github.io/maverick/media/maverick-architecture.svg" width="100%">

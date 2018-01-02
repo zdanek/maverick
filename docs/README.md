@@ -137,7 +137,7 @@ See more things you can do with the `maverick` command:
 First update the OS, download Maverick and do a bootstrap run and reboot:
 ```bash
 $ sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get install -y git && git clone https://github.com/fnoop/maverick.git --depth 1
+sudo apt-get install -y git && git clone https://github.com/goodrobots/maverick.git --depth 1
 cd maverick && sudo ./bin/maverick --env=bootstrap configure
 sudo reboot
 ```

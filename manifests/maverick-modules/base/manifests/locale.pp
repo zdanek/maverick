@@ -33,7 +33,7 @@ class base::locale (
         unless      => "/bin/grep '${timezone}' /etc/timezone",
     }
     
-    # Set TZ environment variable, https://github.com/fnoop/maverick/issues/497
+    # Set TZ environment variable, https://github.com/goodrobots/maverick/issues/497
     file { "/etc/profile.d/01-TZ.sh":
         content     => 'export TZ=":/etc/localtime"',
         mode        => "644",

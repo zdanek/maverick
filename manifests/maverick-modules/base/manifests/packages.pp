@@ -58,7 +58,7 @@ class base::packages {
         ensure      => purged,
     }
 
-    # Remove popularity-contest, https://github.com/fnoop/maverick/issues/503
+    # Remove popularity-contest, https://github.com/goodrobots/maverick/issues/503
     package { "popularity-contest":
         ensure      => absent,
     }

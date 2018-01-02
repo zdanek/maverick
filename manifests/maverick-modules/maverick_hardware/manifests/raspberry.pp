@@ -19,7 +19,7 @@ class maverick_hardware::raspberry (
     $swapsize = 1024, # /var/swap swapfile size in Mb
     ) {
 
-    # https://github.com/fnoop/maverick/issues/234
+    # https://github.com/goodrobots/maverick/issues/234
     if $manage_pi_password == true {
         user { "pi":
             password    => "${pi_password}",

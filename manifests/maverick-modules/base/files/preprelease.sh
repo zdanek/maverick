@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### Script to prepare maverick for release.
-# https://github.com/fnoop/maverick/issues/248
+# https://github.com/goodrobots/maverick/issues/248
 # This isn't really a puppet type action, but is hidden down in base module
 #  so it's not found and run by accident, as it deletes all user data.
 # It must be run as root, otherwise it will fail dismally.

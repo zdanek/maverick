@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # (c) 2016-2017 Fnoop
-# http://github.com/fnoop/maverick
+# http://github.com/goodrobots/maverick
 # This is an experimental daemon that controls a video source, transmutes formats and transmits it over wireless
 
 import sys, os, signal, time, logging, errno, re, ConfigParser, traceback, subprocess, glob

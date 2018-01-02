@@ -3,4 +3,4 @@
 - [Modules](/modules/intro)
 - [Developers](/devdocs/intro)
 - [Gitter](https://gitter.im/companioncomputers/Lobby)
-- [Github](https://github.com/fnoop/maverick)
+- [Github](https://github.com/goodrobots/maverick)

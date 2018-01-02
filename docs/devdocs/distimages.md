@@ -86,7 +86,7 @@ Once the preparation script has been run to completion and the system shut down,
 ## Image Creation
 This stage is easier when the donor system runs on an SD card, such as Raspberry Pi or Odroid.  In this case, the SD card can be removed from the donor system and placed in another system, and the entire SD card is then truncated, compressed and imaged.
 The imaging system does not have to be bootstrapped or running Maverick, but like the preparation script the imaging script lives in the Maverick tree so it at least has to be cloned onto the imaging system:  
-`git clone https://github.com/fnoop/maverick.git --depth 1`  
+`git clone https://github.com/goodrobots/maverick.git --depth 1`  
 
 Run the imaging script:  
 `sudo maverick/manifests/maverick-modules/base/files/createimage.sh` (from the clone above)  

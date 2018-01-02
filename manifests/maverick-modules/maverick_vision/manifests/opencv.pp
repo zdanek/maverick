@@ -23,7 +23,7 @@ class maverick_vision::opencv (
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
     # ensure_packages(["qtbase5-dev"])
-    if $::hardwaremodel == "x86_64" { # https://github.com/fnoop/maverick/issues/233
+    if $::hardwaremodel == "x86_64" { # https://github.com/goodrobots/maverick/issues/233
         ensure_packages(["libtbb-dev", "libtbb2"])
     }
     

@@ -30,7 +30,7 @@ class base::maverick (
 
     # Pull maverick into it's final resting place
     oncevcsrepo { "git-maverick":
-        gitsource   => "https://github.com/fnoop/maverick.git",
+        gitsource   => "https://github.com/goodrobots/maverick.git",
         dest        => "/srv/maverick/software/maverick",
 	    revision    => $maverick_branch,
     }

@@ -270,7 +270,7 @@ class maverick_vision::gstreamer (
             }
             
             # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
-            # See https://github.com/fnoop/maverick/issues/242
+            # See https://github.com/goodrobots/maverick/issues/242
             if ($raspberry_present == "yes") {
                 oncevcsrepo { "git-gstreamer_omx":
                     gitsource   => "https://github.com/fnoop/gst-omx-rpi.git",
