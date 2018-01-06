@@ -7,6 +7,12 @@ class maverick_desktop (
     ### This assumes that the desktop is controlled by systemd which it may not be, so 
     ###  this should be improved in the future.
     if $enable == true {
+        
+        # If raspberry platform, ensure pixel desktop is installed
+        if $raspberry_present == "yes" {
+            ensure_packages(["xserver-xorg", "xinit", "raspberrypi-ui-mods", "lightdm"], {'before'=>Exec["start-desktop-target"]})
+        }
+        
         exec { "start-desktop-target":
             onlyif      => "/bin/systemctl status graphical.target |grep inactive",
             command     => "/bin/systemctl isolate graphical.target",
@@ -58,6 +64,7 @@ class maverick_desktop (
         }
     }
         
+    /*
     # Disable suspend for mav user
     if $enable == true and $desktop_suspend == false {
         exec { "mav_suspend":
@@ -66,5 +73,6 @@ class maverick_desktop (
             user        => "mav",
         }
     }
+    */
     
 }
