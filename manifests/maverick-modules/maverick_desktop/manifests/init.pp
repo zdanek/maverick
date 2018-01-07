@@ -1,18 +1,29 @@
 class maverick_desktop (
+    $install = undef,
     $enable = false,
     $desktop_suspend = false,
 ) {
     
+    # Desktop installation is set to undef by default, so no action is taken.  A config parameter must be set to activate, eg.
+    #  maverick_desktop::install: true
+    # This will be set in the sample-node configs for some platforms which are used to build the OS images, so eg.
+    #  ~/software/maverick/conf/sample-nodes/maverick-raspberry.json will contain "maverick_desktop::install: true"
+    if $install == true {
+        # If raspberry platform, ensure pixel desktop is installed
+        if $raspberry_present == "yes" {
+            ensure_packages(["xserver-xorg", "xinit", "raspberrypi-ui-mods", "lightdm"])
+        }
+    } elsif $install == false {
+        # If raspberry platform, ensure pixel desktop is installed
+        if $raspberry_present == "yes" {
+            ensure_packages(["xserver-xorg", "xinit", "raspberrypi-ui-mods", "lightdm"], {'ensure' => 'absent'})
+        }
+    }
+
     ### Desktop is disabled by default and must be specifically enabled
     ### This assumes that the desktop is controlled by systemd which it may not be, so 
     ###  this should be improved in the future.
     if $enable == true {
-        
-        # If raspberry platform, ensure pixel desktop is installed
-        if $raspberry_present == "yes" {
-            ensure_packages(["xserver-xorg", "xinit", "raspberrypi-ui-mods", "lightdm"], {'before'=>Exec["start-desktop-target"]})
-        }
-        
         exec { "start-desktop-target":
             onlyif      => "/bin/systemctl status graphical.target |grep inactive",
             command     => "/bin/systemctl isolate graphical.target",

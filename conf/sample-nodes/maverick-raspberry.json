@@ -21,6 +21,7 @@
 	},
 	*/
 
+	"maverick_desktop::install": true, // Ensure desktop is installed by default
 	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
 
 	"maverick_hardware::camera_picam_install": true,
