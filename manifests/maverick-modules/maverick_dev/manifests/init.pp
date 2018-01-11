@@ -1,6 +1,7 @@
 class maverick_dev (
     $sitl = true,
     $ardupilot = true,
+    $px4 = false,
 ) {
    
     file { ["/srv/maverick/data/dev", "/srv/maverick/config/dev"]:
@@ -12,6 +13,12 @@ class maverick_dev (
 
     if $ardupilot {
         class { "maverick_dev::ardupilot": 
+            sitl    => $sitl,
+        }
+    }
+    
+    if $px4 == true {
+        class { "maverick_dev::px4":
             sitl    => $sitl,
         }
     }
