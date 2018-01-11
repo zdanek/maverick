@@ -201,3 +201,7 @@ Maverick installs ZeroTier software by default but does not start it.  To start 
 `"maverick_network::zerotier::active": true`  
 By default, Zerotier is set to join the public 'Earth' network.  To join a different network, set localconf parameter:  
 `"maverick_network::zerotier::network_id": "ztnetworkhash"`  
+To not join a network automatically, set localconf parameter:  
+`"maverick_network::zerotier::join_network": false`  
+ 
+
