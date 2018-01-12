@@ -21,6 +21,7 @@ class maverick_dev (
         class { "maverick_dev::px4":
             sitl    => $sitl,
         }
+        class { "maverick_dev::dronecore": }
     }
 
     if $sitl {
