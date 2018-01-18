@@ -127,12 +127,12 @@ However, anywhere in the Hiera configuration (described below in [Local Configur
 ```
 These entries are in the format: `"<class>::<parameter>": <value>`
 
-There are multiple levels of configuration, defined in /srv/maverick/software/maverick/conf/hiera.yaml.  The entries in the :hierarchy section are in order of specificity, so the top entries override lower entries, and these entries represent json files within the /srv/maverick/software/maverick/conf directory.  So, some basic defaults are set in puppet-defaults.json and maverick-defaults.json - in particular it includes *base*, *maverick_desktop* and *maverick_security* modules by default.
+There are multiple levels of configuration, defined in /srv/maverick/software/maverick/conf/hiera.yaml.  The entries in the :hierarchy section are in order of specificity, so the top entries override lower entries, and these entries represent json files within the /srv/maverick/software/maverick/conf or /srv/maverick/config/maverick directories.  So, some basic defaults are set in puppet-defaults.json and maverick-defaults.json - in particular it includes *base*, *maverick_desktop* and *maverick_security* modules by default.
 
 !> Important Note: The hierarchical configuration *merges* rather than strictly overrides conflicting entries, where that resource can have multiple values.  So for example _classes_ can be defined in multiple levels of the hierarchy and all classes defined in all levels will be called, rather than just the classes defined in the top level.
 
 ### Local configuration
-The simplest way to configure Maverick is to use the local config file: /srv/maverick/software/maverick/conf/localconf.json.  This JSON file feeds into to the hiera config and is a convenient place to keep config.  A sample file is provided that does not do anything but gives some examples of what can be changed.  This is a good place to set (encrypted) passwords, wifi keys, git settings etc. as this file is in .gitignore and will never be committed back to git.
+The simplest way to configure Maverick is to use the local config file: /srv/maverick/config/maverick/localconf.json.  This JSON file feeds into to the hiera config and is a convenient place to keep config.  A sample file is provided that does not do anything but gives some examples of what can be changed.  This is a good place to set (encrypted) passwords, wifi keys, git settings etc. as this file is in .gitignore and will never be committed back to git.
 
 !> Important: All hiera json files must be strictly valid json, make sure no trailing commas are left lying around.
 
@@ -169,9 +169,9 @@ This turns on desktop environment (disabled by default), sets up one managed net
 !> Note the last entry is to include the maverick_network class.  Networking is *not configured by default* as this would break existing connectivity.
 
 ### Local node config
-Another way to configure Maverick is to place a pre-configured json file into /srv/maverick/software/maverick/conf/local-nodes directory named after the hostname.  This is a great way of quickly rebuilding computers to a known configuration, or cloning computers to identical configurations (eg. for a swarm).  So for example:
+Another way to configure Maverick is to place a pre-configured json file into /srv/maverick/config/maverick/local-nodes directory named after the hostname.  This is a great way of quickly rebuilding computers to a known configuration, or cloning computers to identical configurations (eg. for a swarm).  So for example:
 ```
-cp /var/tmp/swarm-raspberry.json /srv/maverick/software/maverick/conf/local-nodes
+cp /var/tmp/swarm-raspberry.json /srv/maverick/config/maverick/local-nodes
 hostname swarm-raspberry
 maverick configure
 ```
@@ -180,7 +180,7 @@ Maverick looks for a file in the local-nodes directory with the same name as the
 All these json config files have the same syntax and scope, so a good workflow is to make changes in localconf.json and when happy with the changes to save these to a local-node file.  A library of local-node files can be easily built up and activated by just changing the hostname to whatever config is required.
 
 ### Sample node configs
-A library of pre-set configs are included in /srv/maverick/software/conf/sample-nodes.  For example, there is a raspberrylcd.json that configures a Raspberry Pi with an LCD screen.  So the installation steps from scratch into flight mode would be:
+A library of pre-set configs are included in /srv/maverick/software/maverick/conf/sample-nodes.  For example, there is a raspberrylcd.json that configures a Raspberry Pi with an LCD screen.  So the installation steps from scratch into flight mode would be:
 ```
 sudo apt-get update && sudo apt-get -y upgrade
 sudo apt-get install -y git && git clone https://github.com/goodrobots/maverick.git
