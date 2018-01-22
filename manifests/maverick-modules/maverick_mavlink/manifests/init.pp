@@ -7,7 +7,7 @@ class maverick_mavlink (
     $mavproxy_source = "https://github.com/ArduPilot/MAVProxy.git",
     $mavproxy_type = "pip",
     $dronekit_install = true,
-    $dronekit_la_install = true,
+    $dronekit_la_install = false,
     $dronekit_la_source = "https://github.com/dronekit/dronekit-la.git",
     $mavcesium = true,
     $mavcesium_install = true,
