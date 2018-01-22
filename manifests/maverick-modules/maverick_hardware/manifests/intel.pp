@@ -4,7 +4,6 @@ class maverick_hardware::intel (
     $opencl = true,
 ) {
 
-        
     ### Install MRAA - Intel GPIO access library
     if $mraa == true and $::operatingsystem == "ubuntu" {
         ensure_resource("class", "apt")
@@ -16,10 +15,10 @@ class maverick_hardware::intel (
             require     => Exec['apt_update'],
         }
     }
-    
+
     if $intel_graphics == true {
         if $::operatingsystem == "ubuntu" {
-             # Install vaapi support
+            # Install vaapi support
             exec { "01org-gfx-repo-key":
                 command         => "/usr/bin/wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-4 -O - | apt-key add -",
                 unless          => "/usr/bin/apt-key list |/bin/grep 39B88DE4",
@@ -45,17 +44,19 @@ class maverick_hardware::intel (
         # Install misc support
         ensure_packages(["i965-va-driver", "intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"])
     }
-    
+
     ### Install beignet/opencl
     if $opencl == true {
         # Install dependencies
         ensure_packages(["cmake", "pkg-config", "ocl-icd-dev", "libegl1-mesa-dev", "ocl-icd-opencl-dev", "libdrm-dev", "libxfixes-dev", "libxext-dev", "libtinfo-dev", "libedit-dev", "zlib1g-dev", "clinfo"])
-        if $::operatingsystem == "Debian" and $::operatingsystemmajrelease == "9" {
+        if ($::operatingsystem == "Debian" and versioncmp($::operatingsystemmajrelease, "9") >= 0) or ($::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "17") >= 0) {
             $_packages = ["llvm-3.8-dev", "clang-3.8", "libclang-3.8-dev"]
-        } elsif $::operatingsystem == "Ubuntu" and $::operatingsystemrelease == "16.04" {
+        } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemrelease, "16.04") == 0 {
             $_packages = ["llvm-3.6-dev", "clang-3.6", "libclang-3.6-dev"]
+        } else {
+            $_packages = []
         }
-        if ! ("install_flag_beignet" in $installflags) {
+        if ! ("install_flag_beignet" in $installflags and !empty[$_packages]) {
             ensure_packages($_packages, {'before'=>Exec["beignet-prepbuild"]})
             # Clone and Build beignet
             oncevcsrepo { "git-beignet":
