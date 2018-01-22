@@ -6,7 +6,9 @@ influx_user = mav
 influx_password = wingman
 logdirs = /srv/maverick/data/analysis/inbox,/srv/maverick/data/analysis/anonybox,/srv/maverick/data/mavlink/fc/logs,/srv/maverick/data/mavlink/sitl/logs
 meta_database = /srv/maverick/data/analysis/mavlog-meta.db
+grafana_host = <%= @grafana_host %>
+grafana_port = <%= @grafana_port %>
 grafana_user = admin
-grafana_password = theneedforspeed
+grafana_password = <%= @grafana_adminpass %>
 grafana_database = /srv/maverick/data/analysis/grafana/grafana.db
 anonymous_directory = /srv/maverick/data/analysis/anonybox

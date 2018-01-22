@@ -1,5 +1,8 @@
 class maverick_analysis::mavlogd (
     $active = true,
+    $grafana_port = $maverick_analysis::grafana::webport,
+    $grafana_host = $maverick_analysis::grafana::host,
+    $grafana_adminpass = $maverick_analysis::grafana::admin_password,
 ) {
     ensure_packages(["python-lockfile", "python-daemon"])
     install_python_module { 'pip-pyinotify':
@@ -36,7 +39,8 @@ class maverick_analysis::mavlogd (
         owner           => "mav",
         group           => "mav",
         #replace         => false,
-        source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
+        #source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
+        content         => template("maverick_analysis/maverick-mavlogd.conf.erb"),
         notify          => Service_wrapper["maverick-mavlogd"],
     } ->
     file { "/etc/systemd/system/maverick-mavlogd.service":

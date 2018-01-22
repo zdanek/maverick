@@ -1,5 +1,6 @@
 class maverick_analysis::grafana (
     $webport = "6790",
+    $host = "127.0.0.1",
     $rootpath = "/analysis/grafana/",
     $grafana_version = latest,
     $grafana_raspberry_version = "4.6.1",
@@ -84,7 +85,7 @@ class maverick_analysis::grafana (
         enable      => false,
     } ->
     http_conn_validator { 'grafana-postdelay' :
-        host    => '127.0.0.1',
+        host    => $host,
         port    => $webport,
         use_ssl => false,
         test_url => '/public/img/grafana_icon.svg',

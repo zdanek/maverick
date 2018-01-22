@@ -379,7 +379,7 @@ class ProcessLog(ProcessEvent):
             "title": "Flight Logs Index"
         }
         # Create/update the dashboard in grafana
-        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host="127.0.0.1", port=6790)
+        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
         dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
         logger.debug("Grafana dashboard update:"+str(dashreturn))
         
@@ -432,7 +432,7 @@ class ProcessLog(ProcessEvent):
             "title": "Error Events Index"
         }
         # Create/update the dashboard in grafana
-        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host="127.0.0.1", port=6790)
+        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
         dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
         logger.debug("Grafana error event dashboard update:"+str(dashreturn))
         
