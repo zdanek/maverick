@@ -53,6 +53,10 @@ class maverick_ros (
                             default: { $_installtype = "source" }
                         }
                     }
+                    "bionic": {
+                        $autodist = "lunar"
+                        $_installtype = "source"
+                    }
                     default: {
                         $autodist = undef
                         $_installtype = undef
