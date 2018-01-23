@@ -7,7 +7,11 @@ class maverick_web::nginx (
     if $::architecture =~ "arm" {
         $manage_repo = false
     } else {
-        $manage_repo = true
+        if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") < 0 {
+            $manage_repo = true
+        } else {
+            $manage_repo = false
+        }
     }
 
     # Workaround for ubilinux
