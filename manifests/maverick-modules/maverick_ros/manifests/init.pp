@@ -55,11 +55,9 @@ class maverick_ros (
                         }
                     }
                     "bionic": {
+                        warning("ROS install not supported yet on Ubuntu 18.04")
                         $autodist = "lunar"
-                        case $architecture {
-                            "amd64", "i386", "armhf", "arm64", "aarch64": { $_installtype = "native" }
-                            default: { $_installtype = "source" }
-                        }
+                        $_installtype = undef
                     }
                     default: {
                         $autodist = undef

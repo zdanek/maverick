@@ -77,8 +77,8 @@ class maverick_ros::ros2 (
     } else {
         $_distribution = $distribution
     }
-    
-    if $installtype == "native" and $_distribution {
+
+    if $_installtype and $_distribution {
         # Install dependencies
         
         # Work out distro name
@@ -89,19 +89,22 @@ class maverick_ros::ros2 (
         }
         
         # Create symlink to usual vendor install directory
-        file { ["/opt/ros2"]:
-            ensure      => directory,
-            mode        => "755",
-            owner       => "root",
-            group       => "root",
-        } ->
+        if ! defined(File["/opt/ros"]) {
+            file { ["/opt/ros"]:
+                ensure      => directory,
+                mode        => "755",
+                owner       => "root",
+                group       => "root",
+            }
+        }
         file { ["${installdir}", "${installdir}/${_distribution}"]:
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
             mode        => "755",
+            require     => File["/opt/ros"],
         } ->
-        file { "/opt/ros2/${_distribution}":
+        file { "/opt/ros/${_distribution}":
             ensure      => link,
             target      => "${installdir}/${_distribution}",
             force       => true,
@@ -110,7 +113,9 @@ class maverick_ros::ros2 (
             ensure      => link,
             target      => "${installdir}/${_distribution}",
             force       => true,
-        } ->
+        }
+        
+        /*
         # Install ROS2 repo/key
         exec { "ros2-repo-key":
             command     => "/usr/bin/curl http://repo.ros2.org/repos.key | apt-key add -",
@@ -121,6 +126,7 @@ class maverick_ros::ros2 (
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros2-latest.list",
             notify      => Exec["apt_update"],
         }
-        
+        */
+
     }
 }
