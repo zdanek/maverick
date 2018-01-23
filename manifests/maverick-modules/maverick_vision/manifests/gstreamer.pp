@@ -101,7 +101,7 @@ class maverick_vision::gstreamer (
                 $_gobject_package = "python-gobject-dev"
             }
             # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "nasm", "libxext-dev"])
+            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev"])
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
@@ -254,7 +254,8 @@ class maverick_vision::gstreamer (
             }
     
             # Install vaapi for Intel platform
-            if $::hardwaremodel == "x86_64" {
+            # if $::hardwaremodel == "x86_64" {
+            if defined(Class["maverick_hardware::intel"]) {
                 ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
                 oncevcsrepo { "git-gstreamer_vaapi":
                     gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
