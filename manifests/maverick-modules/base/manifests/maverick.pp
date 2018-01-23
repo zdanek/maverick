@@ -1,5 +1,6 @@
 class base::maverick (
     $maverick_branch = "stable",
+    $git_credentials_cache = true,
 ) {
    
    # Note: The mav user is setup in base::users
@@ -21,7 +22,7 @@ class base::maverick (
     include git
     # Lay down a default .gitconfig for mav user, don't overwrite modifications in the future
     file { "/srv/maverick/.gitconfig":
-        source          => "puppet:///modules/base/mav_gitconfig",
+        content         => template("base/mav_gitconfig.erb"),
         owner           => "mav",
         group           => "mav",
         mode            => "644",

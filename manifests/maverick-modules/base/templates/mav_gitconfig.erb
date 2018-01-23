@@ -1,10 +1,11 @@
 # This default git config for the mav user comes from:
 #  https://blog.scottnonnenberg.com/better-git-configuration/
 #
+<% if @git_credentials_cache == true %>
 # Except for the following credential entry
 [credential]
 	helper = cache --timeout=86400
-	
+<% end %>
 [alias]
   prune = fetch --prune
   # Because I constantly forget how to do this
