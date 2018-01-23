@@ -4,98 +4,102 @@ class maverick_network::zerotier (
     $join_network = true,
     $network_id = "8056c2e21c000001",
 ) {
- 
+
     # Workaround for ubilinux
     if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {
         $_release = "stretch"
+    } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
+        $_release = undef
+        warning("Zerotier not supported on Ubuntu >= 18.04 yet")
     } else {
         $_release = $::lsbdistcodename
     }
-    
-    # Install core zerotier pgp key, repo and package
-    apt::key { 'zerotier':
-      id      => '74A5E9C458E1A431F1DA57A71657198823E52A61',
-      server  => 'pgp.mit.edu',
-    } ->
-    apt::source { 'zerotier':
-      location      => "https://download.zerotier.com/debian/${_release}",
-      release       => $_release,
-      repos         => 'main',
-      key           => {'id' => '74A5E9C458E1A431F1DA57A71657198823E52A61'},
-      notify        => Exec["apt_update"],
-    } ->
-    package { "zerotier-one":
-        ensure      => installed,
-        require     => Exec["apt_update"],
-    } ->
-    file { "/usr/bin/zerotier-cli":
-        target      => "/usr/sbin/zerotier-cli",
-    } ->
-    
-    # Create initial crypto keys and register, and copy private key to mav user for user control
-    exec { "zt-createkeys":
-        command     => "/bin/systemctl start zerotier-one; sleep 10; /bin/systemctl stop zerotier-one",
-        creates     => "/var/lib/zerotier-one/authtoken.secret",
-    } ->
-    exec { "mav-ztkey":
-        command     => "/bin/cat /var/lib/zerotier-one/authtoken.secret >>/srv/maverick/.zeroTierOneAuthToken",
-        creates     => "/srv/maverick/.zeroTierOneAuthToken",
-    } ->
-    file { "/srv/maverick/.zeroTierOneAuthToken":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "600",
-    }
-    
-    # Install libzt - library is a WIP
-    if $libzt == true {
-        ensure_packages(["swig", "swig-examples"]) # for python_module target
-        oncevcsrepo { "git-libzt":
-            gitsource   => "https://github.com/zerotier/libzt.git",
-            dest        => "/srv/maverick/software/libzt",
-            submodules  => true,
+
+    if $_release {
+        # Install core zerotier pgp key, repo and package
+        apt::key { 'zerotier':
+        id      => '74A5E9C458E1A431F1DA57A71657198823E52A61',
+        server  => 'pgp.mit.edu',
         } ->
-        exec { "libzt-make":
-            command     => "/usr/bin/make -j ${::processorcount} static_lib tests",
-            cwd         => "/srv/maverick/software/libzt",
-            creates     => "/bin/blah",
-            user        => "mav",
-            require     => Package["swig"],
+        apt::source { 'zerotier':
+        location      => "https://download.zerotier.com/debian/${_release}",
+        release       => $_release,
+        repos         => 'main',
+        key           => {'id' => '74A5E9C458E1A431F1DA57A71657198823E52A61'},
+        notify        => Exec["apt_update"],
+        } ->
+        package { "zerotier-one":
+            ensure      => installed,
+            require     => Exec["apt_update"],
+        } ->
+        file { "/usr/bin/zerotier-cli":
+            target      => "/usr/sbin/zerotier-cli",
+        } ->
+
+        # Create initial crypto keys and register, and copy private key to mav user for user control
+        exec { "zt-createkeys":
+            command     => "/bin/systemctl start zerotier-one; sleep 10; /bin/systemctl stop zerotier-one",
+            creates     => "/var/lib/zerotier-one/authtoken.secret",
+        } ->
+        exec { "mav-ztkey":
+            command     => "/bin/cat /var/lib/zerotier-one/authtoken.secret >>/srv/maverick/.zeroTierOneAuthToken",
+            creates     => "/srv/maverick/.zeroTierOneAuthToken",
+        } ->
+        file { "/srv/maverick/.zeroTierOneAuthToken":
+            owner       => "mav",
+            group       => "mav",
+            mode        => "600",
         }
-    }
-    
-    if $active == true {
-        service { "zerotier-one":
-            ensure      => running,
-            enable      => true,
-            require     => Package["zerotier-one"],
+
+        # Install libzt - library is a WIP
+        if $libzt == true {
+            ensure_packages(["swig", "swig-examples"]) # for python_module target
+            oncevcsrepo { "git-libzt":
+                gitsource   => "https://github.com/zerotier/libzt.git",
+                dest        => "/srv/maverick/software/libzt",
+                submodules  => true,
+            } ->
+            exec { "libzt-make":
+                command     => "/usr/bin/make -j ${::processorcount} static_lib tests",
+                cwd         => "/srv/maverick/software/libzt",
+                creates     => "/bin/blah",
+                user        => "mav",
+                require     => Package["swig"],
+            }
         }
-        if $join_network == true {
-            exec { "zt-controlnetwork":
-                command     => "/usr/sbin/zerotier-cli join ${network_id}",
-                unless      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
-                require     => Service["zerotier-one"],
+
+        if $active == true {
+            service { "zerotier-one":
+                ensure      => running,
+                enable      => true,
+                require     => Package["zerotier-one"],
+            }
+            if $join_network == true {
+                exec { "zt-controlnetwork":
+                    command     => "/usr/sbin/zerotier-cli join ${network_id}",
+                    unless      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                    require     => Service["zerotier-one"],
+                }
+            } else {
+                exec { "zt-controlnetwork":
+                    command     => "/usr/sbin/zerotier-cli leave ${network_id}",
+                    onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                    require     => Service["zerotier-one"],
+                }
             }
         } else {
-            exec { "zt-controlnetwork":
-                command     => "/usr/sbin/zerotier-cli leave ${network_id}",
-                onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
-                require     => Service["zerotier-one"],
+            if $join_network == false {
+                exec { "zt-controlnetwork":
+                    command     => "/usr/sbin/zerotier-cli leave ${network_id}",
+                    onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
+                    before      => Service["zerotier-one"],
+                }
             }
-        }
-    } else {
-        if $join_network == false {
-            exec { "zt-controlnetwork":
-                command     => "/usr/sbin/zerotier-cli leave ${network_id}",
-                onlyif      => "/usr/sbin/zerotier-cli listnetworks |grep ${network_id}",
-                before      => Service["zerotier-one"],
+            service { "zerotier-one":
+                ensure      => stopped,
+                enable      => false,
+                require     => Package["zerotier-one"],
             }
-        }
-        service { "zerotier-one":
-            ensure      => stopped,
-            enable      => false,
-            require     => Package["zerotier-one"],
         }
     }
-
 }
