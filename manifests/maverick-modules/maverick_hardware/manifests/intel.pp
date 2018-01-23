@@ -56,7 +56,7 @@ class maverick_hardware::intel (
         } else {
             $_packages = []
         }
-        if ! ("install_flag_beignet" in $installflags and !empty[$_packages]) {
+        if ! ("install_flag_beignet" in $installflags and !empty($_packages)) {
             ensure_packages($_packages, {'before'=>Exec["beignet-prepbuild"]})
             # Clone and Build beignet
             oncevcsrepo { "git-beignet":
