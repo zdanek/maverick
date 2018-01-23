@@ -1,6 +1,6 @@
 class maverick_analysis::influx (
     $source = "https://github.com/influxdata/influxdb.git",
-    $branch = "v1.2.4",
+    $branch = "v1.4.2",
     $influxdb_version = "1.3.3-1",
     $active = true,
 ) {
@@ -18,7 +18,11 @@ class maverick_analysis::influx (
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian stretch stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         }
     } elsif $::operatingsystem == "Ubuntu" {
-        $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+        if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
+            $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} artful stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+        } else {    
+            $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
+        }
     }
 
     # Install influx repo key
