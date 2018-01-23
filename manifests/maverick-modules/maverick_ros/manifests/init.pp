@@ -55,7 +55,10 @@ class maverick_ros (
                     }
                     "bionic": {
                         $autodist = "lunar"
-                        $_installtype = "source"
+                        case $architecture {
+                            "amd64", "i386", "armhf", "arm64", "aarch64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
                     }
                     default: {
                         $autodist = undef
