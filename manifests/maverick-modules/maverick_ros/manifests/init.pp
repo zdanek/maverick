@@ -7,6 +7,7 @@ class maverick_ros (
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
     $module_opencv = false,
+    $ros2 = false,
 ) {
     
     # If installtype is set then use it and skip autodetection
@@ -373,5 +374,9 @@ class maverick_ros (
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
         }
+    }
+
+    if $ros2 == true {
+        class { "maverick_ros::ros2": }
     }
 }
