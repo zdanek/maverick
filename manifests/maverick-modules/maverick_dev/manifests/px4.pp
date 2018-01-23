@@ -15,15 +15,15 @@ class maverick_dev::px4 (
     install_python_module { 'pip-px4-pandas':
         pkgname     => 'pandas',
         ensure      => present,
-    }
+    } ->
     install_python_module { 'pip-px4-jinja2':
         pkgname     => 'jinja2',
         ensure      => present,
-    }
+    } ->
     install_python_module { 'pip-px4-pyserial':
         pkgname     => 'pyserial',
         ensure      => present,
-    }
+    } ->
     install_python_module { 'pip-px4-pyulog':
         pkgname     => 'pyulog',
         ensure      => present,
@@ -101,7 +101,7 @@ class maverick_dev::px4 (
             command     => "/usr/bin/git remote add upstream ${px4_upstream}",
             unless      => "/usr/bin/git remote -v | /bin/grep ${px4_upstream}",
             cwd         => "/srv/maverick/code/px4",
-            require     => Oncevcsrepo["git-ardupilot"],
+            require     => Install_python_module['pip-px4-jinja2'],
         } ->
         exec { "px4-make":
             command     => "/usr/bin/make -j2 posix >/srv/maverick/var/log/build/px4.make.log 2>&1",
