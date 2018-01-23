@@ -4,6 +4,9 @@ class maverick_web::nodejs (
     # Workaround for ubilinux
     if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {
         $_release = "stretch"
+    } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
+        # Temporary hack for ubuntu 18.04
+        $_release = "artful"
     } else {
         $_release = $::lsbdistcodename
     }
