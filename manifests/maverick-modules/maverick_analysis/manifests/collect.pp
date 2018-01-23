@@ -2,9 +2,8 @@ class maverick_analysis::collect (
     $active = true,
     $install_type = "source",
     $git_source = "https://github.com/collectd/collectd.git",
-    $git_revision = "collectd-5.7.2",
+    $git_revision = "collectd-5.8.0",
 ) {
-    
     # Install from source
     if $install_type == "source" {
         $manage_package = false
@@ -87,7 +86,7 @@ class maverick_analysis::collect (
         $config_file = "${collectd_dir}/collectd.conf"
         $plugin_conf_dir = "${collectd_dir}/conf.d"
         $typesdb = "/usr/share/collectd/types.db"
-    
+
         # Collectd repos only provide i386/amd64 packages
         if $::architecture == "i386" or $::architecture == "amd64" and ($operatingsystem == "Ubuntu" and versioncmp($::operatingsystemrelease, "17.04") < 0) {
             $manage_repo = true
@@ -186,7 +185,7 @@ class maverick_analysis::collect (
             exec => ["/srv/maverick/software/maverick/manifests/maverick-modules/maverick_analysis/files/rapl-power.sh"],
         }
     }
-    
+
     # Configure an exec plugin to run power script on Nvidia Tegra platform, to retrieve power consumption
     if $tegra_present == "yes" {
         ensure_packages(["bc"])
@@ -202,5 +201,4 @@ class maverick_analysis::collect (
             notify      => Service["maverick-collectd"],
         }
     }
-
 }
