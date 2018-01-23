@@ -2,6 +2,7 @@ class maverick_web::cloud9 (
     $cloud9_active = true,
     $webport = "6789",
     $basepath = "/srv/maverick",
+    $cloud9_password = "wingman",
 ) {
     if $cloud9_installed == "no" {
         warning("Cloud9 will be compiled and can take a long time, please be patient..")
