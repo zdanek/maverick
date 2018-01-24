@@ -2,5 +2,5 @@
 - [About](/about)
 - [Modules](/modules/intro)
 - [Developers](/devdocs/intro)
-- [Gitter](https://gitter.im/companioncomputers/Lobby)
+- [Gitter](https://gitter.im/goodrobots/maverick)
 - [Github](https://github.com/goodrobots/maverick)
