@@ -11,6 +11,7 @@ What does Maverick do?
 
  - Downloadable, ready to flash, ready to fly images for Raspberry Pi (all models), NVidia Tegra TX1/TX2, Up (Up, Squared, Core), Odroid XU4, Intel Joule
  - Downloadable VM image for developers in OVA (Open Virtual Appliance) and Parallels formats, should run in VirtualBox, VMware, Parallels etc
+ - Permissive MIT licensing, absolute minimum restrictions on opensource or commercial usage
  - Ability to bootstrap from any donor/vendor OS (only Debian/Ubuntu based OS supported so far, but possible to support any base OS) and create custom images
  - Single 'maverick' command provides system/network info, self updating, system configuration, service control
  - Self-contained, consistent software environments and versions across different platforms
