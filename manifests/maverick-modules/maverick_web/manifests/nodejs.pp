@@ -23,7 +23,6 @@ class maverick_web::nodejs (
             repo_url_suffix           => '8.x',
             repo_release              => $_release,
             nodejs_package_ensure     => latest,
-            npm_package_ensure        => present,
         }
     }
     
