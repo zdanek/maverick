@@ -99,7 +99,7 @@ class base::maverick (
     file { "/srv/maverick/config/maverick/maverick-branch.conf":
         owner   => "mav",
         group   => "mav",
-        content => "MAVERICK_BRANCH=stable",
+        content => "MAVERICK_BRANCH=${maverick_branch}",
         replace => false,
     }
     
