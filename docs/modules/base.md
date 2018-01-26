@@ -25,11 +25,16 @@ To change it, set a localconf parameter:
 
 ---
 ## System Passwords
-### Mav User
+### Mav User
 Almost everything in the Maverick environment is run or performed as the *mav* system user.  The default password is 'wingman'.  To change this, set a localconf parameter with a new password hash:  
 `"base::users::mav_password": "$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1"`
 By default, the *mav* user does not need to use a password to perform root actions through sudo.  To change this, set localconf parameter:  
 `"base::users::mav_sudopass": true`
+Git credentials for the mav user are cached by default. To turn this off (useful if multiple people are sharing the mav user account), set the localconf parameter:  
+`"base::maverick::git_credentials_cache": false`  
+This sets the credentials cache in ~/.gitconfig.  Note this config file is only set once by Maverick, so for this parameter to take effect, remove the file:  
+`rm ~/.gitconfig`  
+
 ### Root User
 The root password is _not_ managed by default.  To manage the root password, set localconf parameter:  
 `"base::users::manage_root_password": true"`  
