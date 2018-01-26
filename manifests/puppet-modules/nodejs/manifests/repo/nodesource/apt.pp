@@ -4,10 +4,8 @@ class nodejs::repo::nodesource::apt {
   $enable_src = $nodejs::repo::nodesource::enable_src
   $ensure     = $nodejs::repo::nodesource::ensure
   $pin        = $nodejs::repo::nodesource::pin
-  $url_suffix = $nodejs::repo::nodesource::url_suffix
   $release    = $nodejs::repo::nodesource::release
-
-  ensure_packages(['apt-transport-https', 'ca-certificates'])
+  $url_suffix = $nodejs::repo::nodesource::url_suffix
 
   include ::apt
 
@@ -24,10 +22,6 @@ class nodejs::repo::nodesource::apt {
       pin      => $pin,
       release  => $release,
       repos    => 'main',
-      require  => [
-        Package['apt-transport-https'],
-        Package['ca-certificates'],
-      ],
     }
 
     Apt::Source['nodesource'] -> Package<| tag == 'nodesource_repo' |>

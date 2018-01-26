@@ -1,7 +1,6 @@
 # == Class: nodejs: See README.md for documentation.
 class nodejs(
   $cmd_exe_path                                        = $nodejs::params::cmd_exe_path,
-  Boolean $legacy_debian_symlinks                      = $nodejs::params::legacy_debian_symlinks,
   Boolean $manage_package_repo                         = $nodejs::params::manage_package_repo,
   $nodejs_debug_package_ensure                         = $nodejs::params::nodejs_debug_package_ensure,
   Optional[String] $nodejs_debug_package_name          = $nodejs::params::nodejs_debug_package_name,
@@ -22,9 +21,10 @@ class nodejs(
   $repo_proxy                                          = $nodejs::params::repo_proxy,
   $repo_proxy_password                                 = $nodejs::params::repo_proxy_password,
   $repo_proxy_username                                 = $nodejs::params::repo_proxy_username,
+  Optional[String] $repo_release                       = $nodejs::params::repo_release,
   $repo_url_suffix                                     = $nodejs::params::repo_url_suffix,
-  $repo_release                                        = $nodejs::params::repo_release,
   Array $use_flags                                     = $nodejs::params::use_flags,
+  Optional[String] $package_provider                   = $nodejs::params::package_provider,
 ) inherits nodejs::params {
 
   if $manage_package_repo and !$repo_class {

@@ -9,7 +9,7 @@ class nodejs::install {
   }
 
   # npm is a Gentoo USE flag
-  if $::operatingsystem == 'Gentoo' {
+  if $facts['os']['name'] == 'Gentoo' {
     package_use { $nodejs::nodejs_package_name:
       ensure => present,
       target => 'nodejs-flags',
@@ -17,6 +17,8 @@ class nodejs::install {
       before => Package[$nodejs::nodejs_package_name],
     }
   }
+
+  Package { provider => $nodejs::package_provider }
 
   # nodejs
   package { $nodejs::nodejs_package_name:
@@ -40,18 +42,6 @@ class nodejs::install {
     }
   }
 
-  # Replicates the nodejs-legacy package functionality
-  if ($::osfamily == 'Debian' and $nodejs::legacy_debian_symlinks) {
-    file { '/usr/bin/node':
-      ensure => 'link',
-      target => '/usr/bin/nodejs',
-    }
-    file { '/usr/share/man/man1/node.1.gz':
-      ensure => 'link',
-      target => '/usr/share/man/man1/nodejs.1.gz',
-    }
-  }
-
   # npm
   if $nodejs::npm_package_name and $nodejs::npm_package_name != false {
     package { $nodejs::npm_package_name:
@@ -62,7 +52,7 @@ class nodejs::install {
 
   file { 'root_npmrc':
     ensure  => 'file',
-    path    => '/root/.npmrc',
+    path    => "${facts['root_home']}/.npmrc",
     content => template('nodejs/npmrc.erb'),
     owner   => 'root',
     group   => '0',
