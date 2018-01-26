@@ -7,7 +7,8 @@ class maverick_web (
     $webserver_sslport = 443,
     $maverick_docs = true,
     $ssl = true,
-    $maverick_webui_dev = false,
+    $maverick_web = false,
+    $maverick_api = false,
 ) {
     
     if $nodejs == true {
@@ -57,8 +58,12 @@ class maverick_web (
         class { "maverick_web::ssl": }
     }
     
-    if $maverick_webui_dev == true {
-        class { "maverick_web::maverick_webui_dev": }
+    if $maverick_api == true {
+        class { "maverick_web::maverick_api": }
+    }
+
+    if $maverick_web == true {
+        class { "maverick_web::maverick_web": }
     }
     
 }

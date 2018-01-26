@@ -20,9 +20,11 @@ class maverick_web::nodejs (
         }
     } else {
         class { 'nodejs':
-            repo_url_suffix => '8.x',
-            repo_release    => $_release,
-            nodejs_package_ensure => latest,
+            repo_url_suffix           => '8.x',
+            repo_release              => $_release,
+            nodejs_package_ensure     => latest,
+            nodejs_dev_package_ensure => present,
+            npm_package_ensure        => present,
         }
     }
     

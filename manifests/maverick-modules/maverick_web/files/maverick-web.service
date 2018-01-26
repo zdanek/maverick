@@ -1,0 +1,16 @@
+[Unit]
+Description=Maverick Web Frontend
+After=network-online.target multi-user.target
+Requires=network-online.target multi-user.target
+
+[Service]
+TimeoutStartSec=0
+WorkingDirectory=/srv/maverick/code/maverick-web
+ExecStart=/usr/bin/npm run dev
+User=mav
+TimeoutStartSec=20
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
