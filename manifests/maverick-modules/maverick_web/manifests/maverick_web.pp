@@ -6,7 +6,7 @@ class maverick_web::maverick_web (
     oncevcsrepo { "git-maverick-web":
         gitsource   => "https://github.com/goodrobots/maverick-web.git",
         dest        => "/srv/maverick/code/maverick-web",
-        revision    => "hacking",
+        revision    => "master",
         depth       => undef,
     } ->
     nodejs::npm { 'npm-maverick-web':
@@ -39,6 +39,14 @@ class maverick_web::maverick_web (
             ensure      => stopped,
             enable      => false,
             require     => Exec["maverick-systemctl-daemon-reload"],
+        }
+    }
+    
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "maverick-web":
+            ports       => $webport,
+            ips         => lookup("firewall_ips"),
+            proto       => "tcp"
         }
     }
 
