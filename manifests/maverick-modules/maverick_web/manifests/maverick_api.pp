@@ -43,7 +43,7 @@ class maverick_web::maverick_api (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
     nginx::resource::location { "maverick-api":
-        location    => "/maverick-api",
+        location    => "/maverick-api/",
         proxy       => "http://localhost:${apiport}/",
         server      => "${::hostname}.local",
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
