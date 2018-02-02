@@ -14,7 +14,7 @@ class maverick_web::maverick_web (
       target           => '/srv/maverick/code/maverick-web',
       use_package_json => true,
     } ->
-    file { "/etc/systemd/system/maverick-maverick-web.service":
+    file { "/etc/systemd/system/maverick-web.service":
         owner       => "root",
         group       => "root",
         mode        => "644",
@@ -29,13 +29,13 @@ class maverick_web::maverick_web (
     }
     
     if $active == true {
-        service { "maverick-maverick-web":
+        service { "maverick-web":
             ensure      => running,
             enable      => true,
             require     => Exec["maverick-systemctl-daemon-reload"],
         }
     } else {
-        service { "maverick-maverick-web":
+        service { "maverick-web":
             ensure      => stopped,
             enable      => false,
             require     => Exec["maverick-systemctl-daemon-reload"],

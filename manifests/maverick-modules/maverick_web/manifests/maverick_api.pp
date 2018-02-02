@@ -50,13 +50,13 @@ class maverick_web::maverick_api (
     }
     
     if $active == true {
-        service { "maverick-maverick-api":
+        service { "maverick-api":
             ensure      => running,
             enable      => true,
             require     => Exec["maverick-systemctl-daemon-reload"],
         }
     } else {
-        service { "maverick-maverick-api":
+        service { "maverick-api":
             ensure      => stopped,
             enable      => false,
             require     => Exec["maverick-systemctl-daemon-reload"],
