@@ -246,16 +246,32 @@ if [ "$SELFUPDATE" == "true" ]; then
         if [ $EUID -eq 0 ]; then
             echo -n "Updating maverick: "
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"
-            echo -n "Updating maverick-fcs: "
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
+                echo -n "Updating maverick-fcs: "
                 su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
+            fi
+            if [ -d "/srv/maverick/code/maverick-web" ]; then
+                echo -n "Updating maverick-web: "
+                su mav -c "cd /srv/maverick/code/maverick-web; git pull origin"
+            fi
+            if [ -d "/srv/maverick/code/maverick-api" ]; then
+                echo -n "Updating maverick-api: "
+                su mav -c "cd /srv/maverick/code/maverick-api; git pull origin"
             fi
         elif [ $USER == "mav" ]; then
             echo -n "Updating maverick: "
             cd /srv/maverick/software/maverick; git pull origin;
-            echo -n "Updating maverick-fcs: "
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
+                echo -n "Updating maverick-fcs: "
                 cd /srv/maverick/software/maverick-fcs; git pull origin;
+            fi
+            if [ -d "/srv/maverick/code/maverick-web" ]; then
+                echo -n "Updating maverick-web: "
+                cd /srv/maverick/code/maverick-web; git pull origin
+            fi
+            if [ -d "/srv/maverick/code/maverick-api" ]; then
+                echo -n "Updating maverick-api: "
+                cd /srv/maverick/code/maverick-api; git pull origin
             fi
         fi
         echo
