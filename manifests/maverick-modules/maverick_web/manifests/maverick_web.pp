@@ -26,8 +26,17 @@ class maverick_web::maverick_web (
         proxy       => "http://localhost:${webport}/",
         server      => "${::hostname}.local",
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+    } ->
+    nginx::resource::location { "maverick-web-prod":
+        location    => "/web/maverick",
+        ensure          => present,
+        ssl             => true,
+        location_alias  => "/srv/maverick/code/maverick-web/dist",
+        index_files     => ["index.html"],
+        server          => "${::hostname}.local",
+        require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
-    
+
     if $active == true {
         service { "maverick-web":
             ensure      => running,
