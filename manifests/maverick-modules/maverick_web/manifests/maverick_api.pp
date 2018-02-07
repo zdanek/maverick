@@ -47,6 +47,11 @@ class maverick_web::maverick_api (
         proxy       => "http://localhost:${apiport}/",
         server      => "${::hostname}.local",
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+    	proxy_connect_timeout   => "7d",
+    	#proxy_send_timeout      => "7d", # not supported by nginx puppet module
+    	proxy_read_timeout      => "7d",
+        proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
+    	proxy_http_version      => "1.1",
     }
     
     if $active == true {
