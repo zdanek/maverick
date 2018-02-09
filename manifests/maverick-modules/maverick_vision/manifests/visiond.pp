@@ -98,7 +98,7 @@ class maverick_vision::visiond (
         nginx::resource::location { "web-webvision":
             location    => "/vision/webvision/",
             proxy       => 'http://localhost:6793/',
-            server      => "${::hostname}.local",
+            server      => getvar("maverick_web::server_fqdn"),
             require     => [ Class["maverick_gcs::fcs"], Class["nginx"], ],
         }
 

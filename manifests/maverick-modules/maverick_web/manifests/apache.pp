@@ -1,6 +1,7 @@
 class maverick_web::apache (
     $port,
     $ssl_port,
+    $server_hostname = $maverick_web::server_fqdn,
 ) {
     
     service_wrapper { "nginx":
@@ -10,7 +11,7 @@ class maverick_web::apache (
     class { 'apache':
         default_vhost => false,
     } ->
-    apache::vhost { "${::hostname}.local":
+    apache::vhost { $server_hostname:
         port        => $port,
         docroot     => '/srv/maverick/software/maverick-fcs/public',
         require     => Class["maverick_gcs::fcs"],

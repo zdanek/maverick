@@ -286,13 +286,13 @@ class maverick_mavlink (
             	proxy_read_timeout      => "7d",
                 proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"'],
             	proxy_http_version      => "1.1",
-            	server                  => "${::hostname}.local",
+            	server                  => getvar("maverick_web::server_fqdn"),
         	}
             # Setup reverse proxy for static content
             nginx::resource::location { "web-mavcesium":
                 location    => "/mavlink/mavcesium/",
                 proxy       => "http://127.0.0.1:${mavcesium_port}/mavlink/mavcesium/",
-                server      => "${::hostname}.local",
+                server      => getvar("maverick_web::server_fqdn"),
                 require     => [ Class["maverick_gcs::fcs"], Service["maverick-nginx"] ],
             }
         }

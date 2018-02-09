@@ -1,4 +1,5 @@
 class maverick_web::maverick_docs (
+    $server_hostname = $maverick_web::server_fqdn,
 ) {
     
     /*
@@ -20,7 +21,7 @@ class maverick_web::maverick_docs (
         location        => "/web/maverick-docs",
         location_alias  => "/srv/maverick/software/maverick/docs",
         index_files     => ["maverick.html"], # index.html is for github hosted docs
-        server          => "${::hostname}.local",
+        server          => $server_hostname,
         require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
     

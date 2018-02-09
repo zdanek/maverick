@@ -9,6 +9,7 @@ class maverick_web (
     $ssl = true,
     $maverick_web = true,
     $maverick_api = true,
+    $server_fqdn = $::fqdn,
 ) {
     
     if $nodejs == true {

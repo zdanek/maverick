@@ -9,6 +9,7 @@
 	"classes": [
 		"base",
 		"maverick_security",
+	    "maverick_web",
 		"maverick_mavlink",
 		"maverick_vision",
 		"maverick_fc",
@@ -17,8 +18,7 @@
 		"maverick_dev",
 	    "maverick_desktop",
 	    "maverick_intelligence",
-	    "maverick_analysis",
-	    "maverick_web"
+	    "maverick_analysis"
 	]
 	
 }

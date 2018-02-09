@@ -1,6 +1,7 @@
 class maverick_web::maverick_web (
     $webport = 6794,
     $active = true,
+    $server_hostname = $maverick_web::server_fqdn,
 ) {
     
     oncevcsrepo { "git-maverick-web":
@@ -24,7 +25,7 @@ class maverick_web::maverick_web (
     nginx::resource::location { "maverick-web":
         location    => "/maverick-web/",
         proxy       => "http://localhost:${webport}/",
-        server      => "${::hostname}.local",
+        server      => $server_hostname,
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     } ->
     nginx::resource::location { "maverick-web-prod":
@@ -33,7 +34,7 @@ class maverick_web::maverick_web (
         ssl             => true,
         location_alias  => "/srv/maverick/code/maverick-web/dist",
         index_files     => ["index.html"],
-        server          => "${::hostname}.local",
+        server          => $server_hostname,
         require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
 

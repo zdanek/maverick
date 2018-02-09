@@ -1,6 +1,7 @@
 class maverick_web::maverick_api (
     $active = true,
     $apiport = 6795,
+    $server_hostname = $maverick_web::server_fqdn,
 ) {
 
     # install python components
@@ -43,9 +44,10 @@ class maverick_web::maverick_api (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
     nginx::resource::location { "maverick-api":
+        ssl             => true,
         location    => "/maverick-api/",
         proxy       => "http://localhost:${apiport}/",
-        server      => "${::hostname}.local",
+        server      => $server_hostname,
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     	proxy_connect_timeout   => "7d",
     	#proxy_send_timeout      => "7d", # not supported by nginx puppet module

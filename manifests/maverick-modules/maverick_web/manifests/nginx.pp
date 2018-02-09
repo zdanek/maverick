@@ -1,6 +1,7 @@
 class maverick_web::nginx (
     $port,
     $ssl_port,
+    $server_hostname = $maverick_web::server_fqdn,
 ) {
     
     # Nginx doesn't have repo for ARM, so don't try to use it
@@ -48,12 +49,12 @@ class maverick_web::nginx (
         service_name    => "maverick-nginx",
     }
 
-    nginx::resource::server { "${::hostname}.local":
+    nginx::resource::server { $server_hostname:
         listen_port => $port,
         ssl         => true,
         ssl_port    => $ssl_port,
-        ssl_cert    => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.crt",
-        ssl_key     => "/srv/maverick/data/web/ssl/${::hostname}.local-webssl.key",
+        ssl_cert    => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.crt",
+        ssl_key     => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.key",
         www_root    => '/srv/maverick/software/maverick-fcs/public',
         require     => [ Class["maverick_gcs::fcs"], ],
         notify      => Service["maverick-nginx"],
@@ -65,7 +66,7 @@ class maverick_web::nginx (
         location        => "/security/mavCA.crt",
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
-        server          => "${::hostname}.local",
+        server          => $server_hostname,
         require         => [ Class["maverick_gcs::fcs"], ],
         notify          => Service["maverick-nginx"],
     }
@@ -81,7 +82,7 @@ class maverick_web::nginx (
         location            => "/nginx_status",
         stub_status         => true,
         location_cfg_append => $local_config,
-        server              => "${::hostname}.local",
+        server              => $server_hostname,
         notify              => Service["maverick-nginx"],
     }
     
