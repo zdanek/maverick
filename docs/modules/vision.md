@@ -47,7 +47,9 @@ OpenCV in the 'maverick-raspberry' profile or the 'Raspberry Pi (All models)' OS
 ### Visiond
 Visiond is a Maverick-specific (python-based) daemon that automates the process of capturing, transcoding and transmitting video over the network.  It detects the attached camera and encoding hardware and constructs a gstreamer pipeline based on the detected hardware details.  There is a dynamic config file in *~/config/vision/maverick-visiond.conf* that allows easy configuration of the device, video format, resolution, framerate and network output.  To activate the config changes, restart the service:  
 `maverick restart visiond`  
-This service is started by default.  
+This service is started by default. To turn it off at boot, set a localconf parameter:  
+`"maverick_vision::visiond::active": false`  
+
 Visiond tries to autodetect the connected camera, the stream type (raw,mjpeg,h264), then optimal encoding type and the payloading, and also tries to autodetect and utilise any connected hardware encoding capabilities.  The config file can be used to override any part of the autodetected pipeline construction.  
 For example, the Raspberry Pi with the Pi camera has a very specific set of requirements to stream video - it requires Raw stream from the first v4l2 video source with pixel format I420, attached directly to the hardware OMX h264 encoder, then rtph264pay payloading before sending to the udp output sink.  Visiond usually automatically detects all of this, but the config file can be used to specifically set these requirements, eg:
 ```
