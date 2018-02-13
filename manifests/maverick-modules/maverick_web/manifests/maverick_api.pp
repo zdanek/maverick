@@ -1,6 +1,7 @@
 class maverick_web::maverick_api (
     $active = true,
     $apiport = 6795,
+    $apirosuri = "http://localhost:11313",
     $server_hostname = $maverick_web::server_fqdn,
 ) {
 
@@ -43,6 +44,26 @@ class maverick_web::maverick_api (
         source      => "puppet:///modules/maverick_web/maverick-api.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
+    file { "/etc/systemd/system/maverick-api.service.d":
+        ensure      => directory,
+        owner       => "root",
+        group       => "root",
+        mode        => "755",
+    } ->
+    file { "/etc/systemd/system/maverick-api.service.d/pythonpath.conf":
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        source      => "puppet:///modules/maverick_web/api-pythonpath.conf",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    } ->
+    file { "/etc/systemd/system/maverick-api.service.d/ros.conf":
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        content     => template("maverick_web/api-ros.conf.erb"),
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    } ->
     nginx::resource::location { "maverick-api":
         ssl             => true,
         location    => "/maverick-api/",
