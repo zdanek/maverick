@@ -2,6 +2,7 @@ class maverick_web::maverick_api (
     $active = true,
     $apiport = 6795,
     $apirosuri = "http://localhost:11313",
+    $rosdistro = "lunar",
     $server_hostname = $maverick_web::server_fqdn,
 ) {
 
@@ -54,7 +55,7 @@ class maverick_web::maverick_api (
         owner       => "root",
         group       => "root",
         mode        => "644",
-        source      => "puppet:///modules/maverick_web/api-pythonpath.conf",
+        content     => template("maverick_web/api-pythonpath.conf.erb"),
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     file { "/etc/systemd/system/maverick-api.service.d/ros.conf":

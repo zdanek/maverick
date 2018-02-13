@@ -1,7 +1,7 @@
 [Service]
-Environment="ROS_ROOT=/opt/ros/kinetic/share/ros"
-Environment="ROS_PACKAGE_PATH=/opt/ros/kinetic/share"
+Environment="ROS_ROOT=/opt/ros/<%= @rosdistro %>/share/ros"
+Environment="ROS_PACKAGE_PATH=/opt/ros/<%= @rosdistro %>/share"
 Environment="ROS_MASTER_URI=<%= @apirosuri %>"
 Environment="ROSLISP_PACKAGE_DIRECTORIES="
-Environment="ROS_DISTRO=kinetic"
-Environment="ROS_ETC_DIR=/opt/ros/kinetic/etc/ros"
+Environment="ROS_DISTRO=<%= @rosdistro %>"
+Environment="ROS_ETC_DIR=/opt/ros/<%= @rosdistro %>/etc/ros"
