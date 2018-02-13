@@ -59,10 +59,17 @@ class maverick_network::zerotier (
                 dest        => "/srv/maverick/software/libzt",
                 submodules  => true,
             } ->
-            exec { "libzt-make":
-                command     => "/usr/bin/make -j ${::processorcount} static_lib tests",
+            exec { "libzt-cmake-setup":
+                command     => "/usr/bin/cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=DEBUG",
                 cwd         => "/srv/maverick/software/libzt",
-                creates     => "/bin/blah",
+                creates     => "/srv/maverick/software/libzt/build/Makefile",
+                user        => "mav",
+                require     => Package["swig"],
+            } ->
+            exec { "libzt-cmake-build":
+                command     => "/usr/bin/cmake --build build",
+                cwd         => "/srv/maverick/software/libzt",
+                creates     => "/srv/maverick/software/libzt/bin/lib/libzt.a",
                 user        => "mav",
                 require     => Package["swig"],
             }
