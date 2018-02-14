@@ -9,6 +9,7 @@ WorkingDirectory=/srv/maverick/code/maverick-api
 ExecStart=/srv/maverick/code/maverick-api/maverick-api
 User=mav
 TimeoutStartSec=20
+TimeoutStopSec=10
 Restart=on-failure
 
 [Install]
