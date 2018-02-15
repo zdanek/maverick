@@ -11,6 +11,8 @@ class maverick_web::maverick_web (
         depth       => undef,
     } ->
     nodejs::npm { 'npm-maverick-web':
+      user             => 'mav',
+      home_dir         => '/srv/maverick',
       ensure           => 'present',
       target           => '/srv/maverick/code/maverick-web',
       use_package_json => true,
