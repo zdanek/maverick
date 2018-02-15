@@ -19,16 +19,10 @@ class base {
     
     ### Make sure basic packages are installed
     class { "base::packages": 
-        stage	=> "bootstrap",
-        require		=> Class["base::defaults", "base::locale"],
+        stage   => "bootstrap",
+        require => Class["base::defaults", "base::locale"],
     }
-    
-    ### Setup python
-    class { "base::python": 
-        stage	=> "bootstrap",
-        require		=> Class["base::defaults"],
-    }
-    
+
     ### Bootstrap puppet
     class { "maverick_puppet::client":
         stage   => "bootstrap",
@@ -61,6 +55,9 @@ class base {
         class { "apt": }
     }
 
+    ### Setup python
+    class { "base::python": }
+    
     ### Include useful functions
     class { "base::functions": }
         

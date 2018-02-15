@@ -4,12 +4,8 @@ class maverick_analysis::mavlogd (
     $grafana_host = $maverick_analysis::grafana::host,
     $grafana_adminpass = $maverick_analysis::grafana::admin_password,
 ) {
-    if !defined(Package["python-lockfile"]) {
-        ensure_packages(["python-lockfile"])
-    }
-    if !defined(Package["python-daemon"]) {
-        ensure_packages(["python-daemon"])
-    }
+    ensure_packages(["python-lockfile"])
+    ensure_packages(["python-daemon"])
     install_python_module { 'pip-pyinotify':
         pkgname     => 'pyinotify',
         ensure      => present,
