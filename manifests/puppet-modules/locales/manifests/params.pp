@@ -20,7 +20,7 @@ class locales::params {
   $input_method        = ''       # A default input method to be used in X11. For more details see the comments at the top of /etc/X11/xim
 
   case $::operatingsystem {
-    /(Ubuntu|Debian)/: {
+    /(Ubuntu|Debian|LinuxMint)/: {
 
       $default_file      = '/etc/default/locale'
       $locale_gen_cmd    = '/usr/sbin/locale-gen'
@@ -28,7 +28,7 @@ class locales::params {
       $supported_locales = '/usr/share/i18n/SUPPORTED' # ALL locales support
 
       case $::operatingsystem {
-        'Ubuntu': {
+        /(Ubuntu|LinuxMint)/: {
           $package     = 'locales'
           case $::lsbdistcodename {
             'hardy': {
@@ -60,7 +60,7 @@ class locales::params {
         }
       }
     }
-    /(RedHat|CentOS|OracleLinux|Fedora)/: {
+    /(RedHat|CentOS|OracleLinux|Fedora|Amazon|CloudLinux)/: {
       $package = 'glibc-common'
       $locale_gen_cmd = undef
       $update_local_pkg = undef
@@ -68,6 +68,7 @@ class locales::params {
       $update_locale_cmd = undef
       $config_file = '/var/lib/locales/supported.d/local'
       $update_locale_pkg = false
+      $supported_locales = undef
       if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
         $default_file      = '/etc/locale.conf'
       } else {
