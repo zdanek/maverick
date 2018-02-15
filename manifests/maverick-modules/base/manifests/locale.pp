@@ -4,7 +4,6 @@ class base::locale (
     $language_pack = "locales-all",
 ) {
     
-    /*
     # Install language support if necessary
     if $operatingsystem == "Ubuntu" {
         exec { "install-language":
@@ -13,8 +12,7 @@ class base::locale (
             before      => Class["locales"],
         }
     }
-    */
-    
+
     if $locale {
         $_locale = $locale
     } else {
