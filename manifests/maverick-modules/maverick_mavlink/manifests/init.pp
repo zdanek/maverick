@@ -360,7 +360,8 @@ class maverick_mavlink (
             exec { "compile-cuav":
                 command     => "/usr/bin/python setup.py install",
                 cwd         => "/srv/maverick/var/build/cuav",
-                require     => [ Class["maverick_vision::opencv"], Package["libdc1394-22-dev"] ],
+                before      => Class["maverick_vision::opencv"],
+                require     => Package["libdc1394-22-dev"],
                 unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/cuav*",
             }
         }      
