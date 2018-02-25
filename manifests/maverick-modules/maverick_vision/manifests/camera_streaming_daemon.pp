@@ -1,5 +1,5 @@
 class maverick_vision::camera_streaming_daemon (
-    $camera_streaming_daemon_source = "https://github.com/01org/camera-streaming-daemon.git",
+    $camera_streaming_daemon_source = "https://github.com/intel/camera-streaming-daemon.git",
     $rtsp_port = 8554,
     $active = false,
 ) {

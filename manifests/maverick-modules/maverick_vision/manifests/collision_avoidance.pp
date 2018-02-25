@@ -1,5 +1,5 @@
 class maverick_vision::collision_avoidance (
-    $source = "https://github.com/01org/collision-avoidance-library.git",
+    $source = "https://github.com/intel/collision-avoidance-library.git",
     $revision = "master",
     $active = false,
 ) {

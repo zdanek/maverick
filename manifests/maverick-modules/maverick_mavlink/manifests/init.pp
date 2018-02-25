@@ -2,7 +2,7 @@ class maverick_mavlink (
     $cmavnode_install = true,
     $cmavnode_source = "https://github.com/MonashUAS/cmavnode.git",
     $mavlink_router_install = true,
-    $mavlink_router_source = "https://github.com/01org/mavlink-router.git",
+    $mavlink_router_source = "https://github.com/intel/mavlink-router.git",
     $mavproxy_install = true,
     $mavproxy_source = "https://github.com/ArduPilot/MAVProxy.git",
     $mavproxy_type = "pip",

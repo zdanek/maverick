@@ -12,7 +12,7 @@ class maverick_hardware::peripheral::caspa (
             ensure      => directory,
         } ->
         oncevcsrepo { "git-icamerasrc":
-            gitsource   => "https://github.com/01org/icamerasrc.git",
+            gitsource   => "https://github.com/intel/icamerasrc.git",
             dest        => "/srv/maverick/var/build/caspa/icamerasrc",
             revision    => "8a4a9e575b382ff70f1950a4b52c9d835d982101",
             depth       => "",
