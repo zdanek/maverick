@@ -27,6 +27,8 @@ class maverick_web::maverick_web (
         command     => "/usr/bin/npm install",
         cwd         => "/srv/maverick/code/maverick-web",
         creates     => "/srv/maverick/code/maverick-web/node_modules",
+        user        => "mav",
+        timeout     => 0,
     } ->
     file { "/etc/systemd/system/maverick-web.service":
         owner       => "root",
@@ -37,6 +39,8 @@ class maverick_web::maverick_web (
     } -> 
     nginx::resource::location { "maverick-web":
         location    => $webpath_dev,
+        ensure          => present,
+        ssl             => true,
         proxy       => "http://localhost:${webport}/",
         server      => $server_hostname,
         auth_basic  => $auth_message,
@@ -50,6 +54,8 @@ class maverick_web::maverick_web (
         location_alias  => "/srv/maverick/code/maverick-web/dist",
         index_files     => ["index.html"],
         server          => $server_hostname,
+        auth_basic      => $auth_message,
+        auth_basic_user_file => $auth_file,
         require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
     /*
