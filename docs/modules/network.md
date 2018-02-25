@@ -203,5 +203,13 @@ By default, Zerotier is set to join the public 'Earth' network.  To join a diffe
 `"maverick_network::zerotier::network_id": "ztnetworkhash"`  
 To not join a network automatically, set localconf parameter:  
 `"maverick_network::zerotier::join_network": false`  
- 
-
+ZeroTier can be added and activated without any of the other Maverick networking setup (which can be quite intrusive and complex).  Just add the class in localconf:  
+```
+"classes":
+	[
+		"maverick_network::zerotier"
+	]
+```
+The libzt library is not compiled by default, but can be enabled by setting localconf parameter:  
+`maverick_network::zerotier::libzt": true`  
+This installs into ~/software/libzt.
