@@ -184,7 +184,8 @@ class Streamer(object):
         queue = Gst.ElementFactory.make("queue", "queue")
         if self.format != self.encoder:
             dec = None
-            if Gst.ElementFactory.find("omxmjpegdec"):
+            # if Gst.ElementFactory.find("omxmjpegdec"):
+            if Gst.ElementFactory.find("omxmjpegdecDISABLED"):
                 logger.info("Raspberry hardware decoder detected, using omxmjpegdec as mjpeg decoder")
                 dec = Gst.ElementFactory.make("omxmjpegdec", "omxmjpegdec")
             elif Gst.ElementFactory.find("jpegdec"):
