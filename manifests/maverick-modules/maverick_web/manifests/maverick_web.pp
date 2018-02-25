@@ -2,6 +2,8 @@ class maverick_web::maverick_web (
     $webport = 6794,
     $active = true,
     $server_hostname = $maverick_web::server_fqdn,
+    $auth_message = undef,
+    $auth_file = undef,
 ) {
     
     oncevcsrepo { "git-maverick-web":
@@ -28,6 +30,8 @@ class maverick_web::maverick_web (
         location    => "/maverick-web/",
         proxy       => "http://localhost:${webport}/",
         server      => $server_hostname,
+        auth_basic  => $auth_message,
+        auth_basic_user_file => $auth_file,
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     } ->
     nginx::resource::location { "maverick-web-prod":
