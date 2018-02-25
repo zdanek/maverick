@@ -69,7 +69,7 @@ class maverick_network::zerotier (
             exec { "libzt-cmake-build":
                 command     => "/usr/bin/cmake --build build",
                 cwd         => "/srv/maverick/software/libzt",
-                creates     => "/srv/maverick/software/libzt/bin/lib/libzt.a",
+                creates     => "/srv/maverick/software/libzt/bin/lib/libzt.so",
                 user        => "mav",
                 require     => Package["swig"],
             }
