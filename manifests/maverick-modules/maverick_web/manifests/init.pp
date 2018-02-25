@@ -7,8 +7,8 @@ class maverick_web (
     $webserver_sslport = 443,
     $maverick_docs = true,
     $ssl = true,
-    $maverick_web = true,
-    $maverick_api = true,
+    $maverick_web = false,
+    $maverick_api = false,
     $server_fqdn = $::fqdn,
 ) {
     
