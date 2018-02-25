@@ -12,12 +12,19 @@ class maverick_web::maverick_web (
         revision    => "master",
         depth       => undef,
     } ->
+    /*
     nodejs::npm { 'npm-maverick-web':
       user             => 'mav',
       home_dir         => '/srv/maverick',
       ensure           => 'present',
       target           => '/srv/maverick/code/maverick-web',
       use_package_json => true,
+    } ->
+    */
+    exec { "npm-maverick-web":
+        command     => "/usr/bin/npm install",
+        cwd         => "/srv/maverick/code/maverick-web",
+        creates     => "/srv/maverick/code/maverick-web/node_modules",
     } ->
     file { "/etc/systemd/system/maverick-web.service":
         owner       => "root",
