@@ -2,6 +2,9 @@ class maverick_web::nginx (
     $port,
     $ssl_port,
     $server_hostname = $maverick_web::server_fqdn,
+    $downloads = false,
+    $downloads_dir = "/var/www/html/maverick/downloads",
+    $downloads_location = "/maverick/downloads",
 ) {
     
     # Nginx doesn't have repo for ARM, so don't try to use it
@@ -49,6 +52,9 @@ class maverick_web::nginx (
         service_name    => "maverick-nginx",
     }
 
+    # apache2-utils used for htpasswd, even by nginx
+    ensure_packages(["apache2-utils"])
+    
     nginx::resource::server { $server_hostname:
         listen_port => $port,
         ssl         => true,
@@ -71,6 +77,19 @@ class maverick_web::nginx (
         notify          => Service["maverick-nginx"],
     }
 
+    # Add a location for downloads, turned off by default
+    if $downloads {
+        nginx::resource::location { "maverick-downloads":
+            location        => $downloads_location,
+            ensure          => present,
+            ssl             => true,
+            location_alias  => $downloads_dir,
+            index_files     => [],
+            server          => $server_hostname,
+            require         => Class["nginx"],
+        }
+    }
+    
     # Add a location to stub stats - used by collectd to collect nginx metrics
     $local_config = {
         'access_log' => 'off',
