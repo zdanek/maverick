@@ -6,11 +6,14 @@ class base::locale (
     
     # Install language support if necessary
     if $operatingsystem == "Ubuntu" {
+        ensure_packages([$language_pack], {'before'=>Class["locales"]})
+        /*
         exec { "install-language":
             command     => "/usr/bin/apt-get -y install \"${language_pack}\"",
             unless      => "/usr/bin/locale -a |grep -i ${locale}",
             before      => Class["locales"],
         }
+        */
     }
 
     if $locale {
