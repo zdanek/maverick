@@ -77,7 +77,7 @@ class maverick_ros (
                     }
                     "9": { # stretch
                         case $::raspberry_present {
-                            "yes": { $autodist = "lunar" }
+                            "yes": { $autodist = "kinetic" }
                             default: { $autodist = "lunar" }
                         }
                         case $::architecture {
