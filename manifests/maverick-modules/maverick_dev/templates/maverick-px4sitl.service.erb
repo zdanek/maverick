@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick PX4 SITL
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/srv/maverick/config/dev/px4sitl.conf
+ExecStart=/srv/maverick/software/maverick/bin/px4sitl.sh
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

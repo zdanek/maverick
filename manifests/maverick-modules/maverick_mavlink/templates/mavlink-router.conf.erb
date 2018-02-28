@@ -19,17 +19,22 @@ Log=/srv/maverick/data/mavlink/<%= @name %>/logs
     Device=<%= @inputaddress %>
     Baud=<%= @inputbaud %>,57600,115200,921600
     FlowControl=<%= @inputflow %>
+<% elsif @inputtype == "udp" -%>
+[UdpEndpoint udp]
+    Mode=eavesdropping
+    Address=<%= @inputaddress %>
+    Port=<%= @inputport %>
 <% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
-[UdpEndpoint <%= i -%>]
-    Mode = normal
-    Address = 127.0.0.1
-    Port = <%= @startingudp.to_i() + i %>
+[UdpEndpoint o<%= i -%>]
+    Mode=normal
+    Address=127.0.0.1
+    Port=<%= @startingudp.to_i() + i %>
 <% end %>
 <% (0..(@udpinports.to_i()-1)).each do |i| -%>
-[UdpEndpoint <%= i -%>]
-    Mode = eavesdropping
-    Address = 0.0.0.0
-    Port = <%= (@startingudp.to_i() + @udpports.to_i()) + i %>
+[UdpEndpoint i<%= i -%>]
+    Mode=eavesdropping
+    Address=0.0.0.0
+    Port=<%= (@startingudp.to_i() + @udpports.to_i()) + i %>
 <% end %>

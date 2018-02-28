@@ -3,6 +3,7 @@ define maverick_ros::mavros (
     $mavlink_port = "5770",
     $active = true,
     $mavros_startup_delay = 10,
+    $mavros_launcher = "apm.launch",
 ) {
     
     file { "/srv/maverick/config/ros/mavros-${name}.conf":

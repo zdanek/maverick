@@ -36,6 +36,13 @@ class maverick_mavlink (
         group       => "mav",
         mode        => "755",
     }
+    # Create log directory for mavlink
+    file { ["/srv/maverick/var/log/mavlink" ]:
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    }
     
     # Install mavlink-params@ service
     file { "/srv/maverick/software/maverick/bin/mavlink_params":
