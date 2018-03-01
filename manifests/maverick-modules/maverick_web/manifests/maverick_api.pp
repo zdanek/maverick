@@ -52,5 +52,35 @@ class maverick_web::maverick_api (
         group       => "mav",
         mode        => "755",
     }
+    
+    # Add extra mavros modules
+    file { ["/srv/maverick/var/build/catkin_mavros_maverick", "/srv/maverick/var/build/catkin_mavros_maverick/src"]:
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    exec { "mavros_maverick-catkin-init":
+        command     => "/usr/bin/catkin init",
+        user        => "mav",
+        cwd         => "/srv/maverick/var/build/catkin_mavros_maverick",
+        creates     => "/srv/maverick/var/build/catkin_mavros_maverick/.catkin_tools",
+    } ->
+    exec { "mavros_maverick-wstool-init":
+        command     => "/usr/bin/wstool init",
+        user        => "mav",
+        cwd         => "/srv/maverick/var/build/catkin_mavros_maverick",
+        creates     => "/srv/maverick/var/build/catkin_mavros_maverick/.rosinstall",
+    } ->
+    oncevcsrepo { "git-mavros_maverick":
+        gitsource   => "https://github.com/goodrobots/mavros-maverick.git",
+        dest        => "/srv/maverick/var/build/catkin_mavros_maverick/src/mavros_maverick",
+    } ->
+    exec { "mavros_maverick-catkin":
+        environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages"],
+        cwd         => "/srv/maverick/var/build/catkin_mavros_maverick",
+        command     => "/opt/ros/current/bin/catkin_make_isolated --install --install-space /srv/maverick/software/ros/current -DCMAKE_BUILD_TYPE=Release",
+        creates     => "/srv/maverick/software/ros/current/lib/libmavros_maverick.so",
+    }
 
 }
