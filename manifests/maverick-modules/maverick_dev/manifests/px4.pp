@@ -15,10 +15,11 @@ class maverick_dev::px4 (
     $mavlink_udpinports = 3,
     $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = "11315",
+    $rosmaster_port = 11315,
     $mavros_active = true,
     $mavros_startup_delay = 10,
     $mavlink_port = 5790,
+    $api_instance = true,
 ) {
 
     # Install px4 dev/build dependencies
@@ -317,6 +318,16 @@ class maverick_dev::px4 (
     if $cross_compile == true {
         ensure_packages(["python-serial", "openocd", "flex", "bison", "libncurses5-dev", "autoconf", "texinfo", "libftdi-dev", "libtool", "zlib1g-dev"])
         ensure_packages(["gcc-arm-none-eabi", "gdb-arm-none-eabi", "binutils-arm-none-eabi"])
+    }
+
+    if $api_instance == true {
+        # Create an API instance
+        maverick_web::api { "api-px4sitl":
+            instance    => "px4sitl",
+            active      => true,
+            apiport     => 6802,
+            rosport     => $rosmaster_port,
+        }
     }
 
 }

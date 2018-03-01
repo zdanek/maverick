@@ -1,0 +1,15 @@
+[Unit]
+Description=Maverick API Service - %I
+After=maverick-mavros@fc.service maverick-mavros@sitl.service maverick-mavros@px4sitl.service
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/api.sh %I
+User=mav
+TimeoutStartSec=20
+TimeoutStopSec=10
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

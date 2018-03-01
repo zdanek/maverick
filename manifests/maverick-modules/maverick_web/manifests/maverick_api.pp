@@ -1,9 +1,4 @@
 class maverick_web::maverick_api (
-    $active = true,
-    $apiport = 6795,
-    $apirosuri = "http://localhost:11313",
-    $rosdistro = "lunar",
-    $server_hostname = $maverick_web::server_fqdn,
 ) {
 
     # install python components
@@ -38,66 +33,24 @@ class maverick_web::maverick_api (
         revision    => "master",
         depth       => undef,
     } ->
-    file { "/etc/systemd/system/maverick-api.service":
+    file { "/etc/systemd/system/maverick-api@.service":
         owner       => "root",
         group       => "root",
         mode        => "644",
-        source      => "puppet:///modules/maverick_web/maverick-api.service",
+        source      => "puppet:///modules/maverick_web/maverick-api@.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
-    file { "/etc/systemd/system/maverick-api.service.d":
+    # Create a symlink to api launch script
+    file { "/srv/maverick/software/maverick/bin/api.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_web/files/api.sh",
+    }
+    
+    file { "/srv/maverick/var/log/web/api":
         ensure      => directory,
-        owner       => "root",
-        group       => "root",
+        owner       => "mav",
+        group       => "mav",
         mode        => "755",
-    } ->
-    file { "/etc/systemd/system/maverick-api.service.d/pythonpath.conf":
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        content     => template("maverick_web/api-pythonpath.conf.erb"),
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    } ->
-    file { "/etc/systemd/system/maverick-api.service.d/ros.conf":
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        content     => template("maverick_web/api-ros.conf.erb"),
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    } ->
-    nginx::resource::location { "maverick-api":
-        ssl             => true,
-        location    => "/maverick-api/",
-        proxy       => "http://localhost:${apiport}/",
-        server      => $server_hostname,
-        require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
-    	proxy_connect_timeout   => "7d",
-    	#proxy_send_timeout      => "7d", # not supported by nginx puppet module
-    	proxy_read_timeout      => "7d",
-        proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
-    	proxy_http_version      => "1.1",
-    }
-    
-    if $active == true {
-        service { "maverick-api":
-            ensure      => running,
-            enable      => true,
-            require     => Exec["maverick-systemctl-daemon-reload"],
-        }
-    } else {
-        service { "maverick-api":
-            ensure      => stopped,
-            enable      => false,
-            require     => Exec["maverick-systemctl-daemon-reload"],
-        }
-    }
-    
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "maverick-api":
-            ports       => $apiport,
-            ips         => lookup("firewall_ips"),
-            proto       => "tcp"
-        }
     }
 
 }

@@ -40,7 +40,7 @@ cd ~/code/ardupilot
 ./waf --upload copter
 ```
 
-## SITL
+## Ardupilot SITL
 Maverick provides a complete ArduPilot SITL environment, complete with a Mavlink proxy so multiple connection types can be made, and optionally a separate ROS environment and MAVRos connected to SITL.  
 In *dev* mode, SITL is automatically compiled and installed, and a system service is enabled and running by default.  In *flight* mode, all the SITL and associated services are disabled to ensure they do not conflict or take resources during flight.  
 The SITL service can be turned off by setting the localconf parameter:  

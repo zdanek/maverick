@@ -20,7 +20,7 @@ class maverick_web (
         class { "maverick_web::cloud9": }
     }
     
-    file { "/srv/maverick/data/web":
+    file { [ "/srv/maverick/data/web", "/srv/maverick/config/web", "/srv/maverick/var/log/web" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",

@@ -4,7 +4,7 @@ Maverick uses *mavlink proxies* to allow multiple connections from the mavlink s
 `"maverick_fc::mavlink_proxy": "mavlink-router"`
 <img src='media/mavlink-proxy.svg' width='75%'>
 ### Proxy Ports
-Maverick sets two proxy environments out of the box - one for FC (Flight Controller) and one for SITL.  There are a default set of endpoints, some of which are reserved or recommended for particular use:  
+Maverick sets two proxy environments out of the box - one for FC (Flight Controller) and one for Ardupilot SITL, and a third optional PX4 SITL environment.  There are a default set of endpoints, some of which are reserved or recommended for particular use:  
 
   | Env | Port | Status
 --- | :---: | :---: | ---
@@ -27,6 +27,16 @@ UDP | SITL | 14582 | <font color='gray'>available</font>
 UDPin | SITL | 14583 | <font color='gray'>available</font>
 UDPin | SITL | 14584 | <font color='gray'>available</font>
 UDPin | SITL | 14585 | <font color='gray'>available</font>
+--- | --- | --- | ---
+TCP | PX4 SITL | 5790 | TCP allows multiple connections to a port
+TCP | PX4 SITL | 5791 | <font color='gray'>available</font>
+TCP | PX4 SITL | 5792 | <font color='gray'>available</font>
+UDP | PX4 SITL | 14590 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>
+UDP | PX4 SITL | 14591 | Web Interface (Reserved)
+UDP | PX4 SITL | 14592 | <font color='gray'>available</font>
+UDPin | PX4 SITL | 14593 | <font color='gray'>available</font>
+UDPin | PX4 SITL | 14594 | <font color='gray'>available</font>
+UDPin | PX4 SITL | 14595 | <font color='gray'>available</font>
 
 The number of ports for each endpoint type can be set for each proxy type and instance.  Each proxy type has an 'instance generator' which is used by other modules to create a proxy instance.  So for example the maverick_fc module creates an instance of maverick_mavlink::mavproxy, or maverick_mavlink::mavlink_router or maverick_mavlink::cmavnode depending on which proxy type is selected.  Each proxy type takes parameters:  
 - *startingtcp*: The starting tcp port - maverick_fc starts at 5770 by default, maverick_sitl starts at 5780.
@@ -44,7 +54,7 @@ These parameters have to be set in the class/module creating the proxy instance,
 "maverick_fc::mavlink_udpports": 3,
 "maverick_fc::mavlink_udpinports": 3,
 ```
-For SITL, the localconf parameters would be:
+For Ardupilot SITL, the localconf parameters would be:
 ```puppet
 "maverick_dev::sitl::mavlink_proxy": "mavlink-router",
 "maverick_dev::sitl::mavlink_startingtcp": 5780,
@@ -52,6 +62,15 @@ For SITL, the localconf parameters would be:
 "maverick_dev::sitl::mavlink_startingudp": 14580,
 "maverick_dev::sitl::mavlink_udpports": 3,
 "maverick_dev::sitl::mavlink_udpinports": 3,
+```
+For PX4 SITL, the localconf parameters would be:
+```puppet
+"maverick_dev::px4::mavlink_proxy": "mavlink-router",
+"maverick_dev::px4::mavlink_startingtcp": 5790,
+"maverick_dev::px4::mavlink_tcpports": 3,
+"maverick_dev::px4::mavlink_startingudp": 14590,
+"maverick_dev::px4::mavlink_udpports": 3,
+"maverick_dev::px4::mavlink_udpinports": 3,
 ```
 
 Note that firewall rules are automatically generated for the correct number of tcp and udp ports depending on these settings.

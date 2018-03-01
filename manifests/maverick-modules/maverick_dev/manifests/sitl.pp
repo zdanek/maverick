@@ -11,11 +11,12 @@ class maverick_dev::sitl (
     $mavlink_udpinports = 3,
     $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = "11313",
+    $rosmaster_port = 11313,
     $mavros_active = true,
     $mavros_startup_delay = 10,
     $mavlink_port = 5780,
     $sitl_active = true,
+    $api_instance = true,
 ) {
     
     # Install a virtual environment for dronekit sitl
@@ -350,5 +351,15 @@ class maverick_dev::sitl (
             mavros_startup_delay => $mavros_startup_delay,
         }
     }
-    
+
+    if $api_instance == true {
+        # Create an API instance
+        maverick_web::api { "api-sitl":
+            instance    => "sitl",
+            active      => true,
+            apiport     => 6801,
+            rosport     => $rosmaster_port,
+        }
+    }
+
 }

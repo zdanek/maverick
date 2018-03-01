@@ -1,0 +1,1 @@
+/srv/maverick/software/maverick/manifests/maverick-modules/maverick_web/files/api.sh
