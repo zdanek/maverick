@@ -140,6 +140,11 @@ class maverick_ros (
             target      => "${installdir}/${_distribution}",
             force       => true,
         } ->
+        file { "/opt/ros/current":
+            ensure      => link,
+            target      => "${installdir}/${_distribution}",
+            force       => true,
+        } ->
         # Install ROS bootstrap from ros.org packages
         exec { "ros-repo-key":
             command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
@@ -151,7 +156,7 @@ class maverick_ros (
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros-latest.list",
             notify      => Exec["apt_update"],
         } ->
-        package { ["python-rosdep"]:
+        package { ["python-rosdep", "python-catkin-tools"]:
             ensure      => installed,
             require     => Exec["apt_update"],
         }
