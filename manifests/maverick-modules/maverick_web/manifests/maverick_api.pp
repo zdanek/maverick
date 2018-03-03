@@ -73,13 +73,20 @@ class maverick_web::maverick_api (
         creates     => "/srv/maverick/var/build/catkin_mavros_maverick/.rosinstall",
     } ->
     oncevcsrepo { "git-mavros_maverick":
-        gitsource   => "https://github.com/goodrobots/mavros-maverick.git",
+        gitsource   => "https://github.com/goodrobots/mavros_maverick.git",
         dest        => "/srv/maverick/var/build/catkin_mavros_maverick/src/mavros_maverick",
     } ->
     exec { "mavros_maverick-catkin":
-        environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages"],
+        user        => "mav",
+        environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/kinetic"],
         cwd         => "/srv/maverick/var/build/catkin_mavros_maverick",
-        command     => "/opt/ros/current/bin/catkin_make_isolated --install --install-space /srv/maverick/software/ros/current -DCMAKE_BUILD_TYPE=Release",
+        # command     => "/opt/ros/current/bin/catkin_make_isolated --install --install-space /srv/maverick/software/ros/current -DCMAKE_BUILD_TYPE=Release",
+        command     => "/opt/ros/current/bin/catkin_make_isolated --install-space /srv/maverick/software/ros/current -DCMAKE_BUILD_TYPE=Release",
+        creates     => "/srv/maverick/software/ros/current/lib/libmavros_maverick.so",
+    } ->
+    exec { "mavros_maverick-install":
+        cwd         => "/srv/maverick/var/build/catkin_mavros_maverick/build_isolated/mavros_maverick",
+        command     => "/usr/bin/make install",
         creates     => "/srv/maverick/software/ros/current/lib/libmavros_maverick.so",
     }
 
