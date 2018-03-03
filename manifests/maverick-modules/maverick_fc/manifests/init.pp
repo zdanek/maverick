@@ -2,7 +2,6 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
-    $mavlink_paramcontrol = false,
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_baud = 115200,
     $mavlink_startingtcp = 5770,
@@ -73,26 +72,9 @@ class maverick_fc (
     
     # Install default params config
     file { "/srv/maverick/config/mavlink/mavlink_params-fc.json":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        source      => "puppet:///modules/maverick_fc/mavlink_params-fc.json",
-        replace     => false,
+        ensure      => absent,
     }
-    if $mavlink_active and $mavlink_paramcontrol {
-        service_wrapper { "maverick-params@fc":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
-        }
-    } else {
-        service_wrapper { "maverick-params@fc":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
-        }
-    }
-   
+
     ### Setup mavlink proxy
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "fc":

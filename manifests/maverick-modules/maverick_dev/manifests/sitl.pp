@@ -3,7 +3,6 @@ class maverick_dev::sitl (
     $jsbsim_source = "http://github.com/tridge/jsbsim.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
-    $mavlink_paramcontrol = false,
     $mavlink_startingtcp = 5780,
     $mavlink_tcpports = 3,
     $mavlink_startingudp = 14580,
@@ -193,11 +192,7 @@ class maverick_dev::sitl (
         notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-sitl"] ]
     } ->
     file { "/srv/maverick/config/mavlink/mavlink_params-sitl.json":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        source      => "puppet:///modules/maverick_dev/mavlink_params-sitl.json",
-        replace     => false,
+        ensure      => absent,
     }
     
     if $sitl_active == true {
@@ -206,29 +201,11 @@ class maverick_dev::sitl (
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
         }
-        if $mavlink_paramcontrol == true {
-            service_wrapper { "maverick-params@sitl":
-                ensure      => running,
-                enable      => true,
-                require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"], Service_wrapper["maverick-sitl"] ],
-            }
-        } else {
-            service_wrapper { "maverick-params@sitl":
-                ensure      => stopped,
-                enable      => false,
-                require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
-            }
-        }
     } else {
         service_wrapper { "maverick-sitl":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
-        } ->
-        service_wrapper { "maverick-params@sitl":
-            ensure      => stopped,
-            enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-params@.service"] ],
         }
     }
 

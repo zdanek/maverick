@@ -46,14 +46,10 @@ class maverick_mavlink (
     
     # Install mavlink-params@ service
     file { "/srv/maverick/software/maverick/bin/mavlink_params":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlink_params",
+        ensure      => absent,
     } ->
     file { "/etc/systemd/system/maverick-params@.service":
-        source      => "puppet:///modules/maverick_mavlink/maverick-params@.service",
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
+        ensure      => absent,
         notify      => Exec["maverick-systemctl-daemon-reload"],
     }
         
