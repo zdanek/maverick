@@ -117,16 +117,17 @@ class maverick_dev::sitl (
     
     # If SITL plane, compile jsbsim and install service
     if $ardupilot_vehicle == "plane" and ! ("install_flag_jsbsim" in $installflags) {
+        ensure_packages(["libexpat1-dev"])
         oncevcsrepo { "git-jsbsim":
             gitsource   => $jsbsim_source,
             dest        => "/srv/maverick/var/build/jsbsim",
-        }
-        ensure_packages(["libexpat1-dev"])
+        } ->
         exec { "jsbsim-autogen":
             command     => "/srv/maverick/var/build/jsbsim/autogen.sh --enable-libraries --prefix=/srv/maverick/software/jsbsim --exec-prefix=/srv/maverick/software/jsbsim",
             cwd         => "/srv/maverick/var/build/jsbsim",
             creates     => "/srv/maverick/var/build/jsbsim/Makefile",
             user        => "mav",
+            require     => Package["libexpat1-dev"],
         } ->
         exec { "jsbsim-make":
             command     => "/usr/bin/make",
