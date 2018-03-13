@@ -2,7 +2,7 @@ class maverick_analysis::grafana (
     $webport = "6790",
     $host = "127.0.0.1",
     $rootpath = "/analysis/grafana/",
-    $grafana_version = latest,
+    $grafana_version = "4.6.1",
     $grafana_raspberry_version = "4.6.1",
     $grafana_firewall_rules = false,
     $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
@@ -84,6 +84,12 @@ class maverick_analysis::grafana (
         ensure      => "stopped",
         enable      => false,
     } ->
+    /*
+    service_wrapper { "grafana-server":
+        ensure      => "stopped",
+        enable      => false,
+    } ->
+    */
     http_conn_validator { 'grafana-postdelay' :
         host    => $host,
         port    => $webport,
@@ -136,6 +142,7 @@ class maverick_analysis::grafana (
         grafana_url       => "http://localhost:${webport}",
         grafana_user      => 'admin',
         grafana_password  => $admin_password,
+        organization      => 'Maverick',
         type              => 'influxdb',
         url               => 'http://localhost:8086',
         database          => 'maverick',
