@@ -4,6 +4,10 @@ define maverick_ros::mavros (
     $active = true,
     $mavros_startup_delay = 10,
     $mavros_launcher = "apm.launch",
+    $source_sysid = undef,
+    $source_cmpid = undef,
+    $target_sysid = undef,
+    $target_cmpid = undef,
 ) {
     
     file { "/srv/maverick/config/ros/mavros-${name}.conf":
