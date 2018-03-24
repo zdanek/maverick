@@ -6,8 +6,18 @@ class maverick_hardware::peripheral::flirone (
     if $::raspberry_present == "yes" {
         ensure_packages(["raspberrypi-kernel-headers"])
     }
-    ensure_packages(["libusb-1.0-0-dev", "dkms", "v4l2loopback-utils", "v4l2loopback-dkms"])
-    
+    ensure_packages(["libusb-1.0-0-dev", "dkms", "v4l2loopback-utils", "v4l2loopback-dkms", "libjpeg-dev"])
+    /*
+    if $::operatingsystem == "Debian" {
+        exec { "flirone-libturbojpeg-install":
+            command     => "/usr/bin/apt install -y libturbojpeg-dev",
+            unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+            before      => Exec["flirone-compile"],
+        }
+    } elsif $::operatingsystem == "Ubuntu" {
+        ensure_packages(["libjpeg-turbo8-dev"], {'before' => Exec["flirone-compile"]})
+    }
+    */
     oncevcsrepo { "git-libseek":
         gitsource   => "https://github.com/fnoop/flirone-v4l2.git",
         dest        => "/srv/maverick/software/flirone",
@@ -16,7 +26,7 @@ class maverick_hardware::peripheral::flirone (
         command     => "/usr/bin/make",
         cwd         => "/srv/maverick/software/flirone",
         creates     => "/srv/maverick/software/flirone/flirone",
-        require     => [ Package["v4l2loopback-dkms"], Package["libusb-1.0-0-dev"] ],
+        require     => [ Package["v4l2loopback-dkms"], Package["libusb-1.0-0-dev"], Package["libjpeg-dev"] ],
     } ->
     file { "/srv/maverick/software/maverick/bin/flirone_v4l2.sh":
         ensure      => symlink,
