@@ -16,6 +16,7 @@ class maverick_dev::sitl (
     $mavlink_port = 5780,
     $sitl_active = true,
     $api_instance = true,
+    $api_active = false,
 ) {
     
     # Install a virtual environment for dronekit sitl
@@ -334,7 +335,7 @@ class maverick_dev::sitl (
         # Create an API instance
         maverick_web::api { "api-sitl":
             instance    => "sitl",
-            active      => false,
+            active      => $api_active,
             apiport     => 6801,
             rosport     => $rosmaster_port,
         }
