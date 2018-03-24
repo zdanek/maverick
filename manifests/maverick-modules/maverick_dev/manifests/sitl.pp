@@ -334,7 +334,7 @@ class maverick_dev::sitl (
         # Create an API instance
         maverick_web::api { "api-sitl":
             instance    => "sitl",
-            active      => true,
+            active      => false,
             apiport     => 6801,
             rosport     => $rosmaster_port,
         }

@@ -1,6 +1,6 @@
 class maverick_web::maverick_web (
     $webport = 6794,
-    $active = true,
+    $active = false,
     $webpath_dev = '/dev/maverick/',
     $webpath_prod = '/web/maverick',
     $server_hostname = $maverick_web::server_fqdn,
