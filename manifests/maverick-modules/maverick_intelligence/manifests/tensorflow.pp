@@ -184,7 +184,7 @@ class maverick_intelligence::tensorflow (
             unless "tensorflow" in $::python_modules["global"] {
                 exec { "install-tensorflow":
                     path        => ["/usr/local/bin","/usr/bin"],
-                    command     => "pip install /srv/maverick/var/build/tensorflow/tensorflow_pkg/*.whl >/srv/maverick/var/log/build/tensorflow.install.log 2>&1",
+                    command     => "pip --disable-pip-version-check install /srv/maverick/var/build/tensorflow/tensorflow_pkg/*.whl >/srv/maverick/var/log/build/tensorflow.install.log 2>&1",
                     require     => Exec["createwhl-tensorflow"],
                     before      => File["/srv/maverick/var/build/.install_flag_tensorflow"],
                 }

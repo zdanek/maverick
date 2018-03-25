@@ -8,7 +8,7 @@ Facter.add(:python_modules) do
     end
     
     pippaths.each do |pipenv,pippath|
-        pip_output = Facter::Core::Execution::exec("#{pippath} freeze")
+        pip_output = Facter::Core::Execution::exec("#{pippath} --disable-pip-version-check freeze")
         unless pip_output.to_s.empty?
             pips = pip_output.lines.map(&:chomp)
             pips.each do |pip|

@@ -17,8 +17,8 @@ class base::python (
 
     # Need to install/upgrade pip to a known version using easy_install, which is the only method that works reliably.
     exec { "upgrade-pip":
-        command     => "sudo easy_install -U pip==9.0.1",
-        unless      => "ls /usr/local/lib/python2.7/dist-packages/pip-9.0.1*.egg",
+        command     => "sudo easy_install -U pip==9.0.3",
+        unless      => "ls /usr/local/lib/python2.7/dist-packages/pip-9.0.3*.egg",
         path        => ["/usr/local/bin", "/usr/bin", "/bin"],
         require     => Package["python-setuptools"],
     } ->
