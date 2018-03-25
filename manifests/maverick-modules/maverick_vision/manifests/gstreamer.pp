@@ -9,10 +9,10 @@ class maverick_vision::gstreamer (
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
             # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
-            if ! ("install_flag_gst-rtsp-server" in $installflags) and ($::operatingsystemmajrelease == 8 or $::operatingsystemmajrelease == 9) {
-                if $::operatingsystemmajrelease == 8 {
+            if ! ("install_flag_gst-rtsp-server" in $installflags) {
+                if $::operatingsystemmajrelease == "8" {
                     $_gitrev = "1.4.4"
-                } elsif $::operatingsystemmajrelease == 9 {
+                } elsif $::operatingsystemmajrelease == "9" {
                     $_gitrev = "1.10.4"
                 }
                 file { "/srv/maverick/var/build/gstreamer":
