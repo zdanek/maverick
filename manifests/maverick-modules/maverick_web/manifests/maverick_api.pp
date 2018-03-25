@@ -65,6 +65,7 @@ class maverick_web::maverick_api (
         user        => "mav",
         cwd         => "/srv/maverick/var/build/catkin_mavros_maverick",
         creates     => "/srv/maverick/var/build/catkin_mavros_maverick/.catkin_tools",
+        require     => Class["maverick_ros"],
     } ->
     exec { "mavros_maverick-wstool-init":
         command     => "/usr/bin/wstool init",
