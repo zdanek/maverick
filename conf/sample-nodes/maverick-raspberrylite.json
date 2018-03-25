@@ -26,7 +26,7 @@
     "maverick_analysis::grafana": true,
     "maverick_analysis::mavlogd": true,
     
-	"maverick_desktop::install": true, // Ensure desktop is installed by default
+	"maverick_desktop::install": false, // Ensure desktop is installed by default
 	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
 	
 	"maverick_dev::sitl": false,
@@ -45,10 +45,10 @@
 	"maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
 	"maverick_fc::mavlink_input": "/dev/ttyAMA0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	"maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
-	"maverick_fc::ros_instance": false,
-	"maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
-	"maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
-	"maverick_fc::mavros_startup_delay": 20,
+	"maverick_fc::ros_instance": true,
+	"maverick_fc::rosmaster_active": true, // Whether ROS master for fc is active or not
+	"maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
+	"maverick_fc::mavros_startup_delay": 30,
 
 	"maverick_gcs::fcs": true,
 	
@@ -64,8 +64,6 @@
 
 	"maverick_mavlink::mavcesium_install": true,
 	"maverick_mavlink::cuav_install": false,
-	
-	"maverick_ros::installtype": false,
 	
 	"maverick_vision::gstreamer": true,
 	"maverick_vision::opencv": true,
