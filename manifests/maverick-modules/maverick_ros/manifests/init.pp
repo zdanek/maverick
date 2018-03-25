@@ -210,6 +210,13 @@ class maverick_ros (
     # Build from source
     } elsif $_installtype == "source" {
 
+        # Force osdistro for raspberry
+        if $raspberry_present == "yes" {
+            $_osdistro = "--os=debian:${::lsbdistcodename}"
+        } else {
+            $_osdistro = ""
+        }
+
         if ! ("install_flag_ros" in $installflags) {
             file { "${builddir}":
                 ensure      => directory,
@@ -245,7 +252,7 @@ class maverick_ros (
             } ->
             exec { "catkin_make":
                 environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y ${_osdistro} && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
@@ -312,7 +319,7 @@ class maverick_ros (
                 } ->
                 exec { "catkin_make_mavros":
                     # Note must only use -j1 otherwise we get compiler errors
-                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1 >/srv/maverick/var/log/build/ros.mavros.install.out 2>&1",
+                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y $_osdistro && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1 >/srv/maverick/var/log/build/ros.mavros.install.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${installdir}/${_distribution}/lib/libmavros.so",
