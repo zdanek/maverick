@@ -18,6 +18,13 @@ class base::maverick (
         mode    => "755",
     }
     
+    # If the gitbranch fact is set, use that to set the branch while setting up maverick
+    if $::gitbranch {
+        $_gitbranch = $::gitbranch
+    } else {
+        $_gitbranch = $maverick_branch
+    }
+
     # Setup git for the mav user
     include git
     # Lay down a default .gitconfig for mav user, don't overwrite modifications in the future
@@ -33,7 +40,7 @@ class base::maverick (
     oncevcsrepo { "git-maverick":
         gitsource   => "https://github.com/goodrobots/maverick.git",
         dest        => "/srv/maverick/software/maverick",
-	    revision    => $maverick_branch,
+	    revision    => $_gitbranch,
     }
     file { "/srv/maverick/config/maverick/localconf.json":
         source      => "puppet:///modules/base/maverick-localconf.json",
@@ -99,7 +106,7 @@ class base::maverick (
     file { "/srv/maverick/config/maverick/maverick-branch.conf":
         owner   => "mav",
         group   => "mav",
-        content => "MAVERICK_BRANCH=${maverick_branch}",
+        content => "MAVERICK_BRANCH=${_gitbranch}",
         replace => false,
     }
     
