@@ -27,13 +27,13 @@ class maverick_intelligence::tensorflow (
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.4.0rc1-cp27-none-any.whl",
+                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.7.0rc1-cp27-none-any.whl",
                 ensure      => present,
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.4.0rc1-cp27-none-any.whl",
+                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.7.0rc1-cp27-none-any.whl",
                 ensure      => present,
             }
         } elsif ($::tegra_present == "yes" and $::tegra_model == "TX1") {
