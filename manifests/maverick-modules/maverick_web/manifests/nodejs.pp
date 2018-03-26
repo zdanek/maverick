@@ -17,13 +17,20 @@ class maverick_web::nodejs (
             command     => "/usr/bin/wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/install-node-v8.9.0.sh | bash",
             creates     => "/opt/nodejs/bin/node",
             timeout     => 0,
+            before      => File["/usr/bin/node"],
         }
     } else {
         class { 'nodejs':
             repo_url_suffix           => '8.x',
             repo_release              => $_release,
             nodejs_package_ensure     => latest,
+            before      => File["/usr/bin/node"],
         }
+    }
+    
+    file { "/usr/bin/node":
+        ensure  => link,
+        target  => "/opt/nodejs/bin/node",
     }
     
 }
