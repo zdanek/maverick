@@ -2,8 +2,7 @@ class maverick_analysis::grafana (
     $webport = "6790",
     $host = "127.0.0.1",
     $rootpath = "/analysis/grafana/",
-    $grafana_version = "4.6.1",
-    $grafana_raspberry_version = "4.6.1",
+    $grafana_version = "5.0.3",
     $grafana_firewall_rules = false,
     $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
     $mav_salt = 'ry48G1ZHyi',
@@ -11,7 +10,7 @@ class maverick_analysis::grafana (
     $admin_password = 'theneedforspeed',
     $admin_salt = 'F3FAxVm33R',
 ) {
-    
+
     ensure_packages(["sqlite3"])
 
     file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/var/log/analysis/grafana"]:
@@ -44,7 +43,7 @@ class maverick_analysis::grafana (
         }
         $manage_package_repo = false
         # Don't use autodetect above, because we want OS images to be compatible with Zero
-        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_raspberry_version}_armhf.deb"
+        $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
         $install_method = "package"
     } else {
         $manage_package_repo = true
