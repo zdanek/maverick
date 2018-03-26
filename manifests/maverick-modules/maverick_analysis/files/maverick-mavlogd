@@ -7,6 +7,7 @@ import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re, Co
 import lockfile, signal, grp
 import asyncore, pyinotify
 import sqlite3
+import json
 from dateutil import parser
 from grafana_api_client import GrafanaClient
 from grafanalib.core import *
@@ -25,7 +26,7 @@ class ProcessLog(ProcessEvent):
         self.dashboard_links()
         self.dashboard_errors()
         # Set favourite dashboards for the mav user
-        self.star_dashboards()
+        # self.star_dashboards()
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
@@ -361,17 +362,16 @@ class ProcessLog(ProcessEvent):
         # Construct the dashboard
         dashboard = {
             "editable": False,
-            "hideControls": True,
-            "rows": [{"panels": [{
-                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table><!--<script language='javascript'>setTimeout(function(){location.reload(true)}, 15000)</script>-->",
+            "panels": [{
+                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table>",
+                  "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
                   "mode": "html",
-                  "span": 12,
+                  "title": "Flight Log Index",
+                  "type": "text",
                   "title": "Flight Logs",
-                  "type": "text"
-                }],
-            "title": "Flight Logs",
+                  "id": 1
             }],
-            "schemaVersion": 14,
+            "schemaVersion": 16,
             "style": "dark",
             "tags": ["ardupilot"],
             "timezone": "browser",
@@ -379,9 +379,11 @@ class ProcessLog(ProcessEvent):
             "title": "Flight Logs Index"
         }
         # Create/update the dashboard in grafana
-        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
-        dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
-        logger.debug("Grafana dashboard update:"+str(dashreturn))
+        #grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
+        #dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
+        with open("/srv/maverick/data/analysis/grafana/dashboards/flight-index.json", 'w') as flightindex:
+            json.dump(dashboard, flightindex)
+        logger.debug("Grafana dashboard updated")
         
     def dashboard_errors(self):
         error_entries = []
@@ -414,27 +416,28 @@ class ProcessLog(ProcessEvent):
         # Construct the dashboard
         dashboard = {
             "editable": False,
-            "hideControls": True,
-            "rows": [{"panels": [{
+            "panels": [{
                   "content": "<table><thead><tr><th>Error Description</th><th>Event Time</th><th>Flight Data Links</th><th colspan='3'>EKF Data Links</th></tr></thead><tbody>"+"\n".join(error_entries)+"</tbody></table>",
+                  "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
                   "mode": "html",
-                  "span": 12,
-                  "title": "Error Events",
-                  "type": "text"
-                }],
-            "title": "Error Events",
+                  "title": "Flight Log Index",
+                  "type": "text",
+                  "title": "Flight Logs",
+                  "id": 2
             }],
-            "schemaVersion": 14,
+            "schemaVersion": 16,
             "style": "dark",
-            "tags": ["ardupilot", "errors"],
+            "tags": ["ardupilot"],
             "timezone": "browser",
             "version": int(time.time()),
-            "title": "Error Events Index"
+            "title": "Flight Errors Index"
         }
         # Create/update the dashboard in grafana
-        grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
-        dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
-        logger.debug("Grafana error event dashboard update:"+str(dashreturn))
+        #grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
+        #dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
+        with open("/srv/maverick/data/analysis/grafana/dashboards/flighterrors-index.json", 'w') as flighterrors:
+            json.dump(dashboard, flighterrors)
+        logger.debug("Grafana error event dashboard update")
         
     def error_text(self,subsys,ecode):
         subsysId = {
