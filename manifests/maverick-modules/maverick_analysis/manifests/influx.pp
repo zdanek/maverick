@@ -1,7 +1,4 @@
 class maverick_analysis::influx (
-    $source = "https://github.com/influxdata/influxdb.git",
-    $branch = "v1.4.2",
-    $influxdb_version = "1.3.3-1",
     $active = true,
 ) {
     
@@ -95,7 +92,7 @@ class maverick_analysis::influx (
     # Install python library
     install_python_module { "pip-influxdb":
         ensure          => atleast,
-        version         => "4.1.1",
+        version         => "5.0.0",
         pkgname         => "influxdb",
     }
 
