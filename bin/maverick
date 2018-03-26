@@ -474,11 +474,11 @@ if [ "$STATUS" == "true" ]; then
         (systemctl status maverick-web >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-web >/dev/null 2>&1); statusen=$?; statusout+=$(status "web" "Maverick Web" $status $statusen)
         (systemctl status maverick-nginx >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-nginx >/dev/null 2>&1); statusen=$?; statusout+=$(status "nginx" "Webserver" $status $statusen)
         (systemctl status maverick-cloud9 >/dev/null 2>&1); c9=$?; (systemctl is-enabled maverick-cloud9 >/dev/null 2>&1); c9en=$?; statusout+=$(status "cloud9" "Cloud9 IDE" $c9 $c9en)
-        (systemctl status maverick-grafana >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-grafana >/dev/null 2>&1); statusen=$?; statusout+=$(status "grafana" "Analysis Dashboard" $status $statusen)
         (systemctl status maverick-mavcesium >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-mavcesium >/dev/null 2>&1); statusen=$?; statusout+=$(status "mavcesium" "MavCesium" $status $statusen)
         (systemctl status maverick-webvision >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-webvision >/dev/null 2>&1); visen=$?; statusout+=$(status "webvision" "Web Vision" $vis $visen)
         statusout+='------------:------------:------------------\n'
         statusout+="${blue}Analysis Services${reset}\n"
+        (systemctl status maverick-grafana >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-grafana >/dev/null 2>&1); statusen=$?; statusout+=$(status "grafana" "Analysis Dashboard" $status $statusen)
         (systemctl status maverick-mavlogd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-mavlogd >/dev/null 2>&1); statusen=$?; statusout+=$(status "mavlogd" "Log Import Daemon" $status $statusen)
         (systemctl status maverick-influxd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-influxd >/dev/null 2>&1); statusen=$?; statusout+=$(status "influxd" "Time Data DB" $status $statusen)
         (systemctl status maverick-collectd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-collectd >/dev/null 2>&1); statusen=$?; statusout+=$(status "collectd" "System Metrics" $status $statusen)

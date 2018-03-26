@@ -6,14 +6,19 @@ class maverick_analysis::grafana (
     $grafana_firewall_rules = false,
     $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
     $mav_salt = 'ry48G1ZHyi',
-    $admin_hash = '0a66a2e243118cc863cbcaa5c1bae486a57a008e5b17b68f5c00cabd7dcc6b6974af6806348d75f17fb709762cda2038c05c',
-    $admin_password = 'theneedforspeed',
-    $admin_salt = 'F3FAxVm33R',
+    # $mav_password = 'wingman',
+    $admin_user = 'admin',
+    # To reset the admin hash: grafana-cli -d admin reset-admin-password theneedforspeed --config=/srv/maverick/config/analysis/grafana.ini from /usr/share/grafana
+    $admin_hash = '6eade3d424af57a87cb455d6577a7d92746517db17deda6b73fd40f22850b4491e6513d22763d9891d2a9206e8c61c9da3d6',
+    $admin_salt = 'WwOYa3P4rc',
+    $admin_rand = 'slhNQwWHa7',
+    # $admin_password = 'theneedforspeed',
+    $admin_password = 'admin',
 ) {
 
     ensure_packages(["sqlite3"])
 
-    file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/var/log/analysis/grafana"]:
+    file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/plugins", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",
@@ -62,7 +67,11 @@ class maverick_analysis::grafana (
         cfg => {
             app_mode => 'production',
             paths   => {
-                data        => "/srv/maverick/data/analysis/grafana",
+                data            => "/srv/maverick/data/analysis/grafana",
+                logs            => "/srv/maverick/data/analysis/grafana/logs",
+                plugins         => "/srv/maverick/data/analysis/grafana/plugins",
+                provisioning    => "/srv/maverick/data/analysis/grafana/provisioning",
+            
             },
             server   => {
               http_port     => $webport,
@@ -83,12 +92,10 @@ class maverick_analysis::grafana (
         ensure      => "stopped",
         enable      => false,
     } ->
-    /*
     service_wrapper { "grafana-server":
         ensure      => "stopped",
         enable      => false,
     } ->
-    */
     http_conn_validator { 'grafana-postdelay' :
         host    => $host,
         port    => $webport,
@@ -118,7 +125,55 @@ class maverick_analysis::grafana (
         unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"10\" and user_id=\"100\"' |grep Viewer",
         command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','10','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
         user            => "mav",
-    } ->
+    }
+
+    # Deploy the provisioning config
+    file { "/srv/maverick/data/analysis/grafana/provisioning/datasources/influx.yaml":
+        source          => "puppet:///modules/maverick_analysis/grafana-influx.yaml",
+        owner           => "mav",
+        group           => "mav",
+        notify          => Service["maverick-grafana"],
+    }
+    file { "/srv/maverick/data/analysis/grafana/provisioning/dashboards/dashboards.yaml":
+        source          => "puppet:///modules/maverick_analysis/grafana-dashboards.yaml",
+        owner           => "mav",
+        group           => "mav",
+        notify          => Service["maverick-grafana"],
+    }
+    
+    # Deploy provisioning dashboards
+    file { "/srv/maverick/data/analysis/grafana/dashboards/system_dashboard.json":
+        content         => template("maverick_analysis/${_dashboard}"),
+        owner           => "mav",
+        group           => "mav",
+    }
+    file { "/srv/maverick/data/analysis/grafana/dashboards/flight-dashboard-ardupilot.json":
+        content         => template("maverick_analysis/flight-dashboard-ardupilot.json"),
+        owner           => "mav",
+        group           => "mav",
+    }
+    file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf2-ardupilot.json":
+        content         => template("maverick_analysis/flight-ekf2-ardupilot.json"),
+        owner           => "mav",
+        group           => "mav",
+    }
+    file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf3-ardupilot.json":
+        content         => template("maverick_analysis/flight-ekf3-ardupilot.json"),
+        owner           => "mav",
+        group           => "mav",
+    }
+    file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf2ekf3-ardupilot.json":
+        content         => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
+        owner           => "mav",
+        group           => "mav",
+    }
+    file { "/srv/maverick/data/analysis/grafana/dashboards/mavexplorer-mavgraphs.json":
+        content         => template("maverick_analysis/mavexplorer-mavgraphs.json"),
+        owner           => "mav",
+        group           => "mav",
+    }
+
+    /*
     # Delete old admin user
     exec { "grafana-deloldadminuser":
         onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where id=1' |grep admin",
@@ -128,7 +183,7 @@ class maverick_analysis::grafana (
     # Create admin user in grafana
     exec { "grafana-adminuser":
         unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep admin",
-        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(101,0,'admin','admin','Maverick Admin','${admin_hash}','${admin_salt}','yICOZzT82L','',10,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43')\"",
+        command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(101,0,'${admin_user}','${admin_user}','Maverick Admin','${admin_hash}','${admin_salt}','${admin_rand}','',10,1,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43')\"",
         user            => "mav",
     } ->
     # Link admin user to org
@@ -137,66 +192,28 @@ class maverick_analysis::grafana (
         command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('101','10','101','Admin','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
         user            => "mav",
     } ->
-    grafana_datasource { 'influxdb':
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        organization      => 'Maverick',
-        type              => 'influxdb',
-        url               => 'http://localhost:8086',
-        database          => 'maverick',
-        access_mode       => 'proxy',
-        is_default        => true,
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
+    */
+
+    /*
+    ### NEW - Not working yet
+    exec { "grafana-reset-admin-password":
+        command         => "/usr/sbin/grafana-cli -d admin reset-admin-password ${admin_password} --config=/srv/maverick/config/analysis/grafana.ini",
+        #unless          => "",
+        cwd             => "/usr/share/grafana",
     } ->
-    grafana_dashboard { 'system_dashboard':
-        title               => "System Dashboard",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        content           => template("maverick_analysis/${_dashboard}"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
+    grafana_organization { 'maverick':
+        grafana_url      => "http://${host}:${webport}",
+        grafana_user     => $admin_user,
+        grafana_password => $admin_password,
     } ->
-    grafana_dashboard { 'flight_dashboard':
-        title               => "Flight Data Analysis",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
+    grafana_user { 'mav':
+        grafana_url      => "http://${host}:${webport}",
+        grafana_user      => $admin_user,
         grafana_password  => $admin_password,
-        content           => template("maverick_analysis/flight-dashboard-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
-    } ->
-    grafana_dashboard { 'ekf2_dashboard':
-        title               => "Flight EKF2 Analysis",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        content           => template("maverick_analysis/flight-ekf2-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
-    } ->
-    grafana_dashboard { 'ekf3_dashboard':
-        title               => "Flight EKF3 Analysis",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        content           => template("maverick_analysis/flight-ekf3-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
-    } ->
-    grafana_dashboard { 'ekf2ekf3_dashboard':
-        title               => "Flight EKF2-EKF3 Analysis",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        content           => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
-    } ->
-    grafana_dashboard { 'mavexplorer_mavgraphs_dashboard':
-        title               => "MAVExplorer Mavgraphs",
-        grafana_url       => "http://localhost:${webport}",
-        grafana_user      => 'admin',
-        grafana_password  => $admin_password,
-        content           => template("maverick_analysis/mavexplorer-mavgraphs.json"),
-        require             => [ Service["maverick-grafana"], Http_conn_validator["grafana-postdelay"] ],
+        full_name         => 'Maverick User',
+        password          => $mav_password,
     }
+    */
     
     if defined(Class["::maverick_web"]) {
         nginx::resource::location { "web-analysis-graphs":

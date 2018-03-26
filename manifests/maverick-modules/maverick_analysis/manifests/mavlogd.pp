@@ -52,13 +52,23 @@ class maverick_analysis::mavlogd (
         source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.service",
         notify          => Exec["maverick-systemctl-daemon-reload"],
         require         => [Service_wrapper["maverick-influxd"], Service["maverick-grafana"]],
-    } ->
-    service_wrapper{ "maverick-mavlogd":
-        ensure          => running,
-        enable          => true,
-        require         => Package["python-lockfile"],
+        before          => Service_wrapper["maverick-mavlogd"],
     }
     
+    if $active == true {
+        service_wrapper{ "maverick-mavlogd":
+            ensure          => running,
+            enable          => true,
+            require         => Package["python-lockfile"],
+        }
+    } else {
+        service_wrapper{ "maverick-mavlogd":
+            ensure          => stopped,
+            enable          => false,
+            require         => Package["python-lockfile"],
+        }
+    }
+
     if defined(Class["::maverick_web"]) {
         # Add a temporary service to run mavlog uploader
         # Note the paths and webport are hardcoded into /srv/maverick/software/maverick-fcs/file_upload.py
