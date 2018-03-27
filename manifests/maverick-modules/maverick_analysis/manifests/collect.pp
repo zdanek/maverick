@@ -45,6 +45,7 @@ class maverick_analysis::collect (
                 command     => "/usr/bin/make install >/srv/maverick/var/log/build/collectd-install 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/software/collectd/sbin/collectd",
+                timeout     => 0,
             } ->
             file { "/srv/maverick/var/build/.install_flag_collectd":
                 owner           => "mav",
