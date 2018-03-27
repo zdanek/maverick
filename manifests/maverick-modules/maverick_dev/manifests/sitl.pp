@@ -8,6 +8,8 @@ class maverick_dev::sitl (
     $mavlink_startingudp = 14580,
     $mavlink_udpports = 3,
     $mavlink_udpinports = 3,
+    $mavlink_serialout = undef,
+    $mavlink_outbaud = 115200,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = 11313,
@@ -225,6 +227,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             notify      => $notifyResources,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
@@ -236,6 +240,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "sitl":
@@ -246,6 +252,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => $mavlink_active,
             notify      => $notifyResources,
         }
@@ -258,6 +266,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
@@ -269,6 +279,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => false,
         } ->
         maverick_mavlink::cmavnode { "sitl":
@@ -278,6 +290,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => $mavlink_active,
             notify      => $notifyResources,
         }
@@ -290,6 +304,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             notify      => $notifyResources,
         } ->
         maverick_mavlink::mavproxy { "sitl":
@@ -300,6 +316,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "sitl":
@@ -311,6 +329,8 @@ class maverick_dev::sitl (
             udpinports  => $mavlink_udpinports,
             startingtcp => $mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
+            serialout   => $mavlink_serialout,
+            outbaud     => $mavlink_outbaud,
             active      => $mavlink_active,
             notify      => $notifyResources,
         }

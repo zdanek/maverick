@@ -9,6 +9,9 @@ define maverick_mavlink::mavlink_router (
     $udpinports = 3,
     $startingtcp = 5770,
     $tcpports = 3,
+    $serialout = undef,
+    $outbaud = undef,
+    $outflow = false,
     $active = true,
     $replaceconfig = true,
 ) {

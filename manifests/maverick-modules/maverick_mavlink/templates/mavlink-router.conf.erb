@@ -38,3 +38,9 @@ Log=/srv/maverick/data/mavlink/<%= @name %>/logs
     Address=0.0.0.0
     Port=<%= (@startingudp.to_i() + @udpports.to_i()) + i %>
 <% end %>
+<% if @serialout -%>
+[UartEndpoint serialout]
+    Device=<%= @serialout %>
+    Baud=<%= @outbaud %>,57600,115200,921600
+    FlowControl=<%= @outflow %>
+<% end %>
