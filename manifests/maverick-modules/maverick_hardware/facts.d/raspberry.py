@@ -103,6 +103,7 @@ class Raspberry(object):
     def storagedata(self):
         # Obtain the SD card size from proc
         f = open('/proc/partitions', 'r')
+        self.data['sdsize'] = None
         for line in f:
             if re.search("mmcblk0$", line):
                 self.data['sdsize'] = int(line.split()[2]) / 1024
