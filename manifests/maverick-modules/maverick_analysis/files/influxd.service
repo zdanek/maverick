@@ -1,8 +1,8 @@
 [Unit]
 Description=InfluxDB is an open-source, distributed, time series database
 After=network.target
-Wants=network-online.target multi-user.target
-After=network-online.target multi-user.target
+Wants=network-online.target
+After=network-online.target
 Before=maverick-collectd.service
 
 [Service]
