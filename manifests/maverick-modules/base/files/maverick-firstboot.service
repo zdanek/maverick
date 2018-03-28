@@ -1,7 +1,5 @@
 [Unit]
 Description=Maverick First Boot actions
-After=network-online.target
-Requires=network-online.target
 
 [Service]
 Type=oneshot
@@ -11,5 +9,5 @@ ExecStart=/bin/sh -c 'if [ -e /boot/maverick ]; then /srv/maverick/software/mave
 User=mav
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network-online.target
 
