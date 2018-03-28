@@ -1,6 +1,7 @@
 [Unit]
 Description=Maverick Mavros - %I
-Requires=multi-user.target maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-rosmaster@px4.service maverick-sitl.service
+After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-rosmaster@px4.service maverick-sitl.service
+Requires=multi-user.target 
 
 [Service]
 TimeoutStartSec=0
