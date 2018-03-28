@@ -1,10 +1,8 @@
 [Unit]
 Description=Maverick Mavros - %I
-After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-sitl.service maverick-mavproxy@fc.service maverick-mavproxy@sitl.service maverick-mavproxy@px4.service maverick-mavlink-router@fc.service maverick-mavlink-router@sitl.service maverick-mavlink-router@px4.service maverick-cmavnode@fc.service maverick-cmavnode@sitl.service maverick-cmavnode@px4.service
-Requires=network-online.target
+Requires=multi-user.target maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-rosmaster@px4.service maverick-sitl.service
 
 [Service]
 TimeoutStartSec=0
 ExecStart=/srv/maverick/software/maverick/bin/mavros.sh %I
 User=mav
-

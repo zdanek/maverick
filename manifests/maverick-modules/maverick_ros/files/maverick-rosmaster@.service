@@ -1,7 +1,7 @@
 [Unit]
 Description=Maverick ROS Master - %I
 After=maverick-motd.service
-Requires=network-online.target
+Requires=multi-user.target
 
 [Service]
 TimeoutStartSec=0
