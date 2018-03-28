@@ -1,14 +1,14 @@
-<% if @udpinaddress and @udpinport %>
+<% if @inputtype == "udp" -%>
 [linkname]
     type=socket
     targetip=<%= @udpinaddress %>
     targetport=<%= @udpinport %>
-<% else -%>
+<% elsif @inputtype == "serial" -%>
 [fcserial]
     type=serial
     port=<%= @inputaddress %>
     baud=<%= @inputbaud %>
-    flow_control=false
+    flow_control=<%= @inputflow %>
 <% end -%>
 
 <% (0..(@udpports.to_i()-1)).each do |i| -%>
@@ -22,3 +22,11 @@
     type=socket
     localport=<%= (@startingudp.to_i() + @udpports.to_i()) + i %>
 <% end -%>
+
+<% if @serialout -%>
+[serialout]
+    type=serial
+    port=<%= @serialout %>
+    baud=<%= @outbaud %>
+    flow_control=<%= @outflow %>
+<% end %>

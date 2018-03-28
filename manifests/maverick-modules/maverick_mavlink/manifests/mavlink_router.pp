@@ -2,6 +2,7 @@ define maverick_mavlink::mavlink_router (
     $inputtype = "serial",
     $inputaddress = undef,
     $inputbaud = undef,
+    $inputflow = false,
     $inputport = undef,
     $inputflow = false,
     $startingudp = 14570,

@@ -1,6 +1,7 @@
 define maverick_mavlink::mavproxy (
     $inputaddress = "",
     $inputbaud = undef,
+    $inputflow = false,
     $instance = 0,
     $startingudp = 14570,
     $udpports = 3,
@@ -9,6 +10,7 @@ define maverick_mavlink::mavproxy (
     $tcpports = 3,
     $serialout = undef,
     $outbaud = undef,
+    $outflow = false,
     $active = true,
     $replaceconfig = true,
 ) {

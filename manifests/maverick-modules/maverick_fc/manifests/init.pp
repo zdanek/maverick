@@ -3,7 +3,9 @@ class maverick_fc (
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_input = "/dev/ttyAMA0",
-    $mavlink_baud = 115200,
+    $mavlink_inbaud = 115200,
+    $mavlink_inflow = false,
+    $mavlink_flow = false,
     $mavlink_startingtcp = 5770,
     $mavlink_tcpports = 3,
     $mavlink_startingudp = 14570,
@@ -11,6 +13,7 @@ class maverick_fc (
     $mavlink_udpinports = 3,
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
+    $mavlink_outflow = false,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11311",
@@ -81,7 +84,8 @@ class maverick_fc (
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
@@ -89,11 +93,13 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             inputaddress => $mavlink_input,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -102,11 +108,13 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             instance    => 2,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -115,12 +123,14 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             instance    => 2,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -129,12 +139,14 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
@@ -142,11 +154,13 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
@@ -154,12 +168,14 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => $mavlink_active,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
@@ -167,11 +183,13 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             instance    => 2,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -180,12 +198,14 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
             inputaddress => $mavlink_input,
-            inputbaud   => $mavlink_baud,
+            inputbaud   => $mavlink_inbaud,
+            inputflow   => $mavlink_inflow,
             startingudp => $mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
@@ -193,6 +213,7 @@ class maverick_fc (
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
+            outflow     => $mavlink_outflow,
             active      => $mavlink_active,
         }
     }

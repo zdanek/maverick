@@ -1,6 +1,8 @@
 define maverick_mavlink::cmavnode (
+    $inputtype = "serial",
     $inputaddress = undef,
     $inputbaud = 115200,
+    $inputflow = false,
     $udpinaddress = undef,
     $udpinport = undef,
     $startingudp = 14570,
@@ -10,6 +12,7 @@ define maverick_mavlink::cmavnode (
     $tcpports = 3,
     $serialout = undef,
     $outbaud = undef,
+    $outflow = false,
     $active = true,
     $replaceconfig = true,
 ) {
