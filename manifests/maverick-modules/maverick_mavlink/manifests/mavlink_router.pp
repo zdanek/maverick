@@ -4,7 +4,6 @@ define maverick_mavlink::mavlink_router (
     $inputbaud = undef,
     $inputflow = false,
     $inputport = undef,
-    $inputflow = false,
     $startingudp = 14570,
     $udpports = 3,
     $udpinports = 3,
