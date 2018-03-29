@@ -196,7 +196,7 @@ class maverick_dev::px4 (
         }
         
         if $ros_instance == true {
-            $notifyResources = [ Service_wrapper["maverick-px4sitl"], Service_wrapper["maverick-rosmaster@px4sitl"] ]
+            $notifyResources = [ Service_wrapper["maverick-px4sitl"], Service["maverick-rosmaster@px4sitl"] ]
         } else {
             $notifyResources = Service_wrapper["maverick-px4sitl"]
         }

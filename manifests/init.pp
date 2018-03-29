@@ -204,7 +204,6 @@ define service_wrapper ($enable, $ensure, $service_name=$name) {
         $_provider = undef
     }
     if ! ($ensure == "stopped" and empty(grep($::installed_services, $service_name))) {
-        warning("service_wrapper: ${name} : ${service_name} : $ensure : $enable : $_provider")
         if $service_name != $name {
             service { $name:
                 name        => $service_name,
