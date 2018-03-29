@@ -18,6 +18,10 @@ class maverick_web::nodejs (
             creates     => "/opt/nodejs/bin/node",
             timeout     => 0,
             before      => File["/usr/bin/node"],
+        } ->
+        file { "/usr/bin/node":
+            ensure  => link,
+            target  => "/opt/nodejs/bin/node",
         }
     } else {
         class { 'nodejs':
@@ -27,10 +31,5 @@ class maverick_web::nodejs (
             before      => File["/usr/bin/node"],
         }
     }
-    
-    file { "/usr/bin/node":
-        ensure  => link,
-        target  => "/opt/nodejs/bin/node",
-    }
-    
+
 }
