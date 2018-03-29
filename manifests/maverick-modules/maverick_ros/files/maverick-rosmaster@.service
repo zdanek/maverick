@@ -2,7 +2,6 @@
 Description=Maverick ROS Master - %I
 After=maverick-motd.service
 StartLimitBurst=5
-After=multi-user.target
 
 [Service]
 TimeoutStartSec=0

@@ -1,7 +1,6 @@
 [Unit]
 Description=Maverick Mavros - %I
 After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-rosmaster@px4.service maverick-sitl.service
-Requires=maverick-rosmaster@%I.service
 
 [Service]
 TimeoutStartSec=0
