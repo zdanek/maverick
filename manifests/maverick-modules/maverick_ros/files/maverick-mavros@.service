@@ -1,9 +1,12 @@
 [Unit]
 Description=Maverick Mavros - %I
 After=maverick-rosmaster@fc.service maverick-rosmaster@sitl.service maverick-rosmaster@px4.service maverick-sitl.service
-Requires=multi-user.target 
+Requires=maverick-rosmaster@%I.service
 
 [Service]
 TimeoutStartSec=0
 ExecStart=/srv/maverick/software/maverick/bin/mavros.sh %I
 User=mav
+
+[Install]
+WantedBy=multi-user.target

@@ -215,7 +215,7 @@ class maverick_dev::sitl (
     }
 
     if $ros_instance == true {
-        $notifyResources = [ Service_wrapper["maverick-sitl"], Service_wrapper["maverick-rosmaster@sitl"] ]
+        $notifyResources = [ Service_wrapper["maverick-sitl"], Service["maverick-rosmaster@sitl"] ]
     } else {
         $notifyResources = Service_wrapper["maverick-sitl"]
     }
