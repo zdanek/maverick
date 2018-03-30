@@ -23,6 +23,7 @@ class maverick_dev::px4 (
     $mavros_startup_delay = 10,
     $mavlink_port = 5790,
     $api_instance = true,
+    $api_active = false,
 ) {
 
     # Install px4 dev/build dependencies
@@ -354,7 +355,7 @@ class maverick_dev::px4 (
         # Create an API instance
         maverick_web::api { "api-px4sitl":
             instance    => "px4sitl",
-            active      => true,
+            active      => $api_active,
             apiport     => 6802,
             rosport     => $rosmaster_port,
         }
