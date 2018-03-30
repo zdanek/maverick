@@ -160,6 +160,7 @@ class maverick_ros (
             ensure      => installed,
             require     => Exec["apt_update"],
         }
+        /*
         $wstool_package = $::operatingsystem ? {
             'Ubuntu'        => 'python-wstool',
             'Debian'        => 'python-wstools',
@@ -167,6 +168,8 @@ class maverick_ros (
         package { "python-wstool":
             name        => $wstool_package
         }
+        */
+        ensure_packages(["python-wstool", "python-wstools"])
     }
 
     # Install from ros repos
