@@ -11,7 +11,8 @@ class maverick_hardware::peripheral::flirone (
     if $::operatingsystem == "Debian" {
         exec { "flirone-libturbojpeg-install":
             command     => "/usr/bin/apt install -y libturbojpeg-dev",
-            unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+            #unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+            creates     => "/usr/include/turbojpeg.h",
             before      => Exec["flirone-compile"],
         }
     } elsif $::operatingsystem == "Ubuntu" {

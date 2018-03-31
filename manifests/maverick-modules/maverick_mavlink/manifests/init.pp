@@ -322,7 +322,8 @@ class maverick_mavlink (
         if $::operatingsystem == "Debian" {
             exec { "libturbojpeg-install":
                 command     => "/usr/bin/apt install -y libturbojpeg-dev",
-                unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+                #unless      => "/usr/bin/dpkg -l libturbojpeg-dev",
+                creates     => "/usr/include/turbojpeg.h",
             }
         } elsif $::operatingsystem == "Ubuntu" {
             ensure_packages(["libjpeg-turbo8-dev"])
