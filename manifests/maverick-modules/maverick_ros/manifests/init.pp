@@ -148,7 +148,8 @@ class maverick_ros (
         # Install ROS bootstrap from ros.org packages
         exec { "ros-repo-key":
             command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
-            unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
+            #unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
+            creates     => "/etc/apt/sources.list.d/ros-latest.list",
             require     => Package["dirmngr"],
         } ->
         exec { "ros-repo":

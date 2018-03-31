@@ -25,7 +25,8 @@ class maverick_analysis::influx (
     # Install influx repo key
     exec { "influx-key":
         command         => "/usr/bin/curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -",
-        unless          => "/usr/bin/apt-key list |/bin/egrep '2582\s?E0C5'",
+        #unless          => "/usr/bin/apt-key list |/bin/egrep '2582\s?E0C5'",
+        creates         => "/etc/apt/sources.list.d/influxdb.list",
     } ->
     exec { "influx-repo":
         command         => $_influx_command,
