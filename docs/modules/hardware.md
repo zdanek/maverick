@@ -54,6 +54,10 @@ USB ports provide a maximum of 500ma current according to the USB protocol - any
 The default swap size on Raspbian is 100Mb and is implemented using the swapfile /var/swap.  When running memory hungry software such as compilers or running a lot of software which is a common scenario with Maverick, having more swap available is a good idea.  So the default in Maverick is increased to 1024Mb (1Gb).  To alter this, set the localconf parameter:  
 `"maverick_hardware::raspberry::swapsize": 512`
 
+On the Raspberry Pi 3 and Pi Zero W, the bluetooth overlay grabs the hardware line for the serial UART (/dev/ttyAMA0) and by default provides an unreliable serial device on /dev/ttyS0.  This serial device /dev/ttyS0 is very sensitive to bus and CPU throttling and becomes unreliable or unuseable when the bus or CPU is throttled (which is normal).  So Maverick disables this overlay and restores the hardware serial UART to /dev/ttyAMA0 where it is reliable.  However, this disables bluetooth.  In order to disable this behaviour and re-enable the bluetooth overlay, set the localconf parameter:  
+`"maverick_hardware::raspberry::serialoverride": false`  
+Note that this puts the serial UART back on /dev/ttyS0 where it is known to be unreliable.
+
 ### BeagleBone Black
 The BeagleBone Black (BBB) is an interesting embedded computer system about the size of a Raspberry Pi.  It is popular with the hacking community and has been used for several ArduPilot projects.  It has an onboard MMC flash memory but can also be booted from SD card.  Maverick has been developed and tested on BeagleBone Black running the Ubuntu OS.  Beaglebone hardware will be detected automatically, to force platform support, set localconf parameter:  
 `"maverick_hardware::beagle_install": true`  

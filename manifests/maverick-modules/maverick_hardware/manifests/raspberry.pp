@@ -6,6 +6,7 @@ class maverick_hardware::raspberry (
     $spi = true,
     $i2c = true,
     $serialconsole = false, # Normally leave the serial lines free for pixhawk
+    $serialoverride = true, # Disable bluetooth on Pi 3/ZeroW for more reliable serial
     $camera = true,
     $xgl = false,
     $v4l2 = true,
@@ -102,7 +103,7 @@ class maverick_hardware::raspberry (
         value       => 1,
     }
     # If this is a RPi 3, disable the onboard bluetooth and reassign the GPIO UART to uart0 which is more reliable
-    if ($raspberry_model == "3 Model B" or $raspberry_model == "Zero W") {
+    if ($raspberry_model == "3 Model B" or $raspberry_model == "Zero W") and $serialoverride == true {
         confline { "rpi3-uartoverlay":
             file        => "/boot/config.txt",
             line        => "dtoverlay=pi3-disable-bt",
@@ -113,6 +114,11 @@ class maverick_hardware::raspberry (
         } ->
         package { "hciuart":
             ensure      => purged
+        }
+    } else {
+        exec { 'rpi3-disable-dtoverlay':
+            command => "/bin/sed -i -e 's/^dtoverlay=pi3-disable-bt/#dtoverlay=pi3-disable-bt/' /boot/config.txt",
+            onlyif  => "/bin/grep '^dtoverlay=pi3-disable-bt' /boot/config.txt",
         }
     }
 
