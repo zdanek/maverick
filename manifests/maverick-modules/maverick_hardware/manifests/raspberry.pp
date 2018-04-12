@@ -12,6 +12,7 @@ class maverick_hardware::raspberry (
     $v4l2 = true,
     $overpower_usb = false,
     $auto_login = false,
+    $desktop_autologin_user = "mav",
     $manage_pi_password = false,
     $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
     $remove_extrapackages = true,
@@ -95,6 +96,12 @@ class maverick_hardware::raspberry (
             target  => "/etc/systemd/system/autologin@.service",
             force   => true,
         }
+    }
+    
+    confval { "rpi-desktop-autologin":
+        file        => "/etc/lightdm/lightdm.conf",
+        field       => "autologin-user",
+        value       => $desktop_autologin_user,
     }
     
     confval{ "rpi-enableuart":
