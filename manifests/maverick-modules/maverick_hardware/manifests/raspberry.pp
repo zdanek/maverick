@@ -98,12 +98,14 @@ class maverick_hardware::raspberry (
         }
     }
     
-    confval { "rpi-desktop-autologin":
-        file        => "/etc/lightdm/lightdm.conf",
-        field       => "autologin-user",
-        value       => $desktop_autologin_user,
+    if getvar("maverick_desktop::enable") == true {
+        confval { "rpi-desktop-autologin":
+            file        => "/etc/lightdm/lightdm.conf",
+            field       => "autologin-user",
+            value       => $desktop_autologin_user,
+        }
     }
-    
+
     confval{ "rpi-enableuart":
         file        => "/boot/config.txt",
         field       => "enable_uart",
