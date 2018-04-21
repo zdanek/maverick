@@ -20,6 +20,8 @@ class maverick_fc (
     $mavros_active = true,
     $mavros_startup_delay = 10,
     $mavlink_port = "5770",
+    $api_instance = true,
+    $api_active = false,
     $dflogger_active = false,
     $dflogger_port = 14570,
 ) {
@@ -264,6 +266,16 @@ class maverick_fc (
             rosmaster_port      => $rosmaster_port,
             mavlink_port        => $mavlink_port,
             mavros_startup_delay => $mavros_startup_delay,
+        }
+    }
+    
+    if $api_instance == true {
+        # Create an API instance
+        maverick_web::api { "api-fc":
+            instance    => "fc",
+            active      => $api_active,
+            apiport     => 6800,
+            rosport     => $rosmaster_port,
         }
     }
     

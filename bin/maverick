@@ -424,6 +424,7 @@ if [ "$STATUS" == "true" ]; then
         statusout+=$(status "${mavfcservice}" "Mavlink (FC)" $mavfc $mavfcen)
         (systemctl status maverick-rosmaster@fc >/dev/null 2>&1); rosmfc=$?; (systemctl is-enabled maverick-rosmaster@fc >/dev/null 2>&1); rosmfcen=$?; statusout+=$(status "rosmaster@fc" "ROS (FC)" $rosmfc $rosmfcen)
         (systemctl status maverick-mavros@fc >/dev/null 2>&1); mavrosfc=$?; (systemctl is-enabled maverick-mavros@fc >/dev/null 2>&1); mavrosfcen=$?; statusout+=$(status "mavros@fc" "Mavros (FC)" $mavrosfc $mavrosfcen)
+        (systemctl status maverick-api@fc >/dev/null 2>&1); apifc=$?; (systemctl is-enabled maverick-api@fc >/dev/null 2>&1); apifcen=$?; statusout+=$(status "api@fc" "API (FC)" $apifc $apifcen)
         if [ "$environment" == "dev" -a -d "/srv/maverick/code/sitl" -a -f "/srv/maverick/config/dev/sitl.conf" ]; then
             statusout+='------------:------------:------------------\n'
             statusout+="${blue}Dev SITL Services${reset}\n"
