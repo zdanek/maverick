@@ -96,6 +96,13 @@ class maverick_analysis::collect (
         }
     }
 
+    if $active == true {
+        $service_ensure = running
+        $service_enable = true
+    } else {
+        $service_ensure = stopped
+        $service_enable = false
+    }
     class { "collectd":
         config_file     => $config_file,
         plugin_conf_dir => $plugin_conf_dir,
@@ -107,6 +114,8 @@ class maverick_analysis::collect (
         manage_package  => $manage_package,
         manage_repo     => $manage_repo,
         manage_service  => true,
+        service_ensure  => $service_ensure,
+        service_enable  => $service_enable,
         service_name    => 'maverick-collectd',
         typesdb         => [$typesdb],
     } ->
