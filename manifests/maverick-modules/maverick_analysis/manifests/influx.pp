@@ -57,17 +57,17 @@ class maverick_analysis::influx (
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    exec { "influxd-systemd-activate":
-        command     => "/bin/systemctl daemon-reload",
-        unless      => "/bin/systemctl list-units |grep maverick-influxd",
-    } ->
     # Ensure system influxd instance is stopped
     service_wrapper { "influxdb":
         ensure      => stopped,
         enable      => false,
     }
-    
+
     if $active == true {
+        exec { "influxd-systemd-activate":
+            command     => "/bin/systemctl daemon-reload",
+            unless      => "/bin/systemctl list-units |grep maverick-influxd",
+        } ->
         service_wrapper { "maverick-influxd":
             ensure      => running,
             enable      => true,
