@@ -1,5 +1,5 @@
 [Unit]
-Description=Maverick Web Frontend
+Description=Maverick Web Devserver
 After=network-online.target multi-user.target
 Requires=network-online.target multi-user.target
 

@@ -11,6 +11,7 @@ class maverick_web::maverick_web (
     # Install node dependency globally, easier cross-platform
     ensure_packages(["phantomjs"])
     
+    # Install dev repo, register maverick-webdev service
     oncevcsrepo { "git-maverick-web":
         gitsource   => "https://github.com/goodrobots/maverick-web.git",
         dest        => "/srv/maverick/code/maverick-web",
@@ -26,28 +27,36 @@ class maverick_web::maverick_web (
         timeout     => 0,
         require     => Package["phantomjs"],
     } ->
-    file { "/etc/systemd/system/maverick-web.service":
+    file { "/etc/systemd/system/maverick-webdev.service":
         owner       => "root",
         group       => "root",
         mode        => "644",
-        source      => "puppet:///modules/maverick_web/maverick-web.service",
+        source      => "puppet:///modules/maverick_web/maverick-webdev.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
-    nginx::resource::location { "maverick-web":
+    nginx::resource::location { "maverick-webdev":
         location    => $webpath_dev,
-        ensure          => present,
-        ssl             => true,
+        ensure      => present,
+        ssl         => true,
         proxy       => "http://localhost:${webport}/",
         server      => $server_hostname,
         auth_basic  => $auth_message,
         auth_basic_user_file => $auth_file,
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+    }
+    
+    # Install prod repo, register nginx location
+    oncevcsrepo { "git-maverick-web-dist":
+        gitsource   => "https://github.com/goodrobots/maverick-web-dist.git",
+        dest        => "/srv/maverick/software/maverick-web",
+        revision    => "master",
+        depth       => undef,
     } ->
     nginx::resource::location { "maverick-web-prod":
-        location    => $webpath_prod,
+        location        => $webpath_prod,
         ensure          => present,
         ssl             => true,
-        location_alias  => "/srv/maverick/code/maverick-web/dist",
+        location_alias  => "/srv/maverick/software/maverick-web",
         index_files     => ["index.html"],
         server          => $server_hostname,
         auth_basic      => $auth_message,
@@ -67,18 +76,25 @@ class maverick_web::maverick_web (
         index_files     => [],
         server          => $server_hostname,
         ssl             => true,
-        location_alias  => "/srv/maverick/code/maverick-web/dist/",
+        location_alias  => "/srv/maverick/software/maverick-web/",
     }
     */
+
+    # Stop old web service if it exists
+    service { 'maverick':
+        ensure  => stopped,
+        enable  => false,
+    }
     
+    # Bring webdev service to desired state
     if $active == true {
-        service { "maverick-web":
+        service { "maverick-webdev":
             ensure      => running,
             enable      => true,
             require     => Exec["maverick-systemctl-daemon-reload"],
         }
     } else {
-        service { "maverick-web":
+        service { "maverick-webdev":
             ensure      => stopped,
             enable      => false,
             require     => Exec["maverick-systemctl-daemon-reload"],
