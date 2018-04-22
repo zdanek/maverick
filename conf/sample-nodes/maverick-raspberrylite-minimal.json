@@ -1,6 +1,6 @@
 // Sample/default config file for Raspberry Pi platform
-// Activated by changing hostname to 'maverick-raspberrylite' and running 'maverick configure':
-//  sudo hostnamectl set-hostname maverick-raspberrylite
+// Activated by changing hostname to 'maverick-raspberrylite-minimal' and running 'maverick configure':
+//  sudo hostnamectl set-hostname maverick-raspberrylite-minimal
 //  maverick configure
 {
 
@@ -23,16 +23,15 @@
 	},
 	*/
 	
-    "maverick_analysis::influxdb": true,
-    "maverick_analysis::collectd": true,
-    "maverick_analysis::grafana": true,
-    "maverick_analysis::mavlogd": true,
-    
+	"maverick_analysis::influx::active": false,
+	"maverick_analysis::collect::active": false,
+	"maverick_analysis::mavlogd::active": false,
+	"maverick_analysis::grafana::active": false,
+	"maverick_cloud9::cloud9_active": false,
+	
 	"maverick_desktop::install": false, // Ensure desktop is installed by default
 	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
 	
-	"maverick_dev::sitl": false,
-	"maverick_dev::sitl::mavros_startup_delay": 20,
 	// Dev SITL mavlink setup - note this requires dev environment to be active
 	"maverick_dev::sitl": false,
 	"maverick_dev::ardupilot": false,
@@ -48,12 +47,9 @@
 	"maverick_fc::mavlink_input": "/dev/ttyAMA0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
 	"maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
 	"maverick_fc::ros_instance": true,
-	"maverick_fc::rosmaster_active": true, // Whether ROS master for fc is active or not
-	"maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
-	"maverick_fc::mavros_startup_delay": 30,
+	"maverick_fc::rosmaster_active": false, // Whether ROS master for fc is active or not
+	"maverick_fc::mavros_active": false, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
 
-	"maverick_gcs::fcs": true,
-	
 	"maverick_hardware::camera_picam_install": true,
 	"maverick_hardware::seekthermal_install": true,
 	"maverick_hardware::flirone_install": true,
@@ -64,7 +60,7 @@
 	"maverick_intelligence::tensorflow": true,
 	"maverick_intelligence::tensorflow::arch": "armv6l",
 
-	"maverick_mavlink::mavcesium_install": true,
+	"maverick_mavlink::mavcesium_install": false,
 	"maverick_mavlink::cuav_install": false,
 	
 	"maverick_vision::gstreamer": true,
@@ -81,6 +77,9 @@
 	
 	"maverick_vision::orb_slam2": false,
 	"maverick_vision::rtabmap": false,
+	
+	"maverick_web::nginx::active": false,
+	"maverick_web::cloud9::cloud9_active": false,
 
 	// Add classes here
 	"classes":		[
