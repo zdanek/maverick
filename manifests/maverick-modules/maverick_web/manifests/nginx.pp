@@ -1,12 +1,21 @@
 class maverick_web::nginx (
+    $active = true,
     $port,
     $ssl_port,
     $server_hostname = $maverick_web::server_fqdn,
     $downloads = false,
     $downloads_dir = "/var/www/html/maverick/downloads",
     $downloads_location = "/maverick/downloads",
+    $www_root = '/srv/maverick/software/maverick-fcs/public',
 ) {
-    
+    if $active == true {
+        $service_ensure = running
+        $service_enable = true
+    } else {
+        $service_ensure = stopped
+        $service_enable = false
+    }
+
     # Nginx doesn't have repo for ARM, so don't try to use it
     if $::architecture =~ "arm" {
         $manage_repo = false
@@ -50,6 +59,8 @@ class maverick_web::nginx (
         repo_release    => $_release,
         service_manage  => true,
         service_name    => "maverick-nginx",
+        service_ensure  => $service_ensure,
+        service_enable  => $service_enable,
     }
 
     # apache2-utils used for htpasswd, even by nginx
@@ -61,7 +72,7 @@ class maverick_web::nginx (
         ssl_port    => $ssl_port,
         ssl_cert    => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.crt",
         ssl_key     => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.key",
-        www_root    => '/srv/maverick/software/maverick-fcs/public',
+        www_root    => $www_root,
         require     => [ Class["maverick_gcs::fcs"], ],
         notify      => Service["maverick-nginx"],
     }
