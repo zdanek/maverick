@@ -1,5 +1,19 @@
 # Maverick Changelog
 
+## [2018-03-29] 1.1.6 'Sweeter raspberry jam' release
+ - Change license to MIT
+ - Move from fnoop to goodrobots github
+ - Fix ros/mavros on raspberry pi, enable ros in raspberrylite (pi zero) profile
+ - Fix Maverick service ordering and dependencies
+ - Add configurable flow control and serial output to mavlink proxies
+ - Enable Maverick to run from usb stick on raspberry pi
+ - Update grafana to 5.0 and move datasource and dashboards to new provisioning mechanism
+ - Fix RTSP server on raspberry
+ - Update opencv to 3.4.1, gstreamer to 1.14.0, tensorflow to 1.7.0rc1, collectd to 5.8.0, grafana to 5.0.3
+ - Add zerotier libzt support
+ - Lots of bugfixes and minor improvements
+ - Lots of preliminary work for Maverick 2.0 - PX4 firmware, Dronecore, Gazebo, API, Web GCS, all disabled for now
+
 ## [2017-12-12] 1.1.5 'This was not supposed to exist' release
  - Add RTSP support to visiond, change default port to 5600, support GCS video
  - Added 'WebVision' - realtime video through web browser
