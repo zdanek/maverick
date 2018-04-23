@@ -84,16 +84,25 @@ class maverick_analysis::mavlogd (
             group           => "mav",
             source          => "puppet:///modules/maverick_analysis/maverick-uploader.service",
             notify          => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        service_wrapper{ "maverick-uploader":
-            ensure          => running,
-            enable          => true,
-        } ->
-        nginx::resource::location { "web-analysis-uploader":
-            location    => "/analysis/uploader/",
-            proxy       => 'http://localhost:6792/',
-            server      => getvar("maverick_web::server_fqdn"),
-            require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["maverick-uploader"], ],
+        }
+        
+        if $active == true {
+            service_wrapper { "maverick-uploader":
+                ensure          => running,
+                enable          => true,
+                require         => File["/etc/systemd/system/maverick-uploader.service"],
+            } ->
+            nginx::resource::location { "web-analysis-uploader":
+                location    => "/analysis/uploader/",
+                proxy       => 'http://localhost:6792/',
+                server      => getvar("maverick_web::server_fqdn"),
+                require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["maverick-uploader"], ],
+            }
+        } else {
+            service_wrapper { "maverick-uploader":
+                ensure      => stopped,
+                enable      => false,
+            }
         }
     }
 }
