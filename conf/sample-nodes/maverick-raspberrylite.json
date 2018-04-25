@@ -23,10 +23,10 @@
 	},
 	*/
 	
-    "maverick_analysis::influxdb": true,
-    "maverick_analysis::collectd": true,
-    "maverick_analysis::grafana": true,
-    "maverick_analysis::mavlogd": true,
+	"maverick_analysis::influx::active": false,
+	"maverick_analysis::collect::active": false,
+	"maverick_analysis::mavlogd::active": false,
+	"maverick_analysis::grafana::active": false,
     
 	"maverick_desktop::install": false, // Ensure desktop is installed by default
 	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
@@ -81,7 +81,7 @@
 	
 	"maverick_vision::orb_slam2": false,
 	"maverick_vision::rtabmap": false,
-
+	
 	// Add classes here
 	"classes":		[
 	    "maverick_network"
