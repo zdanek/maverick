@@ -10,15 +10,17 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All Models) - 1.1.6](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberry.img.xz)
-- [Raspberry Pi Lite (Pi Zero/W) - 1.1.6](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberrylite.img.xz)
-- [Aaeon Up Boards (All Models) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
-- [Ubuntu VM (OVA) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
-- [Ubuntu VM (Parallels) - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
-- [Nvidia Tegra TX1 - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
-- [Nvidia Tegra TX2 - 1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
-- [Intel Joule - 1.1.1)](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
-- [Odroid XU3/XU4 - 1.0.4](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
+- [Raspberry Pi (All Models) - 1.1.6 - {d3a7ae7fdf59272adaf91671e0118504070fea1c172d92c3aa362a3e203398be}](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberry.img.xz)
+- [Raspberry Pi Lite (Pi Zero/W) - 1.1.6 - {c2d7c5e096d6d3210301d4d4774046d1e2503f70e754ff079c8dcbd6a333e890}](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberrylite.img.xz)
+- [Aaeon Up Boards (All Models) - 1.1.5 - {d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
+- [Ubuntu VM (OVA) - 1.1.5 - {183548a95db55433ce55718fe8517f979000dfe9433f09031c98318b6a27c6be}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
+- [Ubuntu VM (Parallels) - 1.1.5 - {011cd70e6b4c4f5949fa56e8e98c6ed19755e3ce0c917c8bbc5c8fa1e1f0a796}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.pvmz.zip)
+- [Nvidia Tegra TX1 - 1.1.5 - {6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
+- [Nvidia Tegra TX2 - 1.1.5 - {388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
+- [Intel Joule - 1.1.1 - {4b7bd0f70d87dc42dfa9f93a0f7951da2ea134b067e51851b4537c82c1c646a5}](http://www.maverick.one/maverick/downloads/maverick-1.1.1-joule.iso)
+- [Odroid XU3/XU4 - 1.0.4 - {d5bb5cd9c70273148d8c0bf9078ba85ce093589b13031c8ae94f8393fc51de86}](http://www.maverick.one/maverick/downloads/maverick-1.0.4-odroidxu4.img.xz)
+
+sha256 hashes are given for each file within the {} brackets.
 
 These images require a 16Gb or larger SD card, except for the Raspberry Lite image which requires 8Gb SD card.
 
