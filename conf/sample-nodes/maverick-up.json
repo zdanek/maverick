@@ -25,7 +25,7 @@
 
 	"maverick_mavlink::cuav_install": true,
 	
-	"maverick_vision::visiond::active": true,
+	// "maverick_vision::visiond::active": false,
 	// "maverick_vision::vision_landing::vision_landing_revision": "realsense",
 	// "maverick_vision::vision_landing::active": false,
 	"maverick_vision::collision_avoidance": true,

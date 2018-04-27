@@ -480,18 +480,32 @@ class App():
             Gst.debug_set_active(True)
             Gst.debug_set_default_threshold(self.config['debug'])
         
-        if 'pipeline_override' in self.config:
-            self.manualconstruct()
+        if 'retry' not in self.config or not self.config['retry']:
+            self.retry = 30
         else:
-            self.autoconstruct()
+            self.retry = self.config['retry']
+
+        # Start the pipeline.  Trap any errors and wait for 30sec before trying again.
+        while True:
+            try:
+                if 'pipeline_override' in self.config:
+                    self.manualconstruct()
+                else:
+                    self.autoconstruct()
+            except ValueError as e:
+                logger.critical("Error constructing pipeline: {}, retrying in {} sec".format(repr(e.message), self.retry))
+                time.sleep(float(self.retry))
 
     def manualconstruct(self):
         logger.info("Manual Pipeline Construction")
         logger.info("Creating pipeline from config: " + self.config['pipeline_override'])
-        # Create the pipeline from config override
-        self.pipeline = Gst.parse_launch(self.config['pipeline_override'])
-        # Set pipeline to playing
-        self.pipeline.set_state(Gst.State.PLAYING)
+        try:
+            # Create the pipeline from config override
+            self.pipeline = Gst.parse_launch(self.config['pipeline_override'])
+            # Set pipeline to playing
+            self.pipeline.set_state(Gst.State.PLAYING)
+        except:
+            raise ValueError('Error constructing manual pipeline specified')
         while True:
             time.sleep(5)
 
@@ -511,19 +525,16 @@ class App():
                 else:
                     logger.debug('v4l2 device '+devicepath+' is not a camera, ignoring')
         if not cameradev:
-            logger.critical('Error detecting camera video device')
-            sys.exit(1)
+            raise ValueError('Error detecting camera video device')
 
         # Check the camera has a valid input
         try:
             self.vd = open(cameradev, 'rw')
             cp = v4l2.v4l2_capability()
         except:
-            logger.critical('Camera not specified in config, or camera not valid')
-            sys.exit(1)
+            raise ValueError('Camera not specified in config, or camera not valid')
         if not self.check_input():
-            logger.critical('Specified camera not valid')
-            sys.exit(1)
+            raise ValueError('Specified camera not valid')
 
         # Log info
         self.camera_info()
@@ -558,8 +569,7 @@ class App():
                 logger.info('Camera H264 stream available, using H264 stream')
                 streamtype = 'h264'
         if not streamtype:
-            logger.critical('Error detecting camera video format')
-            sys.exit(1)
+            raise ValueError('Error detecting camera video format')
 
         # If encoder set in config use it, otherwise set to h264
         encoder = None
@@ -587,9 +597,8 @@ class App():
             logger.info("Creating stream object - camera:"+cameradev+", stream:"+streamtype+", pixelformat:"+pixelformat+", encoder:"+encoder+", size:("+str(self.config['width'])+" x "+str(self.config['height'])+" / "+str(self.config['framerate'])+"), output:"+self.config['output']+", brightness:"+self.config['brightness'])
             Streamer(self.config['width'], self.config['height'], self.config['framerate'], streamtype, pixelformat, encoder, self.config['input'], cameradev, int(self.config['brightness']), self.config['output'], self.config['output_dest'], int(self.config['output_port']))
         except Exception as e:
-            logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
-            logger.critical('Error creating '+streamtype+' stream: ' + str(repr(e)))
-            sys.exit(1)
+            #logger.critical('Error creating '+streamtype+' stream:', traceback.print_exc())
+            raise ValueError('Error creating '+streamtype+' stream: ' + str(repr(e)))
 
         while True:
             time.sleep(5)

@@ -75,7 +75,7 @@
     "maverick_vision::vision_seek": true,
     "maverick_vision::camera_streaming_daemon": false,
 	"maverick_vision::visiond": true,
-	"maverick_vision::visiond::active": false,
+	"maverick_vision::visiond::active": true,
 	"maverick_vision::visiond::webvision_active": false,
 	"maverick_vision::vision_landing::active": false,
 	
