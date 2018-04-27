@@ -1,7 +1,7 @@
 [Unit]
 Description=Maverick instance of Statistics collection and monitoring daemon
-After=network-online.target multi-user.target maverick-influxd.service
-Requires=network-online.target multi-user.target maverick-influxd.service
+After=network-online.target maverick-influxd.service
+Requires=network-online.target maverick-influxd.service
 ConditionPathExists=/srv/maverick/config/analysis/collectd/collectd.conf
 Documentation=man:collectd(1)
 Documentation=man:collectd.conf(5)
