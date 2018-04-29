@@ -2,7 +2,7 @@ class maverick_analysis::grafana (
     $webport = "6790",
     $host = "127.0.0.1",
     $rootpath = "/analysis/grafana/",
-    $grafana_version = "5.0.3",
+    $grafana_version = "5.1.0",
     $grafana_firewall_rules = false,
     $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
     $mav_salt = 'ry48G1ZHyi',
