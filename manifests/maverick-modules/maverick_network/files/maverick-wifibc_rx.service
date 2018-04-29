@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick WifiBC RX Daemon
+After=network.target
+Requires=network.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/wifibc.sh rx
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+

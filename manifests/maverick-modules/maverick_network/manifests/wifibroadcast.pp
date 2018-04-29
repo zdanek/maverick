@@ -1,5 +1,7 @@
 class maverick_network::wifibroadcast (
     $type = "svpcom",
+    $tx_active = false,
+    $rx_active = false,
 ) {
     
     if $type == "befinitiv" {
@@ -33,6 +35,7 @@ class maverick_network::wifibroadcast (
     } elsif $type == "svpcom" {
         ensure_packages(["libpcap-dev", "gcc", "make", "libcap2-bin", "libsodium-dev"])
         
+        # Install software
         if ! ("install_flag_wifibc" in $installflags) {
             oncevcsrepo { "git-wifibc":
                 gitsource   => "https://github.com/svpcom/wifibroadcast.git",
@@ -64,7 +67,90 @@ class maverick_network::wifibroadcast (
                 mode        => "0644",
             }
         }
+        
+        # Generate keys
+        file { "/srv/maverick/data/network/wifibc":
+            ensure      => directory,
+            mode        => "755",
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        exec { "wifibc-genkeys":
+            command     => "/srv/maverick/software/wifibc/bin/keygen",
+            creates     => "/srv/maverick/data/network/wifibc/rx.key",
+            cwd         => "/srv/maverick/data/network/wifibc",
+            user        => "mav",
+        }
+        
+        # Install default config files
+        file { "/srv/maverick/config/network/wifibc":
+            ensure      => directory,
+            mode        => "755",
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        file { "/srv/maverick/config/network/wifibc/tx.conf":
+            source      => "puppet:///modules/maverick_network/maverick-wifibc_tx.conf",
+            owner       => "mav",
+            group       => "mav",
+            replace     => false,
+        }
+        file { "/srv/maverick/config/network/wifibc/rx.conf":
+            source      => "puppet:///modules/maverick_network/maverick-wifibc_rx.conf",
+            owner       => "mav",
+            group       => "mav",
+            replace     => false,
+        }
+        
+        # Install wifibc service
+        file { "/srv/maverick/software/maverick/bin/wifibc.sh":
+            ensure      => symlink,
+            target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/wifibc.sh",
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        file { "/etc/systemd/system/maverick-wifibc_tx.service":
+            source      => "puppet:///modules/maverick_network/maverick-wifibc_tx.service",
+            owner       => root,
+            group       => root,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        file { "/etc/systemd/system/maverick-wifibc_rx.service":
+            source      => "puppet:///modules/maverick_network/maverick-wifibc_rx.service",
+            owner       => root,
+            group       => root,
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        }
 
+        # Control tx service
+        if $tx_active == true {
+            service_wrapper { "maverick-wifibc_tx":
+                ensure  => running,
+                enable  => true,
+                require => Exec["maverick-systemctl-daemon-reload"],
+            }
+        } else {
+            service_wrapper { "maverick-wifibc_tx":
+                ensure  => stopped,
+                enable  => false,
+                require => Exec["maverick-systemctl-daemon-reload"],
+            }
+        }
+        
+        # Control rx service
+        if $rx_active == true {
+            service { "maverick-wifibc_rx":
+                ensure  => running,
+                enable  => true,
+                require => Exec["maverick-systemctl-daemon-reload"],
+            }
+        } else {
+            service { "maverick-wifibc_rx":
+                ensure  => stopped,
+                enable  => false,
+                require => Exec["maverick-systemctl-daemon-reload"],
+            }
+        }
     }
 
 }

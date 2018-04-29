@@ -17,13 +17,13 @@ class maverick_network (
     ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload", "hostapd"])
     
     # Create log directory
-    file { "/srv/maverick/var/log/network":
+    file { ["/srv/maverick/var/log/network", "/srv/maverick/config/network", "/srv/maverick/data/network"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",
         group       => "mav",
     }
-    
+
     # Install/setup wifibroadcast
     class { "maverick_network::wifibroadcast": }
     
@@ -254,12 +254,6 @@ class maverick_network (
     }
     
     # Define and configure monitor-mode interface setup in systemd
-    file { "/srv/maverick/config/network":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
     file { ["/srv/maverick/software/maverick/bin/monitor-interface.sh", "/etc/systemd/system/monitor-interface@.service"]:
         ensure      => absent,
         notify      => Exec["maverick-systemctl-daemon-reload"],

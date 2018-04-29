@@ -498,6 +498,10 @@ if [ "$STATUS" == "true" ]; then
         (systemctl status maverick-collectd >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-collectd >/dev/null 2>&1); statusen=$?; statusout+=$(status "collectd" "System Metrics" $status $statusen)
         (systemctl status maverick-uploader >/dev/null 2>&1); status=$?; (systemctl is-enabled maverick-uploader >/dev/null 2>&1); statusen=$?; statusout+=$(status "uploader" "Log Uploader Daemon" $status $statusen)
         statusout+='------------:------------:------------------\n'
+        statusout+="${blue}Network Services${reset}\n"
+        (systemctl status maverick-wifibc_tx >/dev/null 2>&1); wifibc=$?; (systemctl is-enabled maverick-wifibc_tx >/dev/null 2>&1); wifibcen=$?; statusout+=$(status "wifibc_tx" "WifiBC TX" $wifibc $wifibcen)
+        (systemctl status maverick-wifibc_rx >/dev/null 2>&1); wifibc=$?; (systemctl is-enabled maverick-wifibc_rx >/dev/null 2>&1); wifibcen=$?; statusout+=$(status "wifibc_rx" "WifiBC RX" $wifibc $wifibcen)
+        statusout+='------------:------------:------------------\n'
         statusout+="${blue}Vision Services${reset}\n"
         (systemctl status maverick-visiond >/dev/null 2>&1); vis=$?; (systemctl is-enabled maverick-visiond >/dev/null 2>&1); visen=$?; statusout+=$(status "visiond" "Vision Daemon" $vis $visen)
         (systemctl status maverick-csd >/dev/null 2>&1); csd=$?; (systemctl is-enabled maverick-csd >/dev/null 2>&1); csden=$?; statusout+=$(status "csd" "Camera Streaming Daemon" $csd $csden)
