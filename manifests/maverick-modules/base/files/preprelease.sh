@@ -91,6 +91,7 @@ find /srv/maverick/data/logs -type f -delete
 find /srv/maverick/data/mavlink -type f -delete
 find /srv/maverick/data/vision -type f -delete
 find /srv/maverick/data/analysis -type f -delete
+find /srv/maverick/data/network -type f -delete
 rm -rf /srv/maverick/var/lib/influxdb
 
 echo "Recreating gstreamer cache"
