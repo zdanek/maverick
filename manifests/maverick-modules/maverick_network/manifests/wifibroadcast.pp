@@ -59,6 +59,7 @@ class maverick_network::wifibroadcast (
                 command     => "/bin/cp /srv/maverick/var/build/wifibc/[rt]x /srv/maverick/var/build/wifibc/keygen /srv/maverick/software/wifibc/bin",
                 creates     => "/srv/maverick/software/wifibc/bin/keygen",
                 user        => "mav",
+                before      => Exec["wifibc-genkeys"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_wifibc":
                 ensure      => present,
