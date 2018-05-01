@@ -195,7 +195,7 @@ class maverick_network (
         # Reset resolv.conf to resolvconf
         file { "/etc/resolv.conf":
             ensure      => symlink,
-            target      => "/run/resolvconf/resolv.conf",
+            target      => "/etc/resolvconf/run/resolv.conf",
         }
     }
     
