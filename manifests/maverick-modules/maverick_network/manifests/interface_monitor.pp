@@ -7,6 +7,7 @@ define maverick_network::interface_monitor (
         enable_dhcp     => false,
         auto            => true,
         allow_hotplug   => true,
+        method          => "manual",
         template        => "maverick_network/interface_fragment_wireless.erb",
         post_up         => ["/srv/maverick/software/maverick/bin/network-if-monitor ${name}"],
         options         => {
