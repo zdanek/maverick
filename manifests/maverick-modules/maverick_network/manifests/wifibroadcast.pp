@@ -69,6 +69,11 @@ class maverick_network::wifibroadcast (
             }
         }
         
+        exec { "setcaps-wifibc_tx":
+            command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/tx",
+            unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/tx |/bin/grep cap_net_admin",
+        }
+        
         # Generate keys
         file { "/srv/maverick/data/network/wifibc":
             ensure      => directory,
@@ -128,7 +133,7 @@ class maverick_network::wifibroadcast (
             service_wrapper { "maverick-wifibc_tx":
                 ensure  => running,
                 enable  => true,
-                require => Exec["maverick-systemctl-daemon-reload"],
+                require => [ Exec["maverick-systemctl-daemon-reload"], Exec["setcaps-wifibc_tx"] ],
             }
         } else {
             service_wrapper { "maverick-wifibc_tx":
