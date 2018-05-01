@@ -10,7 +10,7 @@ define maverick_network::interface_monitor (
         template        => "maverick_network/interface_fragment_wireless.erb",
         post_up         => ["/srv/maverick/software/maverick/bin/network-if-monitor ${name}"],
         options         => {
-            # wireless_mode =>    "managed",
+            wireless_mode =>    "monitor",
         },
     }
 
