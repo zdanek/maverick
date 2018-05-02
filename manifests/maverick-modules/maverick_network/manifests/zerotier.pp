@@ -31,12 +31,10 @@ class maverick_network::zerotier (
         package { "zerotier-one":
             ensure      => installed,
             require     => Exec["apt_update"],
-        }
-
+        } ->
         file { "/usr/bin/zerotier-cli":
             target      => "/usr/sbin/zerotier-cli",
-        }
-
+        } ->
         # Create initial crypto keys and register, and copy private key to mav user for user control
         exec { "zt-createkeys":
             command     => "/bin/systemctl start zerotier-one; sleep 10; /bin/systemctl stop zerotier-one",
