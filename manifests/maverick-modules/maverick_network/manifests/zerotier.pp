@@ -9,8 +9,8 @@ class maverick_network::zerotier (
     if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {
         $_release = "stretch"
     } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
-        $_release = undef
-        warning("Zerotier not supported on Ubuntu >= 18.04 yet")
+        $_release = "xenial"
+        warning("Zerotier temporary support for Ubuntu 18.04 - using Xenial packages")
     } else {
         $_release = $::lsbdistcodename
     }
@@ -18,23 +18,24 @@ class maverick_network::zerotier (
     if $_release {
         # Install core zerotier pgp key, repo and package
         apt::key { 'zerotier':
-        id      => '74A5E9C458E1A431F1DA57A71657198823E52A61',
-        server  => 'pgp.mit.edu',
+            id      => '74A5E9C458E1A431F1DA57A71657198823E52A61',
+            server  => 'pgp.mit.edu',
         } ->
         apt::source { 'zerotier':
-        location      => "https://download.zerotier.com/debian/${_release}",
-        release       => $_release,
-        repos         => 'main',
-        key           => {'id' => '74A5E9C458E1A431F1DA57A71657198823E52A61'},
-        notify        => Exec["apt_update"],
+            location      => "https://download.zerotier.com/debian/${_release}",
+            release       => $_release,
+            repos         => 'main',
+            key           => {'id' => '74A5E9C458E1A431F1DA57A71657198823E52A61'},
+            notify        => Exec["apt_update"],
         } ->
         package { "zerotier-one":
             ensure      => installed,
             require     => Exec["apt_update"],
-        } ->
+        }
+
         file { "/usr/bin/zerotier-cli":
             target      => "/usr/sbin/zerotier-cli",
-        } ->
+        }
 
         # Create initial crypto keys and register, and copy private key to mav user for user control
         exec { "zt-createkeys":
