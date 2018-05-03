@@ -18,7 +18,7 @@ except:
 class Netinfo(object):
     def __init__(self, _if):
         self.data = {}
-        self._if = _if
+        self._if = str(_if)
         self.udevnet = Udevnet()
         self.udevnet.runall()
 
@@ -97,7 +97,6 @@ class Netinfo(object):
         # Stop here if we don't have a wireless card
         if self.data['type'] != "Wireless":
             return
-
         # Retrieve wireless info
         try:
             _ifobj = pyw.getcard(self._if)
