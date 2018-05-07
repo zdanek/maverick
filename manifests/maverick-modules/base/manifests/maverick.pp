@@ -110,6 +110,12 @@ class base::maverick (
         replace => false,
     }
     
+    # Migrate old fnoop origin to goodrobots
+    exec { "mavfnoop-to-mavgoodrobots":
+        command => "/usr/bin/git remote set-url origin https://github.com/goodrobots/maverick.git",
+        onlyif  => "/usr/bin/git remote -v |grep fnoop",    
+    }
+
     # Ensure desktop config directory exists and prevent auto directory creation
     file { "/srv/maverick/.config":
         owner   => "mav",
