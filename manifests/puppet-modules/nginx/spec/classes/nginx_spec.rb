@@ -60,6 +60,24 @@ describe 'nginx' do
             it { is_expected.to contain_yumrepo('passenger').that_comes_before('Package[nginx]') }
           end
 
+          context 'using default repo without passenger' do
+            let(:params) { { purge_passenger_repo: false } }
+
+            it { is_expected.to contain_package('nginx') }
+            it do
+              is_expected.to contain_yumrepo('nginx-release').with(
+                'baseurl'  => "http://nginx.org/packages/#{facts[:operatingsystem] == 'CentOS' ? 'centos' : 'rhel'}/#{facts[:operatingsystemmajrelease]}/$basearch/",
+                'descr'    => 'nginx repo',
+                'enabled'  => '1',
+                'gpgcheck' => '1',
+                'priority' => '1',
+                'gpgkey'   => 'http://nginx.org/keys/nginx_signing.key'
+              )
+            end
+
+            it { is_expected.not_to contain_yumrepo('passenger') }
+          end
+
           context 'package_source => nginx-mainline' do
             let(:params) { { package_source: 'nginx-mainline' } }
 
@@ -165,6 +183,10 @@ describe 'nginx' do
             it { is_expected.not_to contain_apt__source('nginx') }
             it { is_expected.not_to contain_package('passenger') }
           end
+        when 'Archlinux'
+          context 'using defaults' do
+            it { is_expected.to contain_package('nginx-mainline') }
+          end
         else
           it { is_expected.to contain_package('nginx') }
         end
@@ -174,6 +196,7 @@ describe 'nginx' do
         let :params do
           {
             service_ensure: 'running',
+            service_enable: true,
             service_name: 'nginx',
             service_manage: true
           }
@@ -197,6 +220,7 @@ describe 'nginx' do
             {
               service_restart: 'a restart command',
               service_ensure: 'running',
+              service_enable: true,
               service_name: 'nginx'
             }
           end
@@ -211,7 +235,7 @@ describe 'nginx' do
             }
           end
 
-          it { is_expected.to contain_service('nginx').with_name('nginx14') }
+          it { is_expected.to contain_service('nginx14') }
         end
 
         describe 'when service_manage => false' do
@@ -477,6 +501,12 @@ describe 'nginx' do
                 attr: 'multi_accept',
                 value: 'off',
                 notmatch: %r{multi_accept}
+              },
+              {
+                title: 'should set etag',
+                attr: 'etag',
+                value: 'off',
+                match: '  etag off;'
               },
               {
                 title: 'should set events_use',

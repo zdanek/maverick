@@ -370,6 +370,43 @@ describe 'nginx::resource::location' do
           end
         end
 
+        describe 'server_location_add_header template content' do
+          let :default_params do
+            {
+              location: 'location',
+              server: 'server1'
+            }
+          end
+
+          context 'location_add_header template with default params' do
+            let(:params) { default_params }
+
+            it { is_expected.to contain_concat__fragment('server1-500-' + Digest::MD5.hexdigest('location')) }
+            it 'doesn\'t add any add_header lines' do
+              is_expected.to contain_concat__fragment('server1-500-' + Digest::MD5.hexdigest('location')).
+                without_content(%r{add_header})
+            end
+          end
+
+          context 'location_add_header template with add_header parameter containing hash of two headers' do
+            let(:params) do
+              default_params.merge(
+                'add_header' => {
+                  'X-Frame-Options' => 'SAMEORIGIN',
+                  'X-Powered-By'    => 'Puppet'
+                }
+              )
+            end
+
+            it 'contains both add_header lines' do
+              is_expected.to contain_concat__fragment('server1-500-' + Digest::MD5.hexdigest('location')).
+                with_content(%r{^\s+add_header\s+"X-Frame-Options"\s+"SAMEORIGIN";$})
+              is_expected.to contain_concat__fragment('server1-500-' + Digest::MD5.hexdigest('location')).
+                with_content(%r{^\s+add_header\s+"X-Powered-By"\s+"Puppet";$})
+            end
+          end
+        end
+
         describe 'server_location_directory template content' do
           let :default_params do
             {
@@ -746,6 +783,36 @@ describe 'nginx::resource::location' do
               attr: 'proxy_cache_use_stale',
               value: 'value',
               match: %r{^\s+proxy_cache_use_stale\s+value;}
+            },
+            {
+              title: 'should set proxy_cache_bypass with a string',
+              attr: 'proxy_cache_bypass',
+              value: '$pragma',
+              match: %r{^\s+proxy_cache_bypass\s+\$pragma;}
+            },
+            {
+              title: 'should set proxy_cache_bypass with an array',
+              attr: 'proxy_cache_bypass',
+              value: [
+                '$pragma',
+                '$cookie'
+              ],
+              match: [
+                %r{^\s+proxy_cache_bypass\s+\$pragma;},
+                %r{^\s+proxy_cache_bypass\s+\$cookie;}
+              ]
+            },
+            {
+              title: 'should set proxy_cache_lock with a string',
+              attr: 'proxy_cache_lock',
+              value: 'on',
+              match: %r{^\s+proxy_cache_lock\s+on;}
+            },
+            {
+              title: 'should set proxy_cache_lock with a string',
+              attr: 'proxy_cache_lock',
+              value: 'off',
+              match: %r{^\s+proxy_cache_lock\s+off;}
             },
             {
               title: 'should set proxy_pass',

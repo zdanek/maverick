@@ -26,32 +26,32 @@
 # }
 class nginx (
   ### START Nginx Configuration ###
-  $client_body_temp_path                                     = $::nginx::params::client_body_temp_path,
+  $client_body_temp_path                                     = $nginx::params::client_body_temp_path,
   Boolean $confd_only                                        = false,
   Boolean $confd_purge                                       = false,
-  $conf_dir                                                  = $::nginx::params::conf_dir,
+  $conf_dir                                                  = $nginx::params::conf_dir,
   Optional[Enum['on', 'off']] $daemon                        = undef,
-  $daemon_user                                               = $::nginx::params::daemon_user,
+  $daemon_user                                               = $nginx::params::daemon_user,
   $daemon_group                                              = undef,
-  $global_owner                                              = $::nginx::params::global_owner,
-  $global_group                                              = $::nginx::params::global_group,
-  $global_mode                                               = $::nginx::params::global_mode,
-  $log_dir                                                   = $::nginx::params::log_dir,
-  $log_group                                                 = $::nginx::params::log_group,
+  $global_owner                                              = $nginx::params::global_owner,
+  $global_group                                              = $nginx::params::global_group,
+  $global_mode                                               = $nginx::params::global_mode,
+  $log_dir                                                   = $nginx::params::log_dir,
+  $log_group                                                 = $nginx::params::log_group,
   $log_mode                                                  = '0750',
   Variant[String, Array[String]] $http_access_log            = "${log_dir}/${::nginx::params::http_access_log_file}",
   $http_format_log                                           = undef,
   Variant[String, Array[String]] $nginx_error_log            = "${log_dir}/${::nginx::params::nginx_error_log_file}",
   Nginx::ErrorLogSeverity $nginx_error_log_severity          = 'error',
-  $pid                                                       = $::nginx::params::pid,
-  $proxy_temp_path                                           = $::nginx::params::proxy_temp_path,
-  $root_group                                                = $::nginx::params::root_group,
-  $run_dir                                                   = $::nginx::params::run_dir,
-  $sites_available_owner                                     = $::nginx::params::sites_available_owner,
-  $sites_available_group                                     = $::nginx::params::sites_available_group,
-  $sites_available_mode                                      = $::nginx::params::sites_available_mode,
-  Boolean $super_user                                        = $::nginx::params::super_user,
-  $temp_dir                                                  = $::nginx::params::temp_dir,
+  $pid                                                       = $nginx::params::pid,
+  $proxy_temp_path                                           = $nginx::params::proxy_temp_path,
+  $root_group                                                = $nginx::params::root_group,
+  $run_dir                                                   = $nginx::params::run_dir,
+  $sites_available_owner                                     = $nginx::params::sites_available_owner,
+  $sites_available_group                                     = $nginx::params::sites_available_group,
+  $sites_available_mode                                      = $nginx::params::sites_available_mode,
+  Boolean $super_user                                        = $nginx::params::super_user,
+  $temp_dir                                                  = $nginx::params::temp_dir,
   Boolean $server_purge                                      = false,
 
   # Primary Templates
@@ -65,6 +65,7 @@ class nginx (
   $client_body_timeout                                       = '60s',
   $send_timeout                                              = '60s',
   $lingering_timeout                                         = '5s',
+  Optional[Enum['on', 'off']] $etag                          = undef,
   Optional[String] $events_use                               = undef,
   String $fastcgi_cache_inactive                             = '20m',
   Optional[String] $fastcgi_cache_key                        = undef,
@@ -122,6 +123,7 @@ class nginx (
   ],
   Array $proxy_hide_header                                   = [],
   Array $proxy_pass_header                                   = [],
+  Array $proxy_ignore_header                                 = [],
   $sendfile                                                  = 'on',
   String $server_tokens                                      = 'on',
   $spdy                                                      = 'off',
@@ -139,11 +141,11 @@ class nginx (
 
   ### START Package Configuration ###
   $package_ensure                                            = present,
-  $package_name                                              = $::nginx::params::package_name,
+  $package_name                                              = $nginx::params::package_name,
   $package_source                                            = 'nginx',
   $package_flavor                                            = undef,
-  $manage_repo                                               = $::nginx::params::manage_repo,
-  $repo_release                                              = undef,
+  $manage_repo                                               = $nginx::params::manage_repo,
+  Optional[String] $repo_release                             = undef,
   $passenger_package_ensure                                  = 'present',
   ### END Package Configuration ###
 
@@ -167,12 +169,13 @@ class nginx (
   $nginx_upstreams                                           = {},
   $nginx_servers                                             = {},
   $nginx_servers_defaults                                    = {},
+  Boolean $purge_passenger_repo                              = true,
   ### END Hiera Lookups ###
-) inherits ::nginx::params {
+) inherits nginx::params {
 
-  contain '::nginx::package'
-  contain '::nginx::config'
-  contain '::nginx::service'
+  contain 'nginx::package'
+  contain 'nginx::config'
+  contain 'nginx::service'
 
   create_resources('nginx::resource::upstream', $nginx_upstreams)
   create_resources('nginx::resource::server', $nginx_servers, $nginx_servers_defaults)
@@ -185,6 +188,6 @@ class nginx (
   # Allow the end user to establish relationships to the "main" class
   # and preserve the relationship to the implementation classes through
   # a transitive relationship to the composite class.
-  Class['::nginx::package'] -> Class['::nginx::config'] ~> Class['::nginx::service']
-  Class['::nginx::package'] ~> Class['::nginx::service']
+  Class['nginx::package'] -> Class['nginx::config'] ~> Class['nginx::service']
+  Class['nginx::package'] ~> Class['nginx::service']
 }

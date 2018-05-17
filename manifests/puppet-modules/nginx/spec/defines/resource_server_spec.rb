@@ -331,6 +331,12 @@ describe 'nginx::resource::server' do
               attr: 'index_files',
               value: [],
               notmatch: %r{\s+index\s+}
+            },
+            {
+              title: 'should set autoindex',
+              attr: 'autoindex',
+              value: 'on',
+              match: '  autoindex on;'
             }
           ].each do |param|
             context "when #{param[:attr]} is #{param[:value]}" do
@@ -555,6 +561,12 @@ describe 'nginx::resource::server' do
               match: %r{\s+ssl_dhparam\s+/tmp/dhparam;}
             },
             {
+              title: 'should set ssl_ecdh_curve',
+              attr: 'ssl_ecdh_curve',
+              value: 'secp521r1',
+              match: %r{\s+ssl_ecdh_curve\s+secp521r1;}
+            },
+            {
               title: 'should set the SSL stapling file',
               attr: 'ssl_stapling_file',
               value: '/tmp/stapling_file',
@@ -565,6 +577,12 @@ describe 'nginx::resource::server' do
               attr: 'ssl_trusted_cert',
               value: '/tmp/trusted_certificate',
               match: %r{\s+ssl_trusted_certificate\s+/tmp/trusted_certificate;}
+            },
+            {
+              title: 'should set ssl_verify_depth',
+              attr: 'ssl_verify_depth',
+              value: 2,
+              match: %r{^\s+ssl_verify_depth\s+2;}
             },
             {
               title: 'should set the SSL cache',
