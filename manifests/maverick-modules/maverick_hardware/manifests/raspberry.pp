@@ -30,7 +30,13 @@ class maverick_hardware::raspberry (
             ensure      => absent
         }
     }
-    
+
+    # Disable raspberry wifi-country service
+    service { "wifi-country":
+        ensure  => stopped,
+        enable  => false,
+    }
+
     # Remove large packages to save space
     if $remove_extrapackages == true {
         package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot"]:
