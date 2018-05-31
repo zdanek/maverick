@@ -259,14 +259,17 @@ class maverick_network (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     file { "/srv/maverick/software/maverick/bin/network-if-monitor":
-        ensure      => link,
+        ensure      => absent,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-monitor.sh"
     } ->
     file { "/srv/maverick/software/maverick/bin/network-if-managed":
-        ensure      => link,
+        ensure      => absent,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-managed.sh"
     }
-    
+    file { "/srv/maverick/software/maverick/bin/network-if-config":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/network-if-config.sh"
+    }
     
     # Retrieve defined interfaces and process
     $interfaces = lookup("maverick_network::interfaces", {merge => hash})

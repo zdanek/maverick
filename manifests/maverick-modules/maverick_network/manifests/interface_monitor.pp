@@ -9,7 +9,7 @@ define maverick_network::interface_monitor (
         allow_hotplug   => true,
         method          => "manual",
         template        => "maverick_network/interface_fragment_wireless.erb",
-        post_up         => ["/srv/maverick/software/maverick/bin/network-if-monitor ${name}"],
+        post_up         => ["/srv/maverick/software/maverick/bin/network-if-config ${name} monitor"],
         options         => {
             wireless_mode =>    "monitor",
         },
