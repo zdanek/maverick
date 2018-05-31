@@ -3,7 +3,7 @@
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
-	
+
 	"maverick_desktop::enable": true, // Desktop is enabled by default
 
 	// Flight Controller (fc) mavlink setup

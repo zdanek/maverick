@@ -24,10 +24,6 @@
     "wifi_psk": "",
 
     "maverick_network::interfaces": {
-        "eth0": {},
-        "wlan0": {
-            "type": "wireless"
-        }
     },
 
     "classes" : [

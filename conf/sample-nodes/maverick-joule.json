@@ -3,6 +3,11 @@
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
+    "maverick_network::interfaces": {
+        "wlan0": {
+            "type": "wireless"
+        }  
+    },
 	
 	"maverick_hardware::camera_realsense_install": true, // Force realsense support
 	

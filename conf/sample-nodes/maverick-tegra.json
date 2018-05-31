@@ -3,6 +3,12 @@
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
+    "maverick_network::interfaces": {
+		"eth0": {},
+        "wlan0": {
+            "type": "wireless"
+        }  
+    },
 
 	"maverick_desktop::enable": false, // Desktop is enabled by default
 	"maverick_intelligence::tensorflow": false, // Temporarily disabled until gpu build in place
