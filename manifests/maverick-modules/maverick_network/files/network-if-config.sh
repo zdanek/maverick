@@ -102,6 +102,7 @@ echo "Setting Power: ${POWER}"
 $iw dev $1 set txpower fixed $POWER
 
 # Test that we have an ipv4 address on our interface, if not trigger a dhclient request
+sleep 5
 ip4a=$($ipcmd -4 a show $1)
 if [[ -z $ip4a ]]; then
     echo "No ipv4 address, triggering dhclient request"
