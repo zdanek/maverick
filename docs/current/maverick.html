@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- This page is intended for use in github environment -->
+<!-- This page is intended for use in Maverick environment -->
 <html>
 
 <head>
@@ -15,7 +15,7 @@
 <script>
   window.$docsify = {
     repo: 'https://github.com/goodrobots/maverick',
-    basePath: '/',
+    basePath: './',
     coverpage: true,
     loadNavbar: true,
     loadSidebar: true,
@@ -66,5 +66,11 @@
 <script src="//unpkg.com/prismjs/components/prism-puppet.js"></script>
 <script src="//unpkg.com/prismjs/components/prism-json.js"></script>
 <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+<script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    console.log("Installing service worker")
+    navigator.serviceWorker.register('sw.js')
+  }
+</script>
 
 </html>

@@ -1,15 +1,7 @@
 class maverick_web::maverick_docs (
     $server_hostname = $maverick_web::server_fqdn,
 ) {
-    
-    /*
-    # Install maverick docs
-    oncevcsrepo { "github-maverick_docs":
-        gitsource   => "https://github.com/goodrobots/maverick",
-        dest        => "/srv/maverick/software/maverick-docs",
-        revision    => "gh-pages",
-    }
-    */
+
     file { "/srv/maverick/software/maverick-docs":
         ensure      => absent,
         force       => true,
@@ -20,9 +12,9 @@ class maverick_web::maverick_docs (
         ssl             => true,
         location        => "/web/maverick-docs",
         location_alias  => "/srv/maverick/software/maverick/docs",
-        index_files     => ["maverick.html"], # index.html is for github hosted docs
+        index_files     => ["index.html"],
         server          => $server_hostname,
         require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
-    
+
 }

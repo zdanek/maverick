@@ -1,70 +1,21 @@
-<!DOCTYPE html>
-<!-- This page is intended for use in github environment -->
 <html>
-
-<head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
-  <link rel="stylesheet" href="//unpkg.com/docsify-copy-code/styles.css">
-</head>
-
-<body>
-  <div id="app"></div>
-</body>
-<script>
-  window.$docsify = {
-    repo: 'https://github.com/goodrobots/maverick',
-    basePath: '/maverick/',
-    coverpage: true,
-    loadNavbar: true,
-    loadSidebar: true,
-    autoHeader: true,
-    mergeNavbar: true,
-    auto2top: true,
-    subMaxLevel: 4,
-    name: 'Maverick Docs',
-    themeColor: '#330f53',
-    alias: {
-      '/modules': '/modules/intro',
-      '/modules/_navbar.md': '/_navbar.md',
-      '/modules/_sidebar.md': '/_sidebar.md',
-      '/modules/README.md': '/README.md',
-      '/devdocs/_navbar.md': '/_navbar.md',
-      '/devdocs/_sidebar.md': '/_sidebar.md',
-      '/devdocs/README.md': '/README.md'
-    },
-    search: {
-      paths: [
-        '/',
-        '/about',
-        '/devdocs/intro',
-        '/devdocs/distimages',
-        '/modules/analysis',
-        '/modules/base',
-        '/modules/cloud9',
-        '/modules/desktop',
-        '/modules/dev',
-        '/modules/fc',
-        '/modules/hardware',
-        '/modules/intelligence',
-        '/modules/intro',
-        '/modules/mavlink',
-        '/modules/network',
-        '/modules/ros',
-        '/modules/security',
-        '/modules/vision',
-        '/modules/web'
-      ],
-      depth: 4
-
-    }
-  }
-</script>
-<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-bash.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-puppet.js"></script>
-<script src="//unpkg.com/prismjs/components/prism-json.js"></script>
-<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
-
+    <head>
+        <link rel="canonical" href="current/"/>
+        <noscript>
+        	<meta http-equiv="refresh" content="0;URL=current/">
+        </noscript>
+        <!--[if lt IE 9]><script type="text/javascript">var IE_fix=true;</script><![endif]-->
+        <script type="text/javascript">
+        	var url = "current/";
+        	if(typeof IE_fix != "undefined") // IE8 and lower fix to pass the http referer
+        	{
+        		document.write("redirecting...");
+        		var referLink = document.createElement("a");
+        		referLink.href = url;
+        		document.body.appendChild(referLink);
+        		referLink.click();
+        	}
+        	else { window.location.replace(url); } // All other browsers
+        </script>
+    </head>
 </html>
