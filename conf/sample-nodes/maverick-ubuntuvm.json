@@ -3,6 +3,9 @@
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
+    "maverick_network::interfaces": {
+		"eth0": {},
+    },
 
 	"maverick_desktop::enable": true, // Desktop is enabled by default
 
