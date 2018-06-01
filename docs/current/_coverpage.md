@@ -5,7 +5,7 @@
 - Create repeatable, consistent, reliable, secure systems
 - Hardware and OS agnostic
 - Ready-to-fly images for popular SBCs (Raspberry, Odroid, Joule)
-- Open Source - GPLv3
+- Open Source - Completely Permissive MIT License
 - Rich functionality of the the box
 - Mavlink Proxies, ROS, MAVROS, Simulators (SITL, Gazebo)
 - Web IDE, Development Environment, Cross-Compile Firmware
