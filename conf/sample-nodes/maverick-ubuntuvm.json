@@ -7,6 +7,8 @@
 		"eth0": {}
     },
 
+	"maverick_dev::ardupilot::armeabi_packages": true,
+
 	"maverick_desktop::enable": true, // Desktop is enabled by default
 
 	// Flight Controller (fc) mavlink setup

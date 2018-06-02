@@ -7,6 +7,8 @@
         }  
     },
     
+	"maverick_dev::ardupilot::armeabi_packages": true,
+
     "maverick_hardware::camera_realsense_install": true, // Force realsense support
     
     "maverick_desktop::enable": false, // Desktop is enabled by default
