@@ -8,9 +8,6 @@ class maverick_network::zerotier (
     # Workaround for ubilinux
     if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {
         $_release = "stretch"
-    } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
-        $_release = "xenial"
-        warning("Zerotier temporary support for Ubuntu 18.04 - using Xenial packages")
     } else {
         $_release = $::lsbdistcodename
     }
