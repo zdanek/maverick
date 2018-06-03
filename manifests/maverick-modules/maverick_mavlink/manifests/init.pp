@@ -353,6 +353,11 @@ class maverick_mavlink (
             pkgname     => "numpy",
             ensure      => present,
             timeout     => 0,
+        } ->
+        install_python_module { "pytest":
+            pkgname     => "pytest",
+            ensure      => present,
+            timeout     => 0,
         }
         unless "cuav" in $::python_modules["global"] {
             oncevcsrepo { "git-cuav":
@@ -365,7 +370,7 @@ class maverick_mavlink (
                 command     => "/usr/bin/python setup.py install",
                 cwd         => "/srv/maverick/var/build/cuav",
                 before      => Class["maverick_vision::opencv"],
-                require     => Package["libdc1394-22-dev"],
+                require     => [ Package["libdc1394-22-dev"], Install_python_module["pytest"], ],
                 unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/cuav*",
             }
         }      
