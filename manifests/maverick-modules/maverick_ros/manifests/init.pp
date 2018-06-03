@@ -157,7 +157,11 @@ class maverick_ros (
         exec { "ros-repo":
             command     => "/bin/echo \"deb http://packages.ros.org/ros/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros-latest.list",
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros-latest.list",
-            notify      => Exec["apt_update"],
+            notify      => Exec["ros_apt_update"],
+        } ->
+        exec { "ros_apt_update":
+            command     => "/usr/bin/apt update",
+            refreshonly => true,
         } ->
         package { ["python-rosdep", "python-catkin-tools"]:
             ensure      => installed,
@@ -179,7 +183,7 @@ class maverick_ros (
     if $_installtype == "native" {
         package { ["ros-${_distribution}-perception", "ros-${_distribution}-viz", "ros-${_distribution}-mavros", "ros-${_distribution}-mavros-extras", "ros-${_distribution}-mavros-msgs", "ros-${_distribution}-test-mavros"]:
             ensure      => installed,
-            require     => [ Exec["apt_update"], Package["python-rosdep"], File["/opt/ros/${_distribution}"], ],
+            require     => [ Exec["ros_apt_update"], Package["python-rosdep"], File["/opt/ros/${_distribution}"], ],
         } ->
         # Download latest geographiclib install script
         exec { "download_geoinstall":
@@ -211,6 +215,7 @@ class maverick_ros (
         # Install python3 packages
         package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
             ensure      => present,
+            require     => Exec["ros_apt_update"],
         }
 
     # Build from source
