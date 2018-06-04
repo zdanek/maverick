@@ -5,10 +5,11 @@ class maverick_security (
 	$rkhunter = false,
 	$clamav = false,
 	$ssl = true,
+	$ldap_server = true,
 	) {
     
-    # Create data directory
-    file { "/srv/maverick/data/security":
+    # Create data and config directory
+    file { ["/srv/maverick/data/security", "/srv/maverick/config/security"]:
     	ensure		=> directory,
     	owner		=> "mav",
     	group		=> "mav",
@@ -29,6 +30,9 @@ class maverick_security (
 
 	### Configure/enable ssh client, including various mandatory keys
 	class { "maverick_security::ssh": }
+
+	### Configure ldap server
+	class { "maverick_security::ldap_server": }
 
 	### Configure fail2ban for ssh
 	if $fail2ban {
