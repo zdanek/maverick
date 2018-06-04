@@ -61,6 +61,7 @@ class maverick_web::nginx (
         service_name    => "maverick-nginx",
         service_ensure  => $service_ensure,
         service_enable  => $service_enable,
+        require         => Service_wrapper["system-nginx"],
     }
 
     # apache2-utils used for htpasswd, even by nginx
