@@ -31,6 +31,12 @@ class maverick_security (
 	### Configure/enable ssh client, including various mandatory keys
 	class { "maverick_security::ssh": }
 
+	### Configure base SSL environment
+	class { "maverick_security::ssl": }
+
+	### Configure ldap client
+	class { "maverick_security::ldap_client": }
+
 	### Configure ldap server
 	class { "maverick_security::ldap_server": }
 
@@ -49,8 +55,6 @@ class maverick_security (
 		rkhunter		=> $rkhunter,
 		clamav			=> $clamav,
 	}
-	
-	### Configure base SSL environment
-	class { "maverick_security::ssl": }
+
 
 }
