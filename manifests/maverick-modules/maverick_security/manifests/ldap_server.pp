@@ -93,12 +93,10 @@ class maverick_security::ldap_server (
           ensure => present,
           value  => '1535',
         }
-        /*
         openldap::server::globalconf { 'Security':
             ensure  => present,
-        	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=0' ] } 
+        	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=128' ] } 
         }
-        */
         openldap::server::schema { 'inetorgperson':
           ensure  => present,
           path    => '/etc/ldap/schema/inetorgperson.schema',
