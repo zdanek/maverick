@@ -16,7 +16,7 @@
     // Flight Controller (fc) mavlink setup
     // "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
     // "maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
-    "maverick_fc::mavlink_input": "/dev/ttyS1", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
+    "maverick_fc::mavlink_input": "/dev/ttyS0", // Input source for mavlink proxy, how the Companion Computer connects to the Flight Controller
     "maverick_fc::mavlink_baud": "115200", // Input baud rate for UART connections
     // "maverick_fc::rosmaster_active": true, // Whether ROS master for fc is active or not
     // "maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
