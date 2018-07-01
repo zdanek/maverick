@@ -2,6 +2,11 @@ class maverick_web::maverick_api (
 ) {
 
     # install python components
+    install_python_module { "mavapi-pymavlink":
+        pkgname     => "pymavlink",
+        ensure      => atleast,
+        version     => "2.2.10",
+    } ->
     install_python_module { "mavapi-graphene":
         pkgname     => "graphene",
         ensure      => atleast,
