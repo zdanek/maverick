@@ -99,7 +99,7 @@ done
 echo "Setting country: ${COUNTRY}"
 $iw reg set $COUNTRY
 echo "Setting Power: ${POWER}"
-$iw dev $1 set txpower fixed $POWER
+$iw dev $1 set txpower fixed $(($POWER * 100))
 
 # Test that we have an ipv4 address on our interface, if not trigger a dhclient request
 sleep 5
