@@ -12,6 +12,10 @@ class maverick_web::maverick_web (
     ensure_packages(["phantomjs"])
     
     # Install dev repo, register maverick-webdev service
+    package { '@vue/cli':
+        ensure   => 'present',
+        provider => 'npm',
+    } ->
     oncevcsrepo { "git-maverick-web":
         gitsource   => "https://github.com/goodrobots/maverick-web.git",
         dest        => "/srv/maverick/code/maverick-web",
