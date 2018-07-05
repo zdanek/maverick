@@ -104,8 +104,9 @@ $iw dev $1 set txpower fixed $(($POWER * 100))
 # Test that we have an ipv4 address on our interface, if not trigger a dhclient request
 sleep 5
 ip4a=$($ipcmd -4 a show $1)
-if [[ -z $ip4a ]]; then
-    echo "No ipv4 address, triggering dhclient request"
+ipgw=$($ipcmd -4 r |grep 'default via')
+if [[ -z $ip4a ]] || [[ -z $ipgw ]]; then
+    echo "No ipv4 address or gateway detected, triggering dhclient request"
     dhclient $1
 fi
 
