@@ -1,0 +1,5 @@
+# Site-specific additions and overrides for usr.sbin.slapd.
+/srv/maverick/config/security/ldap/ r,
+/srv/maverick/config/security/ldap/** rk,
+/srv/maverick/data/security/ldap/ m,
+/srv/maverick/data/security/ldap/** rwmk,

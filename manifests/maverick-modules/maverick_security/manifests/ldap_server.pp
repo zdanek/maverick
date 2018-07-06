@@ -72,6 +72,12 @@ class maverick_security::ldap_server (
         file { "/etc/default/slapd":
             source   => "puppet:///modules/maverick_security/default.slapd",
         } ->
+        file { "/etc/apparmor.d/local/usr.sbin.slapd":
+            source   => "puppet:///modules/maverick_security/apparmor.slapd",
+            mode     => "0644",
+            owner    => "root",
+            group    => "root",
+        } ->
         class { 'openldap::server': 
             confdir   => '/srv/maverick/config/security/ldap',
             provider  => 'olc',
