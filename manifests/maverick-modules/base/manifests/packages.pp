@@ -25,6 +25,7 @@ class base::packages {
         "tcpdump",
         "whois",
         "debian-goodies",
+        "apparmor-utils",
     ])
 
     if $operatingsystem == "Ubuntu" {

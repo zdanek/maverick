@@ -13,44 +13,46 @@ class maverick_security::ldap_server (
 ) {
     
     # Create ldap ssl and data directory
-    file { ["/srv/maverick/data/security/ldap", "/srv/maverick/data/security/ssl/ldap"]:
+    file { ["/etc/ldap/ssl"]:
     	ensure		=> directory,
     	owner		=> "mav",
     	group		=> "mav",
     	mode		=> "755",
-    } ->
+    }
+    /*
     # Symlink the default ldap config directory for clients
     file { "/etc/ldap/slapd.d":
         ensure      => symlink,
-        target      => "/srv/maverick/config/security/ldap",
+        #target      => "/srv/maverick/config/security/ldap",
+        target      => "/var/lib/ldap",
         force       => true,
     }
+    */
     
     # Retrieve CA passphrase for signing
     $ca_passphrase = getvar("maverick_security::ssl::ca_passphrase")
 
     # Create cert chain
     exec { "create-ldapssl-key":
-        command     => "/usr/bin/openssl genrsa -out /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.key 2048",
-        creates     => "/srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.key",
+        command     => "/usr/bin/openssl genrsa -out /etc/ldap/ssl/${cert_cname}-ldapssl.key 2048",
+        creates     => "/etc/ldap/ssl/${cert_cname}-ldapssl.key",
         user        => "mav",
     } ->
     exec { "create-ldapssl-csr":
-        command     => "/usr/bin/openssl req -new -key /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.key -out /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.csr -subj \"/C=${cert_country}/ST=${cert_state}/L=${cert_locality}/O=${cert_orgname}/OU=${cert_orgunit}/CN=${cert_cname}\"",
-        creates     => "/srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.csr",
+        command     => "/usr/bin/openssl req -new -key /etc/ldap/ssl/${cert_cname}-ldapssl.key -out /etc/ldap/ssl/${cert_cname}-ldapssl.csr -subj \"/C=${cert_country}/ST=${cert_state}/L=${cert_locality}/O=${cert_orgname}/OU=${cert_orgunit}/CN=${cert_cname}\"",
+        creates     => "/etc/ldap/ssl/${cert_cname}-ldapssl.csr",
         user        => "mav",
     } ->
-    file { "/srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.ext":
+    file { "/etc/ldap/ssl/${cert_cname}-ldapssl.ext":
         ensure      => present,
         content     => template("maverick_security/ldapssl.ext.erb"),
         owner       => "mav",
         group       => "mav",
     } ->
     exec { "create-ldapssl-cert":
-        command     => "/usr/bin/openssl x509 -req -passin pass:${ca_passphrase} -in /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.csr -CA /srv/maverick/data/security/ssl/ca/mavCA.pem -CAkey /srv/maverick/data/security/ssl/ca/mavCA.key -CAcreateserial -out /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.crt -days 365 -sha512 -extfile /srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.ext",
-        creates     => "/srv/maverick/data/security/ssl/ldap/${cert_cname}-ldapssl.crt",
+        command     => "/usr/bin/openssl x509 -req -passin pass:${ca_passphrase} -in /etc/ldap/ssl/${cert_cname}-ldapssl.csr -CA /srv/maverick/data/security/ssl/ca/mavCA.pem -CAkey /srv/maverick/data/security/ssl/ca/mavCA.key -CAcreateserial -out /etc/ldap/ssl/${cert_cname}-ldapssl.crt -days 365 -sha512 -extfile /etc/ldap/ssl/${cert_cname}-ldapssl.ext",
+        unless      => "/usr/bin/find /etc/ldap/ssl -name ${cert_cname}-ldapssl.crt -size +0",
         require     => Exec["create-ca-rootcert"],
-        user        => "mav",
         notify      => Service["slapd"]
     }
 
@@ -69,39 +71,56 @@ class maverick_security::ldap_server (
             group    => root,
             mode     => "0644",
         } ->
+        /*
         file { "/etc/default/slapd":
             source   => "puppet:///modules/maverick_security/default.slapd",
         } ->
+        */
         file { "/etc/apparmor.d/local/usr.sbin.slapd":
-            source   => "puppet:///modules/maverick_security/apparmor.slapd",
+            source   => "puppet:///modules/maverick_security/apparmor.local.usr.sbin.slapd",
             mode     => "0644",
             owner    => "root",
             group    => "root",
         } ->
+        /*
+        file { "/etc/apparmor.d/usr.sbin.slapd":
+            source   => "puppet:///modules/maverick_security/apparmor.d.usr.sbin.slapd",
+            mode     => "0644",
+            owner    => "root",
+            group    => "root",
+        } ->
+        */
+        /*
+        file { [ "/etc/apparmor.d/local/usr.sbin.slapd", "/etc/apparmor.d/usr.sbin.slapd", "/etc/apparmor.d/cache/usr.sbin.slapd":
+            ensure  => absent,
+        } ->
+        */
         class { 'openldap::server': 
-            confdir   => '/srv/maverick/config/security/ldap',
+            # confdir   => '/srv/maverick/config/security/ldap',
             provider  => 'olc',
-            owner     => 'mav',
-            group     => 'mav',
+            #owner     => 'mav',
+            #group     => 'mav',
             ldaps_ifs => ['/'],
             ssl_ca    => '/srv/maverick/data/security/ssl/ca/mavCA.pem',
-            ssl_cert  => '/srv/maverick/data/security/ssl/ldap/slapd-ldapssl.crt',
-            ssl_key   => '/srv/maverick/data/security/ssl/ldap/slapd-ldapssl.key',
+            ssl_cert  => '/etc/ldap/ssl/slapd-ldapssl.crt',
+            ssl_key   => '/etc/ldap/ssl/slapd-ldapssl.key',
             require   => Package["ruby-augeas"],
         }
         openldap::server::database { $base:
           ensure    => present,
           rootdn    => "cn=admin,${base}",
           rootpw    => $roothash,
-          directory => "/srv/maverick/data/security/ldap/maverick.one",
+          # directory => "/srv/maverick/data/security/ldap/maverick.one",
         }
+        /*
         openldap::server::globalconf { 'LogLevel':
           ensure => present,
           value  => '1535',
         }
         openldap::server::globalconf { 'Security':
             ensure  => present,
-        	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=128' ] } 
+        	#value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=128' ] }
+        	#value   => { 'Security' => [ 'simple_bind=128', 'ssf=128' ] } 
         }
         openldap::server::schema { 'inetorgperson':
           ensure  => present,
@@ -116,6 +135,7 @@ class maverick_security::ldap_server (
             'by * none',
           ],
         }
+        */
     }
     
 }
