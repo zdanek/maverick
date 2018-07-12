@@ -1,6 +1,6 @@
 class maverick_vision::opencv (
     $contrib = true,
-    $opencv_version = "3.4.1",
+    $opencv_version = "3.4.2",
     $release = "Release", # Release or Debug, OpenCV build type
     $precompile_headers = false,
     $armv7l_optimize = false,
@@ -14,7 +14,7 @@ class maverick_vision::opencv (
     # as we want to access from both, so we install into global.
     
     # Install dependencies
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10") {
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
         ensure_packages(["libpng-dev"])
     } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") {
         ensure_packages(["libjasper-dev", "libpng12-dev"])
@@ -22,7 +22,6 @@ class maverick_vision::opencv (
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["python2.7-dev", "libpython3-all-dev"])
     ensure_packages(["libgtk2.0-dev"])
-    # ensure_packages(["qtbase5-dev"])
     if $::hardwaremodel == "x86_64" { # https://github.com/goodrobots/maverick/issues/233
         ensure_packages(["libtbb-dev", "libtbb2"])
     }
