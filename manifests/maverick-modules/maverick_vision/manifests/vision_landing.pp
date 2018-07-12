@@ -21,7 +21,7 @@ class maverick_vision::vision_landing (
         user        => mav,
         environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:/srv/maverick/software/aruco/lib", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco:/srv/maverick/software/librealsense", "CMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib:/srv/maverick/software/librealsense"],
         cwd         => "/srv/maverick/software/vision_landing/src",
-        command     => "/usr/bin/cmake -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco . && make && make install",
+        command     => "/usr/bin/cmake -Daruco_DIR=/srv/maverick/software/aruco -DOpenCV_DIR=/srv/maverick/software/opencv -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco . && make && make install",
         creates     => "/srv/maverick/software/vision_landing/track_targets",
         require     => [ Class["maverick_vision::opencv"], Class["maverick_vision::aruco"] ],
     } ->
