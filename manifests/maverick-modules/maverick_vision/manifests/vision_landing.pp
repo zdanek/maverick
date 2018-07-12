@@ -1,6 +1,6 @@
 class maverick_vision::vision_landing (
     $active = false,
-    $vision_landing_source = "https://github.com/fnoop/vision_landing.git",
+    $vision_landing_source = "https://github.com/goodrobots/vision_landing.git",
     $vision_landing_revision = "master",
 ) {
 
@@ -19,9 +19,9 @@ class maverick_vision::vision_landing (
     # Compile vision_landing
     exec { "vision_landing-compile":
         user        => mav,
-        environment => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco:/srv/maverick/software/librealsense"],
+        environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib:/srv/maverick/software/aruco/lib", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco:/srv/maverick/software/librealsense", "CMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib:/srv/maverick/software/librealsense"],
         cwd         => "/srv/maverick/software/vision_landing/src",
-        command     => "/usr/bin/cmake -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv . && make && make install",
+        command     => "/usr/bin/cmake -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib -DCMAKE_MODULE_PATH=/srv/maverick/software/opencv:/srv/maverick/software/aruco . && make && make install",
         creates     => "/srv/maverick/software/vision_landing/track_targets",
         require     => [ Class["maverick_vision::opencv"], Class["maverick_vision::aruco"] ],
     } ->
