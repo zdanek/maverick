@@ -1,6 +1,6 @@
 class maverick_vision::aruco (
     $aruco_gitsource = "https://github.com/fnoop/aruco.git",
-    $aruco_gitbranch = "2.0.20-git-fixed",
+    $aruco_gitbranch = "master",
 ) {
 
     if ! ("install_flag_aruco" in $installflags) {
