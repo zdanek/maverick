@@ -44,7 +44,8 @@ class Raspberry(object):
             'a020a0': ['Q1 2017', 'Compute Module 3 (and CM3 Lite)', '1.0', 1024, '(Mfg by Sony)'],
             'a22082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Embest)'],
             'a32082': ['Q4 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony Japan)'],
-            'a020d3': ['Q1 2018', '3 Model B+', '1.3', 1024, '(Mfg by Sony)']
+            'a020d3': ['Q1 2018', '3 Model B+', '1.3', 1024, '(Mfg by Sony)'],
+            '2a020d3': ['Q1 2018', '3 Model B+', '1.3', 1024, '(Mfg by Sony)']
         }
         count = 0
         f = open('/proc/cpuinfo', 'r')
