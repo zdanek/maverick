@@ -27,7 +27,7 @@ sed -i -e "s/psk\":[[:space:]]\+\".*\"/psk\":    \"$psk\"/" /srv/maverick/config
 sudo sed -i -e "s/wpa-ssid[[:space:]]\+.*/wpa-ssid $ssid/" /etc/network/interfaces
 sudo sed -i -e "s/wpa-psk[[:space:]]\+.*/wpa-psk $psk/" /etc/network/interfaces
 
-# If we detect wlan0 (default interface) mac address, use it to define wman0
+# If we detect wlan0 (default interface) mac address, use it to define wlan0
 mac=$(ip link show wlan0 2>/dev/null|grep link/ether |awk {'print $2'})
 if [ "x${mac}" != "x" ]; then
     sed -i -e "s/macaddress\":\s\"xx:xx:xx:xx:xx:xx\"/macaddress\": \"$mac\"/" /srv/maverick/config/maverick/localconf.json
@@ -37,10 +37,8 @@ echo
 echo "Updated config, restarting networking.. (If you do not see 'Done' below shortly, reset the power)"
 nohup sudo systemctl restart networking >/dev/null 2>&1
 nohup systemctl restart ifup@wlan0 >/dev/null 2>&1
-nohup systemctl restart ifup@wman0 >/dev/null 2>&1
 sudo dhclient eth0 >/dev/null 2>&1
 sudo dhclient wlan0 >/dev/null 2>&1
-sudo dhclient wman0 >/dev/null 2>&1
 echo
 echo "Done"
 echo "Note: You may need to reboot to activate the new network settings"
