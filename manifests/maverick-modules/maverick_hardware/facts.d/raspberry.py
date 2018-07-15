@@ -55,6 +55,8 @@ class Raspberry(object):
             (key,val) = r.groups(0)[0],r.groups(0)[1]
             if key == "Hardware": 
                 self.data['cpu'] = val
+                if re.search('^BCM', line):
+                    self.data['raspberry_present'] = "yes"
             elif key == "processor":
                 count += 1
             elif key == "Revision": 
@@ -76,7 +78,8 @@ class Raspberry(object):
                     self.data['present'] = "yes"
                 except:
                     # Raspberry hardware not recognised, exit without returning any facts
-                    self.data['raspberry_present'] = "no"
+                    # self.data['raspberry_present'] = "no"
+                    pass
             elif key == "Serial\t": 
                 self.data['serial'] = val
         f.close()
