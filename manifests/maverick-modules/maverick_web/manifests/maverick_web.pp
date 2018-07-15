@@ -33,7 +33,7 @@ class maverick_web::maverick_web (
         user        => "mav",
         environment => ["QT_QPA_PLATFORM=offscreen"], # Fix to allow global phantomjs to run headless
         timeout     => 0,
-        require     => [ Package["phantomjs"], Class["maverick_web::nodejs"], Package["nodejs"], Package["yarn"], ],
+        require     => [ Package["phantomjs"], Class["maverick_web::nodejs"], Package["yarn"], ],
     } ->
     file { "/etc/systemd/system/maverick-webdev.service":
         owner       => "root",
