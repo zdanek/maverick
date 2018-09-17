@@ -1,6 +1,6 @@
 class maverick_vision::opencv (
     $contrib = true,
-    $opencv_version = "3.4.2",
+    $opencv_version = "3.4.3",
     $release = "Release", # Release or Debug, OpenCV build type
     $precompile_headers = false,
     $armv7l_optimize = false,
