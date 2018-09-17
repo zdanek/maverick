@@ -17,7 +17,7 @@ class maverick_web::maverick_web (
         provider => 'npm',
     } ->
     package { '@vue/cli':
-        ensure   => 'present',
+        ensure   => 'latest',
         provider => 'npm',
     } ->
     oncevcsrepo { "git-maverick-web":
@@ -42,15 +42,27 @@ class maverick_web::maverick_web (
         source      => "puppet:///modules/maverick_web/maverick-webdev.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
+    # Define nginx location for webdev proxy
     nginx::resource::location { "maverick-webdev":
         location    => $webpath_dev,
         ensure      => present,
         ssl         => true,
-        proxy       => "http://localhost:${webport}/",
+        proxy       => "http://localhost:${webport}/dev/maverick/",
         server      => $server_hostname,
         auth_basic  => $auth_message,
         auth_basic_user_file => $auth_file,
         require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+    } ->
+    # Define nginx location for webdev proxy websocket endpoint
+    nginx::resource::location { "maverick-webdev-ws":
+        ssl                     => true,
+        location                => "${webpath_dev}/sockjs-node",
+        proxy                   => "http://localhost:${webport}/dev/maverick/sockjs-node",
+        server                  => $server_hostname,
+    	proxy_connect_timeout   => "7d",
+    	proxy_read_timeout      => "7d",
+        proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
+    	proxy_http_version      => "1.1",
     }
     
     # Install prod repo, register nginx location
