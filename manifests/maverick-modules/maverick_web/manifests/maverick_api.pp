@@ -9,28 +9,31 @@ class maverick_web::maverick_api (
     } ->
     install_python_module { "mavapi-graphene":
         pkgname     => "graphene",
-        ensure      => atleast,
-        version     => "2.0",
+        ensure      => exactly,
+        version     => "2.1.3",
     } ->
     install_python_module { "mavapi-sqlalchemy":
         pkgname     => "SQLAlchemy",
-        ensure      => present,
+        ensure      => exactly,
+        version     => "1.2.11",
     } ->
     install_python_module { "mavapi-graphene-sqlalchemy":
         pkgname     => "graphene-sqlalchemy",
-        ensure      => present,
+        ensure      => exactly,
+        version     => "2.1.0",
     } ->
     install_python_module { "mavapi-tornado":
         pkgname     => "tornado",
-        ensure      => present,
+        ensure      => exactly,
+        version     => "5.1.1",
     } ->
     install_python_module { "mavapi-rx":
         pkgname     => "rx",
-        ensure      => present,
+        ensure      => latest,
     } ->
     install_python_module { "mavapi-zeroconf":
         pkgname     => "zeroconf",
-        ensure      => present,
+        ensure      => latest,
     } ->
     oncevcsrepo { "git-maverick-api":
         gitsource   => "https://github.com/goodrobots/maverick-api.git",
