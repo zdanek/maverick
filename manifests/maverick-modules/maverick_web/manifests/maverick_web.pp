@@ -13,7 +13,7 @@ class maverick_web::maverick_web (
     
     # Install dev repo, register maverick-webdev service
     package { 'yarn':
-        ensure   => '1.7.0',
+        ensure   => latest,
         provider => 'npm',
     } ->
     package { '@vue/cli':
