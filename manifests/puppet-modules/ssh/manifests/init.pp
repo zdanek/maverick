@@ -414,12 +414,12 @@ class ssh (
   if $ssh_sendenv == 'USE_DEFAULTS' {
     $ssh_sendenv_real = $default_ssh_sendenv
   } else {
-    case type3x($ssh_sendenv) {
-      'string': {
+    case $ssh_sendenv {
+      String: {
         validate_re($ssh_sendenv, '^(true|false)$', "ssh::ssh_sendenv may be either 'true' or 'false' and is set to <${ssh_sendenv}>.")
-        $ssh_sendenv_real = str2bool($ssh_sendenv)
+        $ssh_sendenv_real = Boolean($ssh_sendenv)
       }
-      'boolean': {
+      Boolean: {
         $ssh_sendenv_real = $ssh_sendenv
       }
       default: {
@@ -431,12 +431,12 @@ class ssh (
   if $sshd_acceptenv == 'USE_DEFAULTS' {
     $sshd_acceptenv_real = $default_sshd_acceptenv
   } else {
-    case type3x($sshd_acceptenv) {
-      'string': {
+    case $sshd_acceptenv {
+      String: {
         validate_re($sshd_acceptenv, '^(true|false)$', "ssh::sshd_acceptenv may be either 'true' or 'false' and is set to <${sshd_acceptenv}>.")
-        $sshd_acceptenv_real = str2bool($sshd_acceptenv)
+        $sshd_acceptenv_real = Boolean($sshd_acceptenv)
       }
-      'boolean': {
+      Boolean: {
         $sshd_acceptenv_real = $sshd_acceptenv
       }
       default: {
@@ -460,12 +460,12 @@ class ssh (
   if $service_hasstatus == 'USE_DEFAULTS' {
     $service_hasstatus_real = $default_service_hasstatus
   } else {
-    case type3x($service_hasstatus) {
-      'string': {
+    case $service_hasstatus {
+      String: {
         validate_re($service_hasstatus, '^(true|false)$', "ssh::service_hasstatus must be 'true' or 'false' and is set to <${service_hasstatus}>.")
-        $service_hasstatus_real = str2bool($service_hasstatus)
+        $service_hasstatus_real = Boolean($service_hasstatus)
       }
-      'boolean': {
+      Boolean: {
         $service_hasstatus_real = $service_hasstatus
       }
       default: {
@@ -544,21 +544,22 @@ class ssh (
   if $sshd_config_compression != undef {
     validate_re($sshd_config_compression, '^(yes|no|delayed)$', "ssh::sshd_config_compression may be either 'yes', 'no' or 'delayed' and is set to <${sshd_config_compression}>.")
   }
-  case type3x($sshd_config_port) {
-    'string': {
+  case $sshd_config_port {
+    String: {
       validate_re($sshd_config_port, '^\d+$', "ssh::sshd_config_port must be a valid number and is set to <${sshd_config_port}>.")
-      $sshd_config_port_array = [ str2num($sshd_config_port) ]
+      $sshd_config_port_array = [ Integer($sshd_config_port) ]
     }
-    'array': {
+    Array: {
       $sshd_config_port_array = $sshd_config_port
     }
-    'integer': {
+    Integer: {
       $sshd_config_port_array = [ $sshd_config_port ]
     }
     default: {
       fail('ssh:sshd_config_port must be a string, an integer or an array. ')
     }
   }
+
   validate_numeric($sshd_config_port_array, 65535, 1)
   if $sshd_kerberos_authentication != undef {
     validate_re($sshd_kerberos_authentication, '^(yes|no)$', "ssh::sshd_kerberos_authentication may be either 'yes' or 'no' and is set to <${sshd_kerberos_authentication}>.")
@@ -675,12 +676,12 @@ class ssh (
 
   validate_re($sshd_ignorerhosts, '^(yes|no)$', "ssh::sshd_ignorerhosts may be either 'yes' or 'no' and is set to <${sshd_ignorerhosts}>.")
 
-  case type3x($hiera_merge) {
-    'string': {
+  case $hiera_merge {
+    String: {
       validate_re($hiera_merge, '^(true|false)$', "ssh::hiera_merge may be either 'true' or 'false' and is set to <${hiera_merge}>.")
-      $hiera_merge_real = str2bool($hiera_merge)
+      $hiera_merge_real = Boolean($hiera_merge)
     }
-    'boolean': {
+    Boolean: {
       $hiera_merge_real = $hiera_merge
     }
     default: {
@@ -688,12 +689,12 @@ class ssh (
     }
   }
 
-  case type3x($ssh_key_import) {
-    'string': {
+  case $ssh_key_import {
+    String: {
       validate_re($ssh_key_import, '^(true|false)$', "ssh::ssh_key_import may be either 'true' or 'false' and is set to <${ssh_key_import}>.")
-      $ssh_key_import_real = str2bool($ssh_key_import)
+      $ssh_key_import_real = Boolean($ssh_key_import)
     }
-    'boolean': {
+    Boolean: {
       $ssh_key_import_real = $ssh_key_import
     }
     default: {
@@ -702,12 +703,12 @@ class ssh (
   }
   validate_bool($ssh_key_import_real)
 
-  case type3x($ssh_key_export) {
-    'string': {
+  case $ssh_key_export {
+    String: {
       validate_re($ssh_key_export, '^(true|false)$', "ssh::ssh_key_export may be either 'true' or 'false' and is set to <${ssh_key_export}>.")
-      $ssh_key_export_real = str2bool($ssh_key_export)
+      $ssh_key_export_real = Boolean($ssh_key_export)
     }
-    'boolean': {
+    Boolean: {
       $ssh_key_export_real = $ssh_key_export
     }
     default: {
@@ -716,11 +717,11 @@ class ssh (
   }
   validate_bool($ssh_key_export_real)
 
-  case type3x($ssh_config_sendenv_xmodifiers) {
-    'string': {
-      $ssh_config_sendenv_xmodifiers_real = str2bool($ssh_config_sendenv_xmodifiers)
+  case $ssh_config_sendenv_xmodifiers {
+    String: {
+      $ssh_config_sendenv_xmodifiers_real = Boolean($ssh_config_sendenv_xmodifiers)
     }
-    'boolean': {
+    Boolean: {
       $ssh_config_sendenv_xmodifiers_real = $ssh_config_sendenv_xmodifiers
     }
     default: {
@@ -772,36 +773,37 @@ class ssh (
   validate_re($ssh_config_global_known_hosts_mode, '^[0-7]{4}$',
     "ssh::ssh_config_global_known_hosts_mode must be a valid 4 digit mode in octal notation. Detected value is <${ssh_config_global_known_hosts_mode}>.")
 
-  if type3x($purge_keys) == 'string' {
-    $purge_keys_real = str2bool($purge_keys)
+  
+  if $purge_keys =~ String {
+    $purge_keys_real = Boolean($purge_keys)
   } else {
     $purge_keys_real = $purge_keys
   }
   validate_bool($purge_keys_real)
 
-  if type3x($manage_service) == 'string' {
-    $manage_service_real = str2bool($manage_service)
+  if $manage_service =~ String {
+    $manage_service_real = Boolean($manage_service)
   } else {
     $manage_service_real = $manage_service
   }
   validate_bool($manage_service_real)
 
-  if type3x($service_enable) == 'string' {
-    $service_enable_real = str2bool($service_enable)
+  if $service_enable =~ String {
+    $service_enable_real = Boolean($service_enable)
   } else {
     $service_enable_real = $service_enable
   }
   validate_bool($service_enable_real)
 
-  if type3x($service_hasrestart) == 'string' {
-    $service_hasrestart_real = str2bool($service_hasrestart)
+  if $service_hasrestart =~ String {
+    $service_hasrestart_real = Boolean($service_hasrestart)
   } else {
     $service_hasrestart_real = $service_hasrestart
   }
   validate_bool($service_hasrestart_real)
 
-  if type3x($manage_root_ssh_config) == 'string' {
-    $manage_root_ssh_config_real = str2bool($manage_root_ssh_config)
+  if $manage_root_ssh_config =~ String {
+    $manage_root_ssh_config_real = Boolean($manage_root_ssh_config)
   } else {
     $manage_root_ssh_config_real = $manage_root_ssh_config
   }
