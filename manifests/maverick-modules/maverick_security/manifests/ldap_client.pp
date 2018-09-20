@@ -4,7 +4,7 @@ class maverick_security::ldap_client (
     
     class { 'openldap::client':
       base       => $base,
-      uri        => ['ldap://localhost', 'ldap://localhost:666'],
+      uri        => ['ldap://localhost', 'ldapi://localhost'],
       tls_cacert => '/srv/maverick/data/security/ssl/ca/mavCA.pem',
     }
     
