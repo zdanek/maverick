@@ -25,7 +25,7 @@ class maverick_web::maverick_api (
     install_python_module { "mavapi-tornado":
         pkgname     => "tornado",
         ensure      => exactly,
-        version     => "5.1.1",
+        version     => "4.5.3",
     } ->
     install_python_module { "mavapi-rx":
         pkgname     => "rx",
