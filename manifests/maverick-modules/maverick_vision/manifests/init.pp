@@ -2,6 +2,8 @@ class maverick_vision (
     $visiond = true,
     $gstreamer = true,
     $opencv = true,
+    $visionlibs = true,
+    $openvino = true,
     $mjpg_streamer = false,
     $aruco = true,
     $orb_slam2 = false,
@@ -19,6 +21,10 @@ class maverick_vision (
         mode        => "755",
     }
     
+    if $visionlibs == true {
+        class { "maverick_vision::visionlibs": }
+    }
+
     if $visiond == true {
         class { "maverick_vision::visiond": }
     }
