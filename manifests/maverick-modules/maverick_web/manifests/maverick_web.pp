@@ -1,7 +1,7 @@
 class maverick_web::maverick_web (
     $webport = 6794,
     $active = false,
-    $webpath_dev = '/dev/maverick/',
+    $webpath_dev = '/dev/maverick',
     $webpath_prod = '/web/maverick',
     $server_hostname = $maverick_web::server_fqdn,
     $auth_message = undef,
@@ -42,17 +42,6 @@ class maverick_web::maverick_web (
         source      => "puppet:///modules/maverick_web/maverick-webdev.service",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } -> 
-    # Define nginx location for webdev proxy
-    nginx::resource::location { "maverick-webdev":
-        location    => $webpath_dev,
-        ensure      => present,
-        ssl         => true,
-        proxy       => "http://localhost:${webport}/dev/maverick/",
-        server      => $server_hostname,
-        auth_basic  => $auth_message,
-        auth_basic_user_file => $auth_file,
-        require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
-    } ->
     # Define nginx location for webdev proxy websocket endpoint
     nginx::resource::location { "maverick-webdev-ws":
         ssl                     => true,
@@ -63,6 +52,17 @@ class maverick_web::maverick_web (
     	proxy_read_timeout      => "7d",
         proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
     	proxy_http_version      => "1.1",
+    } ->
+    # Define nginx location for webdev proxy
+    nginx::resource::location { "maverick-webdev":
+        location    => $webpath_dev,
+        ensure      => present,
+        ssl         => true,
+        proxy       => "http://localhost:${webport}/dev/maverick/",
+        server      => $server_hostname,
+        auth_basic  => $auth_message,
+        auth_basic_user_file => $auth_file,
+        require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
     }
     
     # Install prod repo, register nginx location
