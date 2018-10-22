@@ -41,9 +41,9 @@ class maverick_vision::visionlibs (
             } ->
             exec { "tbb-make":
                 command => "/usr/bin/make",
-                creates => "/srv/maverick/software/tbb",
                 cwd     => "/srv/maverick/var/build/tbb",
                 timeout => 0,
+                user    => "mav",
             } ->
             file { "/srv/maverick/software/tbb":
                 ensure  => directory,
@@ -53,15 +53,23 @@ class maverick_vision::visionlibs (
             file { "/srv/maverick/var/build/tbb/install.sh":
                 source  => "puppet:///modules/maverick_vision/tbb_install.sh",
                 mode    => "0755",
+                owner   => "mav",
+                group   => "mav",
             } ->
             exec { "tbb-install":
                 command => "/srv/maverick/var/build/tbb/install.sh",
                 user    => "mav",
                 cwd     => "/srv/maverick/var/build/tbb",
+                creates => "/srv/maverick/software/tbb/lib",
             } ->
             file { "/srv/maverick/var/build/.install_flag_tbb":
                 ensure  => present,
             }
+        }
+        # Set profile script for custom tbb location
+        file { "/etc/profile.d/50-maverick-tbb-paths.sh":
+            mode        => "644",
+            source      => "puppet:///modules/maverick_vision/tbb-paths.sh",
         }
     }
 
