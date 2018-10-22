@@ -47,8 +47,8 @@ fps=30
 # fakerangefinder=true
 ## output is either a filename to save video to or a gstreamer pipeline.  gstreamer pipeline must start with appsrc.
 #  raspberry hardware encoding
-# output=appsrc ! videorate ! autovideoconvert ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
-# output=appsrc ! videorate ! autovideoconvert ! omxh264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_landing/vision_landing-xxx.avi
+# output=appsrc ! videorate ! autovideoconvert ! video/x-raw,format=I420 ! omxh264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
+# output=appsrc ! videorate ! autovideoconvert ! video/x-raw,format=I420 ! omxh264enc ! mpegtsmux ! filesink location=/srv/maverick/data/vision/vision_landing/vision_landing-xxx.avi
 #  odroid xu4 hardware encoding
 # output=appsrc ! videorate ! autovideoconvert ! v4l2video11h264enc ! h264parse ! rtph264pay config-interval=1 pt=96 ! udpsink host=192.168.1.x port=5000 sync=false
 #  odroid xu4 hardware encoding with options
