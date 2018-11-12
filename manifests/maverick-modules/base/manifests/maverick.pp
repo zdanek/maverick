@@ -5,7 +5,7 @@ class base::maverick (
    
    # Note: The mav user is setup in base::users
    
-   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib"]:
+   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/code/maverick", "/srv/maverick/code/maverick/custom-modules", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib"]:
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
