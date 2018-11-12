@@ -6,3 +6,8 @@ WIPE_EEPROM=false # Set to true to wipe eepom when SITL starts
 GIMBAL=false # Set to true to enable MAVLink gimbal
 TRACKER=false # Set to true to start an antenna tracker instance
 TRACKER_LOCATION= # Set antenna tracker start location
+VEHICLE_TYPE=<%= @ardupilot_type %> # This should normally be overridden by sitl-vehicle.conf
+SCREEN_NAME=apsitl_<%= @instance_name %>
+RCIN_PORT=<%= @actual_rcin_port %>
+SITL_PORT=<%= @actual_sitl_port %>
+INSTANCE=<%= @instance_number %>

@@ -1,0 +1,16 @@
+[Unit]
+Description=Maverick ArduPilot SITL - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/maverick/bin/apsitl.sh %I
+User=mav
+TimeoutStartSec=20
+TimeoutStopSec=10
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

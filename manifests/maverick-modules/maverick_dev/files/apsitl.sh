@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $# -eq 0 ]] ; then
+    echo 'Error: apsitl.sh must be called with an argument: <instance-name>'
+    exit 0
+fi
+
 # Set defaults, can be overriden in /srv/maverick/config/mavlink/sitl.conf
 FRAME=quad # Vehicle frame type - quad, heli, plane, quadplane, rover etc
 LOCATION=CMAC # ~/code/ardupilot/Tools/autotest/locations.txt
@@ -9,14 +14,15 @@ WIPE_EEPROM=false # Set to true to wipe eepom when SITL starts
 GIMBAL=false # Set to true to enable MAVLink gimbal
 TRACKER=false # Set to true to start an antenna tracker instance
 TRACKER_LOCATION= # Set antenna tracker start location
-VEHICLE_TYPE=ArduCopter # This should normally be overridden by sitl-vehicle.conf
-SCREEN_NAME=sitl
+VEHICLE_TYPE=ArduCopter
+SCREEN_NAME=$1
+RCIN_PORT=5500
+SITL_PORT=5600
+INSTANCE=0
 
-[ ! -r /srv/maverick/config/dev/sitl.conf ] || . /srv/maverick/config/dev/sitl.conf
-[ ! -r /srv/maverick/config/dev/sitl-vehicle.conf ] || . /srv/maverick/config/dev/sitl-vehicle.conf
+[ ! -r /srv/maverick/config/dev/apsitl_$1.conf ] || . /srv/maverick/config/dev/apsitl_$1.conf
 
-cd /srv/maverick/data/mavlink/sitl
-source /srv/maverick/.virtualenvs/sitl/bin/activate
+cd /srv/maverick/data/mavlink/apsitl_$1
 
 # If jsbsim is installed, set the path
 if [ -e /srv/maverick/software/jsbsim/bin ]; then
@@ -54,4 +60,4 @@ else
     _TRACKER_LOCATION=""
 fi
 
-/usr/bin/screen -c /srv/maverick/config/dev/sitl.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/sitl --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  
+/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  

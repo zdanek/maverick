@@ -1,11 +1,16 @@
-class maverick_dev::sitl (
+define maverick_dev::apsitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $jsbsim_source = "http://github.com/tridge/jsbsim.git",
+    $instance_name = "dev",
+    $instance_number = 0,
+    $sitl_active = true,
+    $sitl_port = 5000,
+    $rcin_port = 5500,
+    $vehicle_type = "copter",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
-    $mavlink_startingtcp = 5780,
+    $mavlink_startingtcp = 6000,
     $mavlink_tcpports = 3,
-    $mavlink_startingudp = 14580,
+    $mavlink_startingudp = 14000,
     $mavlink_udpports = 3,
     $mavlink_udpinports = 3,
     $mavlink_serialout = undef,
@@ -13,16 +18,20 @@ class maverick_dev::sitl (
     $mavlink_outflow = false,
     $ros_instance = true,
     $rosmaster_active = true,
-    $rosmaster_port = 11313,
+    $rosmaster_port = 11000,
     $mavros_active = true,
     $mavros_startup_delay = 10,
-    $mavlink_port = 5780,
-    $sitl_active = true,
     $api_instance = true,
-    $api_active = false,
+    $api_active = true,
+    $api_port = 7000
 ) {
     
+    # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl_dev
+
     # Install a virtual environment for dronekit sitl
+    # NB: The python virtualenv is disabled as it is probably overly-complicated and unnecessary.
+    # The code remains in case it is useful as an option in the future.
+    /*
     file { "/srv/maverick/code/sitl":
         ensure      => directory,
         owner       => "mav",
@@ -53,6 +62,7 @@ class maverick_dev::sitl (
         ensure      => present,
         timeout     => 0,
     }
+    */
 
     /*
     # Install dronekit into sitl
@@ -82,178 +92,138 @@ class maverick_dev::sitl (
         env         => "sitl",
     }
     */
-        
-    # This is needed for sitl run
-    file { "/var/APM":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    }
 
-    file { "/srv/maverick/var/log/sitl":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    file { "/srv/maverick/var/log/mavlink-sitl":
+    file { [ "/srv/maverick/var/log/dev/apsitl_${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => "755",
     }
     
-    $ardupilot_vehicle = getvar("maverick_dev::ardupilot::ardupilot_vehicle")
-    if $ardupilot_vehicle == "copter" {
+    if $vehicle_type == "copter" {
         $ardupilot_type = "ArduCopter"
-    } elsif $ardupilot_vehicle == "plane" {
+    } elsif $vehicle_type == "plane" {
         $ardupilot_type = "ArduPlane"
-    } elsif $ardupilot_vehicle == "rover" {
+    } elsif $vehicle_type == "rover" {
         $ardupilot_type = "APMrover2"
-    } elsif $ardupilot_vehicle == "sub" {
+    } elsif $vehicle_type == "sub" {
         $ardupilot_type = "ArduSub"
-    } elsif $ardupilot_vehicle == "antennatracker" {
+    } elsif $vehicle_type == "antennatracker" {
         $ardupilot_type = "AntennaTracker"
     } else {
-        $ardupilot_type = $ardupilot_vehicle
+        $ardupilot_type = $vehicle_type
     }
     
-    # If SITL plane, compile jsbsim and install service
-    if $ardupilot_vehicle == "plane" and ! ("install_flag_jsbsim" in $installflags) {
-        ensure_packages(["libexpat1-dev"])
-        oncevcsrepo { "git-jsbsim":
-            gitsource   => $jsbsim_source,
-            dest        => "/srv/maverick/var/build/jsbsim",
-        } ->
-        exec { "jsbsim-autogen":
-            command     => "/srv/maverick/var/build/jsbsim/autogen.sh --enable-libraries --prefix=/srv/maverick/software/jsbsim --exec-prefix=/srv/maverick/software/jsbsim",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/var/build/jsbsim/Makefile",
-            user        => "mav",
-            require     => Package["libexpat1-dev"],
-        } ->
-        exec { "jsbsim-make":
-            command     => "/usr/bin/make",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/var/build/jsbsim/src/JSBSim",
-            user        => "mav",
-        } ->
-        exec { "jsbsim-makeinstall":
-            command     => "/usr/bin/make install",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
-            user        => "mav",
-        } ->
-        file { "/srv/maverick/software/jsbsim/bin":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-        } ->
-        exec { "jsbsim-cpbin":
-            command     => "/bin/cp /srv/maverick/var/build/jsbsim/src/JSBSim /srv/maverick/software/jsbsim/bin",
-            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
-        } ->
-        file { "/srv/maverick/var/build/.install_flag_jsbsim":
-            ensure      => file,
-            owner       => "mav",
-            group       => "mav",
-            mode        => "644",
-        }
-        
+    # Calculate actual SITL ports from instance multiplier, unless the ports have been specifically set
+    if $sitl_port == 5000 {
+        $actual_sitl_port = $sitl_port + ($instance_number * 10)
+    } else {
+        $actual_sitl_port = $sitl_port
+    }    
+
+    if $rcin_port == 5500 {
+        $actual_rcin_port = $rcin_port + ($instance_number * 10)
+    } else {
+        $actual_rcin_port = $rcin_port
+    }
+
+    if $mavlink_startingtcp == 6000 {
+        $actual_mavlink_startingtcp = $mavlink_startingtcp + ($instance_number * 10)
+    } else {
+        $mavlink_startingtcp = $mavlink_startingtcp
     }
     
-    file { "/srv/maverick/software/maverick/bin/sitl.sh":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/sitl.sh",
-    } ->
-    file { "/srv/maverick/config/dev/sitl.screen.conf":
+    if $mavlink_startingudp == 14000 {
+        $actual_mavlink_startingudp = $mavlink_startingudp + ($instance_number * 10)
+    } else {
+        $actual_mavlink_startingudp = $mavlink_startingudp
+    }
+
+    if $rosmaster_port == 11000 {
+        $actual_rosmaster_port = $rosmaster_port + ($instance_number * 10)
+    } else {
+        $actual_rosmaster_port = $rosmaster_port
+    }
+
+    if $api_port == 7000 {
+        $actual_api_port = $api_port + ($instance_number * 10)
+    } else {
+        $actual_api_port = $api_port
+    }
+
+    file { "/srv/maverick/config/dev/apsitl_${instance_name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
-        content     => template("maverick_dev/sitl.screen.conf.erb"),
-        notify      => Service_wrapper["maverick-sitl"],
+        content     => template("maverick_dev/apsitl.screen.conf.erb"),
+        notify      => Service_wrapper["maverick-apsitl@${instance_name}"],
     }
-    file { "/srv/maverick/config/dev/sitl.conf":
-        source      => "puppet:///modules/maverick_dev/sitl.conf",
+    file { "/srv/maverick/config/dev/apsitl_${instance_name}.conf":
+        content     => template("maverick_dev/apsitl.conf.erb"),
         owner       => "mav",
         group       => "mav",
         mode        => "644",
         replace     => false,
-        notify      => Service_wrapper["maverick-sitl"],
+        notify      => Service_wrapper["maverick-apsitl@${instance_name}"],
     } ->
-    file { "/srv/maverick/config/dev/sitl-vehicle.conf":
-        content     => "VEHICLE_TYPE=${ardupilot_type}",
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        notify      => Service_wrapper["maverick-sitl"],
-    } ->
-    file { "/etc/systemd/system/maverick-sitl.service":
-        content     => template("maverick_dev/maverick-sitl.service.erb"),
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-sitl"] ]
-    } ->
-    file { "/srv/maverick/config/mavlink/mavlink_params-sitl.json":
+    file { "/srv/maverick/config/mavlink/mavlink_params-apsitl_${instance_name}.json":
         ensure      => absent,
     }
     
     if $sitl_active == true {
-        service_wrapper { "maverick-sitl":
+        service_wrapper { "maverick-apsitl@${instance_name}":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-apsitl@.service"] ],
         }
     } else {
-        service_wrapper { "maverick-sitl":
+        service_wrapper { "maverick-apsitl@${instance_name}":
             ensure      => stopped,
             enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-sitl.service"] ],
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-apsitl@.service"] ],
         }
     }
 
     if $ros_instance == true {
-        $notifyResources = [ Service_wrapper["maverick-sitl"], Service["maverick-rosmaster@sitl"] ]
+        $notifyResources = [ Service_wrapper["maverick-apsitl@${instance_name}"], Service["maverick-rosmaster@apsitl_${instance_name}"] ]
     } else {
-        $notifyResources = Service_wrapper["maverick-sitl"]
+        $notifyResources = Service_wrapper["maverick-apsitl@${instance_name}"]
     }
     if $mavlink_proxy == "mavproxy" {
-        maverick_mavlink::cmavnode { "sitl":
+        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
             active      => false,
-            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
-            startingudp => $mavlink_startingudp,
+            inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
         } ->
-        maverick_mavlink::mavlink_router { "sitl":
+        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
-            inputport   => "5760",
-            startingudp => $mavlink_startingudp,
+            inputport   => $actual_sitl_port,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             active      => false,
         } ->
-        maverick_mavlink::mavproxy { "sitl":
-            inputaddress => "tcp:localhost:5760",
+        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+            inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
-            startingudp => $mavlink_startingudp,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
@@ -262,39 +232,39 @@ class maverick_dev::sitl (
             notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "cmavnode" {
-        maverick_mavlink::mavproxy { "sitl":
-            inputaddress => "tcp:localhost:5760",
+        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+            inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
-            startingudp => $mavlink_startingudp,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             active      => false,
         } ->
-        maverick_mavlink::mavlink_router { "sitl":
+        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
-            inputport   => "5760",
-            startingudp => $mavlink_startingudp,
+            inputport   => $actual_sitl_port,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             active      => false,
         } ->
-        maverick_mavlink::cmavnode { "sitl":
-            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
-            startingudp => $mavlink_startingudp,
+        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
+            inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
@@ -303,40 +273,40 @@ class maverick_dev::sitl (
             notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
-        maverick_mavlink::cmavnode { "sitl":
+        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
             active      => false,
-            inputaddress => "tcp:localhost:5760", # Note cmavnode doesn't support sitl/tcp yet
-            startingudp => $mavlink_startingudp,
+            inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
         } ->
-        maverick_mavlink::mavproxy { "sitl":
-            inputaddress => "tcp:localhost:5760",
+        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+            inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
-            startingudp => $mavlink_startingudp,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             active      => false,
         } ->
-        maverick_mavlink::mavlink_router { "sitl":
+        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
-            inputport   => "5760",
-            startingudp => $mavlink_startingudp,
+            inputport   => $actual_sitl_port,
+            startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
             udpinports  => $mavlink_udpinports,
-            startingtcp => $mavlink_startingtcp,
+            startingtcp => $actual_mavlink_startingtcp,
             tcpports    => $mavlink_tcpports,
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
@@ -349,25 +319,25 @@ class maverick_dev::sitl (
     # maverick_dev::sitl::ros_instance allows ros to be completely optional
     if $ros_instance == true {
         # Add a ROS master for SITL
-        maverick_ros::rosmaster { "sitl":
+        maverick_ros::rosmaster { "apsitl_${instance_name}":
             active  => $rosmaster_active,
-            port    => $rosmaster_port,
+            port    => $actual_rosmaster_port,
         } ->
-        maverick_ros::mavros { "sitl":
+        maverick_ros::mavros { "apsitl_${instance_name}":
             active              => $mavros_active,
-            rosmaster_port      => $rosmaster_port,
-            mavlink_port        => $mavlink_port,
+            rosmaster_port      => $actual_rosmaster_port,
+            mavlink_port        => $actual_mavlink_startingtcp,
             mavros_startup_delay => $mavros_startup_delay,
         }
     }
 
     if $api_instance == true {
         # Create an API instance
-        maverick_web::api { "api-sitl":
-            instance    => "sitl",
+        maverick_web::api { "api-apsitl_${instance_name}":
+            instance    => "apsitl_${instance_name}",
             active      => $api_active,
-            apiport     => 6801,
-            rosport     => $rosmaster_port,
+            apiport     => $actual_api_port,
+            rosport     => $actual_rosmaster_port,
         }
     }
 

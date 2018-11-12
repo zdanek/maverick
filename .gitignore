@@ -11,7 +11,7 @@ bin/maverick-logd
 bin/maverick-mavlogd
 bin/mavproxy-fc.sh
 bin/mavproxy-sitl.sh
-bin/dev-sitl.sh
+bin/apsitl.sh
 bin/monitor-interface.sh
 bin/network-if-managed
 bin/network-if-monitor
