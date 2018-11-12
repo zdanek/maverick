@@ -12,9 +12,11 @@ bin/maverick-mavlogd
 bin/mavproxy-fc.sh
 bin/mavproxy-sitl.sh
 bin/apsitl.sh
+bin/px4sitl.sh
 bin/monitor-interface.sh
 bin/network-if-managed
 bin/network-if-monitor
+bin/network-if-config
 bin/mavros.sh
 bin/cmavnode.sh
 bin/mavlink-router.sh
@@ -25,6 +27,7 @@ bin/sitl.sh
 bin/wifi-setup
 bin/flirone_v4l2.sh
 bin/wifibc.sh
+bin/api.sh
 conf/local-nodes/
 conf/maverick-branch.conf
 conf/maverick-environment.conf

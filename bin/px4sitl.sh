@@ -1,1 +1,0 @@
-/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/px4sitl.sh
