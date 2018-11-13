@@ -5,6 +5,7 @@ class maverick_dev::ardupilot (
     $ardupilot_branch = "master", # eg. master, Copter-3.3, ArduPlane-release
     $ardupilot_board = "px4-v4",
     $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
+    $ardupilot_all_vehicles = {"copter" => "arducopter", "plane" => "arduplane", "rover" => "ardurover", "sub" => "ardusub", "heli" => "arducopter-heli", "antennatracker" => "antennatracker"},
     $ardupilot_vehicle = "copter", # copter, plane or rover
     $sitl, # passed from init.pp
     $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
@@ -38,10 +39,14 @@ class maverick_dev::ardupilot (
     
     # Compile SITL
     if $sitl and $ardupilot_buildsystem == "waf" {
-        maverick_dev::fwbuildwaf { "sitl_${ardupilot_vehicle}":
-            require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
-            board       => "sitl",
-            build       => $ardupilot_vehicle,
+        # Compile all vehicle types by default for waf build
+        $ardupilot_all_vehicles.each |String $vehicle, String $buildfile| {
+            maverick_dev::fwbuildwaf { "sitl_waf_${vehicle}":
+                require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
+                board       => "sitl",
+                vehicle     => $vehicle,
+                buildfile   => $buildfile,
+            }
         }
     } elsif $sitl and $ardupilot_buildsystem == "make" {
         if $ardupilot_vehicle == "copter" {
@@ -62,7 +67,7 @@ class maverick_dev::ardupilot (
         }
     }
 
-    # If SITL plane, compile jsbsim and install service
+    # Compile jsbsim and install service, for plane
     if $install_jsbsim and ! ("install_flag_jsbsim" in $installflags) {
         ensure_packages(["libexpat1-dev"])
         oncevcsrepo { "git-jsbsim":
