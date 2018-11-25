@@ -6,6 +6,8 @@ define maverick_dev::apsitl (
     $sitl_port = 5000,
     $rcin_port = 5500,
     $vehicle_type = "copter",
+    $vehicle_frame = undef,
+    $vehicle_paramfile = undef,
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_startingtcp = 6000,
@@ -102,16 +104,69 @@ define maverick_dev::apsitl (
     
     if $vehicle_type == "copter" {
         $ardupilot_type = "ArduCopter"
+        if !$vehicle_frame {
+            $ardupilot_frame = "quad"
+        } else {
+            $ardupilot_frame = $vehicle_frame
+        }
+        if !$vehicle_paramfile {
+            $ardupilot_paramfile = "copter"
+        } else {
+            $ardupilot_paramfile = $vehicle_paramfile
+        }
+
     } elsif $vehicle_type == "plane" {
         $ardupilot_type = "ArduPlane"
+        if !$vehicle_frame {
+            $ardupilot_frame = "plane"
+        } else {
+            $ardupilot_frame = $vehicle_frame
+        }
+        if !$vehicle_paramfile {
+            $ardupilot_paramfile = "plane"
+        } else {
+            $ardupilot_paramfile = $vehicle_paramfile
+        }
     } elsif $vehicle_type == "rover" {
         $ardupilot_type = "APMrover2"
+        if !$vehicle_frame {
+            $ardupilot_frame = "rover"
+        } else {
+            $ardupilot_frame = $vehicle_frame
+        }
+        if !$vehicle_paramfile {
+            $ardupilot_paramfile = "rover"
+        } else {
+            $ardupilot_paramfile = $vehicle_paramfile
+        }
     } elsif $vehicle_type == "sub" {
         $ardupilot_type = "ArduSub"
+        if !$vehicle_frame {
+            $ardupilot_frame = "vectored"
+        } else {
+            $ardupilot_frame = $vehicle_frame
+        }
+        if !$vehicle_paramfile {
+            $ardupilot_paramfile = "sub"
+        } else {
+            $ardupilot_paramfile = $vehicle_paramfile
+        }
     } elsif $vehicle_type == "antennatracker" {
         $ardupilot_type = "AntennaTracker"
+        if !$vehicle_frame {
+            $ardupilot_frame = "tracker"
+        } else {
+            $ardupilot_frame = $vehicle_frame
+        }
+        if !$vehicle_paramfile {
+            $ardupilot_paramfile = "tracker"
+        } else {
+            $ardupilot_paramfile = $vehicle_paramfile
+        }
     } else {
         $ardupilot_type = $vehicle_type
+        $ardupilot_frame = $vehicle_frame
+        $ardupilot_paramfile = $vehicle_paramfile
     }
     
     # Calculate actual SITL ports from instance multiplier, unless the ports have been specifically set

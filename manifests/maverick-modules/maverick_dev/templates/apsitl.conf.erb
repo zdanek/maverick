@@ -1,4 +1,4 @@
-FRAME=quad # Vehicle frame type - quad, heli, plane, quadplane, rover etc
+FRAME=<%= @ardupilot_frame %> # Vehicle frame type - quad, heli, plane, quadplane, rover etc
 LOCATION=CMAC # ~/code/ardupilot/Tools/autotest/locations.txt
 CUSTOM_LOCATION= # Set to override LOCATION with a custom location
 SPEEDUP=1 # Set simulation speedup (1 for wall clock time)
@@ -11,3 +11,4 @@ SCREEN_NAME=apsitl_<%= @instance_name %>
 RCIN_PORT=<%= @actual_rcin_port %>
 SITL_PORT=<%= @actual_sitl_port %>
 INSTANCE=<%= @instance_number %>
+DEFAULT_PARAMS=/srv/maverick/code/ardupilot/Tools/autotest/default_params/<%= @ardupilot_paramfile %>.parm

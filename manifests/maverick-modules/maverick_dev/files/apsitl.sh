@@ -19,10 +19,11 @@ SCREEN_NAME=$1
 RCIN_PORT=5500
 SITL_PORT=5600
 INSTANCE=0
+DEFAULT_PARAMS= # Default set of parameters to load if not already present
 
 [ ! -r /srv/maverick/config/dev/apsitl_$1.conf ] || . /srv/maverick/config/dev/apsitl_$1.conf
 
-cd /srv/maverick/data/mavlink/apsitl_$1
+cd /srv/maverick/data/dev/mavlink/apsitl_$1
 
 # If jsbsim is installed, set the path
 if [ -e /srv/maverick/software/jsbsim/bin ]; then
@@ -60,4 +61,10 @@ else
     _TRACKER_LOCATION=""
 fi
 
-/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION  
+if [ "x$DEFAULT_PARAMS" != "x" ]; then
+    _DEFAULT_PARAMS="--add-param-file=$DEFAULT_PARAMS"
+else
+    _DEFAULT_PARAMS=""
+fi
+
+/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/dev/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION $_DEFAULT_PARAMS  
