@@ -1,0 +1,14 @@
+[Unit]
+Description=Maverick ArduPilot Custom SITL
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/srv/maverick/config/custom_sitl/custom_sitl.conf
+ExecStart=/srv/maverick/software/maverick/manifests/maverick-modules/custom_sitl/files/custom_sitl.sh
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+
