@@ -1,4 +1,4 @@
-class custom_sitl (
+class sample_sitl_swarm (
 ) {
 
     # Create a custom APSITL instance (copter by default)
