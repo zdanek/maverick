@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Set python module paths
-export PYTHONPATH=/srv/maverick/software/gstreamer/lib/python2.7/site-packages:/srv/maverick/software/opencv/lib/python2.7/dist-packages:/opt/ros/current/lib/python2.7/dist-packages
+export PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages
 
 # Source ROS environment
 source /srv/maverick/software/ros/current/setup.bash
 
 # Source api config for this instance
-[ ! -r /srv/maverick/config/web/api-$1.conf ] || . /srv/maverick/config/web/api-$1.conf
+[ ! -r /srv/maverick/config/web/api-env.$1.conf ] || . /srv/maverick/config/web/api-env.$1.conf
 export API_PORT ROS_MASTER_URI
 
 cd /srv/maverick/var/log/web/api/$1
-/srv/maverick/code/maverick-api/maverick-api --configuration /srv/maverick/config/web/api-$1.json >/srv/maverick/var/log/web/api/$1/log 2>&1
+/srv/maverick/code/maverick-api/maverick_api/maverick_api.py --config-file=/srv/maverick/config/web/maverick-api.$1.conf >/srv/maverick/var/log/web/api/$1/log 2>&1

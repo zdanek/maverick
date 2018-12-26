@@ -14,7 +14,7 @@ define maverick_web::api (
         group       => "mav",
         mode        => "755",
     } ->
-    file { "/srv/maverick/config/web/api-${instance}.conf":
+    file { "/srv/maverick/config/web/api-env.${instance}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -22,12 +22,12 @@ define maverick_web::api (
         content     => template("maverick_web/api.conf.erb"),
         notify      => Service_wrapper["maverick-api@${instance}"],
     } ->
-    file { "/srv/maverick/config/web/api-${instance}.json":
+    file { "/srv/maverick/config/web/maverick-api.${instance}.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        content     => template("maverick_web/api.json.erb"),
+        content     => template("maverick_web/maverick-api.conf.erb"),
         notify      => Service_wrapper["maverick-api@${instance}"],
     } 
 
