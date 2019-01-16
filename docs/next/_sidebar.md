@@ -6,6 +6,7 @@
   - [Analysis](/modules/analysis)
   - [Base](/modules/base)
   - [Cloud9](/modules/cloud9)
+  - [Custom](/modules/custom)
   - [Desktop](/modules/desktop)
   - [Development](/modules/dev)
   - [Flight Controller](/modules/fc)
@@ -21,3 +22,4 @@
 - Developers
   - [Overview](/devdocs/intro)
   - [Distribution Images](/devdocs/distimages)
+
