@@ -4,8 +4,10 @@ class maverick_vision::opencv (
     $release = "Release", # Release or Debug, OpenCV build type
     $precompile_headers = false,
     $armv7l_optimize = false,
-    $opencv_dldt_version = "2018_R3",
-    $opencv_omz_version = "2018_R3",
+    # $opencv_dldt_version = "2018_R5",
+    # $opencv_omz_version = "2018_R5",
+    $opencv_dldt_version = "master",
+    $opencv_omz_version = "master"
     $openvino = true,
 ) {
     
