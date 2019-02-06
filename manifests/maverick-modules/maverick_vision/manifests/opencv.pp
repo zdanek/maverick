@@ -7,7 +7,7 @@ class maverick_vision::opencv (
     # $opencv_dldt_version = "2018_R5",
     # $opencv_omz_version = "2018_R5",
     $opencv_dldt_version = "master",
-    $opencv_omz_version = "master"
+    $opencv_omz_version = "master",
     $openvino = true,
 ) {
     
