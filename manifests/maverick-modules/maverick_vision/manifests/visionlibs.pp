@@ -21,8 +21,8 @@ class maverick_vision::visionlibs (
             } ->
             exec { "openblas-makeinstall":
                 command => "/usr/bin/make install PREFIX=/srv/maverick/software/openblas >/srv/maverick/var/log/build/openblas.install 2>&1",
-                cwd     => "/srv/maverick/software/openblas",
-                creates => "/srv/maverick/var/build/openblas/libopenblas.so",
+                cwd     => "/srv/maverick/var/build/openblas",
+                creates => "/srv/maverick/software/openblas/lib/libopenblas.so",
                 timeout => 0,
             } ->
             file { "/srv/maverick/var/build/.install_flag_openblas":
