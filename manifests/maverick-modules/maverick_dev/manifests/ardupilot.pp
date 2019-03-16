@@ -32,7 +32,7 @@ class maverick_dev::ardupilot (
     # If a custom ardupilot repo is specified, configure the upstream automagically
     exec { "ardupilot_setupstream":
         command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
-        unless      => "/usr/bin/git remote -v | /bin/grep ${ardupilot_upstream}",
+        unless      => "/usr/bin/git remote -v | /bin/grep -i ${ardupilot_upstream}",
         cwd         => "/srv/maverick/code/ardupilot",
         require     => Oncevcsrepo["git-ardupilot"],
     }
