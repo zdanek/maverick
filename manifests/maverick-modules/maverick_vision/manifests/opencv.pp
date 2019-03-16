@@ -77,11 +77,11 @@ class maverick_vision::opencv (
         }
         
         if $maverick_vision::visionlibs::tbb == true {
-            $_tbbopts = "-DWITH_TBB=ON -DBUILD_TBB=OFF"
+            $_tbbopts = "-DCMAKE_INSTALL_RPATH=/srv/maverick/software/tbb/lib -DWITH_TBB=ON -DBUILD_TBB=OFF"
         } else {
             $_tbbopts = "-DWITH_TBB=OFF -DBUILD_TBB=OFF"
         }
-        
+
         if $::hardwaremodel == "x86_64" {
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
@@ -102,6 +102,7 @@ class maverick_vision::opencv (
                 "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig",
                 "TBB_LIB_DIR=/srv/maverick/software/tbb/lib",
                 "LIBRARY_PATH=/srv/maverick/software/tbb/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib",
                 "TBBROOT=/srv/maverick/software/tbb",
                 "CPATH=/srv/maverick/software/tbb/include",
                 "OpenBLAS_HOME=/srv/maverick/software/openblas",
@@ -115,6 +116,11 @@ class maverick_vision::opencv (
         exec { "opencv-build":
             user        => "mav",
             timeout     => 0,
+            environment => [
+                "LIBRARY_PATH=/srv/maverick/software/tbb/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib",
+                "CPATH=/srv/maverick/software/tbb/include",
+            ],
             command     => "/usr/bin/make -j${_makej} >/srv/maverick/var/log/build/opencv.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => $_creates,
