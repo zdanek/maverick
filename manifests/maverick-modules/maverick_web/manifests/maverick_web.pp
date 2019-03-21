@@ -67,7 +67,7 @@ class maverick_web::maverick_web (
     
     # Install prod repo, register nginx location
     oncevcsrepo { "git-maverick-web-dist":
-        gitsource   => "https://github.com/goodrobots/maverick-web-dist.git",
+        gitsource   => "https://github.com/goodrobots/maverick-web.git",
         dest        => "/srv/maverick/software/maverick-web",
         revision    => "master",
         depth       => undef,
@@ -76,12 +76,26 @@ class maverick_web::maverick_web (
         location        => $webpath_prod,
         ensure          => present,
         ssl             => true,
-        location_alias  => "/srv/maverick/software/maverick-web",
+        location_alias  => "/srv/maverick/software/maverick-web/dist",
         index_files     => ["index.html"],
         server          => $server_hostname,
         auth_basic      => $auth_message,
         auth_basic_user_file => $auth_file,
         require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+    } ->
+    # Install -web dependencies
+    exec { 'maverick-web-install':
+        command     => "/usr/bin/yarn install",
+        cwd         => "/srv/maverick/software/maverick-web",
+        creates     => "/srv/maverick/software/maverick-web/node_modules",
+        user        => "mav",
+    } ->
+    # Build -web
+    exec { 'maverick-web-build':
+        command     => "/usr/bin/yarn run build",
+        cwd         => "/srv/maverick/software/maverick-web",
+        creates     => "/srv/maverick/software/maverick-web/dist",
+        user        => "mav",
     }
     /*
     nginx::resource::location { "maverick-web-prod-precache":
