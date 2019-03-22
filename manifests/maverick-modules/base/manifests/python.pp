@@ -1,5 +1,48 @@
 class base::python (
+    $maverick_python = true,
+    $python_version = "v3.7.2"
 ) {
+
+    # Install custom python 3.7
+    if $maverick_python == true {
+        # If ~/var/build/.install_flag_python exists, skip pulling source and compiling
+        if ! ("install_flag_python" in $installflags) {
+            warning("Optimized Python will be built and can take a long time, please be patient..")
+            # Pull python from git
+            oncevcsrepo { "git-python":
+                gitsource   => "https://github.com/python/cpython.git",
+                dest        => "/srv/maverick/var/build/python",
+                revision    => $python_version,
+            } ->
+            exec { "python-configure":
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib"],
+                command     => "/srv/maverick/var/build/python/configure --prefix=/srv/maverick/software/python --enable-optimizations --with-lto --enable-shared >/srv/maverick/var/log/build/python.configure.out 2>&1",
+                cwd         => "/srv/maverick/var/build/python",
+                creates     => "/srv/maverick/var/build/python/Makefile",
+                user        => "mav",
+                timeout     => 0,
+            } ->
+            exec { "python-make":
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib"],
+                command     => "/usr/bin/make >/srv/maverick/var/log/build/python.make.out 2>&1",
+                cwd         => "/srv/maverick/var/build/python",
+                creates     => "/srv/maverick/var/build/python/libpython3.so",
+                user        => "mav",
+                timeout     => 0,
+            } ->
+            exec { "python-make-install":
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib"],
+                command     => "/usr/bin/make install >/srv/maverick/var/log/build/python.make.install.out 2>&1",
+                cwd         => "/srv/maverick/var/build/python",
+                creates     => "/srv/maverick/software/python/bin/python3",
+                user        => "mav",
+                timeout     => 0,
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_python":
+                ensure      => present,
+            }
+        }
+    }
 
     # Install python using python module
     class { "python":
