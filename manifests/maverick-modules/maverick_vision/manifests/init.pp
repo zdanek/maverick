@@ -12,7 +12,6 @@ class maverick_vision (
     $camera_streaming_daemon = true,
     $collision_avoidance = false,
     $rtabmap = false,
-    $realsense = false,
 ) {
 
     file { ["/srv/maverick/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:
@@ -68,9 +67,5 @@ class maverick_vision (
 
     if $rtabmap == true {
         class { "maverick_vision::rtabmap": }
-    }
-    
-    if $realsense == true {
-        class { "maverick_vision::realsense": }
     }
 }

@@ -8,7 +8,7 @@ class maverick_hardware (
     $tegra_install = false,
     $camera_ocam_install = false,
     $camera_picam_install = false,
-    $camera_realsense_install = false,
+    $realsense_install = true,
     $seekthermal_install = false,
     $flirone_install = false,
 ) {
@@ -53,7 +53,7 @@ class maverick_hardware (
 	}
 	
 	# Setup realsense depth cameras
-	if $camera_realsense == "yes" or $camera_realsense_install == true {
+	if $camera_realsense == "yes" or $realsense_install == true {
 		class { "maverick_hardware::peripheral::realsense": }
 	}
 	
