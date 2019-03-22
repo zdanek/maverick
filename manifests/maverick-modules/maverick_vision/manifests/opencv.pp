@@ -4,11 +4,8 @@ class maverick_vision::opencv (
     $release = "Release", # Release or Debug, OpenCV build type
     $precompile_headers = false,
     $armv7l_optimize = false,
-    # $opencv_dldt_version = "2018_R5",
-    # $opencv_omz_version = "2018_R5",
-    $opencv_dldt_version = "master",
-    $opencv_omz_version = "master",
-    $openvino = true,
+    $opencv_dldt_version = "2018",
+    $openvino = false,
 ) {
     
     # Ensure gstreamer, tbb and openblas resources are applied before this class
@@ -193,10 +190,22 @@ class maverick_vision::opencv (
                 group       => "mav",
                 mode        => "755",
             } ->
+            exec { "opencv_submodules-init":
+                command     => "/usr/bin/git submodule init",
+                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine",
+                creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/thirdparty/ade",
+                user        => "mav",
+            } ->
+            exec { "opencv_submodules-update":
+                command     => "/usr/bin/git submodule update --recursive",
+                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine",
+                creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/thirdparty/ade/CMakeLists.txt",
+                user        => "mav",
+            } ->
             exec { "opencv_dldt-prepbuild":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv_dldt -DCMAKE_BUILD_TYPE=Release ..",
+                command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv_dldt -DCMAKE_BUILD_TYPE=Release .. >/srv/maverick/var/log/build/opencv_dldt.prepbuild.out 2>&1",
                 cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine/build",
                 creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/build/Makefile",
             } ->
