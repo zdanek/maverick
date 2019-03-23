@@ -95,15 +95,15 @@ class maverick_hardware::peripheral::realsense (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command     => "/usr/bin/cmake -DBUILD_GRAPHICAL_EXAMPLES=false -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib ..",
+                command     => "/usr/bin/cmake -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DBUILD_PYTHON_BINDINGS=bool:true -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib ..",
                 cwd         => "/srv/maverick/var/build/realsense-sdk2/build",
                 creates     => "/srv/maverick/var/build/realsense-sdk2/build/Makefile",
-                require     => File["/srv/maverick/var/build/realsense-sdk2/build"], # ensure we have all the dependencies satisfied
+                require     => [ File["/srv/maverick/var/build/realsense-sdk2/build"], Class["base::python"] ], # ensure we have all the dependencies satisfied
             } ->
             exec { "realsense-sdk2-build":
                 user        => "mav",
                 timeout     => 0,
-                environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/librealsense/include:/srv/maverick/software/opencv/include", "LIBRARY_PATH=/srv/maverick/software/librealsense/lib:/srv/maverick/software/opencv/lib"],
+                environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/realsense-sdk2/include:/srv/maverick/software/opencv/include", "LIBRARY_PATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/opencv/lib"],
                 command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-sdk2.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/realsense-sdk2/build",
                 creates     => "/srv/maverick/var/build/realsense-sdk2/build/tools/convert/rs-convert",
