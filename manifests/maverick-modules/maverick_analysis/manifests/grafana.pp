@@ -19,9 +19,9 @@ class maverick_analysis::grafana (
 
     if $active == true {
     
-        ensure_packages(["sqlite3"])
+        ensure_packages(["sqlite3", "libfontconfig"])
     
-        file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/plugins", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
+        file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
             ensure      => directory,
             mode        => "755",
             owner       => "mav",
@@ -40,6 +40,7 @@ class maverick_analysis::grafana (
             $_dashboard = "system-dashboard-generic.json"
         }
     
+        /*
         if $raspberry_present == "yes" or $tegra_present == "yes" {
             # If we're on tegra, need to do a bit of hackery
             if $tegra_present == "yes" {
@@ -54,10 +55,18 @@ class maverick_analysis::grafana (
             $package_source = "https://dl.bintray.com/fg2it/deb-rpi-1b/main/g/grafana_${grafana_version}_armhf.deb"
             $install_method = "package"
         } else {
-            $manage_package_repo = true
-            $package_source = undef
-            $install_method = "repo"
-        }
+        */
+
+        # Use auto package management by default
+        $manage_package_repo = true
+        $package_source = undef
+        $install_method = "repo"
+
+        # Install grafana repo key
+        exec { "grafana-key":
+            command         => "/usr/bin/curl https://packages.grafana.com/gpg.key | sudo apt-key add -",
+            unless          => "/usr/bin/apt-key list |/bin/egrep '4E40 DDF6 D76E 284A 4A67'",
+        } ->
         file { "/etc/systemd/system/maverick-grafana.service":
             owner       => "root",
             group       => "root",
@@ -83,14 +92,14 @@ class maverick_analysis::grafana (
                 users    => {
                   allow_sign_up => false,
                 },
-          },
-          data_dir              => "/srv/maverick/data/analysis/grafana",
-          install_method        => $install_method,
-          manage_package_repo   => $manage_package_repo,
-          package_source        => $package_source,
-          service_name          => "maverick-grafana",
-          version               => $grafana_version,
-          notify                => Service_wrapper[grafana-server],
+            },
+            data_dir              => "/srv/maverick/data/analysis/grafana",
+            install_method        => $install_method,
+            manage_package_repo   => $manage_package_repo,
+            package_source        => $package_source,
+            service_name          => "maverick-grafana",
+            version               => $grafana_version,
+            notify                => Service_wrapper[grafana-server],
         } ->
         service_wrapper { "grafana":
             ensure      => "stopped",
