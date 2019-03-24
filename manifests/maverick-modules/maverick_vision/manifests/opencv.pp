@@ -80,9 +80,9 @@ class maverick_vision::opencv (
         }
 
         if $::hardwaremodel == "x86_64" {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DINSTALL_C_EXAMPLES=ON -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
     
         if Numeric($memorysize_mb) < 1000 {
@@ -108,7 +108,6 @@ class maverick_vision::opencv (
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => "/srv/maverick/var/build/opencv/build/Makefile",
             require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev"] ], # ensure we have all the dependencies satisfied
-            before      => Exec["opencv_dldt-prepbuild"],
         } ->
         exec { "opencv-build":
             user        => "mav",
@@ -208,6 +207,7 @@ class maverick_vision::opencv (
                 command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv_dldt -DCMAKE_BUILD_TYPE=Release .. >/srv/maverick/var/log/build/opencv_dldt.prepbuild.out 2>&1",
                 cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine/build",
                 creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/build/Makefile",
+                require     => Exec["opencv-prepbuild"],
             } ->
             exec { "opencv_dldt-build":
                 user        => "mav",
