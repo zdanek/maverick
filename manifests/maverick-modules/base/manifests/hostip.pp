@@ -56,7 +56,6 @@ class base::hostip (
         class { "::hosts":
             use_fqdn            => true,
             purge_hosts         => true,
-            stored_config       => false,
             localhost_aliases   => ["localhost"],
             localhost6_aliases  => ["localhost", "ip6-localhost", "ip6-loopback"],
             fqdn_host_aliases   => $_host_aliases,

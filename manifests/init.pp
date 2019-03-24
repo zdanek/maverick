@@ -7,7 +7,7 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global", $version=undef, $url=undef) {
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="global", $version=undef, $url=undef, $pip_provider="pip3") {
   $module_version = $python_modules[$env][$pkgname]
   if $python_modules {
     case $ensure {
@@ -22,6 +22,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 owner => $owner,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
+                pip_provider => $pip_provider,
             }
         }
       }
@@ -36,6 +37,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 owner => $owner,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
+                pip_provider => $pip_provider,
             }
         } elsif versioncmp($version, $module_version) > 0 {
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
@@ -47,6 +49,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 owner => $owner,
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
+                pip_provider => $pip_provider,
             }
         }
       }
@@ -61,6 +64,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 owner => $owner,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
+                pip_provider => $pip_provider,
             }
         } elsif versioncmp($version, $module_version) != 0 {
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
@@ -72,6 +76,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 owner => $owner,
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
+                pip_provider => $pip_provider,
             }
         }
       }
@@ -82,7 +87,8 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             url => $url,
             ensure => absent,
             owner   => $owner,
-            timeout => $timeout
+            timeout => $timeout,
+            pip_provider => $pip_provider,
           }
         }
       }

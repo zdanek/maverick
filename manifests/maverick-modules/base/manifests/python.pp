@@ -42,6 +42,19 @@ class base::python (
                 ensure      => present,
             }
         }
+
+        file { "/etc/profile.d/99-maverick-python-path.sh":
+            content => "export PATH=/srv/maverick/software/python/bin:\$PATH",
+            owner   => "root",
+            group   => "root",
+            mode    => "0644",
+        }
+        file { "/etc/profile.d/99-maverick-pythonpath.sh":
+            content => "export PYTHONPATH=/srv/maverick/software/python/lib/python3.7:\$PYTHONPATH",
+            owner   => "root",
+            group   => "root",
+            mode    => "0644",
+        }
     }
 
     # Install python using python module
@@ -54,9 +67,29 @@ class base::python (
     }
     ensure_packages(["python-setuptools", "virtualenvwrapper", "python-numpy", "python-lockfile", "python-daemon"])
     # Install python3 packages
-    ensure_packages(["python3-numpy", "python3-yaml"])
+    ensure_packages(["python3-yaml"])
     # Install pylint for cloud9 linting
     ensure_packages(["pylint", "pylint3"])
+
+    # Install basic useful python modules
+    install_python_module { 'pip-numpy':
+        pkgname     => 'numpy',
+        ensure      => present,
+        pip_provider => 'pip3',
+    } ->
+    install_python_module { 'pip-daemon':
+        pkgname     => 'python-daemon',
+        ensure      => present,
+    } ->
+    install_python_module { 'pip-lockfile':
+        pkgname     => 'lockfile',
+        ensure      => present,
+    } ->
+    install_python_module { "pytest":
+        pkgname     => "pytest",
+        ensure      => present,
+        timeout     => 0,
+    }
 
     # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
     install_python_module { 'pip-pyric':

@@ -1,39 +1,30 @@
-# puppet-python [![Build Status](https://travis-ci.org/stankevich/puppet-python.svg?branch=master)](https://travis-ci.org/stankevich/puppet-python)
+# puppet-python [![Build Status](https://travis-ci.org/voxpupuli/puppet-python.svg?branch=master)](https://travis-ci.org/voxpupuli/puppet-python)
 
 Puppet module for installing and managing python, pip, virtualenvs and Gunicorn virtual hosts.
 
-===
+**Please note:** The module [stankevich/python](https://forge.puppet.com/stankevich/python) has been deprecated and is now available under Vox Pupuli: [puppet/python](https://forge.puppet.com/puppet/python).
 
-# Compatibility #
+## Compatibility #
 
-* Puppet v3 (with and without the future parser)
+See `.travis.yml` for compatibility matrix.
+
 * Puppet v4
+* Puppet v5
 
-## Ruby versions
-
-* 1.8.7
-* 1.9.3
-* 2.0.0
-* 2.1.0
-* 2.3.1
-
-## OS Distributions ##
+### OS Distributions ##
 
 This module has been tested to work on the following systems.
 
-* Debian 6
-* Debian 7
 * Debian 8
-* EL 5
+* Debian 9
 * EL 6
 * EL 7
+* CentOS 7
 * Gentoo (and Sabayon)
 * Suse 11
-* Ubuntu 10.04
-* Ubuntu 12.04
 * Ubuntu 14.04
-
-===
+* Ubuntu 16.04
+* Ubuntu 18.04
 
 ## Installation
 
@@ -68,6 +59,7 @@ Installs and manages python, python-pip, python-dev, python-virtualenv and Gunic
 
 **use_epel** - Boolean to determine if the epel class is used. Default: true on RHEL like systems, false otherwise
 
+*Install Python from system python*
 ```puppet
   class { 'python' :
     version    => 'system',
@@ -75,6 +67,15 @@ Installs and manages python, python-pip, python-dev, python-virtualenv and Gunic
     dev        => 'absent',
     virtualenv => 'absent',
     gunicorn   => 'absent',
+  }
+```
+*Install Python 3 from the scl repo*
+```puppet
+  class { 'python' :
+    ensure      => 'present',
+    version     => 'rh-python36-python',
+    dev         => 'present',
+    virtualenv  => 'present',
   }
 ```
 
@@ -88,6 +89,8 @@ Installs and manages packages from pip.
 
 **virtualenv** - virtualenv to run pip in. Default: system (no virtualenv)
 
+**pip_provider** - pip provider to execute pip with. Default: pip.
+
 **url** - URL to install from. Default: none
 
 **owner** - The owner of the virtualenv to ensure that packages are installed with the correct permissions (must be specified). Default: root
@@ -96,6 +99,8 @@ Installs and manages packages from pip.
 
 **environment** - Additional environment variables required to install the packages. Default: none
 
+**extras** - Extra features provided by the package which should be installed. Default: none
+
 **egg** - The egg name to use. Default: `$name` of the class, e.g. cx_Oracle
 
 **install_args** - String of additional flags to pass to pip during installaton. Default: none
@@ -103,6 +108,8 @@ Installs and manages packages from pip.
 **uninstall_args** - String of additional flags to pass to pip during uninstall. Default: none
 
 **timeout** - Timeout for the pip install command. Defaults to 1800.
+
+*Install cx_Oracle with pip*
 ```puppet
   python::pip { 'cx_Oracle' :
     pkgname       => 'cx_Oracle',
@@ -114,6 +121,17 @@ Installs and manages packages from pip.
     install_args  => '-e',
     timeout       => 1800,
    }
+```
+*Install Requests with pip3*
+```puppet
+  python::pip { 'requests' :
+    ensure        => 'present',
+    pkgname       => 'requests',
+    pip_provider  => 'pip3',
+    virtualenv    => '/var/www/project1',
+    owner         => 'root',
+    timeout       => 1800
+  }
 ```
 
 ### python::requirements
@@ -151,37 +169,52 @@ Creates Python virtualenv.
 
 **requirements** - Path to pip requirements.txt file. Default: none
 
-**proxy** - Proxy server to use for outbound connections. Default: none
-
 **systempkgs** - Copy system site-packages into virtualenv. Default: don't
+
+**venv_dir** - The location of the virtualenv if resource path not specified. Must be absolute path. Default: resource name
+
+**ensure_venv_dir** - Create virtualenv directory. Default: true
 
 **distribute** - Include distribute in the virtualenv. Default: true
 
-**venv_dir** - The location of the virtualenv if resource path not specified. Must be absolute path. Default: resource name
+**index** - Base URL of Python package index. Default: none
 
 **owner** - Specify the owner of this virtualenv
 
 **group** - Specify the group for this virtualenv
 
-**index** - Base URL of Python package index. Default: none
+**mode** - Specify the directory mode. Default: 0755
+
+**proxy** - Proxy server to use for outbound connections. Default: none
+
+**environment** - Additional environment variables required to install the packages. Default: none
+
+**path** - Set the $PATH environment variable. Default: [ '/bin', '/usr/bin', '/usr/sbin' ]
 
 **cwd** - The directory from which to run the "pip install" command. Default: undef
 
 **timeout** - The maximum time in seconds the "pip install" command should take. Default: 1800
 
+**pip_args** - Arguments to pass to pip during installation. Default: blank
+
+**extra_pip_args** - Arguments to pass to pip for package install.  These are included in the pip command *after* the requirements file.  Default: blank
+
 ```puppet
   python::virtualenv { '/var/www/project1' :
-    ensure       => present,
-    version      => 'system',
-    requirements => '/var/www/project1/requirements.txt',
-    proxy        => 'http://proxy.domain.com:3128',
-    systempkgs   => true,
-    distribute   => false,
-    venv_dir     => '/home/appuser/virtualenvs',
-    owner        => 'appuser',
-    group        => 'apps',
-    cwd          => '/var/www/project1',
-    timeout      => 0,
+    ensure          => present,
+    version         => 'system',
+    requirements    => '/var/www/project1/requirements.txt',
+    systempkgs      => true,
+    venv_dir        => '/home/appuser/virtualenvs',
+    ensure_venv_dir => false,
+    distribute      => false,
+    index           => 'appuser',
+    owner           => 'appuser',
+    group           => 'apps',
+    proxy           => 'http://proxy.domain.com:3128',
+    cwd             => '/var/www/project1',
+    timeout         => 0,
+    extra_pip_args  => '--no-binary :none:',
   }
 ```
 
@@ -302,12 +335,18 @@ python::python_pips:
     virtualenv: "/opt/env1"
   "coverage":
     virtualenv: "/opt/env2"
+python::python_dotfiles:
+  "/var/lib/jenkins/.pip/pip.conf":
+    config:
+      global:
+        index-url: "https://mypypi.acme.com/simple/"
+        extra-index-url: "https://pypi.risedev.at/simple/"
 ```
 
 ### Using SCL packages from RedHat or CentOS
 
 To use this module with Linux distributions in the Red Hat family and python distributions
-from softwarecollections.org, set python::provider to 'rhscl' and python::version to the name 
+from softwarecollections.org, set python::provider to 'rhscl' and python::version to the name
 of the collection you want to use (e.g., 'python27', 'python33', or 'rh-python34').
 
 ## Release Notes
@@ -330,6 +369,6 @@ Currently, the changes you need to make are as follows:
 * All pip definitions MUST include the owner field which specifies which user owns the virtualenv that packages will be installed in.  Adding this greatly improves performance and efficiency of this module.
 * You must explicitly specify pip => true in the python class if you want pip installed.  As such, the pip package is now independent of the dev package and so one can exist without the other.
 
-## Authors
+## Contributors
 
-[Sergey Stankevich](https://github.com/stankevich) | [Shiva Poudel](https://github.com/shivapoudel) | [Peter Souter](https://github.com/petems) | [Garrett Honeycutt](http://learnpuppet.com)
+Check out [Github contributors](https://github.com/voxpupuli/puppet-python/graphs/contributors).

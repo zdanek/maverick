@@ -28,12 +28,6 @@ class python::install {
     'Gentoo' => undef,
   }
 
-  $dev_ensure = $python::dev ? {
-    true    => 'present',
-    false   => 'absent',
-    default => $python::dev,
-  }
-
   $pip_ensure = $python::pip ? {
     true    => 'present',
     false   => 'absent',
@@ -44,6 +38,21 @@ class python::install {
     true    => 'present',
     false   => 'absent',
     default => $python::virtualenv,
+  }
+
+  if $venv_ensure == 'present' {
+    $dev_ensure = 'present'
+    unless $python::dev {
+      # Error: python2-devel is needed by (installed) python-virtualenv-15.1.0-2.el7.noarch
+      # Python dev is required for virtual environment, but python environment is not required for python dev.
+      notify { 'Python virtual environment is dependent on python dev': }
+    }
+  } else {
+    $dev_ensure = $python::dev ? {
+      true    => 'present',
+      false   => 'absent',
+      default => $python::dev,
+    }
   }
 
   package { 'python':
@@ -57,7 +66,7 @@ class python::install {
   }
 
   case $python::provider {
-    pip: {
+    'pip': {
 
       package { 'pip':
         ensure  => $pip_ensure,
@@ -96,9 +105,10 @@ class python::install {
       Package <| title == 'virtualenv' |> {
         name     => 'virtualenv',
         provider => 'pip',
+        require  => Package['python-dev']
       }
     }
-    scl: {
+    'scl': {
       # SCL is only valid in the RedHat family. If RHEL, package must be
       # enabled using the subscription manager outside of puppet. If CentOS,
       # the centos-release-SCL will install the repository.
@@ -134,7 +144,7 @@ class python::install {
         }
       }
     }
-    rhscl: {
+    'rhscl': {
       # rhscl is RedHat SCLs from softwarecollections.org
       if $::python::rhscl_use_public_repository {
         $scl_package = "rhscl-${::python::version}-epel-${::operatingsystemmajrelease}-${::architecture}"
@@ -164,12 +174,29 @@ class python::install {
       }
 
       if $::python::rhscl_use_public_repository {
-        Package <| tag == 'python-scl-repo' |> ->
-        Package <| tag == 'python-scl-package' |>
+        Package <| tag == 'python-scl-repo' |>
+        -> Package <| tag == 'python-scl-package' |>
       }
 
-      Package <| tag == 'python-scl-package' |> ->
-      Package <| tag == 'python-pip-package' |>
+      Package <| tag == 'python-scl-package' |>
+      -> Package <| tag == 'python-pip-package' |>
+    }
+    'anaconda': {
+      $installer_path = '/var/tmp/anaconda_installer.sh'
+
+      file { $installer_path:
+        source => $::python::anaconda_installer_url,
+        mode   => '0700',
+      }
+      -> exec { 'install_anaconda_python':
+        command   => "${installer_path} -b -p ${::python::anaconda_install_path}",
+        creates   => $::python::anaconda_install_path,
+        logoutput => true,
+      }
+      -> exec { 'install_anaconda_virtualenv':
+        command => "${::python::anaconda_install_path}/bin/pip install virtualenv",
+        creates => "${::python::anaconda_install_path}/bin/virtualenv",
+      }
     }
     default: {
 
@@ -182,6 +209,7 @@ class python::install {
         package { 'python-dev':
           ensure => $dev_ensure,
           name   => $pythondev,
+          alias  => $pythondev,
         }
       }
 
@@ -201,16 +229,20 @@ class python::install {
 
         $virtualenv_package = "${python}-virtualenv"
       } else {
-        if $::lsbdistcodename == 'jessie' {
+        if fact('lsbdistcodename') == 'jessie' {
           $virtualenv_package = 'virtualenv'
-        } elsif $::osfamily == 'Gentoo' {
+        } elsif fact('lsbdistcodename') == 'stretch' {
+          $virtualenv_package = 'virtualenv'
+        } elsif fact('lsbdistcodename') == 'xenial' {
+          $virtualenv_package = 'virtualenv'
+        } elsif $facts['os']['family'] == 'Gentoo' {
           $virtualenv_package = 'virtualenv'
         } else {
           $virtualenv_package = 'python-virtualenv'
         }
       }
 
-      if $::python::version =~ /^3/ {
+      if "${::python::version}" =~ /^python3/ { #lint:ignore:only_variable_string
         $pip_category = undef
         $pip_package = 'python3-pip'
       } elsif ($::osfamily == 'RedHat') and (versioncmp($::operatingsystemmajrelease, '7') >= 0) {

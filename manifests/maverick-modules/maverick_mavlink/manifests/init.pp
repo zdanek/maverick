@@ -348,16 +348,6 @@ class maverick_mavlink (
             ensure      => exactly,
             version     => $gooey_version,
             timeout     => 0,
-        } ->
-        install_python_module { "pip-numpy":
-            pkgname     => "numpy",
-            ensure      => present,
-            timeout     => 0,
-        } ->
-        install_python_module { "pytest":
-            pkgname     => "pytest",
-            ensure      => present,
-            timeout     => 0,
         }
         unless "cuav" in $::python_modules["global"] {
             oncevcsrepo { "git-cuav":
