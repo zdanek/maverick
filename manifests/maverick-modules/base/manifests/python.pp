@@ -43,14 +43,9 @@ class base::python (
             }
         }
 
+        # This makes the custom python3 the system default, at least by path invocation
         file { "/etc/profile.d/99-maverick-python-path.sh":
             content => "export PATH=/srv/maverick/software/python/bin:\$PATH",
-            owner   => "root",
-            group   => "root",
-            mode    => "0644",
-        }
-        file { "/etc/profile.d/99-maverick-pythonpath.sh":
-            content => "export PYTHONPATH=/srv/maverick/software/python/lib/python3.7:\$PYTHONPATH",
             owner   => "root",
             group   => "root",
             mode    => "0644",

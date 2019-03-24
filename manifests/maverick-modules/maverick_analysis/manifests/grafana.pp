@@ -19,7 +19,7 @@ class maverick_analysis::grafana (
 
     if $active == true {
     
-        ensure_packages(["sqlite3", "libfontconfig"])
+        ensure_packages(["sqlite3"])
     
         file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
             ensure      => directory,

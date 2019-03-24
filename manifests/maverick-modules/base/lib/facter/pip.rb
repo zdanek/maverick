@@ -1,7 +1,7 @@
 Facter.add(:python_modules) do
   setcode do
-    envs = ["global", "sitl", "fc"]
-    pippaths = {"global" => "pip", "sitl" => "/srv/maverick/.virtualenvs/sitl/bin/pip", "fc" => "/srv/maverick/.virtualenvs/fc/bin/pip"}
+    envs = ["global", "global3", "sitl", "fc"]
+    pippaths = {"global" => "pip", "global3" => "pip3", "sitl" => "/srv/maverick/.virtualenvs/sitl/bin/pip", "fc" => "/srv/maverick/.virtualenvs/fc/bin/pip"}
     modules = {}
     envs.each do |env|
         modules[env] = {}

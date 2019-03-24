@@ -165,7 +165,7 @@ class maverick_vision::opencv (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => "export PYTHONPATH=/srv/maverick/software/opencv/lib/python2.7/dist-packages:\$PYTHONPATH",
+        content     => "export PYTHONPATH=\$PYTHONPATH:/srv/maverick/software/opencv/lib/python3.7/site-packages",
     } ->
     file { "/etc/profile.d/40-maverick-opencv-cmake.sh":
         mode        => "644",
