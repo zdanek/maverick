@@ -1,6 +1,6 @@
 class maverick_vision::gstreamer (
     $gstreamer_installtype = "source",
-    $gstreamer_version = "1.14.4",
+    $gstreamer_version = "1.15.2",
     $libx264 = "installed",
 ) {
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
@@ -88,6 +88,7 @@ class maverick_vision::gstreamer (
         }
         
         # Work out libpython path
+        /*
         if $architecture == "armv7l" or $architecture == "armv6l" {
             $libpython_path = "/usr/lib/arm-linux-gnueabihf"
         } elsif $architecture == "amd64" {
@@ -95,6 +96,8 @@ class maverick_vision::gstreamer (
         } else {
             $libpython_path = "${::architecture}-linux-gnu"
         }
+        */
+        $libpython_path = "/srv/maverick/software/python/lib"
 
         # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
         if ! ("install_flag_gstreamer" in $installflags) {
@@ -239,10 +242,10 @@ class maverick_vision::gstreamer (
             exec { "gstreamer_gst_python":
                 user        => "mav",
                 timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "PYTHON=/srv/maverick/software/python/bin/python3"],
                 command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=${libpython_path} --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
-                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpythonplugin.so",
+                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpython.so",
                 require     => [ Package[$_gobject_package], Oncevcsrepo["git-gstreamer_gst_python"], Exec["gstreamer_gst_plugins_base"] ]
             } ->
             exec { "gstreamer_gst_rtsp_server":
