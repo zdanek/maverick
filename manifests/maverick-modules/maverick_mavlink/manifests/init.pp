@@ -16,8 +16,8 @@ class maverick_mavlink (
     $mavcesium_mavlink_port = "5770",
     $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
     $mavcesium_active = false,
-    $cuav_install = true,
-    $gooey_version = "0.9.2.3",
+    $cuav_install = false,
+    $gooey_version = "1.0.2",
 ) {
     
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)

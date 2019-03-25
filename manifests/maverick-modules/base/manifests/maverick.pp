@@ -57,8 +57,8 @@ class base::maverick (
         content     => "maverick() { /srv/maverick/software/maverick/bin/maverick \$1 \$2 \$3 \$4; . /etc/profile; }",
     }
     exec { "sudoers-securepath":
-        command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick/bin"#\'',
-        unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'maverick/bin'"
+        command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick/bin:/srv/maverick/software/python/bin"#\'',
+        unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'software/maverick/bin.*software/python/bin'"
     }
     
     # Add environment marker

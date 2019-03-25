@@ -2,38 +2,40 @@ class maverick_web::maverick_api (
 ) {
 
     # install python components
+    /*
     install_python_module { "mavapi-pymavlink":
         pkgname     => "pymavlink",
         ensure      => atleast,
         version     => "2.2.10",
     } ->
-    install_python_module { "mavapi-graphene":
-        pkgname     => "graphene",
+    install_python_module { "mavapi-graphql-core-next":
+        pkgname     => "GraphQL-core-next",
         ensure      => exactly,
-        version     => "2.1.3",
-    } ->
-    install_python_module { "mavapi-sqlalchemy":
-        pkgname     => "SQLAlchemy",
-        ensure      => exactly,
-        version     => "1.2.11",
-    } ->
-    install_python_module { "mavapi-graphene-sqlalchemy":
-        pkgname     => "graphene-sqlalchemy",
-        ensure      => exactly,
-        version     => "2.1.0",
-    } ->
+        version     => "1.0.2",
+    }
     install_python_module { "mavapi-tornado":
         pkgname     => "tornado",
         ensure      => exactly,
-        version     => "4.5.3",
+        version     => "6.0.2",
     } ->
-    install_python_module { "mavapi-rx":
-        pkgname     => "rx",
-        ensure      => latest,
+    install_python_module { "mavapi-aiosqlite":
+        pkgname     => "aiosqlite",
+        ensure      => exactly,
+        version     => "0.8.1",
     } ->
-    install_python_module { "mavapi-zeroconf":
-        pkgname     => "zeroconf",
-        ensure      => latest,
+    install_python_module { "mavapi-jstyleson":
+        pkgname     => "jstyleson",
+        ensure      => exactly,
+        version     => "0.0.2",
+    } ->
+    */
+    python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
+        cwd             => "/srv/maverick/code/maverick-api",
+        pip_provider    => "pip3",
+        environment     => ["PATH=/srv/maverick/software/python/bin:\$PATH"],
+        timeout         => 0,
+        forceupdate     => true,
+        fix_requirements_owner => false,
     } ->
     oncevcsrepo { "git-maverick-api":
         gitsource   => "https://github.com/goodrobots/maverick-api.git",
