@@ -77,7 +77,7 @@ class maverick_hardware::peripheral::realsense (
             content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/realsense-sdk2",
         }
 
-        if ! ("install_flag_realsense_sdk2" in $installflags) {
+        if ! ("install_flag_realsense-sdk2" in $installflags) {
             # Clone realsense-sdk
             oncevcsrepo { "git-realsense-realsense_sdk":
                 gitsource   => "https://github.com/IntelRealSense/librealsense.git",
@@ -95,7 +95,7 @@ class maverick_hardware::peripheral::realsense (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command     => "/usr/bin/cmake -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DBUILD_PYTHON_BINDINGS=bool:true -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib ..",
+                command     => "/usr/bin/cmake -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DBUILD_PYTHON_BINDINGS=bool:true -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib .. >/srv/maverick/var/log/build/realsense-sdk2.cmake.out 2>&1",
                 cwd         => "/srv/maverick/var/build/realsense-sdk2/build",
                 creates     => "/srv/maverick/var/build/realsense-sdk2/build/Makefile",
                 require     => [ File["/srv/maverick/var/build/realsense-sdk2/build"], Class["base::python"] ], # ensure we have all the dependencies satisfied
@@ -126,7 +126,7 @@ class maverick_hardware::peripheral::realsense (
                 command         => "/sbin/udevadm control --reload-rules && /sbin/udevadm trigger",
                 refreshonly     => true
             } ->
-            file { "/srv/maverick/var/build/.install_flag_realsense_sdk2":
+            file { "/srv/maverick/var/build/.install_flag_realsense-sdk2":
                 ensure      => file,
                 owner       => "mav",
             }
