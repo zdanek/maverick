@@ -30,10 +30,12 @@ class base {
     }
     
     ### Before we do anything, set our IP in /etc/hosts
+    /*
     class { "base::hostip":
         stage   => "bootstrap",
         require => Class["base::defaults", "base::locale", "maverick_puppet::client"],
     }
+    */
     
     ### Setup base system users
     class { "base::users":
