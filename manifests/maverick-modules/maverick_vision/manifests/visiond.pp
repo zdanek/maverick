@@ -7,10 +7,12 @@ class maverick_vision::visiond (
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
-    # Add v4l2 python bindings
+    # Add v4l2 python2 bindings
     install_python_module { 'pip-v4l2':
         pkgname     => 'v4l2',
         ensure      => present,
+        pip_provider => "pip",
+        env         => "global",
     }
      
     # Link maverick-visiond into central bin directory

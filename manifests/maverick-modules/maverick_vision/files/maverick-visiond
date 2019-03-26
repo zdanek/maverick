@@ -4,7 +4,17 @@
 # http://github.com/goodrobots/maverick
 # This is an experimental daemon that controls a video source, transmutes formats and transmits it over wireless
 
-import sys, os, signal, time, logging, errno, re, ConfigParser, traceback, subprocess, glob
+import os
+import sys
+import signal
+import time
+import logging
+import errno
+import re
+import configparser as ConfigParser
+import traceback
+import subprocess
+import glob
 import v4l2
 from fcntl import ioctl
 import gi
@@ -256,7 +266,7 @@ class Streamer(object):
                 h264struct.frame_skip_enable = 1
                 h264struct.video_bitrate = 2000000
                 self.h264enc.set_property('extra-controls', h264struct)
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             pass
         # Detect Intel/VAAPI
         try:
@@ -266,7 +276,7 @@ class Streamer(object):
             if not vaapi264encoder:
                 logger.info("VAAPI hardware encoder detected, attempting to use vaapi as h264 encoder")
                 self.h264enc = Gst.ElementFactory.make("vaapih264enc", "vaapih264enc")
-        except subprocess.CalledProcessError, e:
+        except subprocess.CalledProcessError as e:
             pass
         # Otherwise use software encoder
         if not self.h264enc:
@@ -405,7 +415,7 @@ class Streamer(object):
         elif t == Gst.MessageType.ERROR:
             self.pipeline.set_state(Gst.State.NULL)
             err, debug = message.parse_error()
-            print "Error: %s" % err, debug
+            print("Error: %s" % err, debug)
             self.playing = False
 
     def bus(self):
@@ -630,7 +640,7 @@ class App():
         while queryctrl.id < v4l2.V4L2_CID_LASTP1:
             try:
                 ioctl(self.vd, v4l2.VIDIOC_QUERYCTRL, queryctrl)
-            except IOError, e:
+            except IOError as e:
                 # this predefined control is not supported by this device
                 assert e.errno == errno.EINVAL
                 queryctrl.id += 1
@@ -641,7 +651,7 @@ class App():
         while True:
             try:
                 ioctl(self.vd, v4l2.VIDIOC_QUERYCTRL, queryctrl)
-            except IOError, e:
+            except IOError as e:
                 # no more custom controls available on this device
                 assert e.errno == errno.EINVAL
                 break
@@ -700,7 +710,7 @@ class App():
 
  
 if __name__ == "__main__":
-    print "Starting maverick-visiond"
+    print("Starting maverick-visiond")
 
     # Setup logging
     logger = logging.getLogger("DaemonLog")
@@ -729,4 +739,4 @@ if __name__ == "__main__":
             daemon_runner.do_action()
     """            
     # logger.info("Stopping maverick-visiond")
-    print "Stopped maverick-visiond daemon"
+    print("Stopped maverick-visiond daemon")
