@@ -2,33 +2,6 @@ class maverick_web::maverick_api (
 ) {
 
     # install python components
-    /*
-    install_python_module { "mavapi-pymavlink":
-        pkgname     => "pymavlink",
-        ensure      => atleast,
-        version     => "2.2.10",
-    } ->
-    install_python_module { "mavapi-graphql-core-next":
-        pkgname     => "GraphQL-core-next",
-        ensure      => exactly,
-        version     => "1.0.2",
-    }
-    install_python_module { "mavapi-tornado":
-        pkgname     => "tornado",
-        ensure      => exactly,
-        version     => "6.0.2",
-    } ->
-    install_python_module { "mavapi-aiosqlite":
-        pkgname     => "aiosqlite",
-        ensure      => exactly,
-        version     => "0.8.1",
-    } ->
-    install_python_module { "mavapi-jstyleson":
-        pkgname     => "jstyleson",
-        ensure      => exactly,
-        version     => "0.0.2",
-    } ->
-    */
     python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
         cwd             => "/srv/maverick/code/maverick-api",
         pip_provider    => "pip3",
