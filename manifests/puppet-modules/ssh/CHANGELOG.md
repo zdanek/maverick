@@ -1,3 +1,39 @@
+### v3.59.0 - 2018-01-03
+  * Support Puppet 6
+
+### v3.58.0 - 2018-10-08
+  * Add RevokedKeys option to `sshd_config`
+
+### v3.57.1 - 2018-07-27
+  * Disable ServerkeyBits on RHEL 7.4 and later
+
+### v3.57.0 - 2017-12-10
+  * Add support for AuthenticationMethods and AllowAgentForwarding
+    options in sshd_config
+
+### v3.56.1 - 2017-11-20
+  * Fix regex bug with `sshd_config_maxstartups`
+
+### v3.56.0 - 2017-10-27
+  * Support puppetlabs/concat v3 and v4
+
+### v3.55.0 - 2017-09-26
+  * Add `ssh::config_entry` defined type to manage `~/.ssh/config`
+  * Add `config_entries` parameter to ssh class to allow specifying a
+    hash of multiple entries for `ssh::config_entry`.
+
+### v3.54.0 - 2017-07-24
+  * Allow sshd_config_hostcertificate to be an array. This fixes a bug
+    where you could have specified one cert and multiple HostKey's since
+    `sshd_config_hostkey` allows an array.
+  * Add parameter `sshd_config_authorized_principals_file` to manage the
+    `AuthorizedPrincipalsFile` setting in `sshd_config`.
+
+### v3.53.0 - 2017-07-24
+  * Support only latest Puppet v3
+  * Support only last few releases on Puppet v4
+  * Add support for Puppet v5
+
 ### v3.52.0 - 2017-05-26
   * Add params for Add PrintLastLog, UsePrivilegeSeparation, and
     Compression options in sshd_config.
