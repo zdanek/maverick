@@ -1,6 +1,6 @@
 {
   "name": "puppet-healthcheck",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "author": "Vox Pupuli",
   "summary": "Puppet resources to evauluate the health and status of things",
   "license": "Apache-2.0",
@@ -16,7 +16,6 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "5",
         "6",
         "7"
       ]
@@ -24,7 +23,6 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "5",
         "6",
         "7"
       ]
@@ -39,14 +37,6 @@
     {
       "operatingsystem": "Scientific",
       "operatingsystemrelease": [
-        "5",
-        "6",
-        "7"
-      ]
-    },
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
         "6",
         "7"
       ]
@@ -54,8 +44,6 @@
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "10.04",
-        "12.04",
         "14.04"
       ]
     }
@@ -63,7 +51,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.6.1 < 5.0.0"
+      "version_requirement": ">= 5.5.8 < 7.0.0"
     }
   ]
 }

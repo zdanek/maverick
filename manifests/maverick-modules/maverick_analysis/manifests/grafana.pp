@@ -113,6 +113,7 @@ class maverick_analysis::grafana (
             host    => $host,
             port    => $webport,
             use_ssl => false,
+            verify_peer => false,
             test_url => '/public/img/grafana_icon.svg',
         } ->
         # Create maverick org in grafana
