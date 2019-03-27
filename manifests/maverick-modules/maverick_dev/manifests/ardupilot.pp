@@ -10,7 +10,7 @@ class maverick_dev::ardupilot (
     $sitl, # passed from init.pp
     $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
     $install_jsbsim = true,
-    $jsbsim_source = "http://github.com/tridge/jsbsim.git",
+    $jsbsim_source = "http://github.com/JSBSim-Team/jsbsim.git",
 ) {
     
     # Install ardupilot from git
@@ -74,6 +74,7 @@ class maverick_dev::ardupilot (
             gitsource   => $jsbsim_source,
             dest        => "/srv/maverick/var/build/jsbsim",
         } ->
+        /*
         exec { "jsbsim-autogen":
             command     => "/srv/maverick/var/build/jsbsim/autogen.sh --enable-libraries --prefix=/srv/maverick/software/jsbsim --exec-prefix=/srv/maverick/software/jsbsim",
             cwd         => "/srv/maverick/var/build/jsbsim",
@@ -100,6 +101,47 @@ class maverick_dev::ardupilot (
         } ->
         exec { "jsbsim-cpbin":
             command     => "/bin/cp /srv/maverick/var/build/jsbsim/src/JSBSim /srv/maverick/software/jsbsim/bin",
+            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_jsbsim":
+            ensure      => file,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "644",
+        }
+        */
+        file { '//srv/maverick/var/build/jsbsim/build':
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        exec { "jsbsim-cmake":
+            command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/jsbsim  ..",
+            cwd         => "/srv/maverick/var/build/jsbsim/build",
+            creates     => "/srv/maverick/var/build/jsbsim/build/Makefile",
+            user        => "mav",
+            require     => Package["libexpat1-dev"],
+        } ->
+        exec { "jsbsim-make":
+            command     => "/usr/bin/make",
+            timeout     => 0,
+            cwd         => "/srv/maverick/var/build/jsbsim/build",
+            creates     => "/srv/maverick/var/build/jsbsim/build/src/JSBSim",
+            user        => "mav",
+        } ->
+        exec { "jsbsim-makeinstall":
+            command     => "/usr/bin/make install",
+            cwd         => "/srv/maverick/var/build/jsbsim/build",
+            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
+            user        => "mav",
+        } ->
+        file { "/srv/maverick/software/jsbsim/bin":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+        } ->
+        exec { "jsbsim-cpbin":
+            command     => "/bin/cp /srv/maverick/var/build/jsbsim/build/src/JSBSim /srv/maverick/software/jsbsim/bin",
             creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
         } ->
         file { "/srv/maverick/var/build/.install_flag_jsbsim":
