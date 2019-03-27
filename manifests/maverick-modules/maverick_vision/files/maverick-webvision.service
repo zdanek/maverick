@@ -5,7 +5,7 @@ Requires=maverick-visiond.service network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/srv/maverick/software/maverick-fcs/tornado/webvision.py
+ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/maverick-fcs/tornado/webvision.py
 User=mav
 TimeoutStartSec=20
 
