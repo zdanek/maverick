@@ -5,7 +5,7 @@ Requires=network-online.target maverick-grafana.service maverick-influxd.service
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/srv/maverick/software/maverick/bin/maverick-mavlogd
+ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/maverick/bin/maverick-mavlogd
 User=mav
 TimeoutStartSec=20
 Restart=on-failure

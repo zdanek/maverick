@@ -1,9 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Script to import ArduPilot logs into influxdb for analysis/display
 # https://github.com/goodrobots/maverick
 
-import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re, ConfigParser, traceback, subprocess, glob, math
+import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re
+import configparser as ConfigParser
+import traceback, subprocess, glob, math
 import lockfile, signal, grp
 import asyncore, pyinotify
 import sqlite3
@@ -11,7 +13,6 @@ import json
 from dateutil import parser
 from grafana_api_client import GrafanaClient
 from grafanalib.core import *
-#from daemon import runner
 from pyinotify import WatchManager, AsyncNotifier, ThreadedNotifier, ProcessEvent, IN_CLOSE_WRITE
 from pymavlink import DFReader
 from pymavlink.DFReader import DFReader, DFReader_binary, DFReader_text
@@ -672,15 +673,15 @@ class App():
         asyncore.loop()
 
     def watch_dirs(self):
-    	watch_manager = WatchManager()
+        watch_manager = WatchManager()
         mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM
         notifier = pyinotify.AsyncNotifier(watch_manager, ProcessLog(self))
-    	for logdir in self.logdirs.split(","):
-    		logger.info("Watching directory: "+str(logdir))
-    		watch_manager.add_watch(logdir, mask)
+        for logdir in self.logdirs.split(","):
+            logger.info("Watching directory: "+str(logdir))
+            watch_manager.add_watch(logdir, mask)
 
     def config_parse(self, path):
-        Config = ConfigParser.SafeConfigParser()
+        Config = ConfigParser.ConfigParser()
         options = {}
         try:
             Config.read(path)
@@ -762,20 +763,3 @@ if __name__ == "__main__":
     # Create app instance and daemonize
     app = App()
     app.run()
-    """
-    daemon_runner = runner.DaemonRunner(app)
-    daemon_runner.daemon_context.files_preserve=[handler.stream]
-    try:
-        daemon_runner.do_action()
-    except runner.DaemonRunnerStopFailureError as Error:
-        if Error:
-            print "Error: " + str(Error)
-        print " - mavlogd not running, cannot stop"
-        # If stop action, just ignore the error and exit
-        if daemon_runner.action == "stop":
-            sys.exit(0)
-        elif daemon_runner.action == "restart":
-            print " - starting mavlogd"
-            daemon_runner.action = "start"
-            daemon_runner.do_action()
-    """
