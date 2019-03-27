@@ -1,16 +1,23 @@
 class maverick_web::maverick_api (
 ) {
 
-    # install python components
-    python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
-        cwd             => "/srv/maverick/code/maverick-api",
-        pip_provider    => "pip3",
-        environment     => ["PATH=/srv/maverick/software/python/bin:\$PATH"],
-        timeout         => 0,
-        forceupdate     => true,
-        fix_requirements_owner => false,
-        manage_requirements => false,
-    } ->
+    # Install python components
+    # python::requirements isn't idempotent, so only run once on initial install
+    if ! ("install_flag_apirequirements" in $installflags) {
+        python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
+            cwd             => "/srv/maverick/code/maverick-api",
+            pip_provider    => "pip3",
+            environment     => ["PATH=/srv/maverick/software/python/bin:\$PATH"],
+            timeout         => 0,
+            forceupdate     => true,
+            fix_requirements_owner => false,
+            manage_requirements => false,
+            before          => Oncevcsrepo["git-maverick-api"],
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_apirequirements":
+            ensure      => present,
+        }
+    }
     oncevcsrepo { "git-maverick-api":
         gitsource   => "https://github.com/goodrobots/maverick-api.git",
         dest        => "/srv/maverick/code/maverick-api",
