@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'concat_file validate_cmd parameter', unless: (fact('kernel') != 'Linux') do
+describe 'concat noop parameter', unless: (fact('kernel') != 'Linux') do
   basedir = default.tmpdir('concat')
   context 'with "/usr/bin/test -e %"' do
     before(:all) do
@@ -14,7 +14,7 @@ describe 'concat_file validate_cmd parameter', unless: (fact('kernel') != 'Linux
     end
     pp = <<-MANIFEST
       concat_file { '#{basedir}/file':
-        validate_cmd => '/usr/bin/test -e %',
+        noop => false,
       }
       concat_fragment { 'content':
         target  => '#{basedir}/file',
@@ -23,8 +23,8 @@ describe 'concat_file validate_cmd parameter', unless: (fact('kernel') != 'Linux
     MANIFEST
 
     it 'applies the manifest twice with no stderr' do
-      apply_manifest(pp, catch_failures: true)
-      apply_manifest(pp, catch_changes: true)
+      apply_manifest(pp, expect_changes: true, noop: true)
+      apply_manifest(pp, catch_changes: true, noop: true)
     end
 
     describe file("#{basedir}/file") do

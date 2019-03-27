@@ -9,6 +9,7 @@ class maverick_web::maverick_api (
         timeout         => 0,
         forceupdate     => true,
         fix_requirements_owner => false,
+        manage_requirements => false,
     } ->
     oncevcsrepo { "git-maverick-api":
         gitsource   => "https://github.com/goodrobots/maverick-api.git",
