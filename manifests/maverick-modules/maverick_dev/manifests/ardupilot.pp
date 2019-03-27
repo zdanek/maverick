@@ -74,42 +74,6 @@ class maverick_dev::ardupilot (
             gitsource   => $jsbsim_source,
             dest        => "/srv/maverick/var/build/jsbsim",
         } ->
-        /*
-        exec { "jsbsim-autogen":
-            command     => "/srv/maverick/var/build/jsbsim/autogen.sh --enable-libraries --prefix=/srv/maverick/software/jsbsim --exec-prefix=/srv/maverick/software/jsbsim",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/var/build/jsbsim/Makefile",
-            user        => "mav",
-            require     => Package["libexpat1-dev"],
-        } ->
-        exec { "jsbsim-make":
-            command     => "/usr/bin/make",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/var/build/jsbsim/src/JSBSim",
-            user        => "mav",
-        } ->
-        exec { "jsbsim-makeinstall":
-            command     => "/usr/bin/make install",
-            cwd         => "/srv/maverick/var/build/jsbsim",
-            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
-            user        => "mav",
-        } ->
-        file { "/srv/maverick/software/jsbsim/bin":
-            ensure      => directory,
-            owner       => "mav",
-            group       => "mav",
-        } ->
-        exec { "jsbsim-cpbin":
-            command     => "/bin/cp /srv/maverick/var/build/jsbsim/src/JSBSim /srv/maverick/software/jsbsim/bin",
-            creates     => "/srv/maverick/software/jsbsim/bin/JSBSim",
-        } ->
-        file { "/srv/maverick/var/build/.install_flag_jsbsim":
-            ensure      => file,
-            owner       => "mav",
-            group       => "mav",
-            mode        => "644",
-        }
-        */
         file { '//srv/maverick/var/build/jsbsim/build':
             ensure      => directory,
             owner       => "mav",
