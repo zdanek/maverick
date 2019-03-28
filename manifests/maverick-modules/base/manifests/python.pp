@@ -7,8 +7,9 @@ class base::python (
     if $maverick_python == true {
         # If ~/var/build/.install_flag_python exists, skip pulling source and compiling
         if ! ("install_flag_python" in $installflags) {
-            warning("Optimized Python will be built and can take a long time, please be patient..")
+            warning("Optimized Python3 will be built and can take a long time, please be patient..")
             # Pull python from git
+            ensure_packages(["libffi-dev", "libncurses5-dev", "libgdbm-dev", "libreadline-dev", "tk-dev"])
             oncevcsrepo { "git-python":
                 gitsource   => "https://github.com/python/cpython.git",
                 dest        => "/srv/maverick/var/build/python",
@@ -21,6 +22,7 @@ class base::python (
                 creates     => "/srv/maverick/var/build/python/Makefile",
                 user        => "mav",
                 timeout     => 0,
+                require     => [ Package["libffi-dev"], Package["tk-dev"], ],
             } ->
             exec { "python-make":
                 environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib"],
