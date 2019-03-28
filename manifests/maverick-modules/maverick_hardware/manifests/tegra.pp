@@ -8,8 +8,8 @@ class maverick_hardware::tegra (
     }
     
     if ! ("install_flag_jtx1inst" in $installflags) {
-        # Pull aruco from git mirror
-        oncevcsrepo { "git-aruco":
+        # Pull jtx1inst fix from git mirror
+        oncevcsrepo { "git-jtx1inst":
             gitsource   => "https://github.com/fnoop/jtx1inst.git",
             dest        => "/srv/maverick/var/build/jtx1inst",
             depth       => undef,
