@@ -8,7 +8,7 @@ class maverick_vision::visionlibs (
     if $openblas == true {
         # If ~/var/build/.install_flag_openblas exists, skip pulling source and compiling
         if ! ("install_flag_openblas" in $installflags) {
-            oncevcsrepo { "git-opencv":
+            oncevcsrepo { "git-openblas":
                 gitsource   => "https://github.com/xianyi/OpenBLAS.git",
                 dest        => "/srv/maverick/var/build/openblas",
                 revision    => $openblas_version,
