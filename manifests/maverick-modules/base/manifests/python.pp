@@ -40,6 +40,10 @@ class base::python (
                 user        => "mav",
                 timeout     => 0,
             } ->
+            exec { "python-pip-upgrade":
+                cwd         => "/srv/maverick/software/python",
+                command     => "/srv/maverick/software/python/bin/pip3 install --upgrade pip",
+            } ->
             file { "/srv/maverick/var/build/.install_flag_python":
                 ensure      => present,
             }

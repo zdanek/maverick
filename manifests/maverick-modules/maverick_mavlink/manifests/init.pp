@@ -213,14 +213,13 @@ class maverick_mavlink (
     ## Install mavcesium dependencies and services
     if $mavcesium_install == true {
         # Overlay mavcesium master ontop of mavproxy installed version
-        package { "libffi-dev":
-            ensure      => installed,
-        } ->
+        ensure_packages(["libffi-dev"])
         oncevcsrepo { "git-mavcesium":
             gitsource   => $mavcesium_source,
             dest        => "/srv/maverick/software/mavcesium",
             submodules  => true,
             owner       => "mav",
+            require     => Package["libffi-dev"],
         } ->
         install_python_module { "mavcesium-tornado":
             pkgname     => "tornado",
