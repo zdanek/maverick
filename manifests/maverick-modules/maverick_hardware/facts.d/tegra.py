@@ -33,6 +33,14 @@ class Tegra(object):
         except:
             pass
         
+        try:
+            with open('/proc/device-tree/model', 'r') as f:
+                board = f.readline().strip()
+                if 'nano' in board:
+                    self.data['model'] = 'Nano'
+        except:
+            pass
+        
         # Define main data container
         f = open('/proc/cpuinfo', 'r')
         for line in f:
