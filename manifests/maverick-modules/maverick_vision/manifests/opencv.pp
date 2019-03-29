@@ -92,6 +92,7 @@ class maverick_vision::opencv (
             exec { "nvidia-patch-glheaders":
                 cwd     => "/usr/local/cuda/include",
                 command => "/usr/bin/patch -N cuda_gl_interop.h /var/tmp/OpenGLHeader.patch",
+                unless  => "/bin/grep '//#ifndef GL_VERSION' /usr/local/cuda/include/cuda_gl_interop.h",
             }
         }
 
