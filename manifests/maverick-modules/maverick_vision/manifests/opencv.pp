@@ -85,8 +85,8 @@ class maverick_vision::opencv (
 
             # Patch OpenGL headers
             file { "/var/tmp/OpenGLHeader.patch":
-                source      => "puppet:///modules/maverick_vision/OpenLGHeader.patch",
-                user        => "mav",
+                source      => "puppet:///modules/maverick_vision/OpenGLHeader.patch",
+                owner       => "mav",
                 group       => "mav",
             } ->
             exec { "nvidia-patch-glheaders":
@@ -125,7 +125,7 @@ class maverick_vision::opencv (
             command     => $_command,
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => "/srv/maverick/var/build/opencv/build/Makefile",
-            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev", "python2.7-dev", "libpython3-all-dev", "qt5-default"] ], # ensure we have all the dependencies satisfied
+            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev", "qt5-default"] ], # ensure we have all the dependencies satisfied
         } ->
         exec { "opencv-build":
             user        => "mav",
