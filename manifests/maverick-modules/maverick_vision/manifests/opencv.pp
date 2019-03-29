@@ -19,9 +19,8 @@ class maverick_vision::opencv (
         ensure_packages(["libjasper-dev", "libpng12-dev"])
     }
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev"])
-    ensure_packages(["python2.7-dev", "libpython3-all-dev"])
-    ensure_packages(["libgtk2.0-dev"])
-    ensure_packages(["libv4l-dev", "libjasper-dev", "qt5-default"])
+    ensure_packages(["libglew-dev"])
+    ensure_packages(["qt5-default"])
 
     # If ~/var/build/.install_flag_opencv exists, skip pulling source and compiling
     if ! ("install_flag_opencv" in $installflags) {
@@ -82,6 +81,17 @@ class maverick_vision::opencv (
                 $_tegra_arch = "-D CUDA_ARCH_BIN=6.2"
             } else {
                 $_tegra_arch = ""
+            }
+
+            # Patch OpenGL headers
+            file { "/var/tmp/OpenGLHeader.patch":
+                source      => "puppet:///modules/maverick_vision/OpenLGHeader.patch",
+                user        => "mav",
+                group       => "mav",
+            } ->
+            exec { "nvidia-patch-glheaders":
+                cwd     => "/usr/local/cuda/include",
+                command => "/usr/bin/patch -N cuda_gl_interop.h /var/tmp/OpenGLHeader.patch",
             }
         }
 
