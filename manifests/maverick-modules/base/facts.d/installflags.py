@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import fnmatch
 import os
@@ -14,6 +14,6 @@ except:
     pass
 
 if installflags:
-    print "installflags="+str(",".join(installflags))
+    print("installflags="+str(",".join(installflags)))
 else:
-    print "installflags=false"
+    print("installflags=false")

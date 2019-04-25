@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much OS information as possible
 
 import os, re, sys, subprocess
@@ -9,7 +9,7 @@ class Baseos(object):
         
     def facter(self):
         # Define main data container
-        f = subprocess.check_output(['facter'])
+        f = subprocess.getoutput(['facter'])
         data = f.split("\n")
         for line in data:
             r = re.search('^(.*)\s+=>\s+(.*)', line)
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if baseos.data:
         for key,val in baseos.data.items():
-            print "baseos_%s=%s" % (key, val)
+            print("baseos_%s=%s" % (key, val))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of an Up board as possible
 
 import os, re, sys, subprocess
@@ -31,4 +31,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if rapl.data:
         for key,val in rapl.data.items():
-            print "rapl_%s=%s" % (key, val)
+            print("rapl_%s=%s" % (key, val))

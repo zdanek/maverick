@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of a beaglebone as possble
 
-import re, sys, subprocess, commands
+import re, sys, subprocess
 import os.path
 from xml.dom.minidom import parse, parseString
 
@@ -75,17 +75,17 @@ class Beagle(object):
 if __name__ == '__main__':
     # Check if model path available, if not exit
     if not os.path.isfile('/sys/firmware/devicetree/base/model'):
-        print "beagle_present=no"
+        print("beagle_present=no")
         sys.exit(1)
     
     beagle = Beagle()
     beagle.cpudata()
     if beagle.data['present'] == 'no':
-        print "beagle_present=no"
+        print("beagle_present=no")
         sys.exit(1)
         
     beagle.storagedata()
     # Finally, print the data out in the format expected of a fact provider
     if beagle.data:
         for key,val in beagle.data.items():
-            print "beagle_%s=%s" % (key, val)
+            print("beagle_%s=%s" % (key, val))

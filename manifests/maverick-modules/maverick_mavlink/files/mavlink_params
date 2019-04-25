@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# mavlink_sitlparams
+# mavlink_params
 # https://github.com/goodrobots/maverick/manifests/maverick-modules/maverick_mavlink/files
 #
 # This is an experimental script to connect to arducopter using dronekit, to control parameter setup.
@@ -23,7 +23,7 @@ nowtime = now.strftime("%Y-%m-%d-%H-%M-%S")
 
 # Configure argument parsing
 import argparse
-import ConfigParser
+import configparser
 parser = argparse.ArgumentParser(description='Mavlink Parameter Configurator')
 parser.add_argument('--config', '-c', required=True, help="config file location, defaults to same directory as mavlink_params")
 parser.add_argument('--verbose', '-v', action='store_true', help="Verbose/Debug output")
@@ -41,13 +41,13 @@ class Craft:
         self.connect()
     def connect(self):
         try:
-            print "Connecting to drone on: %s" % self.config["connect"]
+            print("Connecting to drone on: %s" % self.config["connect"])
             self.vehicle = connect(self.config["connect"], wait_ready=True, rate=1)
             self.connected = True
-            print "Success: Connected to drone"
+            print("Success: Connected to drone")
         except:
             self.connected = False
-            print "Warning: Could not connect to drone"
+            print("Warning: Could not connect to drone")
     def readconf(self):
         try:
             with open(self.configpath) as jsonfile:    
@@ -55,11 +55,11 @@ class Craft:
                 self.config = data['config']
                 self.params = data['params']
         except Exception as error:
-            print "Error reading config file:", str(error)
+            print("Error reading config file:", str(error))
     def updateparams(self):
         for param,value in self.params.items():
             if craft.vehicle.parameters[str(param)] != value:
-                print "Changing parameter '"+str(param)+"' to",value
+                print("Changing parameter '"+str(param)+"' to",value)
                 craft.vehicle.parameters[str(param)] = value
 
 # Define class for signal tracking and handling
@@ -71,10 +71,10 @@ class SigTrack:
     def count(self):
         return self.counter
     def handle_sig(self, signal, frame):
-        print "Signal handler called, calling shutdown and cleanup logic"
+        print("Signal handler called, calling shutdown and cleanup logic")
         sigtracker.add()
         if sigtracker.count() >= 3:
-            print "Signal handler called three times, exiting immediately"
+            print("Signal handler called three times, exiting immediately")
             exit(1)
             
             
@@ -91,7 +91,7 @@ craft = Craft(args.config)
 ### Reread config and then make sure params match
 ### Then go sleepy bye bye for a bit
 ### --------------------------------
-print "Entering main tracking loop"
+print("Entering main tracking loop")
 while sigtracker.count() == 0:
     if not craft.connected:
         craft.connect()
@@ -100,5 +100,5 @@ while sigtracker.count() == 0:
         craft.updateparams()
     sleep(10)
     
-print "mavlink_params shutdown complete, exiting"
+print("mavlink_params shutdown complete, exiting")
 exit(0)

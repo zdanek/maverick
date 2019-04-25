@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of an Up board as possible
 
 import os, re, sys, subprocess
@@ -81,11 +81,11 @@ if __name__ == '__main__':
     up = Up()
     up.boarddata()
     if up.data['present'] == "no":
-        print "up_present=no"
+        print("up_present=no")
         sys.exit(1)
     up.storagedata()
 
     # Finally, print the data out in the format expected of a fact provider
     if up.data:
         for key,val in up.data.items():
-            print "up_%s=%s" % (key, val)
+            print("up_%s=%s" % (key, val))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of a joule as possible
 
 import os, re, sys, subprocess
@@ -53,11 +53,11 @@ if __name__ == '__main__':
     joule = Joule()
     joule.cpudata()
     if joule.data['present'] == "no":
-        print "joule_present=no"
+        print("joule_present=no")
         sys.exit(1)
     joule.storagedata()
 
     # Finally, print the data out in the format expected of a fact provider
     if joule.data:
         for key,val in joule.data.items():
-            print "joule_%s=%s" % (key, val)
+            print("joule_%s=%s" % (key, val))

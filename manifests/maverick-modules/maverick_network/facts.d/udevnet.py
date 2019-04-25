@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts udev info for network interfaces
 
 import os, re, sys, subprocess
@@ -10,7 +10,7 @@ class Udevnet(object):
         
     def udevnet(self):
         # Parse udev database dump, extract network interfaces and add data into dicts keyed by int_field
-        f = subprocess.check_output(['/sbin/udevadm', 'info', '-e'])
+        f = subprocess.getoutput(['/sbin/udevadm info -e'])
         data = f.split("\n")
         counter = 0
         for line in data:
@@ -38,4 +38,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if udev.data:
         for key,val in sorted(udev.data.items()):
-           print "udevnet_%s=%s" % (key, val)
+           print("udevnet_%s=%s" % (key, val))

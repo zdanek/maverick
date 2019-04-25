@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of video devices as possible
 
 import os, re, sys, subprocess, glob
@@ -49,4 +49,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if camera.data:
         for key,val in sorted(camera.data.items()):
-            print "camera_%s=%s" % (key, val)
+            print("camera_%s=%s" % (key, val))

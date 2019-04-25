@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import os, sys
 # Insert facts directory into module path.  Not very clean, but they have to live there for puppet, so for reuse sake we import it here
@@ -58,76 +58,76 @@ def twocols(col1, col2):
 
 if args.motd:
     print
-    print ctrls['bg_blue']+ctrls['fg_grey']+ctrls['bold']+ '** Maverick UAV Companion Computer **' +ctrls['reset']
+    print(ctrls['bg_blue']+ctrls['fg_grey']+ctrls['bold']+ '** Maverick UAV Companion Computer **' +ctrls['reset'])
     print
 
 if raspberry.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tRaspberry Pi')
-    print twocols('Model', '\t\t\t' +raspberry.data['model'])
-    print twocols('Physical RAM', '\t\t' +str(raspberry.data['physram']))
-    print twocols('C/G Mem Split', '\t\t' +str(raspberry.data['memcpu'])+' / '+str(raspberry.data['memgpu']))
-    print twocols('Firmware', '\t\t' +raspberry.data['fwdate'])
-    print twocols('CPU Cores', '\t\t' +str(raspberry.data['cpucores']))
-    print twocols('CPU Freq', '\t\t' +str(raspberry.data['cpufreq']) +' Mhz')
-    print twocols('SD Card Size', '\t\t' +str(raspberry.data['sdsize']) +' Mb')
+    print(twocols('Vendor', '\t\t\tRaspberry Pi'))
+    print(twocols('Model', '\t\t\t' +raspberry.data['model']))
+    print(twocols('Physical RAM', '\t\t' +str(raspberry.data['physram'])))
+    print(twocols('C/G Mem Split', '\t\t' +str(raspberry.data['memcpu'])+' / '+str(raspberry.data['memgpu'])))
+    print(twocols('Firmware', '\t\t' +raspberry.data['fwdate']))
+    print(twocols('CPU Cores', '\t\t' +str(raspberry.data['cpucores'])))
+    print(twocols('CPU Freq', '\t\t' +str(raspberry.data['cpufreq']) +' Mhz'))
+    print(twocols('SD Card Size', '\t\t' +str(raspberry.data['sdsize']) +' Mb'))
 
 elif odroid.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tHardkernel')
-    print twocols('Model', '\t\t\t' +odroid.data['model'])
-    print twocols('CPU Cores', '\t\t' +str(odroid.data['cpucores']))
-    print twocols('Memory', '\t\t\t' +odroid.data['memory'])
-    print twocols('Swap', '\t\t\t' +odroid.data['swap'])
-    print twocols('SD Card Size', '\t\t' +str(odroid.data['sdsize']) +' Mb')
+    print(twocols('Vendor', '\t\t\tHardkernel'))
+    print(twocols('Model', '\t\t\t' +odroid.data['model']))
+    print(twocols('CPU Cores', '\t\t' +str(odroid.data['cpucores'])))
+    print(twocols('Memory', '\t\t\t' +odroid.data['memory']))
+    print(twocols('Swap', '\t\t\t' +odroid.data['swap']))
+    print(twocols('SD Card Size', '\t\t' +str(odroid.data['sdsize']) +' Mb'))
 
 
 elif tegra.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tNvidia')
-    print twocols('Model', '\t\t\t' +tegra.data['model'])
-    print twocols('CPU Cores', '\t\t' +str(tegra.data['cpucores']))
-    print twocols('Memory', '\t\t\t' +tegra.data['memory'])
-    print twocols('Swap', '\t\t\t' +tegra.data['swap'])
-    print twocols('SD Card Size', '\t\t' +str(tegra.data['sdsize']) +' Mb')
+    print(twocols('Vendor', '\t\t\tNvidia'))
+    print(twocols('Model', '\t\t\t' +tegra.data['model']))
+    print(twocols('CPU Cores', '\t\t' +str(tegra.data['cpucores'])))
+    print(twocols('Memory', '\t\t\t' +tegra.data['memory']))
+    print(twocols('Swap', '\t\t\t' +tegra.data['swap']))
+    print(twocols('SD Card Size', '\t\t' +str(tegra.data['sdsize']) +' Mb'))
 
 elif beagle.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tBeaglebone')
-    print twocols('Model', '\t\t\t' +beagle.data['model'])
+    print(twocols('Vendor', '\t\t\tBeaglebone'))
+    print(twocols('Model', '\t\t\t' +beagle.data['model']))
 
 elif joule.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tIntel')
-    print twocols('Model', '\t\t\t'+joule.data['model'])
+    print(twocols('Vendor', '\t\t\tIntel'))
+    print(twocols('Model', '\t\t\t'+joule.data['model']))
 
 elif up.data['present'] == 'yes':
-    print twocols('Vendor', '\t\t\tAaeon')
-    print twocols('Model', '\t\t\t'+up.data['model'])
-    print twocols('BIOS Version', '\t\t'+up.data['bios_version'])
-    print twocols('BIOS Date', '\t\t'+up.data['bios_date'])
+    print(twocols('Vendor', '\t\t\tAaeon'))
+    print(twocols('Model', '\t\t\t'+up.data['model']))
+    print(twocols('BIOS Version', '\t\t'+up.data['bios_version']))
+    print(twocols('BIOS Date', '\t\t'+up.data['bios_date']))
     
 elif baseos.data['is_virtual'] == "true":
-    print twocols('System Type','\t\tVirtual Machine (VM)')
+    print(twocols('System Type','\t\tVirtual Machine (VM)'))
     if baseos.data['virtual']:
-        print twocols('VM Hypervisor', '\t\t'+baseos.data['virtual'])
-    print twocols('Processors', '\t\t'+str(baseos.data['processorcount']))
-    print twocols('Memory Size', '\t\t'+str(baseos.data['memorysize']))
+        print(twocols('VM Hypervisor', '\t\t'+baseos.data['virtual']))
+    print(twocols('Processors', '\t\t'+str(baseos.data['processorcount'])))
+    print(twocols('Memory Size', '\t\t'+str(baseos.data['memorysize'])))
 
 else:
-    print ctrls['bg_red']+ctrls['bold']+ctrls['fg_grey']+ 'Hardware platform not recognised' +ctrls['reset']
+    print(ctrls['bg_red']+ctrls['bold']+ctrls['fg_grey']+ 'Hardware platform not recognised' +ctrls['reset'])
 
-print " ---------------------------------- "
+print(" ---------------------------------- ")
 
-print twocols('OS', '\t\t\t' +baseos.data['osname'])
-print twocols('OS Version', '\t\t' +baseos.data['osrelease'])
-print twocols('Architecture', '\t\t' +baseos.data['arch'])
-print twocols('Kernel', '\t\t\t' +baseos.data['kernel'])
-print twocols('Timezone', '\t\t' +baseos.data['timezone'])
-print twocols('FQDN', '\t\t\t' +baseos.data['fqdn'])
-print twocols('IP Address', '\t\t' +baseos.data['ipaddress'])
+print(twocols('OS', '\t\t\t' +baseos.data['osname']))
+print(twocols('OS Version', '\t\t' +baseos.data['osrelease']))
+print(twocols('Architecture', '\t\t' +baseos.data['arch']))
+print(twocols('Kernel', '\t\t\t' +baseos.data['kernel']))
+print(twocols('Timezone', '\t\t' +baseos.data['timezone']))
+print(twocols('FQDN', '\t\t\t' +baseos.data['fqdn']))
+print(twocols('IP Address', '\t\t' +baseos.data['ipaddress']))
 
 if args.motd:
     print
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset']
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' This is a potentially dangerous aircraft system. ' +ctrls['reset']
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' No modifications should be made without express  ' +ctrls['reset']
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' permission from the owner.  Any unauthorised     ' +ctrls['reset']
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' access will be reported to the authorities.      ' +ctrls['reset']
-    print ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset']
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset'])
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' This is a potentially dangerous aircraft system. ' +ctrls['reset'])
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' No modifications should be made without express  ' +ctrls['reset'])
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' permission from the owner.  Any unauthorised     ' +ctrls['reset'])
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ ' access will be reported to the authorities.      ' +ctrls['reset'])
+    print(ctrls['bg_black']+ctrls['fg_red']+ctrls['bold']+ '--------------------------------------------------' +ctrls['reset'])
     print

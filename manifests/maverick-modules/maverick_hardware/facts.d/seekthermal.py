@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact detects if seek thermal is attached
 
 import os, re, sys, subprocess, glob
@@ -38,4 +38,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if seek.data:
         for key,val in sorted(seek.data.items()):
-            print "seekthermal_%s=%s" % (key, val)
+            print("seekthermal_%s=%s" % (key, val))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of an odroid as possible
 
 import os, re, sys, subprocess
@@ -74,7 +74,7 @@ class Odroid(object):
         try:
             try:
                 klines = subprocess.check_output(["/usr/bin/mkimage", "-l", "/media/boot/uInitrd"]).split("\n")
-            except subprocess.CalledProcessError, e:
+            except subprocess.CalledProcessError as e:
                 klines = None
             for kline in klines:
                 if re.search("Image Name", kline):
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     odroid = Odroid()
     odroid.cpudata()
     if odroid.data['present'] == "no":
-        print "odroid_present=no"
+        print("odroid_present=no")
         sys.exit(1)
     odroid.storagedata()
     odroid.kernel()
@@ -106,4 +106,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if odroid.data:
         for key,val in odroid.data.items():
-            print "odroid_%s=%s" % (key, val)
+            print("odroid_%s=%s" % (key, val))

@@ -1,29 +1,29 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # This fact finds the paths of compiled ardupilot firmwares
 # otherwise compile attempts happen every run, which is unnecessary and very slow
 import os,re
 
-print "ardupilotfw_test=yes"
+print("ardupilotfw_test=yes")
 if os.path.isfile("/srv/maverick/code/ardupilot/ArduCopter/ArduCopter.elf"):
-    print "ardupilotfw_arducopter=yes"
+    print("ardupilotfw_arducopter=yes")
 else:
-    print "ardupilotfw_arducopter=no"
+    print("ardupilotfw_arducopter=no")
 
 if os.path.isfile("/srv/maverick/code/ardupilot/ArduPlane/ArduPlane.elf"):
-    print "ardupilotfw_arduplane=yes"
+    print("ardupilotfw_arduplane=yes")
 else:
-    print "ardupilotfw_arduplane=no"
+    print("ardupilotfw_arduplane=no")
 
 if os.path.isfile("/srv/maverick/code/ardupilot/APMrover2/APMrover2.elf"):
-    print "ardupilotfw_apmrover2=yes"
+    print("ardupilotfw_apmrover2=yes")
 else:
-    print "ardupilotfw_apmrover2=no"
+    print("ardupilotfw_apmrover2=no")
 
 if os.path.isfile("/srv/maverick/code/ardupilot/AntennaTracker/AntennaTracker.elf"):
-    print "ardupilotfw_antennatracker=yes"
+    print("ardupilotfw_antennatracker=yes")
 else:
-    print "ardupilotfw_antennatracker=no"
+    print("ardupilotfw_antennatracker=no")
 
 
 # Define main data container
@@ -36,8 +36,8 @@ for root, dirs, files in os.walk("/srv/maverick/code/ardupilot/build"):
         if re.search("bin/", file):
             waffiles.append(file)
 
-# Finally, print the data out in the format expected of a fact provider
+# Finally, print(the data out in the format expected of a fact provider
 if waffiles:
-    print "waffiles="+str(",".join(waffiles))
+    print("waffiles="+str(",".join(waffiles)))
 else:
-    print "waffiles=false"
+    print("waffiles=false")

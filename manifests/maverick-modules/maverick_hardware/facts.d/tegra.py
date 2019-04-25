@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of a Tegra board as possible
 
 import os, re, sys, subprocess
@@ -79,11 +79,11 @@ if __name__ == '__main__':
     tegra = Tegra()
     tegra.boarddata()
     if tegra.data['present'] == "no":
-        print "tegra_present=no"
+        print("tegra_present=no")
         sys.exit(1)
     tegra.storagedata()
 
     # Finally, print the data out in the format expected of a fact provider
     if tegra.data:
         for key,val in tegra.data.items():
-            print "tegra_%s=%s" % (key, val)
+            print("tegra_%s=%s" % (key, val))

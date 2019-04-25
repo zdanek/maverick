@@ -351,7 +351,7 @@ if [ "$INFO" == "true" ]; then
     fi
     mavenv ${environment}
     echo
-    /usr/bin/python /srv/maverick/software/maverick/bin/maverick-info
+    /srv/maverick/software/maverick/bin/maverick-info
     echo
     exit 0
 fi
@@ -363,7 +363,7 @@ if [ "$NETINFO" == "true" ]; then
     fi
     mavenv ${environment}
     echo
-    /usr/bin/python /srv/maverick/software/maverick/bin/maverick-netinfo
+    /srv/maverick/software/maverick/bin/maverick-netinfo
     echo
     exit 0
 fi

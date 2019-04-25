@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact detects if flir one is attached
 
 import os, re, sys, subprocess, glob
@@ -36,4 +36,4 @@ if __name__ == '__main__':
     # Finally, print the data out in the format expected of a fact provider
     if flirone.data:
         for key,val in sorted(flirone.data.items()):
-            print "flirone_%s=%s" % (key, val)
+            print("flirone_%s=%s" % (key, val))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts network info for network interfaces
 
 import os, re, sys, subprocess
@@ -11,8 +11,8 @@ try:
     from udevnet import Udevnet
     netinfo = {}
 except:
-    print "netinfo_present=no"
-    print "netinfo_interfaces="
+    print("netinfo_present=no")
+    print("netinfo_interfaces=")
     sys.exit(1)
 
 class Netinfo(object):
@@ -187,18 +187,18 @@ if __name__ == '__main__':
     try:
         ifs = pyw.interfaces()
     except pyric.error as e:
-        print "Error running netinfo, pyric not available"
+        print("Error running netinfo, pyric not available")
         sys.exit(1)
     
-    print "netinfo_present=yes"
+    print("netinfo_present=yes")
     with open ("/etc/hostname", "r") as etc_hostname:
         data=etc_hostname.readlines()
     if data:
-        print "netinfo_etchostname="+str(data[0].rstrip())
+        print("netinfo_etchostname="+str(data[0].rstrip()))
     
-    print "netinfo_interfaces="+",".join(ifs)
+    print("netinfo_interfaces="+",".join(ifs))
     for _if in ifs:
         _netinfo = Netinfo(_if)
         _netinfo.getinfo()
         for key,val in sorted(_netinfo.data.items()):
-           print "netinfo_"+_if+"_%s=%s" % (key, val)
+           print("netinfo_"+_if+"_%s=%s" % (key, val))

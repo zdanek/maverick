@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This fact extracts as much hardware information out of a raspberry as possble
 # Some ideas taken from: https://www.raspberrypi.org/forums/viewtopic.php?t=56906&p=429560
 
@@ -125,12 +125,12 @@ if __name__ == '__main__':
     raspberry = Raspberry()
     raspberry.cpudata()
     if raspberry.data['present'] == "no":
-        print "raspberry_present=no"
+        print("raspberry_present=no")
         sys.exit(1)
     raspberry.gpudata()
     raspberry.storagedata()
     # Finally, print the data out in the format expected of a fact provider
     if raspberry.data:
         for key,val in raspberry.data.items():
-            print "raspberry_%s=%s" % (key, val)
+            print("raspberry_%s=%s" % (key, val))
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os, re, sys, subprocess
 
 # Gather partition data
@@ -11,7 +11,7 @@ for line in f:
         data['partitions'][partfrags[3]] = partfrags[2]
 f.close()
 
-fsdata = subprocess.check_output(["/bin/lsblk", "-nl"])
+fsdata = subprocess.getoutput(["/bin/lsblk -nl"])
 for line in fsdata.split('\n'):
     partfrags = line.split()
     if partfrags and len(partfrags) == 7 and partfrags[5] == "part":
@@ -19,8 +19,7 @@ for line in fsdata.split('\n'):
 
 # Gather filesystem data
 try:
-    fnull = open(os.devnull, 'w')
-    fsdata = subprocess.check_output(["/bin/df"], stderr=fnull)
+    fsdata = subprocess.getoutput(["/bin/df"])
 except subprocess.CalledProcessError as e:
     pass
 for line in fsdata.split('\n'):
@@ -32,7 +31,7 @@ for line in fsdata.split('\n'):
             data['filesystems'][fsfrags[5]] = { "size": fsfrags[1], "partition": fsfrags[0] }
 
 # Gatther disk data
-diskdata = subprocess.check_output(["/bin/lsblk","-dn"])
+diskdata = subprocess.getoutput(["/bin/lsblk -dn"])
 for line in diskdata.split('\n'):
     diskfrags = line.split()
     if diskfrags: data['disks'].append(diskfrags[0])
@@ -59,11 +58,11 @@ except:
     data['rootfs_expanded'] = False
     
 # Finally, print the data out in the format expected of a fact provider
-print "rootpart_expanded="+str(data['rootpart_expanded'])
-print "rootpart_device="+str(data['rootpart_device'])
-print "rootpart_partition="+str(data['rootpart_partition'])
+print("rootpart_expanded="+str(data['rootpart_expanded']))
+print("rootpart_device="+str(data['rootpart_device']))
+print("rootpart_partition="+str(data['rootpart_partition']))
 try:
-    print "rootpart_partno="+str(data['rootpart_partition'][-1])
+    print("rootpart_partno="+str(data['rootpart_partition'][-1]))
 except:
-    print "rootpart_partno="
-print "rootfs_expanded="+str(data['rootfs_expanded'])
+    print("rootpart_partno=")
+print("rootfs_expanded="+str(data['rootfs_expanded']))
