@@ -37,6 +37,18 @@ class maverick_network::wifibroadcast (
         
         # Install software
         if ! ("install_flag_wifibc" in $installflags) {
+            install_python_module { 'pip-twisted':
+                pkgname     => 'Twisted',
+                ensure      => atleast,
+                version     => "19.2.0",
+                timeout     => 0,
+            } ->
+            install_python_module { 'pip-pyroute2':
+                pkgname     => 'pyroute2',
+                ensure      => atleast,
+                version     => "0",
+                timeout     => 0,
+            } ->
             oncevcsrepo { "git-wifibc":
                 gitsource   => "https://github.com/svpcom/wifibroadcast.git",
                 dest        => "/srv/maverick/var/build/wifibc",
@@ -44,7 +56,7 @@ class maverick_network::wifibroadcast (
                 require     => [ Package["gcc"], Package["make"], Package["libsodium-dev"], Package["libpcap-dev"] ]
             } ->
             exec { "compile-wifibc":
-                command     => "/usr/bin/make",
+                command     => "/usr/bin/make all_bin gs.key",
                 creates     => "/srv/maverick/var/build/wifibc/tx",
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/wifibc",
@@ -56,7 +68,7 @@ class maverick_network::wifibroadcast (
                 mode        => "0755",
             } ->
             exec { "install-wifibc":
-                command     => "/bin/cp /srv/maverick/var/build/wifibc/[rt]x /srv/maverick/var/build/wifibc/keygen /srv/maverick/software/wifibc/bin",
+                command     => "/bin/cp /srv/maverick/var/build/wifibc/wfb_[rt]x /srv/maverick/var/build/wifibc/wfb_keygen /srv/maverick/software/wifibc/bin",
                 creates     => "/srv/maverick/software/wifibc/bin/keygen",
                 user        => "mav",
                 before      => [ Exec["wifibc-genkeys"], Exec["setcaps-wifibc_tx"] ],
@@ -70,8 +82,8 @@ class maverick_network::wifibroadcast (
         }
         
         exec { "setcaps-wifibc_tx":
-            command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/tx",
-            unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/tx |/bin/grep cap_net_admin",
+            command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/wfb_tx",
+            unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/wfb_tx |/bin/grep cap_net_admin",
         }
         
         # Generate keys
@@ -82,8 +94,8 @@ class maverick_network::wifibroadcast (
             group       => "mav",
         } ->
         exec { "wifibc-genkeys":
-            command     => "/srv/maverick/software/wifibc/bin/keygen",
-            creates     => "/srv/maverick/data/network/wifibc/rx.key",
+            command     => "/srv/maverick/software/wifibc/bin/wfb_keygen",
+            creates     => "/srv/maverick/data/network/wifibc/gs.key",
             cwd         => "/srv/maverick/data/network/wifibc",
             user        => "mav",
         }
