@@ -18,7 +18,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
     case $ensure {
       'present': {
         unless $pkgname in $python_modules[$env] {
-            notice("Installing pip: ${pkgname}: ${path}: ${python_modules['maverick']}")
+            notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
