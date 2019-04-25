@@ -124,10 +124,11 @@ class maverick_mavlink (
             exec { "mavlink-router-build":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/srv/maverick/var/build/mavlink-router/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/mavlink-router/configure --prefix=/srv/maverick/software/mavlink-router --disable-systemd && /usr/bin/make -j${buildparallel} && make install >/srv/maverick/var/log/build/mavlink-router.build.out 2>&1",
+                command     => "/srv/maverick/var/build/mavlink-router/autogen.sh >/srv/maverick/var/log/build/mavlink-router.configure.log 2>&1 && CFLAGS='-g -O2' /srv/maverick/var/build/mavlink-router/configure --prefix=/srv/maverick/software/mavlink-router --disable-systemd >>/srv/maverick/var/log/build/mavlink-router.configure.log 2>&1 && /usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/mavlink-router.make.log 2>&1 && make install >/srv/maverick/var/log/build/mavlink-router.install.log 2>&1",
                 cwd         => "/srv/maverick/var/build/mavlink-router",
                 creates     => "/srv/maverick/software/mavlink-router/bin/mavlink-routerd",
                 require     => Package["autoconf"],
+                path        => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_mavlink-router":
                 ensure      => file,

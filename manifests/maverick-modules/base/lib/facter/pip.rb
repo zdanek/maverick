@@ -9,11 +9,15 @@ Facter.add(:python_modules) do
     
     pippaths.each do |pipenv,pippath|
         # Suppress deprecation warnings for pip2
-        if pippath == "pip"
-            pip_output = Facter::Core::Execution::exec("PYTHONWARNINGS=ignore:DEPRECATION #{pippath} --disable-pip-version-check freeze")
-        else
-            pip_output = Facter::Core::Execution::exec("#{pippath} --disable-pip-version-check freeze")
+        if not pippath.include? "pip3"
+            ENV['PYTHONWARNINGS'] = "ignore:DEPRECATION"
         end
+        begin
+            pip_output = Facter::Core::Execution::execute("#{pippath} --disable-pip-version-check freeze")
+        rescue
+            pip_output = nil
+        end
+
         # Scan and log pip entries for each environment
         unless pip_output.to_s.empty?
             pips = pip_output.lines.map(&:chomp)

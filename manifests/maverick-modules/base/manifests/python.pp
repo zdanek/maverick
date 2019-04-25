@@ -57,6 +57,11 @@ class base::python (
             group   => "root",
             mode    => "0644",
         }
+
+        # Remove the pip binary from custom python, it interferes with system python2
+        file { "/srv/maverick/software/python/bin/pip":
+            ensure  => absent,
+        }
     }
 
     # Install python using python module
@@ -65,19 +70,12 @@ class base::python (
         dev        => 'present',
         virtualenv => 'present',
         gunicorn   => 'absent',
-        before     => Package["python-setuptools"],
     }
-    ensure_packages(["python-setuptools", "virtualenvwrapper", "python-numpy", "python-lockfile", "python-daemon"])
-    # Install python3 packages
-    ensure_packages(["python3-yaml"])
-    # Install pylint for cloud9 linting
-    ensure_packages(["pylint", "pylint3"])
 
     # Install basic useful python modules
     install_python_module { 'pip-numpy':
         pkgname     => 'numpy',
         ensure      => present,
-        pip_provider => 'pip3',
     } ->
     install_python_module { 'pip-daemon':
         pkgname     => 'python-daemon',
@@ -89,6 +87,21 @@ class base::python (
     } ->
     install_python_module { "pytest":
         pkgname     => "pytest",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "pip-yaml":
+        pkgname     => "PyYAML",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "pip-pylint":
+        pkgname     => "pylint",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "pip-virtualenvwrapper":
+        pkgname     => "virtualenvwrapper",
         ensure      => present,
         timeout     => 0,
     }

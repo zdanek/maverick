@@ -9,11 +9,16 @@ define speak ($message = "", $level = "") {
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
 define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="maverick", $version=undef, $url=undef, $pip_provider="pip3") {
   $module_version = $python_modules[$env][$pkgname]
+  if $pip_provider == "pip3" {
+    $path = ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"]
+  } else {
+    $path = ["/usr/local/bin", "/usr/bin", "/bin"]
+  }
   if $python_modules {
     case $ensure {
       'present': {
         unless $pkgname in $python_modules[$env] {
-            notice("Installing pip: ${pkgname}")
+            notice("Installing pip: ${pkgname}: ${path}: ${python_modules['maverick']}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -23,7 +28,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
-                path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
             }
         }
       }
@@ -39,7 +44,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
-                path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
             }
         } elsif versioncmp($version, $module_version) > 0 {
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
@@ -52,7 +57,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
                 pip_provider => $pip_provider,
-                path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
             }
         }
       }
@@ -68,7 +73,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
-                path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
             }
         } elsif versioncmp($version, $module_version) != 0 {
             notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
@@ -81,7 +86,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
                 pip_provider => $pip_provider,
-                path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
             }
         }
       }
@@ -94,7 +99,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             owner   => $owner,
             timeout => $timeout,
             pip_provider => $pip_provider,
-            path => ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"],
+                path => $path,
           }
         }
       }
