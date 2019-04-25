@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'collectd::plugin::snmp::host', type: :define do
-  on_supported_os.each do |os, facts|
+  on_supported_os(baseline_os_hash).each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
@@ -80,7 +80,7 @@ describe 'collectd::plugin::snmp::host', type: :define do
           }
         end
 
-        it { is_expected.to contain_file(filename).with_content(%r{Collect "foo" "bar" "baz"}) }
+        it { is_expected.to contain_file(filename).with_content(%r{Collect "foo" "bar" "baz"$}) }
       end
 
       context 'collect is just a string' do
@@ -90,7 +90,7 @@ describe 'collectd::plugin::snmp::host', type: :define do
           }
         end
 
-        it { is_expected.to contain_file(filename).with_content(%r{Collect "bat"}) }
+        it { is_expected.to contain_file(filename).with_content(%r{Collect "bat"$}) }
       end
     end
   end

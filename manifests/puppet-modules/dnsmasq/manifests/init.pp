@@ -2,7 +2,9 @@ class dnsmasq(
   $configs_hash = {},
   $hosts_hash = {},
   $dhcp_hosts_hash = {},
+  $package_ensure = 'installed',
   $service_control = true,
+  $purge_config_dir = false,
 ) {
   include ::dnsmasq::params
 
@@ -18,7 +20,7 @@ class dnsmasq(
 
   class { '::dnsmasq::service':
     service_control => $service_control,
-    subscribe => Class['::dnsmasq::install', '::dnsmasq::config'],
+    subscribe       => Class['::dnsmasq::install', '::dnsmasq::config'],
   }
 
   class { '::dnsmasq::reload':

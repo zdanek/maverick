@@ -13,73 +13,79 @@
 # Sample Usage:
 #
 class apache (
-  $apache_name                                                   = $::apache::params::apache_name,
-  $service_name                                                  = $::apache::params::service_name,
-  $default_mods                                                  = true,
-  Boolean $default_vhost                                         = true,
-  $default_charset                                               = undef,
-  Boolean $default_confd_files                                   = true,
-  Boolean $default_ssl_vhost                                     = false,
-  $default_ssl_cert                                              = $::apache::params::default_ssl_cert,
-  $default_ssl_key                                               = $::apache::params::default_ssl_key,
-  $default_ssl_chain                                             = undef,
-  $default_ssl_ca                                                = undef,
-  $default_ssl_crl_path                                          = undef,
-  $default_ssl_crl                                               = undef,
-  $default_ssl_crl_check                                         = undef,
-  $default_type                                                  = 'none',
-  $dev_packages                                                  = $::apache::params::dev_packages,
-  $ip                                                            = undef,
-  Boolean $service_enable                                        = true,
-  Boolean $service_manage                                        = true,
-  $service_ensure                                                = 'running',
-  $service_restart                                               = undef,
-  $purge_configs                                                 = true,
-  $purge_vhost_dir                                               = undef,
-  $purge_vdir                                                    = false,
-  $serveradmin                                                   = 'root@localhost',
-  $sendfile                                                      = 'On',
-  $error_documents                                               = false,
-  $timeout                                                       = '120',
-  $httpd_dir                                                     = $::apache::params::httpd_dir,
-  $server_root                                                   = $::apache::params::server_root,
-  $conf_dir                                                      = $::apache::params::conf_dir,
-  $confd_dir                                                     = $::apache::params::confd_dir,
-  $vhost_dir                                                     = $::apache::params::vhost_dir,
-  $vhost_enable_dir                                              = $::apache::params::vhost_enable_dir,
-  $mod_packages                                                  = $::apache::params::mod_packages,
-  $vhost_include_pattern                                         = $::apache::params::vhost_include_pattern,
-  $mod_dir                                                       = $::apache::params::mod_dir,
-  $mod_enable_dir                                                = $::apache::params::mod_enable_dir,
-  $mpm_module                                                    = $::apache::params::mpm_module,
-  $lib_path                                                      = $::apache::params::lib_path,
-  $conf_template                                                 = $::apache::params::conf_template,
-  $servername                                                    = $::apache::params::servername,
-  $pidfile                                                       = $::apache::params::pidfile,
-  Optional[Stdlib::Absolutepath] $rewrite_lock                   = undef,
-  Boolean $manage_user                                           = true,
-  Boolean $manage_group                                          = true,
-  $user                                                          = $::apache::params::user,
-  $group                                                         = $::apache::params::group,
-  $http_protocol_options                                         = $::apache::params::http_protocol_options,
-  $supplementary_groups                                          = [],
-  $keepalive                                                     = $::apache::params::keepalive,
-  $keepalive_timeout                                             = $::apache::params::keepalive_timeout,
-  $max_keepalive_requests                                        = $::apache::params::max_keepalive_requests,
-  $limitreqfieldsize                                             = '8190',
-  $logroot                                                       = $::apache::params::logroot,
-  $logroot_mode                                                  = $::apache::params::logroot_mode,
-  $log_level                                                     = $::apache::params::log_level,
-  $log_formats                                                   = {},
-  $ssl_file                                                      = undef,
-  $ports_file                                                    = $::apache::params::ports_file,
-  $docroot                                                       = $::apache::params::docroot,
-  $apache_version                                                = $::apache::version::default,
-  $server_tokens                                                 = 'OS',
-  $server_signature                                              = 'On',
-  $trace_enable                                                  = 'On',
-  Optional[Enum['on', 'off', 'nodecode']] $allow_encoded_slashes = undef,
-  $file_e_tag                                                    = undef,
+  $apache_name                                                          = $::apache::params::apache_name,
+  $service_name                                                         = $::apache::params::service_name,
+  $default_mods                                                         = true,
+  Boolean $default_vhost                                                = true,
+  $default_charset                                                      = undef,
+  Boolean $default_confd_files                                          = true,
+  Boolean $default_ssl_vhost                                            = false,
+  $default_ssl_cert                                                     = $::apache::params::default_ssl_cert,
+  $default_ssl_key                                                      = $::apache::params::default_ssl_key,
+  $default_ssl_chain                                                    = undef,
+  $default_ssl_ca                                                       = undef,
+  $default_ssl_crl_path                                                 = undef,
+  $default_ssl_crl                                                      = undef,
+  $default_ssl_crl_check                                                = undef,
+  $default_type                                                         = 'none',
+  $dev_packages                                                         = $::apache::params::dev_packages,
+  $ip                                                                   = undef,
+  Boolean $service_enable                                               = true,
+  Boolean $service_manage                                               = true,
+  $service_ensure                                                       = 'running',
+  $service_restart                                                      = undef,
+  $purge_configs                                                        = true,
+  $purge_vhost_dir                                                      = undef,
+  $purge_vdir                                                           = false,
+  $serveradmin                                                          = 'root@localhost',
+  Enum['On', 'Off', 'on', 'off'] $sendfile                              = 'On',
+  $error_documents                                                      = false,
+  $timeout                                                              = '60',
+  $httpd_dir                                                            = $::apache::params::httpd_dir,
+  $server_root                                                          = $::apache::params::server_root,
+  $conf_dir                                                             = $::apache::params::conf_dir,
+  $confd_dir                                                            = $::apache::params::confd_dir,
+  Enum['Off', 'On', 'Double', 'off', 'on', 'double'] $hostname_lookups  = $::apache::params::hostname_lookups,
+  $conf_enabled                                                         = $::apache::params::conf_enabled,
+  $vhost_dir                                                            = $::apache::params::vhost_dir,
+  $vhost_enable_dir                                                     = $::apache::params::vhost_enable_dir,
+  $mod_libs                                                             = $::apache::params::mod_libs,
+  $mod_packages                                                         = $::apache::params::mod_packages,
+  $vhost_include_pattern                                                = $::apache::params::vhost_include_pattern,
+  $mod_dir                                                              = $::apache::params::mod_dir,
+  $mod_enable_dir                                                       = $::apache::params::mod_enable_dir,
+  $mpm_module                                                           = $::apache::params::mpm_module,
+  $lib_path                                                             = $::apache::params::lib_path,
+  $conf_template                                                        = $::apache::params::conf_template,
+  $servername                                                           = $::apache::params::servername,
+  $pidfile                                                              = $::apache::params::pidfile,
+  Optional[Stdlib::Absolutepath] $rewrite_lock                          = undef,
+  Boolean $manage_user                                                  = true,
+  Boolean $manage_group                                                 = true,
+  $user                                                                 = $::apache::params::user,
+  $group                                                                = $::apache::params::group,
+  $http_protocol_options                                                = $::apache::params::http_protocol_options,
+  $supplementary_groups                                                 = [],
+  $keepalive                                                            = $::apache::params::keepalive,
+  $keepalive_timeout                                                    = $::apache::params::keepalive_timeout,
+  $max_keepalive_requests                                               = $::apache::params::max_keepalive_requests,
+  $limitreqfieldsize                                                    = '8190',
+  $limitreqfields                                                       = '100',
+  $logroot                                                              = $::apache::params::logroot,
+  $logroot_mode                                                         = $::apache::params::logroot_mode,
+  $log_level                                                            = $::apache::params::log_level,
+  $log_formats                                                          = {},
+  $ssl_file                                                             = undef,
+  $ports_file                                                           = $::apache::params::ports_file,
+  $docroot                                                              = $::apache::params::docroot,
+  $apache_version                                                       = $::apache::version::default,
+  $server_tokens                                                        = 'Prod',
+  $server_signature                                                     = 'On',
+  $trace_enable                                                         = 'On',
+  Optional[Enum['on', 'off', 'nodecode']] $allow_encoded_slashes        = undef,
+  $file_e_tag                                                           = undef,
+  Optional[Enum['On', 'on', 'Off', 'off', 'DNS', 'dns']]
+    $use_canonical_name                                          = undef,
   $package_ensure                                                = 'installed',
   Boolean $use_optional_includes                                 = $::apache::params::use_optional_includes,
   $use_systemd                                                   = $::apache::params::use_systemd,
@@ -90,6 +96,8 @@ class apache (
   $error_log                                                     = $::apache::params::error_log,
   $scriptalias                                                   = $::apache::params::scriptalias,
   $access_log_file                                               = $::apache::params::access_log_file,
+  Array[Enum['h2', 'h2c', 'http/1.1']] $protocols                = [],
+  Optional[Boolean] $protocols_honor_order                       = undef,
 ) inherits ::apache::params {
 
   $valid_mpms_re = $apache_version ? {
@@ -129,7 +137,6 @@ class apache (
       notify => Class['Apache::Service'],
     }
   }
-  validate_re($sendfile, [ '^[oO]n$' , '^[oO]ff$' ])
 
   # declare the web server user and group
   # Note: requiring the package means the package ought to create them and not puppet
@@ -148,7 +155,7 @@ class apache (
     }
   }
 
-  validate_apache_log_level($log_level)
+  apache::validate_apache_log_level($log_level)
 
   class { '::apache::service':
     service_name    => $service_name,
@@ -188,6 +195,17 @@ class apache (
     force   => $purge_confd,
     notify  => Class['Apache::Service'],
     require => Package['httpd'],
+  }
+
+  if $conf_enabled and ! defined(File[$conf_enabled]) {
+    file { $conf_enabled:
+      ensure  => directory,
+      recurse => true,
+      purge   => $purge_confd,
+      force   => $purge_confd,
+      notify  => Class['Apache::Service'],
+      require => Package['httpd'],
+    }
   }
 
   if ! defined(File[$mod_dir]) {
@@ -271,7 +289,7 @@ class apache (
   if $::apache::conf_dir and $::apache::params::conf_file {
     if $::osfamily == 'gentoo' {
       $error_documents_path = '/usr/share/apache2/error'
-      if is_array($default_mods) {
+      if $default_mods =~ Array {
         if versioncmp($apache_version, '2.4') >= 0 {
           if defined('apache::mod::ssl') {
             ::portage::makeconf { 'apache2_modules':
@@ -336,7 +354,7 @@ class apache (
 
     # preserve back-wards compatibility to the times when default_mods was
     # only a boolean value. Now it can be an array (too)
-    if is_array($default_mods) {
+    if $default_mods =~ Array {
       class { '::apache::default_mods':
         all  => false,
         mods => $default_mods,

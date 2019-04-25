@@ -1,9 +1,13 @@
-# @api private 
-# This class handles the configuration file. Avoid modifying private classes.
-class ntp::config inherits ntp {
+# @summary
+#   This class handles the configuration file.
+#
+# @api private
+#
+class ntp::config {
 
   #The servers-netconfig file overrides NTP config on SLES 12, interfering with our configuration.
-  if $facts['operatingsystem'] == 'SLES' and $facts['operatingsystemmajrelease'] == '12' {
+  if ($facts['operatingsystem'] == 'SLES' and $facts['operatingsystemmajrelease'] == '12') or
+    ($facts['operatingsystem'] == 'OpenSuSE' and $facts['operatingsystemmajrelease'] == '42') {
     file { '/var/run/ntp/servers-netconfig':
       ensure => 'absent'
     }
@@ -27,7 +31,7 @@ class ntp::config inherits ntp {
       ensure  => file,
       owner   => 0,
       group   => 0,
-      mode    => '0644',
+      mode    => '0600',
       content => epp('ntp/keys.epp'),
     }
   }
@@ -86,11 +90,16 @@ class ntp::config inherits ntp {
 
   if $ntp::disable_dhclient {
     augeas { 'disable ntp-servers in dhclient.conf':
-      context => '/files/etc/dhcp/dhclient.conf',
+      context => '/etc/dhcp/dhclient.conf',
       changes => 'rm request/*[.="ntp-servers"]',
     }
 
     file { '/var/lib/ntp/ntp.conf.dhcp':
+      ensure => absent,
+    }
+
+    #remove dhclient ntp script which modifies ntp.conf on RHEL and Amazon Linux
+    file { '/etc/dhcp/dhclient.d/ntp.sh':
       ensure => absent,
     }
   }

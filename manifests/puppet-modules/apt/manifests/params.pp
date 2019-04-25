@@ -1,13 +1,18 @@
+# @summary Provides defaults for the Apt module parameters.
+# 
+# @api private
+#
 class apt::params {
 
   if $::osfamily != 'Debian' {
-    fail('This module only works on Debian or derivatives like Ubuntu')
+    fail(translate('This module only works on Debian or derivatives like Ubuntu'))
   }
 
   $root           = '/etc/apt'
   $provider       = '/usr/bin/apt-get'
   $sources_list   = "${root}/sources.list"
   $sources_list_d = "${root}/sources.list.d"
+  $trusted_gpg_d  = "${root}/trusted.gpg.d"
   $conf_d         = "${root}/apt.conf.d"
   $preferences    = "${root}/preferences"
   $preferences_d  = "${root}/preferences.d"
@@ -21,6 +26,8 @@ class apt::params {
   $ppas           = {}
   $pins           = {}
   $settings       = {}
+  $manage_auth_conf = true
+  $auth_conf_entries = []
 
   $config_files = {
     'conf'   => {
@@ -49,6 +56,7 @@ class apt::params {
     'host'   => undef,
     'port'   => 8080,
     'https'  => false,
+    'direct' => false,
   }
 
   $purge_defaults = {
@@ -72,19 +80,17 @@ class apt::params {
 
   case $facts['os']['name']{
     'Debian': {
-      case $facts['os']['release']['full'] {
-        default: {
           $backports = {
             'location' => 'http://deb.debian.org/debian',
-            'key'      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
             'repos'    => 'main contrib non-free',
           }
-        }
-      }
-
       $ppa_options = undef
       $ppa_package = undef
-
+      if versioncmp($facts['os']['release']['major'], '9') >= 0 {
+        $auth_conf_owner = '_apt'
+      } else {
+        $auth_conf_owner = 'root'
+      }
     }
     'Ubuntu': {
       $backports = {
@@ -92,33 +98,22 @@ class apt::params {
         'key'      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
         'repos'    => 'main universe multiverse restricted',
       }
-
-      case $facts['os']['release']['full'] {
-        '10.04': {
-          $ppa_options        = undef
-          $ppa_package        = 'python-software-properties'
-        }
-        '12.04': {
-          $ppa_options        = '-y'
-          $ppa_package        = 'python-software-properties'
-        }
-        '14.04', '14.10', '15.04', '15.10', '16.04': {
-          $ppa_options        = '-y'
-          $ppa_package        = 'software-properties-common'
-        }
-        default: {
-          $ppa_options        = '-y'
-          $ppa_package        = 'python-software-properties'
-        }
+      $ppa_options        = '-y'
+      $ppa_package        = 'software-properties-common'
+      if versioncmp($facts['os']['release']['full'], '16.04') >= 0 {
+        $auth_conf_owner = '_apt'
+      } else {
+        $auth_conf_owner = 'root'
       }
     }
     undef: {
-      fail('Unable to determine value for fact os["name"]')
+      fail(translate('Unable to determine value for fact os[\"name\"]'))
     }
     default: {
       $ppa_options = undef
       $ppa_package = undef
       $backports   = undef
+      $auth_conf_owner = 'root'
     }
   }
 }

@@ -3,12 +3,12 @@
 #### 目次
 
 
-1. [モジュールの概要 - ntpモジュールについて](#module-description)
-1. [セットアップ - ntpを開始するにあたっての基本設定](#setup)
-1. [利用例 - 設定オプションと追加機能](#usage)
-1. [参照 - モジュールのクラスやパラメータの説明](#reference)
-1. [制限事項 - OSの互換性など](#limitations)
-1. [開発 - モジュールへの貢献方法](#development)
+1. [モジュールの概要 - ntpモジュールについて](#モジュールの概要)
+1. [セットアップ - ntpを開始するにあたっての基本設定](#セットアップ)
+1. [利用例 - 設定オプションと追加機能](#利用例)
+1. [参照 - モジュールのクラスやパラメータの説明](#参照)
+1. [制限事項 - OSの互換性など](#制限事項)
+1. [開発 - モジュールへの貢献方法](#開発)
 
 
 ## モジュールの概要
@@ -19,28 +19,28 @@
 
 ### ntpモジュールの利用方法
 
-`include '::ntp'` と記述するだけで利用可能です。参照するNTPサーバは、以下のようにパラメータで指定します。
+`include ntp`と記述するだけで利用可能です。参照するNTPサーバは、以下のようにパラメータで指定します。
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
 }
 ```
 
 ## 利用例
 
-ntpモジュールのすべてのパラメータは、メインクラスである `::ntp` クラスに含まれているため、ntpモジュールで利用可能な全てのオプションを自由に設定できます。以下にユースケースを示します。
+ntpモジュールのすべてのパラメータは、メインクラスである`ntp`クラスに含まれているため、ntpモジュールで利用可能な全てのオプションを自由に設定できます。以下にユースケースを示します。
 
 ### NTPをインストールして有効にする
 
 ```puppet
-include '::ntp'
+include ntp
 ```
 
 ### NTPサーバを変更する
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
 }
 ```
@@ -48,7 +48,7 @@ class { '::ntp':
 ### 接続可能ユーザ数を制限する
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers  => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
   restrict => ['127.0.0.1'],
 }
@@ -57,7 +57,7 @@ class { '::ntp':
 ### 参照不可のNTPクライアントをインストールする
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers   => ['ntp1.corp.com', 'ntp2.corp.com'],
   restrict  => [
     'default ignore',
@@ -75,7 +75,7 @@ class { '::ntp':
 Openstackノードには多数の仮想インターフェイスが存在する場合があるため、NTPサーバでLISTENするインターフェイスを特定のインターフェイスに制限するのは有効な手段です。
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers  => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
   interfaces => ['127.0.0.1', '1.2.3.4']
 }
@@ -84,7 +84,7 @@ class { '::ntp':
 ### Puppetによるサービスの制御を中止する
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers        => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
   restrict       => ['127.0.0.1'],
   service_manage => false,
@@ -94,7 +94,7 @@ class { '::ntp':
 ### ntpパッケージはインストールせず、設定とサービス起動のみ実行する
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   package_manage => false,
 }
 ```
@@ -102,7 +102,7 @@ class { '::ntp':
 ### カスタムテンプレートにパラメータを渡す
 
 ```puppet
-class { '::ntp':
+class { 'ntp':
   servers         => [ 'ntp1.corp.com', 'ntp2.corp.com' ],
   restrict        => ['127.0.0.1'],
   service_manage  => false,
@@ -126,7 +126,7 @@ class { '::ntp':
 
 ### パラメータ
 
-`::ntp` クラスでは、以下のパラメータを使用できます。
+`ntp`クラスでは、以下のパラメータを使用できます。
 
 #### `authprov`
 
@@ -220,6 +220,14 @@ NTP内のモニタリング機能を無効にします。
 NTP driftfileの保存場所を指定します。
 
 デフォルト値: '/var/lib/ntp/drift' (AIX: 'ntp::driftfile:', Solaris: '/var/ntp/ntp.drift').
+
+#### `enable_mode7`
+
+データタイプ: 真偽値(boolean)
+
+非推奨のntpdcプログラムによって使用される、NTPモード7の実装固有リクエストの処理を有効化します。
+
+デフォルト値: `false`
 
 #### `fudge`
 
@@ -335,7 +343,7 @@ NTPがsyslogの代わりに使用するログファイルを指定します。
 
 データタイプ: Ntp::Poll_interval
 
-Puppetをアップストリームサーバの規格外の最小ポーリング間隔に設定します(値: 3～16)。
+Puppetをアップストリームサーバの規格外の最小ポーリング間隔に設定します(値: 4～17)。
 デフォルト: `undef`
 
 #### `maxpoll`
@@ -344,7 +352,7 @@ Puppetをアップストリームサーバの規格外の最小ポーリング�
 
 データタイプ: Ntp::Poll_interval
 
-アップストリームサーバの規格外の最大ポーリング間隔に設定します(値: 3～16)。
+アップストリームサーバの規格外の最大ポーリング間隔に設定します(値: 4～17)。
 デフォルトオプション: `undef`(FreeBSD: 9)
 
 #### `ntpsigndsocket`
@@ -377,7 +385,7 @@ NTPパッケージを管理するかどうか指定します。
 
 データタイプ: 配列[文字列]
 
-管理するNTPパッケージを指定します。 
+管理するNTPパッケージを指定します。
 
 デフォルト値: ['ntp'] (AIX: 'bos.net.tcp.client'、Solaris: [ 'SUNWntp4r'、'SUNWntp4u' ])
 
@@ -416,7 +424,7 @@ NTPパッケージを管理するかどうか指定します。
 
 #### `noselect_servers`
 
-配列[文字列]で、同期させない1つ以上のピアを指定します。Puppetによって`servers`配列内の一致する項目の最後に'noselect'が追加されます。デフォルト値: [ ]     
+配列[文字列]で、同期させない1つ以上のピアを指定します。Puppetによって`servers`配列内の一致する項目の最後に'noselect'が追加されます。デフォルト値: [ ]
 
 #### `restrict`
 
@@ -493,6 +501,16 @@ NTPに使用するサービスプロバイダ
 
 デフォルト値: `undef`
 
+#### `slewalways`
+
+データタイプ: Enum['no'、'yes']
+
+step動作を無効にし常にslewモードで徐々に時計を合わせるよう`xntpd`を設定するかどうかを指定します。
+
+AIXといった`xntpd`を実行するプラットフォームにのみ適用し、その他のプラットフォームにこの設定を指定しないようにしてください。
+
+デフォルト値: オペレーティングシステムによって異なります。 
+
 #### `statistics`
 
 データタイプ: 配列
@@ -557,6 +575,16 @@ step tickers ERBテンプレートファイルの保存場所。 このパラメ
 tosオプションを有効にするかどうかを指定します。
 
 デフォルト値: `false`
+
+#### `tos_maxclock`
+
+任意
+
+データタイプ: 整数[1]
+
+maxclock tosオプションを指定します。
+
+デフォルト値: 6。
 
 #### `tos_minclock`
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'collectd::plugin::disk', type: :class do
-  on_supported_os(test_on).each do |os, facts|
+  on_supported_os(baseline_os_hash).each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
@@ -133,6 +133,20 @@ describe 'collectd::plugin::disk', type: :class do
             is_expected.to contain_package('collectd-disk').with(
               ensure: 'present',
               name: 'collectd-disk'
+            )
+          end
+        end
+        context ':install_options install package with install options' do
+          let :params do
+            {
+              package_install_options: ['--enablerepo=mycollectd-repo']
+            }
+          end
+
+          it 'Will install the package with install options' do
+            is_expected.to contain_package('collectd-disk').with(
+              ensure: 'present',
+              install_options: ['--enablerepo=mycollectd-repo']
             )
           end
         end

@@ -19,16 +19,16 @@ define collectd::plugin::aggregation::aggregator (
   Optional[Boolean] $calculatestddev      = undef,
 ) {
 
-  include ::collectd
-  include ::collectd::plugin::aggregation
+  include collectd
+  include collectd::plugin::aggregation
 
   $conf_dir = $collectd::plugin_conf_dir
 
   file { "${conf_dir}/aggregator-${name}.conf":
     ensure  => $ensure,
-    mode    => '0640',
-    owner   => 'root',
-    group   => $collectd::root_group,
+    mode    => $collectd::config_mode,
+    owner   => $collectd::config_owner,
+    group   => $collectd::config_group,
     content => template('collectd/plugin/aggregation-aggregator.conf.erb'),
     notify  => Service[$collectd::service_name],
   }

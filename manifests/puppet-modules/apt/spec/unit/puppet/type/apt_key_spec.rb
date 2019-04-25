@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'puppet'
 
 describe Puppet::Type.type(:apt_key) do
-  context 'only namevar 32bit key id' do
+  context 'with only namevar 32bit key id' do
     let(:resource) do
       Puppet::Type.type(:apt_key).new(
         id: 'EF8D349F',
@@ -27,6 +27,14 @@ describe Puppet::Type.type(:apt_key) do
 
     it 'content is not set' do
       expect(resource[:content]).to eq nil
+    end
+
+    it 'refresh is not set' do
+      expect(resource[:refresh]).to eq nil
+    end
+
+    it 'weak_ssl is not set' do
+      expect(resource[:weak_ssl]).to eq nil
     end
   end
 
@@ -103,6 +111,20 @@ describe Puppet::Type.type(:apt_key) do
     end
   end
 
+  context 'with source and weak_ssl' do
+    let(:resource) do
+      Puppet::Type.type(:apt_key).new(
+        id: 'EF8D349F',
+        source: 'https://apt.puppetlabs.com/pubkey.gpg',
+        weak_ssl: true,
+      )
+    end
+
+    it 'source is set to the URL' do
+      expect(resource[:source]).to eq 'https://apt.puppetlabs.com/pubkey.gpg'
+    end
+  end
+
   context 'with content' do
     let(:resource) do
       Puppet::Type.type(:apt_key).new(
@@ -129,105 +151,92 @@ describe Puppet::Type.type(:apt_key) do
     end
   end
 
-  context 'validation' do
+  context 'with validation' do
     it 'raises an error if content and source are set' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'http://apt.puppetlabs.com/pubkey.gpg',
-          content: 'Completely invalid as a GPG key',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'http://apt.puppetlabs.com/pubkey.gpg',
+                                        content: 'Completely invalid as a GPG key')
       }.to raise_error(%r{content and source are mutually exclusive})
+    end
+
+    it 'raises an error if refresh => true and ensure => absent' do
+      expect {
+        Puppet::Type.type(:apt_key).new(id:       'EF8D349F',
+                                        source:   'http://apt.puppetlabs.com/pubkey.gpg',
+                                        ensure:   :absent,
+                                        refresh:  :true)
+      }.to raise_error(%r{ensure => absent and refresh => true are mutually exclusive})
     end
 
     it 'raises an error if a weird length key is used' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'FEF8D349F',
-          source: 'http://apt.puppetlabs.com/pubkey.gpg',
-          content: 'Completely invalid as a GPG key',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'FEF8D349F',
+                                        source: 'http://apt.puppetlabs.com/pubkey.gpg',
+                                        content: 'Completely invalid as a GPG key')
       }.to raise_error(%r{Valid values match})
     end
 
     it 'raises an error when an invalid URI scheme is used in source' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'hkp://pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'hkp://pgp.mit.edu')
       }.to raise_error(%r{Valid values match})
     end
 
     it 'allows the http URI scheme in source' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'http://pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'http://pgp.mit.edu')
       }.not_to raise_error
     end
 
     it 'allows the http URI with username and password' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: '4BD6EC30',
-          source: 'http://testme:Password2@pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: '4BD6EC30',
+                                        source: 'http://testme:Password2@pgp.mit.edu')
       }.not_to raise_error
     end
 
     it 'allows the https URI scheme in source' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'https://pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'https://pgp.mit.edu')
       }.not_to raise_error
     end
 
     it 'allows the https URI with username and password' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'https://testme:Password2@pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'https://testme:Password2@pgp.mit.edu')
       }.not_to raise_error
     end
 
     it 'allows the ftp URI scheme in source' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'ftp://pgp.mit.edu',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'ftp://pgp.mit.edu')
       }.not_to raise_error
     end
 
     it 'allows an absolute path in source' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: '/path/to/a/file',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: '/path/to/a/file')
       }.not_to raise_error
     end
 
     it 'allows 5-digit ports' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          source: 'http://pgp.mit.edu:12345/key',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'http://pgp.mit.edu:12345/key')
       }.not_to raise_error
     end
 
     it 'allows 5-digit ports when using key servers' do
       expect {
-        Puppet::Type.type(:apt_key).new(
-          id: 'EF8D349F',
-          server: 'http://pgp.mit.edu:12345',
-        )
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        server: 'http://pgp.mit.edu:12345')
       }.not_to raise_error
     end
   end

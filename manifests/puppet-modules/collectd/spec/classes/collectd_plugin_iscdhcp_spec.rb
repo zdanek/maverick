@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'collectd::plugin::cuda', type: :class do
-  on_supported_os(test_on).each do |os, facts|
+  on_supported_os(baseline_os_hash).each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
@@ -10,7 +10,7 @@ describe 'collectd::plugin::cuda', type: :class do
       context 'package ensure' do
         context ':ensure => present' do
           it 'import collectd_cuda.collectd_plugin in python-config' do
-            is_expected.to contain_concat_fragment('collectd_plugin_python_conf_collectd_cuda.collectd_plugin').with_content(%r{Import "collectd_cuda.collectd_plugin"})
+            is_expected.to contain_concat_fragment('collectd_plugin_python_conf_collectd_cuda.collectd_plugin_header').with_content(%r{Import "collectd_cuda.collectd_plugin"})
           end
         end
       end
@@ -21,7 +21,7 @@ describe 'collectd::plugin::cuda', type: :class do
         end
 
         it 'Will remove python-config' do
-          is_expected.not_to contain_concat__fragment('collectd_plugin_python_conf_collectd_cuda.collectd_plugin').with(ensure: 'present')
+          is_expected.not_to contain_concat__fragment('collectd_plugin_python_conf_collectd_cuda.collectd_plugin_header').with(ensure: 'present')
         end
       end
 

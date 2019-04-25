@@ -5,11 +5,10 @@ describe 'apt::conf', type: :define do
   end
   let(:facts) do
     {
-      os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+      os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
       lsbdistid: 'Debian',
       osfamily: 'Debian',
-      lsbdistcodename: 'wheezy',
-      puppetversion: Puppet.version,
+      lsbdistcodename: 'jessie',
     }
   end
   let :title do
@@ -64,7 +63,7 @@ describe 'apt::conf', type: :define do
     end
 
     it 'fails' do
-      expect { subject.call } .to raise_error(%r{pass in content})
+      is_expected.to raise_error(%r{pass in content})
     end
   end
 

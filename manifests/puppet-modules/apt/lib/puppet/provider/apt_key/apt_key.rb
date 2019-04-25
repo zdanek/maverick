@@ -2,22 +2,16 @@ require 'open-uri'
 require 'net/ftp'
 require 'tempfile'
 
-if RUBY_VERSION == '1.8.7'
-  # Mothers cry, puppies die and Ruby 1.8.7's open-uri needs to be
-  # monkeypatched to support passing in :ftp_passive_mode.
-  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
-                                     'puppet_x', 'apt_key', 'patch_openuri.rb'))
-  OpenURI::Options[:ftp_active_mode] = false
-end
-
 Puppet::Type.type(:apt_key).provide(:apt_key) do
+  desc 'apt-key provider for apt_key resource'
+
   confine    osfamily: :debian
   defaultfor osfamily: :debian
   commands   apt_key: 'apt-key'
   commands   gpg: '/usr/bin/gpg'
 
   def self.instances
-    cli_args = ['adv', '--list-keys', '--with-colons', '--fingerprint', '--fixed-list-mode']
+    cli_args = ['adv', '--no-tty', '--list-keys', '--with-colons', '--fingerprint', '--fixed-list-mode']
 
     key_output = apt_key(cli_args).encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
 
@@ -72,7 +66,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
 
   def self.prefetch(resources)
     apt_keys = instances
-    resources.keys.each do |name|
+    resources.each_key do |name|
       if name.length == 40
         provider = apt_keys.find { |key| key.fingerprint == name }
         resources[name].provider = provider if provider
@@ -119,7 +113,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
   def source_to_file(value)
     parsed_value = URI.parse(value)
     if parsed_value.scheme.nil?
-      raise("The file #{value} does not exist") unless File.exist?(value)
+      raise(_('The file %{_value} does not exist') % { _value: value }) unless File.exist?(value)
       # Because the tempfile method has to return a live object to prevent GC
       # of the underlying file from occuring too early, we also have to return
       # a file object here.  The caller can still call the #path method on the
@@ -132,16 +126,20 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
         # Only send basic auth if URL contains userinfo
         # Some webservers (e.g. Amazon S3) return code 400 if empty basic auth is sent
         if parsed_value.userinfo.nil?
-          key = parsed_value.read
+          key = if parsed_value.scheme == 'https' && resource[:weak_ssl] == true
+                  open(parsed_value, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
+                else
+                  parsed_value.read
+                end
         else
           user_pass = parsed_value.userinfo.split(':')
           parsed_value.userinfo = ''
           key = open(parsed_value, http_basic_authentication: user_pass).read
         end
       rescue OpenURI::HTTPError, Net::FTPPermError => e
-        raise("#{e.message} for #{resource[:source]}")
+        raise(_('%{_e} for %{_resource}') % { _e: e.message, _resource: resource[:source] })
       rescue SocketError
-        raise("could not resolve #{resource[:source]}")
+        raise(_('could not resolve %{_resource}') % { _resource: resource[:source] })
       else
         tempfile(key)
       end
@@ -158,7 +156,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     # confirm that the fingerprint from the file, matches the long key that is in the manifest
     if name.size == 40
       if File.executable? command(:gpg)
-        extracted_key = execute(["#{command(:gpg)} --with-fingerprint --with-colons #{file.path} | awk -F: '/^fpr:/ { print $10 }'"], failonfail: false)
+        extracted_key = execute(["#{command(:gpg)} --no-tty --with-fingerprint --with-colons #{file.path} | awk -F: '/^fpr:/ { print $10 }'"], failonfail: false)
         extracted_key = extracted_key.chomp
 
         found_match = false
@@ -168,7 +166,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
           end
         end
         unless found_match
-          raise("The id in your manifest #{resource[:name]} and the fingerprint from content/source don't match. Check for an error in the id and content/source is legitimate.")
+          raise(_('The id in your manifest %{_resource} and the fingerprint from content/source don\'t match. Check for an error in the id and content/source is legitimate.') % { _resource: resource[:name] }) # rubocop:disable Metrics/LineLength
         end
       else
         warning('/usr/bin/gpg cannot be found for verification of the id.')
@@ -177,8 +175,31 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     file
   end
 
+  # Update a key if it is expired
+  def update_expired_key
+    # Return without doing anything if refresh or expired is false
+    return unless resource[:refresh] == true && resource[:expired] == true
+
+    # Execute command to update key
+    command = []
+
+    unless resource[:source].nil? && resource[:content].nil?
+      raise(_('an unexpected condition occurred while trying to add the key: %{_resource}') % { _resource: resource[:id] })
+    end
+
+    # Breaking up the command like this is needed because it blows up
+    # if --recv-keys isn't the last argument.
+    command.push('adv', '--no-tty', '--keyserver', resource[:server])
+    unless resource[:options].nil?
+      command.push('--keyserver-options', resource[:options])
+    end
+    command.push('--recv-keys', resource[:id])
+  end
+
   def exists?
-    @property_hash[:ensure] == :present
+    update_expired_key
+    # report expired keys as non-existing when refresh => true
+    @property_hash[:ensure] == :present && !(resource[:refresh] && @property_hash[:expired])
   end
 
   def create
@@ -186,7 +207,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     if resource[:source].nil? && resource[:content].nil?
       # Breaking up the command like this is needed because it blows up
       # if --recv-keys isn't the last argument.
-      command.push('adv', '--keyserver', resource[:server])
+      command.push('adv', '--no-tty', '--keyserver', resource[:server])
       unless resource[:options].nil?
         command.push('--keyserver-options', resource[:options])
       end
@@ -199,7 +220,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
       command.push('add', key_file.path)
     # In case we really screwed up, better safe than sorry.
     else
-      raise("an unexpected condition occurred while trying to add the key: #{resource[:id]}")
+      raise(_('an unexpected condition occurred while trying to add the key: %{_resource}') % { _resource: resource[:id] })
     end
     apt_key(command)
     @property_hash[:ensure] = :present
@@ -215,16 +236,10 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
   end
 
   def read_only(_value)
-    raise('This is a read-only property.')
+    raise(_('This is a read-only property.'))
   end
 
   mk_resource_methods
-
-  # Needed until PUP-1470 is fixed and we can drop support for Puppet versions
-  # before that.
-  def expired
-    @property_hash[:expired]
-  end
 
   # Alias the setters of read-only properties
   # to the read_only function.

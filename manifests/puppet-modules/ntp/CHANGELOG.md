@@ -1,4 +1,118 @@
-## Supported Release 6.2.0
+# Change log
+
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+
+## [7.4.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/7.4.0) (2019-02-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/7.3.0...7.4.0)
+
+### Added
+
+- \(MODULES-8139\) - Add SLES 15 support [\#492](https://github.com/puppetlabs/puppetlabs-ntp/pull/492) ([eimlav](https://github.com/eimlav))
+- \(MODULES-8098\) - Add logconfig option to config file [\#491](https://github.com/puppetlabs/puppetlabs-ntp/pull/491) ([eimlav](https://github.com/eimlav))
+
+### Fixed
+
+- \(FM-7719\) - Remove Amazon Linux and Arch Linux testing/support for ntp module [\#498](https://github.com/puppetlabs/puppetlabs-ntp/pull/498) ([david22swan](https://github.com/david22swan))
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#495](https://github.com/puppetlabs/puppetlabs-ntp/pull/495) ([tphoney](https://github.com/tphoney))
+
+## [7.3.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/7.3.0) (2018-09-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/7.2.0...7.3.0)
+
+### Added
+
+- pdksync - \(MODULES-6805\) metadata.json shows support for puppet 6 [\#484](https://github.com/puppetlabs/puppetlabs-ntp/pull/484) ([tphoney](https://github.com/tphoney))
+- Add burst param [\#476](https://github.com/puppetlabs/puppetlabs-ntp/pull/476) ([kobybr](https://github.com/kobybr))
+- \(MODULES-7465\) Addition of support for Ubuntu 18.04 to NTP [\#475](https://github.com/puppetlabs/puppetlabs-ntp/pull/475) ([david22swan](https://github.com/david22swan))
+
+## [7.2.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/7.2.0) (2018-07-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/7.1.1...7.2.0)
+
+### Changed
+
+- \(FM-6955\) Remove unsupported OS: F24, F25, Debian 7 [\#462](https://github.com/puppetlabs/puppetlabs-ntp/pull/462) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- Add SLES 15 hiera data [\#472](https://github.com/puppetlabs/puppetlabs-ntp/pull/472) ([mattiasgiese](https://github.com/mattiasgiese))
+- \(FM-7038\) Add support for Debian 9 [\#470](https://github.com/puppetlabs/puppetlabs-ntp/pull/470) ([david22swan](https://github.com/david22swan))
+- add tos\_orphan parameter [\#452](https://github.com/puppetlabs/puppetlabs-ntp/pull/452) ([disklord](https://github.com/disklord))
+
+### Fixed
+
+- \(MODULES-6363\) fix disabling dhclient on redhat-derivatives [\#439](https://github.com/puppetlabs/puppetlabs-ntp/pull/439) ([sudodevnull](https://github.com/sudodevnull))
+
+## 7.1.1
+### Summary
+This release includes updated Japanese translations.
+
+### Added
+- Updating translations for readmes/README_ja_JP.md
+
+## 7.1.0
+### Summary
+This release uses the PDK convert functionality which in return makes the module PDK compliant. It also includes one feature and a roll up of maintenance changes.
+
+### Added
+- PDK convert ntp ([MODULES-6326](https://tickets.puppet.com/browse/MODULES-6326)).
+- Create parameter for slewalways to be exposed in the ntp.conf template.
+
+### Fixed
+- `is_virtual` fact is boolean and cant be given to str2bool.
+- Don't use 'inherits' in config, install and service.
+- Roll up of modulesync changes.
+- Make documentation more readable.
+- Fix up rubocop errors ([FM-6634](https://tickets.puppet.com/browse/FM-6634)).
+- Strip data types out of puppet-strings comments.
+
+## 7.0.0
+### Summary
+Hiera 5 only works with Puppet 4.9.4 and above, we have bumped the Puppet requirement for the module accordingly.
+
+### Changed
+- Update YAML to version 5 ([PR 428](https://github.com/puppetlabs/puppetlabs-ntp/pull/428))
+- Updates the lower puppet version boundary to 4.9.4.
+
+## 6.4.1
+### Summary
+This release reverts a PR that implements Hiera 5. Issues have been seen due to compatibility issues. The issues that have been seen are ([MODULES-5775](https://tickets.puppet.com/browse/MODULES-5775)) and ([MODULES-5780](https://tickets.puppet.com/browse/MODULES-5780)).
+
+### Changed
+- Reverts ([PR 394](https://github.com/puppetlabs/puppetlabs-ntp/pull/394))
+
+## 6.4.0
+### Summary
+This release is to both update the modules code so that it matches the set standards and make it so that all future prs are checked by Rubocop before release.
+
+#### Added
+- Rubocop is now enabled.
+
+#### Changed
+- All ruby code within module has been altered to match standards.
+
+## 6.3.0
+### Summary
+This is a feature release with some bugfixes and updated Japanese translations, too.
+
+#### Added
+- `enable_mode7` parameter (defaults to `false`)
+- disable monitor availability while setting stat properties
+
+#### Changed
+- Lower bound of Puppet requirement from 4.5.0 to 4.7.0
+- hiera.yaml to Hiera version 5 format
+
+#### Removed
+- Ubuntu 10.04 and 12.04, Debian 6, SLES 10 SP4, and Fedora 20-23 support from metadata.json (existing compatibility remains)
+
+#### Fixed
+- Path to driftfile on Suse ([MODULES-4941](https://tickets.puppet.com/browse/MODULES-4941))
+- Whitespace issue in ntp.conf.epp with `tos`
+- Permissions on keys file
+
+## 6.2.0
 ### Summary
 This is a small minor release that adds the `pool` parameter and revises some Japanese translations.
 
@@ -8,7 +122,7 @@ This is a small minor release that adds the `pool` parameter and revises some Ja
 #### Fixed
 - Japanese translations for the README
 
-## Supported Release 6.1.0
+## 6.1.0
 ### Summary
 
 This release adds support for internationalization of the module. It also contains Japanese translations for the README, summary and description of the metadata.json and major cleanups in the README. Additional folders have been introduced called locales and readmes where translation files can be found. A number of features and bug fixes are also included in this release.
@@ -31,7 +145,7 @@ This release adds support for internationalization of the module. It also contai
 - (MODULES-4528) Replace Puppet.version.to_f version comparison from spec helper.
 - Solaris data that was the wrong way round now fixed.
 
-## Supported Releases 5.0.0 and 6.0.0
+##s 5.0.0 and 6.0.0
 ### Summary
 
 This double release adds new Puppet 4 features: data in modules, EPP templates, the $facts hash, and data types. The 5.0.0 release is fully backwards compatible to existing Puppet 4 configurations and provides you with [deprecation warnings](https://github.com/puppetlabs/puppetlabs-stdlib#deprecation) for every argument that will not work as expected with the final 6.0.0 release. See the [stdlib docs](https://github.com/puppetlabs/puppetlabs-stdlib#validate_legacy) for an in-depth discussion of this.
@@ -47,7 +161,7 @@ If you're still running Puppet 3, remain on the latest puppetlabs-ntp 4.x releas
 * [The $facts hash](https://docs.puppet.com/puppet/latest/reference/lang_facts_and_builtin_vars.html#the-factsfactname-hash): Makes facts visibly distinct from other variables for more readable and maintainable code. This helps eliminate confusion if you use a local variable whose name happens to match that of a common fact.
 * [Data types for validation](https://docs.puppet.com/puppet/4.6/reference/lang_data.html): Helps you find and replace deprecated code in existing `validate_*` functions with stricter, more readable data type notation. First upgrade to the 5.0.0 release of this module, and address all deprecation warnings before upgrading to the final 6.0.0 release. Please see the [stdlib docs](https://github.com/puppetlabs/puppetlabs-stdlib#validate_legacy) for an in-depth discussion of this process.
 
-## Supported Release 4.2.0
+## 4.2.0
 ### Summary
 
 A large release with many new features. Multiple additions to parameters and work contributed to OS compatibility. Also includes several bug fixes, including clean ups of code.
@@ -79,12 +193,12 @@ A large release with many new features. Multiple additions to parameters and wor
 - Converted license string to SPDX format
 - Removed ruby 1.8.7 and puppet 2.7 from travis-ci jobs
 
-## Supported Release 4.1.2
+## 4.1.2
 ###Summary
 
 Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
 
-## Supported Release 4.1.1
+## 4.1.1
 ### Summary
 This is a bugfix release to address security vulnerability CVE-2013-5211.
 
@@ -351,3 +465,6 @@ Configuration directives that might possibly be affected:
 
 ##2011-06-16 Jeff McCune <jeff@puppetlabs.com> - 0.0.3
 * Initial release under puppetlabs
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'collectd', type: :class do
-  on_supported_os(test_on).each do |os, facts|
+  on_supported_os.each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
@@ -9,20 +9,13 @@ describe 'collectd', type: :class do
 
       options = os_specific_options(facts)
       context 'with all defaults' do
-        it { is_expected.to contain_class('collectd') }
-        it { is_expected.to contain_class('collectd::params') }
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_anchor('collectd::begin') }
-        it { is_expected.to contain_anchor('collectd::end') }
         it { is_expected.to contain_file('collectd.conf').without_content }
         it { is_expected.to contain_file('collectd.d').with_ensure('directory') }
         it { is_expected.to contain_file_line('include_conf_d').with_ensure('absent') }
         it { is_expected.to contain_file_line('include_conf_d_dot_conf').with_ensure('present') }
         it { is_expected.to contain_package(options[:package]).with_ensure('present') }
         it { is_expected.to contain_package(options[:package]).with_install_options(nil) }
-        it { is_expected.to contain_class('collectd::install').that_comes_before('Class[collectd::config]') }
-        it { is_expected.to contain_class('collectd::config').that_notifies('Class[collectd::service]') }
-        it { is_expected.to contain_class('collectd::service') }
         it do
           is_expected.to contain_service('collectd').with(
             ensure: 'running',
@@ -48,6 +41,7 @@ describe 'collectd', type: :class do
         let(:params) { { purge_config: true } }
 
         it { is_expected.to contain_file('collectd.conf').with_content(%r{FQDNLookup true}) }
+        it { is_expected.to contain_file('collectd.conf').with_content(%r{AutoLoadPlugin}) }
         it { is_expected.to contain_file('collectd.conf').with_content(%r{Interval}) }
         it { is_expected.to contain_file('collectd.conf').with_content(%r{Timeout}) }
         it { is_expected.to contain_file('collectd.conf').with_content(%r{ReadThreads}) }
@@ -84,7 +78,7 @@ describe 'collectd', type: :class do
           let(:params) do
             {
               purge_config: true,
-              write_queue_limit_low: '100'
+              write_queue_limit_low: 100
             }
           end
 
@@ -95,7 +89,7 @@ describe 'collectd', type: :class do
           let(:params) do
             {
               purge_config: true,
-              write_queue_limit_high: '100'
+              write_queue_limit_high: 100
             }
           end
 
@@ -199,25 +193,51 @@ describe 'collectd', type: :class do
           end
 
           context 'and ci_package_repo set to a version' do
-            let(:params) do
-              {
-                manage_repo: true,
-                ci_package_repo: '5.6'
-              }
-            end
+            context 'and package_keyserver is default' do
+              let(:params) do
+                {
+                  manage_repo: true,
+                  ci_package_repo: '5.6'
+                }
+              end
 
-            if facts[:osfamily] == 'RedHat'
-              it { is_expected.to contain_yumrepo('collectd-ci').with_gpgkey('https://pkg.ci.collectd.org/pubkey.asc').with_baseurl("https://pkg.ci.collectd.org/rpm/collectd-5.6/epel-#{facts[:operatingsystemmajrelease]}-x86_64") }
+              if facts[:osfamily] == 'RedHat'
+                it { is_expected.to contain_yumrepo('collectd-ci').with_gpgkey('https://pkg.ci.collectd.org/pubkey.asc').with_baseurl("https://pkg.ci.collectd.org/rpm/collectd-5.6/epel-#{facts[:operatingsystemmajrelease]}-x86_64") }
+              end
+              if facts[:osfamily] == 'Debian'
+                it do
+                  is_expected.to contain_apt__source('collectd-ci').
+                    with_location('https://pkg.ci.collectd.org/deb/').
+                    with_key(
+                      'id'     => 'F806817DC3F5EA417F9FA2963994D24FB8543576',
+                      'server' => 'keyserver.ubuntu.com'
+                    ).
+                    with_repos('collectd-5.6')
+                end
+              end
             end
-            if facts[:osfamily] == 'Debian'
-              it do
-                is_expected.to contain_apt__source('collectd-ci').
-                  with_location('https://pkg.ci.collectd.org/deb/').
-                  with_key(
-                    'id'     => 'F806817DC3F5EA417F9FA2963994D24FB8543576',
-                    'server' => 'pgp.mit.edu'
-                  ).
-                  with_repos('collectd-5.6')
+            context 'and package_keyserver is set' do
+              let(:params) do
+                {
+                  manage_repo: true,
+                  ci_package_repo: '5.6',
+                  package_keyserver: 'pgp.mit.edu'
+                }
+              end
+
+              if facts[:osfamily] == 'RedHat'
+                it { is_expected.to contain_yumrepo('collectd-ci').with_gpgkey('https://pkg.ci.collectd.org/pubkey.asc').with_baseurl("https://pkg.ci.collectd.org/rpm/collectd-5.6/epel-#{facts[:operatingsystemmajrelease]}-x86_64") }
+              end
+              if facts[:osfamily] == 'Debian'
+                it do
+                  is_expected.to contain_apt__source('collectd-ci').
+                    with_location('https://pkg.ci.collectd.org/deb/').
+                    with_key(
+                      'id'     => 'F806817DC3F5EA417F9FA2963994D24FB8543576',
+                      'server' => 'pgp.mit.edu'
+                    ).
+                    with_repos('collectd-5.6')
+                end
               end
             end
           end
@@ -233,12 +253,6 @@ describe 'collectd', type: :class do
           let(:params) { { manage_service: false } }
 
           it { is_expected.not_to contain_service('collectd') }
-        end
-
-        context 'when manage_service is undefined' do
-          let(:params) { { manage_service: nil } }
-
-          it { is_expected.to contain_service('collectd').with_ensure('running') }
         end
 
         context 'when plugin_conf_dir_mode is set' do

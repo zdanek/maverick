@@ -5,16 +5,16 @@ define collectd::plugin::filter::chain (
   Optional[Hash] $target_options             = undef,
 ) {
 
-  include ::collectd
-  include ::collectd::plugin::filter
+  include collectd
+  include collectd::plugin::filter
 
   $conf_file = "${collectd::plugin_conf_dir}/filter-chain-${title}.conf"
 
   concat{ $conf_file:
     ensure         => $ensure,
-    mode           => '0640',
-    owner          => 'root',
-    group          => $collectd::root_group,
+    mode           => $collectd::config_mode,
+    owner          => $collectd::config_owner,
+    group          => $collectd::config_group,
     notify         => Service[$collectd::service_name],
     ensure_newline => true,
   }

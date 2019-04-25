@@ -3,6 +3,8 @@ class apache::mod::ssl (
   $ssl_cryptodevice                                         = 'builtin',
   $ssl_options                                              = [ 'StdEnvVars' ],
   $ssl_openssl_conf_cmd                                     = undef,
+  Optional[String] $ssl_cert                                = undef,
+  Optional[String] $ssl_key                                 = undef,
   $ssl_ca                                                   = undef,
   $ssl_cipher                                               = 'HIGH:MEDIUM:!aNULL:!MD5:!RC4:!3DES',
   Variant[Boolean, Enum['on', 'off']] $ssl_honorcipherorder = true,
@@ -53,7 +55,7 @@ class apache::mod::ssl (
     }
   }
 
-  if is_bool($ssl_honorcipherorder) {
+  if $ssl_honorcipherorder =~ Boolean {
     $_ssl_honorcipherorder = $ssl_honorcipherorder
   } else {
     $_ssl_honorcipherorder = $ssl_honorcipherorder ? {

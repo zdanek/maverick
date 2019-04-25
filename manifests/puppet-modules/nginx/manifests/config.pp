@@ -24,10 +24,12 @@ class nginx::config {
   $daemon                         = $nginx::daemon
   $daemon_user                    = $nginx::daemon_user
   $daemon_group                   = $nginx::daemon_group
+  $dynamic_modules                = $nginx::dynamic_modules
   $global_owner                   = $nginx::global_owner
   $global_group                   = $nginx::global_group
   $global_mode                    = $nginx::global_mode
   $log_dir                        = $nginx::log_dir
+  $log_user                       = $nginx::log_user
   $log_group                      = $nginx::log_group
   $log_mode                       = $nginx::log_mode
   $http_access_log                = $nginx::http_access_log
@@ -44,6 +46,7 @@ class nginx::config {
   $super_user                     = $nginx::super_user
   $temp_dir                       = $nginx::temp_dir
   $server_purge                   = $nginx::server_purge
+  $absolute_redirect              = $nginx::absolute_redirect
   $accept_mutex                   = $nginx::accept_mutex
   $accept_mutex_delay             = $nginx::accept_mutex_delay
   $client_body_buffer_size        = $nginx::client_body_buffer_size
@@ -80,12 +83,17 @@ class nginx::config {
   $log_format                     = $nginx::log_format
   $mail                           = $nginx::mail
   $stream                         = $nginx::stream
+  $mime_types                     = $nginx::mime_types_preserve_defaults ? {
+    true    => merge($nginx::params::mime_types,$nginx::mime_types),
+    default => $nginx::mime_types,
+  }
   $multi_accept                   = $nginx::multi_accept
   $names_hash_bucket_size         = $nginx::names_hash_bucket_size
   $names_hash_max_size            = $nginx::names_hash_max_size
   $nginx_cfg_prepend              = $nginx::nginx_cfg_prepend
   $proxy_buffers                  = $nginx::proxy_buffers
   $proxy_buffer_size              = $nginx::proxy_buffer_size
+  $proxy_busy_buffers_size        = $nginx::proxy_busy_buffers_size
   $proxy_cache_inactive           = $nginx::proxy_cache_inactive
   $proxy_cache_keys_zone          = $nginx::proxy_cache_keys_zone
   $proxy_cache_levels             = $nginx::proxy_cache_levels
@@ -98,6 +106,7 @@ class nginx::config {
   $proxy_connect_timeout          = $nginx::proxy_connect_timeout
   $proxy_headers_hash_bucket_size = $nginx::proxy_headers_hash_bucket_size
   $proxy_http_version             = $nginx::proxy_http_version
+  $proxy_max_temp_file_size       = $nginx::proxy_max_temp_file_size
   $proxy_read_timeout             = $nginx::proxy_read_timeout
   $proxy_redirect                 = $nginx::proxy_redirect
   $proxy_send_timeout             = $nginx::proxy_send_timeout
@@ -120,6 +129,7 @@ class nginx::config {
 
   # Non-configurable settings
   $conf_template                  = 'nginx/conf.d/nginx.conf.erb'
+  $mime_template                  = 'nginx/conf.d/mime.types.epp'
   $proxy_conf_template            = undef
 
   File {
@@ -171,22 +181,31 @@ class nginx::config {
     ensure => directory,
   }
 
+  if $nginx::manage_snippets_dir {
+    file { $nginx::snippets_dir:
+      ensure => directory,
+    }
+  }
+
   file { $log_dir:
     ensure => directory,
     mode   => $log_mode,
-    owner  => $daemon_user,
+    owner  => $log_user,
     group  => $log_group,
   }
 
-  file {$client_body_temp_path:
-    ensure => directory,
-    owner  => $daemon_user,
+  if $client_body_temp_path {
+    file {$client_body_temp_path:
+      ensure => directory,
+      owner  => $daemon_user,
+    }
   }
 
-
-  file {$proxy_temp_path:
-    ensure => directory,
-    owner  => $daemon_user,
+  if $proxy_temp_path {
+    file {$proxy_temp_path:
+      ensure => directory,
+      owner  => $daemon_user,
+    }
   }
 
   unless $confd_only {
@@ -198,6 +217,9 @@ class nginx::config {
     }
     file { "${conf_dir}/sites-enabled":
       ensure => directory,
+      owner  => $sites_available_owner,
+      group  => $sites_available_group,
+      mode   => $sites_available_mode,
     }
     if $server_purge {
       File["${conf_dir}/sites-available"] {
@@ -218,6 +240,9 @@ class nginx::config {
     }
     file { "${conf_dir}/streams-available":
       ensure => directory,
+      owner  => $sites_available_owner,
+      group  => $sites_available_group,
+      mode   => $sites_available_mode,
     }
     if $server_purge {
       File["${conf_dir}/streams-enabled"] {
@@ -230,6 +255,11 @@ class nginx::config {
   file { "${conf_dir}/nginx.conf":
     ensure  => file,
     content => template($conf_template),
+  }
+
+  file { "${conf_dir}/mime.types":
+    ensure  => file,
+    content => epp($mime_template),
   }
 
   file { "${temp_dir}/nginx.d":

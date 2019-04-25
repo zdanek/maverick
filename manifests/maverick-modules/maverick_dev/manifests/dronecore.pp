@@ -2,7 +2,7 @@ class maverick_dev::dronecore (
 ) {
 
     # Install px4 dev/build dependencies
-    ensure_packages(["cmake", "build-essential", "colordiff", "astyle", "git", "libcurl4-openssl-dev", "doxygen"])
+    ensure_packages(["cmake", "build-essential", "colordiff", "astyle", "libcurl4-openssl-dev", "doxygen"])
 
     # Install dronecore
     if ! ("install_flag_dronecore" in $installflags) {

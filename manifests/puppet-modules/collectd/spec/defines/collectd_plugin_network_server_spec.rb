@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'collectd::plugin::network::server', type: :define do
-  on_supported_os.each do |os, facts|
+  on_supported_os(baseline_os_hash).each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
@@ -12,7 +12,7 @@ describe 'collectd::plugin::network::server', type: :define do
         let(:title) { 'node1' }
         let :params do
           {
-            port: '1234',
+            port: 1234,
             interface: 'eth0',
             securitylevel: 'Encrypt',
             username: 'foo',

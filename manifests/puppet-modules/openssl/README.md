@@ -4,7 +4,6 @@
 [![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/camptocamp/openssl.svg)](https://forge.puppetlabs.com/camptocamp/openssl)
 [![Build Status](https://img.shields.io/travis/camptocamp/puppet-openssl/master.svg)](https://travis-ci.org/camptocamp/puppet-openssl)
 [![Puppet Forge Endorsement](https://img.shields.io/puppetforge/e/camptocamp/openssl.svg)](https://forge.puppetlabs.com/camptocamp/openssl)
-[![Gemnasium](https://img.shields.io/gemnasium/camptocamp/puppet-openssl.svg)](https://gemnasium.com/camptocamp/puppet-openssl)
 [![By Camptocamp](https://img.shields.io/badge/by-camptocamp-fb7047.svg)](http://www.camptocamp.com)
 
 **This module manages OpenSSL.**
@@ -62,13 +61,13 @@ This type allows to generate Diffie Hellman parameters.
 Simple usage:
 
 ```puppet
-dhparam { '/path/to/dhparam.pem': }
+openssl::dhparam { '/path/to/dhparam.pem': }
 ```
 
 Advanced options:
 
 ```puppet
-dhparam { '/path/to/dhparam.pem':
+openssl::dhparam { '/path/to/dhparam.pem':
   size => 2048,
 }
 ```
@@ -167,6 +166,7 @@ openssl::certificate::x509 { 'foo':
   locality     => 'Myplace',
   unit         => 'MyUnit',
   altnames     => ['a.com', 'b.com', 'c.com'],
+  extkeyusage  => ['serverAuth', 'clientAuth', 'any_other_option_per_openssl'],
   email        => 'contact@foo.com',
   days         => 3456,
   base_dir     => '/var/www/ssl',

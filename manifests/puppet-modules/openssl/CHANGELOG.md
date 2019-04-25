@@ -1,3 +1,20 @@
+## 2019-04-16 - Release 1.12.0
+
+- Add ability to generate Elliptic Curve key pairs (#99)
+
+## 2019-03-01 - Release 1.11.0
+
+- Support unencrypted CSRs (#84)
+- Add the `x509_extensions` directive so generated certificates
+  also include x509 data. Fixes #44. (#89)
+- Update dhparams example in README.md (#92)
+- Add ability to generate x509 certificates with extKeyUsage (#96) 
+- Do not use legacy puppet-lint-absolute_classname-check plugin
+- Fix variable reference in `templates/cert.cnf.erb` to fix spec tests. (#97)
+- Update dependencies to accept stdlib 5
+- Add support for Puppet 5 & 6
+- Update supported OSes
+
 ## 2017-04-18 - Release 1.10.0
 
 - Increase default keysize to 2048bit (#80)

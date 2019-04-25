@@ -115,11 +115,7 @@ server {
 <% if Array(@resolver).count > 0 -%>
   resolver                  <% Array(@resolver).each do |r| %> <%= r %><% end %>;
 <% end -%>
-<% if @add_header -%>
-  <%- @add_header.keys.sort.each do |key| -%>
-  add_header              "<%= key %>" "<%= @add_header[key] %>";
-  <%- end -%>
-<% end -%>
+<%= scope.function_template(["nginx/server/locations/headers.erb"]) %>
 <% if @maintenance -%>
   <%= @maintenance_value %>;
 <% end -%>
@@ -137,6 +133,9 @@ server {
 <% end -%>
 <% if defined? @log_by_lua_file -%>
   log_by_lua_file "<%= @log_by_lua_file %>";
+<% end -%>
+<% if @absolute_redirect -%>
+  absolute_redirect <%= @absolute_redirect %>;
 <% end -%>
 <% if @access_log.is_a?(Array) -%>
   <%- @access_log.each do |log_item| -%>

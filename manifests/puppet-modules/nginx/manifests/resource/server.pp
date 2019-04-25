@@ -28,6 +28,9 @@
 #   [*proxy_send_timeout*]         - Override the default proxy send timeout value of 90 seconds
 #   [*proxy_redirect*]             - Override the default proxy_redirect value of off.
 #   [*proxy_buffering*]            - If defined, sets the proxy_buffering to the passed value.
+#   [*proxy_max_temp_file_size*]   - Sets the maximum size of the temporary buffer file.
+#   [*proxy_busy_buffers_size*]    - Sets the total size of buffers that can be
+#     busy sending a response to the client while the response is not yet fully read.
 #   [*resolver*]                   - Array: Configures name servers used to resolve names of upstream servers into addresses.
 #   [*fastcgi*]                    - location of fastcgi (host:port)
 #   [*fastcgi_param*]              - Set additional custom fastcgi_params
@@ -84,6 +87,7 @@
 #   [*proxy_method*]               - If defined, overrides the HTTP method of the request to be passed to the backend.
 #   [*proxy_http_version*]         - Sets the proxy http version
 #   [*proxy_set_body*]             - If defined, sets the body passed to the backend.
+#   [*absolute_redirect*]          - Enables or disables the absolute redirect functionality of nginx
 #   [*auth_basic*]                 - This directive includes testing name and password with HTTP Basic Authentication.
 #   [*auth_basic_user_file*]       - This directive sets the htpasswd filename for the authentication realm.
 #   [*auth_request*]               - This allows you to specify a custom auth endpoint
@@ -111,7 +115,7 @@
 #     in which case it will be omitted in this server stanza (and default to nginx.conf setting)
 #   [*passenger_cgi_param*]        - Allows one to define additional CGI environment variables to pass to the backend application
 #   [*passenger_set_header*]       - Allows one to set headers to pass to the backend application (Passenger 5.0+)
-#   [*passenger_env_var*]          - Allows one to set environemnt variables to pass to the backend application (Passenger 5.0+)
+#   [*passenger_env_var*]          - Allows one to set environment variables to pass to the backend application (Passenger 5.0+)
 #   [*passenger_pre_start*]        - Allows setting a URL to pre-warm the host. Per Passenger docs, the "domain part of the URL" must match
 #     a value of server_name. If this is an array, multiple URLs can be specified.
 #   [*log_by_lua*]                 - Run the Lua source code inlined as the <lua-script-str> at the log request processing phase. This does
@@ -127,6 +131,7 @@
 #   [*error_pages*]                - Hash: setup errors pages, hash key is the http code and hash value the page
 #   [*locations*]                  - Hash of servers resources used by this server
 #   [*locations_defaults*]         - Hash of location default settings
+#   [*add_listen_directive*]       - Boolean to determine if we should add 'ssl on;' to the vhost or not. defaults to true for nginx 1.14 and older, otherwise false
 # Actions:
 #
 # Requires:
@@ -154,7 +159,7 @@ define nginx::resource::server (
   Variant[Array, String] $ipv6_listen_ip                                         = '::',
   Integer $ipv6_listen_port                                                      = 80,
   String $ipv6_listen_options                                                    = 'default ipv6only=on',
-  Optional[Hash] $add_header                                                     = undef,
+  Hash $add_header                                                               = {},
   Boolean $ssl                                                                   = false,
   Boolean $ssl_listen_option                                                     = true,
   Optional[Variant[String, Boolean]] $ssl_cert                                   = undef,
@@ -181,8 +186,8 @@ define nginx::resource::server (
   Optional[String] $ssl_session_ticket_key                                       = undef,
   Optional[String] $ssl_trusted_cert                                             = undef,
   Optional[Integer] $ssl_verify_depth                                            = undef,
-  String $spdy                                                                   = $nginx::spdy,
-  $http2                                                                         = $nginx::http2,
+  Enum['on', 'off'] $spdy                                                        = $nginx::spdy,
+  Enum['on', 'off'] $http2                                                       = $nginx::http2,
   Optional[String] $proxy                                                        = undef,
   Optional[String]$proxy_redirect                                                = undef,
   String $proxy_read_timeout                                                     = $nginx::proxy_read_timeout,
@@ -201,11 +206,13 @@ define nginx::resource::server (
   Optional[String] $proxy_http_version                                           = undef,
   Optional[String] $proxy_set_body                                               = undef,
   Optional[String] $proxy_buffering                                              = undef,
+  Optional[Nginx::Size] $proxy_max_temp_file_size                                = undef,
+  Optional[Nginx::Size] $proxy_busy_buffers_size                                 = undef,
   Array $resolver                                                                = [],
   Optional[String] $fastcgi                                                      = undef,
   Optional[String] $fastcgi_index                                                = undef,
   $fastcgi_param                                                                 = undef,
-  String $fastcgi_params                                                         = "${::nginx::conf_dir}/fastcgi.conf",
+  String $fastcgi_params                                                         = "${nginx::conf_dir}/fastcgi.conf",
   Optional[String] $fastcgi_script                                               = undef,
   Optional[String] $uwsgi                                                        = undef,
   String $uwsgi_params                                                           = "${nginx::config::conf_dir}/uwsgi_params",
@@ -224,6 +231,7 @@ define nginx::resource::server (
   Optional[Hash] $location_custom_cfg_prepend                                    = undef,
   Optional[Hash] $location_custom_cfg_append                                     = undef,
   Optional[Array[String]] $try_files                                             = undef,
+  Optional[Enum['on', 'off']] $absolute_redirect                                 = undef,
   Optional[String] $auth_basic                                                   = undef,
   Optional[String] $auth_basic_user_file                                         = undef,
   Optional[String] $auth_request                                                 = undef,
@@ -260,7 +268,8 @@ define nginx::resource::server (
   String $maintenance_value                                                      = 'return 503',
   $error_pages                                                                   = undef,
   Hash $locations                                                                = {},
-  Hash $locations_defaults                                                       = {}
+  Hash $locations_defaults                                                       = {},
+  Boolean $add_listen_directive                                                  = $nginx::add_listen_directive,
 ) {
 
   if ! defined(Class['nginx']) {
@@ -369,6 +378,8 @@ define nginx::resource::server (
       proxy_set_body              => $proxy_set_body,
       proxy_cache_bypass          => $proxy_cache_bypass,
       proxy_buffering             => $proxy_buffering,
+      proxy_busy_buffers_size     => $proxy_busy_buffers_size,
+      proxy_max_temp_file_size    => $proxy_max_temp_file_size,
       fastcgi                     => $fastcgi,
       fastcgi_index               => $fastcgi_index,
       fastcgi_param               => $fastcgi_param,
@@ -399,7 +410,7 @@ define nginx::resource::server (
   # Only try to manage these files if they're the default one (as you presumably
   # usually don't want the default template if you're using a custom file.
 
-  if $fastcgi != undef and !defined(File[$fastcgi_params]) and $fastcgi_params == "${::nginx::conf_dir}/fastcgi.conf" {
+  if $fastcgi != undef and !defined(File[$fastcgi_params]) and $fastcgi_params == "${nginx::conf_dir}/fastcgi.conf" {
     file { $fastcgi_params:
       ensure  => present,
       mode    => '0644',
@@ -407,7 +418,7 @@ define nginx::resource::server (
     }
   }
 
-  if $uwsgi != undef and !defined(File[$uwsgi_params]) and $uwsgi_params == "${::nginx::conf_dir}/uwsgi_params" {
+  if $uwsgi != undef and !defined(File[$uwsgi_params]) and $uwsgi_params == "${nginx::conf_dir}/uwsgi_params" {
     file { $uwsgi_params:
       ensure  => present,
       mode    => '0644',
@@ -434,7 +445,8 @@ define nginx::resource::server (
   if $ssl {
     # Access and error logs are named differently in ssl template
 
-    concat::fragment { "${name_sanitized}-ssl-header":
+    File <| title == $ssl_cert or path == $ssl_cert or title == $ssl_key or path == $ssl_key |>
+    -> concat::fragment { "${name_sanitized}-ssl-header":
       target  => $config_file,
       content => template('nginx/server/server_ssl_header.erb'),
       order   => '700',

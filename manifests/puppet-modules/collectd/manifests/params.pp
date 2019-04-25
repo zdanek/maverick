@@ -1,15 +1,18 @@
 #
 class collectd::params {
 
+  $autoloadplugin            = false
   $fqdnlookup                = true
-  $collectd_hostname         = $::hostname
+  $collectd_hostname         = $facts['hostname']
   $conf_content              = undef
+  $config_mode               = '0640'
+  $config_owner              = 'root'
   $interval                  = 10
   $include                   = []
   $internal_stats            = false
-  $purge                     = undef
+  $purge                     = false
   $purge_config              = false
-  $recurse                   = undef
+  $recurse                   = false
   $read_threads              = 5
   $write_threads             = 5
   $timeout                   = 2
@@ -25,6 +28,7 @@ class collectd::params {
   $package_install_options   = undef
   $plugin_conf_dir_mode      = '0750'
   $ci_package_repo           = undef
+  $package_keyserver         = 'keyserver.ubuntu.com'
 
   case $facts['kernel'] {
     'OpenBSD': { $has_wordexp = false }
@@ -39,10 +43,11 @@ class collectd::params {
       $plugin_conf_dir    = "${collectd_dir}/conf.d"
       $service_name       = 'collectd'
       $config_file        = "${collectd_dir}/collectd.conf"
-      $root_group         = 'root'
+      $config_group       = 'root'
       $java_dir           = '/usr/share/collectd/java'
       $default_python_dir = '/usr/local/lib/python2.7/dist-packages'
       $manage_repo        = true
+      $package_configs    = {}
     }
     'Solaris': {
       $package_name       = 'CSWcollectd'
@@ -51,10 +56,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'cswcollectd'
       $config_file        = '/etc/opt/csw/collectd.conf'
-      $root_group         = 'root'
+      $config_group       = 'root'
       $java_dir           = undef
       $default_python_dir = '/opt/csw/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
     'RedHat': {
       $package_name       = 'collectd'
@@ -63,10 +69,16 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/etc/collectd.conf'
-      $root_group         = 'root'
+      $config_group       = 'root'
       $java_dir           = '/usr/share/collectd/java'
       $default_python_dir = '/usr/lib/python2.7/site-packages'
       $manage_repo        = true
+      $package_configs    = {
+        ovs_events => 'ovs-events.conf',
+        ovs_stats => 'ovs-stats.conf',
+        processes => 'processes-config.conf',
+        virt => 'libvirt.conf',
+      }
     }
     'Suse': {
       $package_name       = 'collectd'
@@ -75,10 +87,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/etc/collectd.conf'
-      $root_group         = 'root'
+      $config_group       = 'root'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
     'FreeBSD': {
       $package_name       = 'collectd5'
@@ -87,10 +100,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/usr/local/etc/collectd.conf'
-      $root_group         = 'wheel'
+      $config_group       = 'wheel'
       $java_dir           = undef
       $default_python_dir = '/usr/local/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
     'OpenBSD': {
       $package_name       = 'collectd'
@@ -99,10 +113,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/etc/collectd.conf'
-      $root_group         = '_collectd'
+      $config_group       = '_collectd'
       $java_dir           = undef
       $default_python_dir = '/usr/local/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
     'Archlinux': {
       $package_name       = 'collectd'
@@ -111,10 +126,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/etc/collectd.conf'
-      $root_group         = 'wheel'
+      $config_group       = 'wheel'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
     'Gentoo': {
       $package_name       = 'app-admin/collectd'
@@ -123,10 +139,11 @@ class collectd::params {
       $plugin_conf_dir    = $collectd_dir
       $service_name       = 'collectd'
       $config_file        = '/etc/collectd.conf'
-      $root_group         = 'collectd'
+      $config_group       = 'collectd'
       $java_dir           = undef
       $default_python_dir = '/usr/share/collectd/python'
       $manage_repo        = false
+      $package_configs    = {}
     }
 
     default: {

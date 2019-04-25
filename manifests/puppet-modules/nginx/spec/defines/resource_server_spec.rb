@@ -174,6 +174,18 @@ describe 'nginx::resource::server' do
               match: %r{\s+server_name\s+www.rspec.example.com;}
             },
             {
+              title: 'should not set absolute_redirect',
+              attr: 'absolute_redirect',
+              value: :undef,
+              notmatch: %r{absolute_redirect}
+            },
+            {
+              title: 'should set absolute_redirect off',
+              attr: 'absolute_redirect',
+              value: 'off',
+              match: '  absolute_redirect off;'
+            },
+            {
               title: 'should set auth_basic',
               attr: 'auth_basic',
               value: 'value',
@@ -425,6 +437,47 @@ describe 'nginx::resource::server' do
         end
 
         describe 'server_ssl_header template content' do
+          context 'with ssl' do
+            let :params do
+              default_params.merge(
+                ssl: true,
+                ssl_key: '/tmp/dummy.key',
+                ssl_cert: '/tmp/dummy.crt'
+              )
+            end
+
+            context 'without a value for the nginx_version fact do' do
+              let :facts do
+                facts[:nginx_version] ? facts.delete(:nginx_version) : facts
+              end
+
+              it { is_expected.to contain_concat__fragment("#{title}-ssl-header").with_content(%r{  ssl on;}) }
+            end
+            context 'with fact nginx_version=1.14.1' do
+              let(:facts) { facts.merge(nginx_version: '1.14.1') }
+
+              it { is_expected.to contain_concat__fragment("#{title}-ssl-header").with_content(%r{  ssl on;}) }
+            end
+
+            context 'with fact nginx_version=1.15.1' do
+              let(:facts) { facts.merge(nginx_version: '1.15.1') }
+
+              it { is_expected.to contain_concat__fragment("#{title}-ssl-header").without_content(%r{  ssl on;}) }
+            end
+
+            context 'with ssl cert and key definitions' do
+              let(:pre_condition) do
+                <<-PUPPET
+                file { ['/tmp/dummy.key', '/tmp/dummy.crt']: }
+                include nginx
+                PUPPET
+              end
+
+              it { is_expected.to contain_file('/tmp/dummy.key').with_path('/tmp/dummy.key') }
+              it { is_expected.to contain_concat__fragment("#{title}-ssl-header").that_requires(['File[/tmp/dummy.key]', 'File[/tmp/dummy.crt]']) }
+            end
+          end
+
           [
             {
               title: 'should not contain www to non-www rewrite',
@@ -621,6 +674,18 @@ describe 'nginx::resource::server' do
               match: %r{\s+ssl_prefer_server_ciphers\s+off;}
             },
             {
+              title: 'should not set absolute_redirect',
+              attr: 'absolute_redirect',
+              value: :undef,
+              notmatch: %r{absolute_redirect}
+            },
+            {
+              title: 'should set absolute_redirect off',
+              attr: 'absolute_redirect',
+              value: 'off',
+              match: '  absolute_redirect off;'
+            },
+            {
               title: 'should set auth_basic',
               attr: 'auth_basic',
               value: 'value',
@@ -777,6 +842,12 @@ describe 'nginx::resource::server' do
               attr: 'index_files',
               value: [],
               notmatch: %r{\s+index\s+}
+            },
+            {
+              title: 'should set autoindex',
+              attr: 'autoindex',
+              value: 'on',
+              match: '  autoindex on;'
             }
           ].each do |param|
             context "when #{param[:attr]} is #{param[:value]}" do
@@ -1266,24 +1337,24 @@ describe 'nginx::resource::server' do
 
           context 'when add_header is set' do
             let :params do
-              default_params.merge(add_header: { 'header3' => 'test value 3', 'header2' => 'test value 2', 'header1' => 'test value 1' })
+              default_params.merge(add_header: { 'header3' => { '' => '\'test value 3\' tv3' }, 'header2' => { 'test value 2' => 'tv2' }, 'header1' => 'test value 1' })
             end
 
             it 'has correctly ordered entries in the config' do
-              is_expected.to contain_concat__fragment("#{title}-header").with_content(%r{\s+add_header\s+"header1" "test value 1";\n\s+add_header\s+"header2" "test value 2";\n\s+add_header\s+"header3" "test value 3";\n})
+              is_expected.to contain_concat__fragment("#{title}-header").with_content(%r{\s+add_header\s+"header1" "test value 1";\n\s+add_header\s+"header2" "test value 2" tv2;\n\s+add_header\s+"header3"  'test value 3' tv3;\n})
             end
           end
 
           context 'when add_header is set and ssl => true' do
             let :params do
-              default_params.merge(add_header: { 'header3' => 'test value 3', 'header2' => 'test value 2', 'header1' => 'test value 1' },
+              default_params.merge(add_header: { 'header3' => { '' => '\'test value 3\' tv3' }, 'header2' => { 'test value 2' => 'tv2' }, 'header1' => 'test value 1' },
                                    ssl: true,
                                    ssl_key: 'dummy.key',
                                    ssl_cert: 'dummy.cert')
             end
 
             it 'has correctly ordered entries in the config' do
-              is_expected.to contain_concat__fragment("#{title}-ssl-header").with_content(%r{\s+add_header\s+"header1" "test value 1";\n\s+add_header\s+"header2" "test value 2";\n\s+add_header\s+"header3" "test value 3";\n})
+              is_expected.to contain_concat__fragment("#{title}-ssl-header").with_content(%r{\s+add_header\s+"header1" "test value 1";\n\s+add_header\s+"header2" "test value 2" tv2;\n\s+add_header\s+"header3"  'test value 3' tv3;\n})
             end
           end
         end

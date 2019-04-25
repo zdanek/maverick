@@ -50,9 +50,15 @@ Puppet::Type.newtype(:x509_request) do
   end
 
   newparam(:authentication) do
-    desc "The authentication algorithm: 'rsa' or 'dsa'"
-    newvalues /[dr]sa/
+    desc "The authentication algorithm: 'rsa', 'dsa' or ec"
+    newvalues :rsa, :dsa, :ec
     defaultto :rsa
+  end
+
+  newparam(:encrypted, :boolean => true) do
+    desc 'Whether to generate the key unencrypted. This is needed by some applications like OpenLDAP'
+    newvalues(:true, :false)
+    defaultto true
   end
 
   autorequire(:x509_cert) do

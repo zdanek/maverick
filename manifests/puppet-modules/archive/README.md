@@ -34,13 +34,13 @@ This module manages download, deployment, and cleanup of archive files.
 This module uses types and providers to download and manage compress files,
 with optional lifecycle functionality such as checksum, extraction, and
 cleanup. The benefits over existing modules such as
-[puppet-staging](https://github.com/voxpupoli/puppet-staging):
+[puppet-staging](https://github.com/voxpupuli/puppet-staging):
 
 * Implemented via types and provider instead of exec resource.
 * Follows 302 redirect and propagate download failure.
 * Optional checksum verification of archive files.
 * Automatic dependency to parent directory.
-* Support Windows file extraction via 7zip.
+* Support Windows file extraction via 7zip or PowerShell (Zip file only).
 * Able to cleanup archive files after extraction.
 
 This module is compatible with [camptocamp/archive](https://forge.puppet.com/camptocamp/archive).
@@ -48,9 +48,12 @@ For this it provides compatibility shims.
 
 ## Setup
 
-The module requires 7zip for windows clients which is installed via `include
-'::archive'`. On posix systems, curl is the default provider. The default
-provider can be overwritten by configuring resource defaults in site.pp:
+On Windows 7zip is required to extract all archives except zip files which will
+be extracted with PowerShell if 7zip is not available (requires 
+`System.IO.Compression.FileSystem`/Windows 2012+). Windows clients can install
+7zip via `include '::archive'`. On posix systems, curl is the default provider. 
+The default provider can be overwritten by configuring resource defaults in 
+site.pp:
 
 ```puppet
 Archive {
@@ -112,6 +115,27 @@ archive { '/tmp/test100k.db':
   source   => 'ftp://ftp.otenet.gr/test100k.db',
   username => 'speedtest',
   password => 'speedtest',
+}
+```
+
+If you want to extract a `.tar.gz` file:
+
+```puppet
+$install_path        = '/opt/wso2'
+$package_name        = 'wso2esb'
+$package_ensure      = '4.9.0'
+$repository_url      = 'http://company.com/repository/wso2'
+$archive_name        = "${package_name}-${package_ensure}.tgz"
+$wso2_package_source = "${repository_url}/${archive_name}"
+
+archive { $archive_name:
+  path         => "/tmp/${archive_name}",
+  source       => $wso2_package_source,
+  extract      => true,
+  extract_path => $install_path,
+  creates      => "${install_path}/${package_name}-${package_ensure}",
+  cleanup      => true,
+  require      => File['wso2_appdir'],
 }
 ```
 
@@ -395,7 +419,7 @@ archive { '/tmp/staging/master.zip':
 * `password`: password to download source file.
 * `allow_insecure`: Ignore HTTPS certificate errors (true|false). (default: false)
 * `cookie`: archive file download cookie.
-* `checksum_type`: archive file checksum type (none|md5|sha1|sha2|sh256|sha384|
+* `checksum_type`: archive file checksum type (none|md5|sha1|sha2|sha256|sha384|
   sha512). (default: none)
 * `checksum`: archive file checksum (match checksum_type)
 * `checksum_url`: archive file checksum source (instead of specify checksum)

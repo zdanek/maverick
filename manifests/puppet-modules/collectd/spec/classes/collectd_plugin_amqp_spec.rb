@@ -1,10 +1,14 @@
 require 'spec_helper'
 
 describe 'collectd::plugin::amqp', type: :class do
-  on_supported_os(test_on).each do |os, facts|
+  on_supported_os(baseline_os_hash).each do |os, facts|
     context "on #{os} " do
       let :facts do
         facts
+      end
+
+      let :pre_condition do
+        'include collectd'
       end
 
       options = os_specific_options(facts)
@@ -39,7 +43,7 @@ describe 'collectd::plugin::amqp', type: :class do
       context 'overriding default parameters' do
         let(:params) do
           { amqphost: 'myhost',
-            amqpport: '5666',
+            amqpport: 5666,
             amqpvhost: 'amqp',
             amqpuser: 'user',
             amqppass: 'pass',

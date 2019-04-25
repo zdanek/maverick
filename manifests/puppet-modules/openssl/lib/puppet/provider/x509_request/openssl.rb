@@ -10,6 +10,8 @@ Puppet::Type.type(:x509_request).provide(:openssl) do
       OpenSSL::PKey::DSA.new(file, resource[:password])
     elsif resource[:authentication] == :rsa
       OpenSSL::PKey::RSA.new(file, resource[:password])
+    elsif resource[:authentication] == :ec
+      OpenSSL::PKey::EC.new(file, resource[:password])
     else
       raise Puppet::Error,
             "Unknown authentication type '#{resource[:authentication]}'"
@@ -34,22 +36,23 @@ Puppet::Type.type(:x509_request).provide(:openssl) do
   end
 
   def create
-    if resource[:password]
-      openssl(
-        'req', '-new',
-        '-key', resource[:private_key],
-        '-config', resource[:template],
-        '-out', resource[:path],
-        '-passin', "pass:#{resource[:password]}"
-      )
-    else
-      openssl(
+    cmd_args = [
         'req', '-new',
         '-key', resource[:private_key],
         '-config', resource[:template],
         '-out', resource[:path]
-      )
+    ]
+
+    if resource[:password]
+      cmd_args.push('-passin')
+      cmd_args.push("pass:#{resource[:password]}")
     end
+
+    if not resource[:encrypted]
+      cmd_args.push('-nodes')
+    end
+
+    openssl(*cmd_args)
   end
 
   def destroy

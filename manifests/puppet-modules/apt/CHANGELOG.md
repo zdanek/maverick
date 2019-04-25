@@ -1,7 +1,174 @@
-# Changelog
+# Change log
 
-All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](http://semver.org).
+All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
+
+## [v7.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.0.0) (2019-04-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...v7.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#853](https://github.com/puppetlabs/puppetlabs-apt/pull/853) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- Allow weak SSL verification for apt\_key [\#849](https://github.com/puppetlabs/puppetlabs-apt/pull/849) ([tuxmea](https://github.com/tuxmea))
+
+## [6.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.3.0) (2019-01-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.2.1...6.3.0)
+
+### Added
+
+- Add support for dist-upgrade & autoremove action [\#832](https://github.com/puppetlabs/puppetlabs-apt/pull/832) ([aboks](https://github.com/aboks))
+- \(MODULES-8321\) - Add manage\_auth\_conf parameter [\#831](https://github.com/puppetlabs/puppetlabs-apt/pull/831) ([eimlav](https://github.com/eimlav))
+
+### Fixed
+
+- \(MODULES-8418\) Fix /etc/apt/auth.conf owner changing endlessly [\#836](https://github.com/puppetlabs/puppetlabs-apt/pull/836) ([antaflos](https://github.com/antaflos))
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#835](https://github.com/puppetlabs/puppetlabs-apt/pull/835) ([tphoney](https://github.com/tphoney))
+- \(MODULES-8326\) - apt-transport-https not ensured properly [\#830](https://github.com/puppetlabs/puppetlabs-apt/pull/830) ([eimlav](https://github.com/eimlav))
+
+## [6.2.1](https://github.com/puppetlabs/puppetlabs-apt/tree/6.2.1) (2018-11-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.2.0...6.2.1)
+
+### Fixed
+
+- \(MODULES-8272\) - Revert "Autorequire dirmngr in apt\_key types" [\#825](https://github.com/puppetlabs/puppetlabs-apt/pull/825) ([eimlav](https://github.com/eimlav))
+
+## [6.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.2.0) (2018-11-19)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.1.1...6.2.0)
+
+### Added
+
+- \(MODULES-8081\): add support for hkps:// protocol in apt::key [\#815](https://github.com/puppetlabs/puppetlabs-apt/pull/815) ([simondeziel](https://github.com/simondeziel))
+
+### Fixed
+
+- Apt-key fixes to properly work on Debian 9 [\#822](https://github.com/puppetlabs/puppetlabs-apt/pull/822) ([ekohl](https://github.com/ekohl))
+- \(maint\) - Update Link to REFERENCE.md [\#811](https://github.com/puppetlabs/puppetlabs-apt/pull/811) ([pmcmaw](https://github.com/pmcmaw))
+
+## [6.1.1](https://github.com/puppetlabs/puppetlabs-apt/tree/6.1.1) (2018-10-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.1.0...6.1.1)
+
+### Fixed
+
+- Revert "\(MODULES-6408\) - Fix dirmngr install failing" [\#808](https://github.com/puppetlabs/puppetlabs-apt/pull/808) ([eimlav](https://github.com/eimlav))
+
+## [6.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.1.0) (2018-09-28)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.0.0...6.1.0)
+
+### Added
+
+- pdksync - \(FM-7392\) - Puppet 6 Testing Changes [\#800](https://github.com/puppetlabs/puppetlabs-apt/pull/800) ([pmcmaw](https://github.com/pmcmaw))
+- pdksync - \(MODULES-6805\) metadata.json shows support for puppet 6 [\#798](https://github.com/puppetlabs/puppetlabs-apt/pull/798) ([tphoney](https://github.com/tphoney))
+- \(MODULES-3307\) - Auto update expired keys [\#795](https://github.com/puppetlabs/puppetlabs-apt/pull/795) ([eimlav](https://github.com/eimlav))
+- \(FM-7316\) - Implementation of the i18n process [\#789](https://github.com/puppetlabs/puppetlabs-apt/pull/789) ([david22swan](https://github.com/david22swan))
+- Introduce an Apt::Proxy type to validate the hash [\#773](https://github.com/puppetlabs/puppetlabs-apt/pull/773) ([ekohl](https://github.com/ekohl))
+
+### Fixed
+
+- \(MODULES-6408\) - Fix dirmngr install failing [\#801](https://github.com/puppetlabs/puppetlabs-apt/pull/801) ([eimlav](https://github.com/eimlav))
+- \(MODULES-1630\) - Expanding source list fix to cover all needed versions [\#788](https://github.com/puppetlabs/puppetlabs-apt/pull/788) ([david22swan](https://github.com/david22swan))
+
+## [6.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.0.0) (2018-08-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/5.0.1...6.0.0)
+
+### Changed
+
+- \(MODULES-7668\) Remove support for Puppet 4.7 [\#780](https://github.com/puppetlabs/puppetlabs-apt/pull/780) ([jarretlavallee](https://github.com/jarretlavallee))
+
+### Added
+
+- Check existence of gpg key in apt:ppa [\#774](https://github.com/puppetlabs/puppetlabs-apt/pull/774) ([wenzhengjiang](https://github.com/wenzhengjiang))
+- Make sure PPA source file is absent when apt-add-repository fails [\#768](https://github.com/puppetlabs/puppetlabs-apt/pull/768) ([wenzhengjiang](https://github.com/wenzhengjiang))
+
+## 5.0.1
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/5.0.0...5.0.1)
+
+### Fixed
+
+- \(MODULES-7540\) - add apt-transport-https with https [\#775](https://github.com/puppetlabs/puppetlabs-apt/pull/775) ([tphoney](https://github.com/tphoney))
+
+## [5.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/5.0.0) (2018-07-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/4.5.1...5.0.0)
+
+### Changed
+
+- \[FM-6956\] Removal of unsupported Debian 7 from apt [\#760](https://github.com/puppetlabs/puppetlabs-apt/pull/760) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(MODULES-7467\) Update apt to support Ubuntu 18.04 [\#769](https://github.com/puppetlabs/puppetlabs-apt/pull/769) ([david22swan](https://github.com/david22swan))
+- Support managing login configurations in /etc/apt/auth.conf [\#752](https://github.com/puppetlabs/puppetlabs-apt/pull/752) ([antaflos](https://github.com/antaflos))
+
+### Fixed
+
+- \(MODULES-7327\) - Update README with supported OS [\#767](https://github.com/puppetlabs/puppetlabs-apt/pull/767) ([pmcmaw](https://github.com/pmcmaw))
+- \(bugfix\) Dont run ftp tests in travis [\#766](https://github.com/puppetlabs/puppetlabs-apt/pull/766) ([tphoney](https://github.com/tphoney))
+- \(maint\) make apt testing more stable, cleanup [\#764](https://github.com/puppetlabs/puppetlabs-apt/pull/764) ([tphoney](https://github.com/tphoney))
+- Remove .length from variable $pin\_release in app [\#754](https://github.com/puppetlabs/puppetlabs-apt/pull/754) ([paladox](https://github.com/paladox))
+- Replace UTF-8 whitespace in comment [\#748](https://github.com/puppetlabs/puppetlabs-apt/pull/748) ([bernhardschmidt](https://github.com/bernhardschmidt))
+- Fix "E: Unable to locate package  -y" [\#747](https://github.com/puppetlabs/puppetlabs-apt/pull/747) ([aboks](https://github.com/aboks))
+- Fix automatic coercion warning [\#743](https://github.com/puppetlabs/puppetlabs-apt/pull/743) ([smortex](https://github.com/smortex))
+
+## Supported Release [4.5.1]
+### Summary
+This release fixes CVE-2018-6508 which is a potential arbitrary code execution via tasks.
+
+### Fixed
+- Fix init task for arbitrary remote code
+
+## Supported Release [4.5.0]
+### Summary
+This release uses the PDK convert functionality which in return makes the module PDK compliant. It also includes a roll up of maintenance changes.
+
+### Added
+- PDK convert apt ([MODULES-6452](https://tickets.puppet.com/browse/MODULES-6452)).
+- Testing on Travis using rvm 2.4.1.
+- Modulesync updates.
+
+### Fixed
+- Changes to address additional Rubocop failures.
+- (maint) Addressing puppet-lint doc warnings.
+
+### Removed
+- `gem update bundler` command in .travis.yml due to ([MODULES-6339](https://tickets.puppet.com/browse/MODULES-6339)).
+
+## Supported Release [4.4.1]
+### Summary
+This release is to update the formatting of the module, Rubocop having been run for all ruby files and been set to run automatically on all future commits.
+
+### Changed
+- Rubocop has been implemented.
+
+## Supported Release [4.4.0]
+### Summary
+
+This release is a rollup of new features and fixes.
+
+#### Added
+- Install `apt-transport-https` if using Debian 7, 8, 9 or Ubuntu 14.04, 16.04.
+- Adds a boolean option `direct` to proxy settings to bypass `https_proxy` if not set.
+- Adds facter facts for `dist-upgrade` apt updates.
+
+#### Changed
+- Update class is now private.
+- Some tidyup of ruby code from Rubocop.
+- Fixed circular dependency for package dirmngr.
+- Debian updates are no longer treated as security updates.
+- Legacy functions have been removed.
+- Updates to tests.
+
+#### Fixed
+- [(MODULES-4265)](https://tickets.puppetlabs.com/browse/MODULES-4265) Detect security updates from multiple sources.
 
 ## Supported Release [4.3.0]
 ### Summary
@@ -248,7 +415,7 @@ As this is a major rewrite of the module there are a great number of backwards i
 #### Changes to default behavior
 - By default purge unmanaged files in 'sources.list', 'sources.list.d', 'preferences', and 'preferences.d'.
 - Changed default for `package_manage` in `apt::ppa` to `false`. Set to `true` in a single PPA if you need the package to be managed.
-- `apt::source` will no longer include the `src` entries by default. 
+- `apt::source` will no longer include the `src` entries by default.
 - `pin` in `apt::source` now defaults to `undef` instead of `false`
 
 #### Features
@@ -359,7 +526,7 @@ This release has added tests to ensure graceful failure on OSX.
 ## 2014-06-04 - Release 1.5.0
 ### Summary
 
-This release adds support for Ubuntu 14.04.  It also includes many new features 
+This release adds support for Ubuntu 14.04.  It also includes many new features
 and important bugfixes.  One huge change is that apt::key was replaced with
 apt_key, which allows you to use puppet resource apt_key to inventory keys on
 your system.
@@ -522,7 +689,7 @@ This release includes Ubuntu 12.10 (Quantal) support for PPAs.
 
 ## 2012-05-04 - Puppet Labs <info@puppetlabs.com> - Release 0.0.3
 ### Summary
- 
+
  * only invoke apt-get update once
  * only install python-software-properties if a ppa is added
  * support 'ensure => absent' for all defined types
@@ -605,6 +772,14 @@ This release includes Ubuntu 12.10 (Quantal) support for PPAs.
 * 87777d8 Typo in README
 * f848bac First commit
 
-
+[5.0.1]:https://github.com/puppetlabs/puppetlabs-apt/compare/5.0.0...5.0.1
+[5.0.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.5.1...5.0.0
+[4.5.1]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.5.0...4.5.1
+[4.5.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.4.1...4.5.0
+[4.4.1]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.4.0...4.4.1
+[4.4.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.3.0...4.4.0
 [4.3.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.2.0...4.3.0
 [4.2.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.1.0...4.2.0
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*

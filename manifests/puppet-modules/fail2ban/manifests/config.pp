@@ -1,37 +1,99 @@
-# Configure fail2ban service
+# fail2ban/manifests/config.pp
 #
-# Setup jail.local as a concatenated file. This file will get all jails added
-# to it.
+# This class should not be included directly. Users must use the fail2ban
+# class.
+#
+# @summary Configure fail2ban service
+#
+# @api private
+#
 class fail2ban::config {
 
+  $loglvl = $fail2ban::loglvl
+  $logtarget = $fail2ban::logtarget
+  $syslogsocket = $fail2ban::syslogsocket
+  $socket = $fail2ban::socket
+  $pidfile = $fail2ban::pidfile
+  $dbfile = $fail2ban::dbfile
+  $dbpurgeage = $fail2ban::dbpurgeage
+
+  file { '/etc/fail2ban/fail2ban.conf':
+    ensure  => present,
+    owner   => 'root',
+    group   => 0,
+    mode    => '0644',
+    content => template('fail2ban/fail2ban.conf.erb'),
+  }
+
+  if $fail2ban::rm_fail2ban_local {
+    file { '/etc/fail2ban/fail2ban.local':
+      ensure => absent,
+    }
+  }
+  if $fail2ban::purge_fail2ban_dot_d {
+    file { '/etc/fail2ban/fail2ban.d':
+      ensure  => directory,
+      recurse => true,
+      purge   => true,
+    }
+  }
+
+
+  $persistent_bans = $fail2ban::persistent_bans
+
+  $enabled = $fail2ban::enabled
   $ignoreip = $fail2ban::ignoreip
   $bantime = $fail2ban::bantime
   $findtime = $fail2ban::findtime
   $maxretry = $fail2ban::maxretry
+  $ignorecommand = $fail2ban::ignorecommand
   $backend = $fail2ban::backend
   $destemail = $fail2ban::destemail
+  $sender = $fail2ban::sender
   $banaction = $fail2ban::banaction
+  $chain = $fail2ban::chain
+  $port = $fail2ban::port
   $mta = $fail2ban::mta
   $protocol = $fail2ban::protocol
   $action = $fail2ban::action
+  $usedns = $fail2ban::usedns
+  $logpath = $fail2ban::logpath
+  $logencoding = $fail2ban::logencoding
+  $failregex = $fail2ban::failregex
+  $ignoreregex = $fail2ban::ignoreregex
 
-  $jail_template_name = $::osfamily ? {
-    'Debian' => "${module_name}/debian_jail.conf.erb",
-    'RedHat' => "${module_name}/rhel_jail.conf.erb",
-    default  => fail("Unsupported Operating System family: ${::osfamily}"),
+  case $facts['os']['family'] {
+    'Debian': {
+      $jail_template_name = "${module_name}/debian/jail.conf.erb"
+      $before_include = 'iptables-common.conf'
+    }
+    'RedHat': {
+      $jail_template_name = "${module_name}/rhel/jail.conf.erb"
+      $before_include = 'iptables-common.conf'
+    }
+    default: { fail("Unsupported Operating System family: ${facts['os']['family']}") }
   }
 
   if $fail2ban::purge_jail_dot_d {
-    if $::operatingsystem == 'Debian' and $::operatingsystemmajrelease == 7 {
-      debug('Not purging jail.d on wheezy since the package doesn\'t include capability to use it.')
+    file { '/etc/fail2ban/jail.d':
+      ensure  => directory,
+      recurse => true,
+      purge   => true,
     }
-    else {
-      file { '/etc/fail2ban/jail.d':
-        ensure  => directory,
-        recurse => true,
-        purge   => true,
-      }
+  }
+  if $persistent_bans {
+    file { '/etc/fail2ban/persistent.bans':
+      ensure  => 'present',
+      replace => 'no',
+      mode    => '0644',
     }
+  }
+  file { '/etc/fail2ban/action.d/iptables-multiport.conf':
+    ensure  => present,
+    owner   => 'root',
+    group   => 0,
+    mode    => '0644',
+    content => template('fail2ban/iptables-multiport.erb'),
   }
 
   file { '/etc/fail2ban/jail.conf':
@@ -42,38 +104,9 @@ class fail2ban::config {
     content => template($jail_template_name),
   }
 
-  concat { '/etc/fail2ban/jail.local':
-    owner => 'root',
-    # The next line is not portable to some BSDs, but since the concat module
-    # doesn't let one use integer values for the $group parameter (doing so
-    # produces an error with future parser or 4.x) we're using a string value
-    # instead.
-    # See https://tickets.puppetlabs.com/browse/MODULES-2999 for report on the
-    # concat module. If this gets fixed and the concat module permits usage of
-    # integer values, we'll switch back to using a value of 0 for the $group
-    # parameter.
-    group => 'root',
-    mode  => '0644',
-  }
-  # Define one fragment with a header for the file, otherwise the concat exec
-  # errors out.
-  concat::fragment { 'jail_header':
-    target => '/etc/fail2ban/jail.local',
-    source => 'puppet:///modules/fail2ban/jail.header',
-    order  => 01,
-  }
-
-  if $::operatingsystem == 'gentoo' {
-    file { '/etc/conf.d/fail2ban':
-      ensure => present,
-      source => [
-        "puppet:///modules/site_fail2ban/conf.d/${::fqdn}/fail2ban",
-        'puppet:///modules/site_fail2ban/conf.d/fail2ban',
-        'puppet:///modules/fail2ban/conf.d/fail2ban'
-      ],
-      owner => 'root',
-      group => 0,
-      mode  => '0644';
+  if $fail2ban::rm_jail_local {
+    file { '/etc/fail2ban/jail.local':
+      ensure => absent,
     }
   }
 
