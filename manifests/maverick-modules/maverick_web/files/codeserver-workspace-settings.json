@@ -1,0 +1,7 @@
+{
+    "vsicons.presets.hideFolders": true,
+    "files.exclude": {
+        "**.*": true
+    },
+    "python.analysis.logLevel": "Information"
+}

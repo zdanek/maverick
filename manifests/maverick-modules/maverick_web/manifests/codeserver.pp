@@ -6,11 +6,23 @@ class maverick_web::codeserver (
     $filewatchers = "8192"
 ) {
 
-    file { "/srv/maverick/data/web/codeserver":
+    file { [ "/srv/maverick/data/web/codeserver", "/srv/maverick/data/web/codeserver/User", "/srv/maverick/.vscode" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => "755",
+    } ->
+    file { "/srv/maverick/data/web/codeserver/User/settings.json":
+        owner   => "mav",
+        group   => "mav",
+        source  => "puppet:///modules/maverick_web/codeserver-settings.json",
+        replace => false,
+    } ->
+    file { "/srv/maverick/.vscode/settings.json":
+        owner   => "mav",
+        group   => "mav",
+        source  => "puppet:///modules/maverick_web/codeserver-workspace-settings.json",
+        replace => false,
     }
 
     if ! ("install_flag_codeserver" in $installflags) {
@@ -117,8 +129,7 @@ class maverick_web::codeserver (
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
     }
-    
-    
+  
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "codeserver":
             ports       => $webport,
