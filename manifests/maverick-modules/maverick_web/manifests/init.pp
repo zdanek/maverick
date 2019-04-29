@@ -1,5 +1,6 @@
 class maverick_web (
-    $cloud9 = true,
+    $cloud9 = false,
+    $codeserver = true,
     $nodejs = true,
     $webserver = true,
     $webserver_type = "nginx",
@@ -20,6 +21,10 @@ class maverick_web (
         class { "maverick_web::cloud9": }
     }
     
+    if $codeserver == true {
+        class { "maverick_web::codeserver": }
+    }
+
     file { [ "/srv/maverick/data/web", "/srv/maverick/config/web", "/srv/maverick/var/log/web" ]:
         ensure      => directory,
         owner       => "mav",

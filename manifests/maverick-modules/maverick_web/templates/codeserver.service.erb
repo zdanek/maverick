@@ -1,0 +1,12 @@
+[Unit]
+Description=CodeServer
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --port <%= @webport %> --allow-http --disable-telemetry --password <%= @password %>
+User=mav
+
+[Install]
+WantedBy=multi-user.target
