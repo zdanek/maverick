@@ -85,6 +85,14 @@ class maverick_web::codeserver (
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
     } ->
+    exec { "codeserver-ext-nightowl":
+        command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension sdras.night-owl",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/sdras.night-owl-*/package.json",
+        before      => Service_wrapper["maverick-codeserver"],
+        notify      => Service_wrapper["maverick-codeserver"],
+    } ->
     exec { "codeserver-ext-gitlens":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension eamodio.gitlens",
         user        => "mav",
