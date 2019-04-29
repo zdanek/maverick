@@ -39,6 +39,7 @@ class maverick_web::codeserver (
             timeout		=> 0,
             user        => "mav",
             require     => Class["maverick_web::nodejs"],
+            before      => Exec["codeserver-ext-python"],
         } ->
         exec { "codeserver-build":
             command		=> "/usr/bin/yarn task build:server:binary >/srv/maverick/var/log/build/codeserver.build.log 2>&1",
@@ -55,7 +56,6 @@ class maverick_web::codeserver (
         } ->
         file { "/srv/maverick/var/build/.install_flag_codeserver":
             ensure      => present,
-            before      => Exec["codeserver-ext-python"],
         }
     }
 
