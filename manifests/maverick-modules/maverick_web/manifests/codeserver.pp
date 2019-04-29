@@ -43,6 +43,7 @@ class maverick_web::codeserver (
         } ->
         file { "/srv/maverick/var/build/.install_flag_codeserver":
             ensure      => present,
+            before      => Exec["codeserver-ext-python"],
         }
     }
 
@@ -59,7 +60,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-python.python-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-cplusplus":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension ms-vscode.cpptools",
         user        => "mav",
@@ -67,7 +68,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-vscode.cpptools-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-vscodeicons":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension vscode-icons-team.vscode-icons",
         user        => "mav",
@@ -75,7 +76,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/vscode-icons-team.vscode-icons-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-onedarkpro":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension zhuangtongfa.material-theme",
         user        => "mav",
@@ -83,7 +84,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/zhuangtongfa.material-theme-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-gitlens":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension eamodio.gitlens",
         user        => "mav",
@@ -91,7 +92,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/eamodio.gitlens-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-vetur":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension octref.vetur",
         user        => "mav",
@@ -99,7 +100,7 @@ class maverick_web::codeserver (
         unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/octref.vetur-*/package.json",
         before      => Service_wrapper["maverick-codeserver"],
         notify      => Service_wrapper["maverick-codeserver"],
-    }
+    } ->
     exec { "codeserver-ext-puppet":
         command     => "/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --install-extension jpogran.puppet-vscode",
         user        => "mav",
