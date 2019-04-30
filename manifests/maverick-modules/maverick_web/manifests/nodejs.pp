@@ -11,7 +11,7 @@ class maverick_web::nodejs (
     # Nodesource repo doesn't support Pi Zero/armv6l, install manually
     if $::raspberry_present == "yes" {
         exec { "armv6l-nodejs":
-            command     => "/usr/bin/wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/install-node-v8.9.0.sh | bash",
+            command     => "/usr/bin/wget -O - https://raw.githubusercontent.com/sdesalas/node-pi-zero/master/install-node-v10.15.0.sh | bash",
             creates     => "/opt/nodejs/bin/node",
             timeout     => 0,
         } ->
@@ -21,7 +21,7 @@ class maverick_web::nodejs (
         }
     } else {
         class { 'nodejs':
-            repo_url_suffix           => '8.x',
+            repo_url_suffix           => '10.x',
             repo_release              => $_release,
             nodejs_package_ensure     => latest,
         }
