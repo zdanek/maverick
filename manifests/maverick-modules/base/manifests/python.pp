@@ -4,6 +4,7 @@ class base::python (
 ) {
 
     # Install custom python 3.7
+    # It is STRONGLY recommended not to disable this - Maverick and associated projects target python 3.7+
     if $maverick_python == true {
         # If ~/var/build/.install_flag_python exists, skip pulling source and compiling
         if ! ("install_flag_python" in $installflags) {
@@ -102,6 +103,16 @@ class base::python (
     } ->
     install_python_module { "pip-virtualenvwrapper":
         pkgname     => "virtualenvwrapper",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "pip-black":
+        pkgname     => "black",
+        ensure      => present,
+        timeout     => 0,
+    } ->
+    install_python_module { "pip-flake8":
+        pkgname     => "flake8",
         ensure      => present,
         timeout     => 0,
     }
