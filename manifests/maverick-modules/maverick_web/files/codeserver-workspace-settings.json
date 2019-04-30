@@ -3,5 +3,12 @@
     "files.exclude": {
         "**.*": true
     },
-    "python.analysis.logLevel": "Information"
+    "python.analysis.logLevel": "Information",
+    "python.pythonPath": "/srv/maverick/software/python/bin/python3",
+    "python.linting.pylintPath": "/srv/maverick/software/python/bin/pylint",
+    "python.unitTest.pyTestPath": "/srv/maverick/software/python/bin/pytest",
+    "python.formatting.blackPath": "/srv/maverick/software/python/bin/black",
+    "python.formatting.provider": "black",
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": "/srv/maverick/software/python/bin/flake8"
 }
