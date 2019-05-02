@@ -53,10 +53,10 @@ class base::python (
 
         # This makes the custom python3 the system default, at least by path invocation
         file { "/etc/profile.d/99-maverick-python-path.sh":
-            content => "export PATH=/srv/maverick/software/python/bin:\$PATH",
             owner   => "root",
             group   => "root",
             mode    => "0644",
+            content => 'NEWPATH="/srv/maverick/software/python/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
 
         # Remove the pip binary from custom python, it interferes with system python2

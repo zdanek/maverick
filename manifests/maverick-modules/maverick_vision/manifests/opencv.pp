@@ -162,13 +162,15 @@ class maverick_vision::opencv (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => "export PATH=/srv/maverick/software/opencv/bin:\$PATH",
+        #content     => "export PATH=/srv/maverick/software/opencv/bin:\$PATH",
+        content     => 'NEWPATH="/srv/maverick/software/opencv/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-opencv-pkgconfig.sh":
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => "export PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH",
+        #content     => "export PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH",
+        content     => 'NEWPATH="/srv/maverick/software/opencv/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-opencv-ldlibrarypath.sh":
         ensure      => absent,
@@ -184,13 +186,14 @@ class maverick_vision::opencv (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => "export PYTHONPATH=\$PYTHONPATH:/srv/maverick/software/opencv/lib/python3.7/site-packages",
+        #content     => "export PYTHONPATH=\$PYTHONPATH:/srv/maverick/software/opencv/lib/python3.7/site-packages",
+        content     => 'NEWPATH="/srv/maverick/software/opencv/lib/python3.7/site-packages"; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-opencv-cmake.sh":
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => "export CMAKE_PREFIX_PATH=/srv/maverick/software/opencv:\$CMAKE_PREFIX_PATH",
+        content     => 'NEWPATH="/srv/maverick/software/opencv"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
     }
 
     if $openvino == true {

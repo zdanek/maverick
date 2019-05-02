@@ -66,11 +66,29 @@ class maverick_vision::visionlibs (
                 ensure  => present,
             }
         }
-        # Set profile script for custom tbb location
-        file { "/etc/profile.d/50-maverick-tbb-paths.sh":
+        # Set profile scripts for custom tbb location
+        file { "/etc/profile.d/50-maverick-tbb-cpath.sh":
             mode        => "644",
-            source      => "puppet:///modules/maverick_vision/tbb-paths.sh",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/tbb/include"; if [ -n "${CPATH##*${NEWPATH}}" -a -n "${CPATH##*${NEWPATH}:*}" ]; then export CPATH=$NEWPATH:$CPATH; fi',
+        } ->
+        file { "/etc/profile.d/50-maverick-tbb-librarypath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; if [ -n "${LIBRARY_PATH##*${NEWPATH}}" -a -n "${LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LIBRARY_PATH=$NEWPATH:$LIBRARY_PATH; fi',
+        } ->
+        file { "/etc/profile.d/50-maverick-tbb-ldlibrarypath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
         }
+        file { "/etc/profile.d/50-maverick-tbb-paths.sh":
+            ensure      => absent,
+        }
+
     }
 
 }

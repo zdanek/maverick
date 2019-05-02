@@ -74,7 +74,7 @@ class maverick_hardware::peripheral::realsense (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => "export CMAKE_PREFIX_PATH=\$CMAKE_PREFIX_PATH:/srv/maverick/software/realsense-sdk2",
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
         }
 
         if ! ("install_flag_realsense-sdk2" in $installflags) {

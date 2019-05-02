@@ -77,7 +77,7 @@ class base::maverick (
     concat::fragment { "maverickpath-base":
         target      => "/etc/profile.d/maverick-path.sh",
         order       => 1,
-        content     => "export PATH=\$PATH:/srv/maverick/software/maverick/bin",
+        content     => 'NEWPATH="/srv/maverick/software/maverick/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
     }
     
     # Create symlinks for maverick subcommands

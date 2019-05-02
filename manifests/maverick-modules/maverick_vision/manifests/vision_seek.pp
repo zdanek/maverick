@@ -34,13 +34,13 @@ class maverick_vision::vision_seek (
                 ensure      => present,
                 owner       => mav,
                 mode        => "644"
-            } ->
-            file { "/etc/profile.d/70-maverick-libseek-thermal-pkgconfig.sh":
-                mode        => "644",
-                owner       => "root",
-                group       => "root",
-                content     => "export PKG_CONFIG_PATH=/srv/maverick/software/libseek-thermal/lib/pkgconfig:\$PKG_CONFIG_PATH",
             }
+        }
+        file { "/etc/profile.d/70-maverick-libseek-thermal-pkgconfig.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/libseek-thermal/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
         }
     }
 
