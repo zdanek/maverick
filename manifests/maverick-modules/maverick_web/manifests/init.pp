@@ -25,7 +25,7 @@ class maverick_web (
         class { "maverick_web::codeserver": }
     }
 
-    file { [ "/srv/maverick/data/web", "/srv/maverick/config/web", "/srv/maverick/var/log/web" ]:
+    file { [ "/srv/maverick/data/web", "/srv/maverick/config/web", "/srv/maverick/var/log/web", "/srv/maverick/var/lib/web", ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
