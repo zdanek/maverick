@@ -1,5 +1,6 @@
 class base::locale (
-    $locale = "en_GB.UTF-8",
+    $default_locale = "en_GB.UTF-8",
+    $locales = ["en_GB.UTF-8 UTF-8", "en_US.UTF-8 UTF-8"],
     $timezone = "Europe/London",
     $language_pack = "locales-all",
 ) {
@@ -15,17 +16,11 @@ class base::locale (
         }
         */
     }
-
-    if $locale {
-        $_locale = $locale
-    } else {
-        $_locale = "en_GB.UTF-8 UTF-8"
-    }
     
     # Set system locale
     class { "locales":
-        default_locale      => "${_locale}",
-        locales             => [ "${_locale}" ],
+        default_locale      => $default_locale,
+        locales             => $locales,
     }
 
     # Set the timezone using systemd
