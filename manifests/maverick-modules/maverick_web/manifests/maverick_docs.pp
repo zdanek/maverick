@@ -11,7 +11,7 @@ class maverick_web::maverick_docs (
     nginx::resource::location { "web-maverick-docs":
         ensure          => present,
         ssl             => true,
-        location        => "/web/maverick-docs",
+        location        => "/web/docs/maverick",
         location_alias  => "/srv/maverick/software/maverick/docs",
         index_files     => ["index.html"],
         server          => $server_hostname,
@@ -30,7 +30,7 @@ class maverick_web::maverick_docs (
         } ->
         install_python_module { "pip-sphinx-rtd":
             pkgname     => "sphinx-rtd-theme",
-            url         => "git+https://github.com/ArduPilot/sphinx_rtd_theme.git",
+            url         => "git+https://github.com/fnoop/sphinx_rtd_theme.git",
             ensure      => present,
         } ->
         install_python_module { "pip-sphinx-youtube":
@@ -58,7 +58,7 @@ class maverick_web::maverick_docs (
         nginx::resource::location { "web-ardupilot-wiki":
             ensure          => present,
             ssl             => true,
-            location        => "/web/ardupilot-wiki",
+            location        => "/web/docs/ardupilot",
             location_alias  => "/srv/maverick/var/lib/web/ardupilot_wiki",
             index_files     => ["index.html"],
             server          => $server_hostname,
