@@ -48,6 +48,12 @@ class maverick_web::maverick_docs (
             dest        => "/srv/maverick/software/ardupilot_wiki",
             revision    => "destdir",
         } ->
+        file { "/srv/maverick/software/ardupilot_wiki/common_conf.py":
+            source      => "puppet:///modules/maverick_web/arduwiki_common_conf.py",
+        } ->
+        file { "/srv/maverick/software/ardupilot_wiki/ardupilot/source/index.rst":
+            source      => "puppet:///modules/maverick_web/arduwiki_index.rst",
+        } ->
         exec { "ardupilot_wiki_compile":
             command     => "/srv/maverick/software/python/bin/python3 /srv/maverick/software/ardupilot_wiki/update.py --destdir=/srv/maverick/var/lib/web/ardupilot_wiki",
             user        => 'mav',
