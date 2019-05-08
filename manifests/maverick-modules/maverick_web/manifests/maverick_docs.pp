@@ -1,6 +1,7 @@
 class maverick_web::maverick_docs (
     $server_hostname = $maverick_web::server_fqdn,
     $ardupilot_docs = true,
+    $px4_docs = true,
 ) {
 
     file { "/srv/maverick/software/maverick-docs":
@@ -70,6 +71,39 @@ class maverick_web::maverick_docs (
             server          => $server_hostname,
             require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
         }
+    }
 
+    if $px4_docs == true {
+        oncevcsrepo { "git-px4_docs":
+            gitsource   => "https://github.com/PX4/px4_user_guide.git",
+            dest        => "/srv/maverick/software/px4_user_guide",
+        } ->
+        package { 'gitbook-cli':
+            ensure   => 'latest',
+            provider => 'npm',
+        } ->
+        exec { 'gitbook-px4-install':
+            command => "/usr/bin/gitbook install",
+            user    => "mav",
+            timeout => 0,
+            cwd     => "/srv/maverick/software/px4_user_guide",
+            creates => "/srv/maverick/software/px4_user_guide/node_modules/gitbook-plugin-mathjax",
+        } ->
+        exec { 'gitbook-px4-build':
+            command => "/usr/bin/gitbook build --format website",
+            user    => "mav",
+            timeout => 0,
+            cwd     => "/srv/maverick/software/px4_user_guide",
+            creates => "/srv/maverick/software/px4_user_guide/_book/en/index.html",
+        } ->
+        nginx::resource::location { "web-px4-guide":
+            ensure          => present,
+            ssl             => true,
+            location        => "/web/docs/px4",
+            location_alias  => "/srv/maverick/software/px4_user_guide/_book",
+            index_files     => ["index.html"],
+            server          => $server_hostname,
+            require         => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+        }
     }
 }
