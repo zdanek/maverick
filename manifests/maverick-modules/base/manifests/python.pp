@@ -1,6 +1,6 @@
 class base::python (
     $maverick_python = true,
-    $python_version = "v3.7.2"
+    $python_version = "v3.7.3"
 ) {
 
     # Install custom python 3.7
@@ -26,8 +26,8 @@ class base::python (
                 require     => [ Package["libffi-dev"], Package["tk-dev"], Package["libbz2-dev"], ],
             } ->
             exec { "python-make":
-                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib"],
-                command     => "/usr/bin/make >/srv/maverick/var/log/build/python.make.out 2>&1",
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib", "PROFILE_TASK=-m test.regrtest --pgo -j${::processorcount}"],
+                command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/python.make.out 2>&1",
                 cwd         => "/srv/maverick/var/build/python",
                 creates     => "/srv/maverick/var/build/python/libpython3.so",
                 user        => "mav",
