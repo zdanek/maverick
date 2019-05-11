@@ -88,14 +88,14 @@ class Raspberry(object):
     def gpudata(self):
         try:
             # Interrogate the raspberry gpu for more info
-            self.data['memcpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem arm"]).split("=")[1].rstrip()[:-1]
-            self.data['memgpu'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_mem gpu"]).split("=")[1].rstrip()[:-1]
-            self.data['mpg2codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled MPG2"]).split("=")[1].rstrip()
-            self.data['vc1codec'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "codec_enabled WVC1"]).split("=")[1].rstrip()
-            self.data['cpufreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config arm_freq"]).split("=")[1].rstrip()
-            self.data['ramfreq'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config sdram_freq"]).split("=")[1].rstrip()
-            self.data['l2cache'] = subprocess.check_output(["/opt/vc/bin/vcgencmd", "get_config disable_l2cache"]).split("=")[1].rstrip()
-            fwdata = subprocess.check_output(["/opt/vc/bin/vcgencmd", "version"])
+            self.data['memcpu'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_mem arm").split("=")[1].rstrip()[:-1]
+            self.data['memgpu'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_mem gpu").split("=")[1].rstrip()[:-1]
+            self.data['mpg2codec'] = subprocess.getoutput("/opt/vc/bin/vcgencmd codec_enabled MPG2").split("=")[1].rstrip()
+            self.data['vc1codec'] = subprocess.getoutput("/opt/vc/bin/vcgencmd codec_enabled WVC1").split("=")[1].rstrip()
+            self.data['cpufreq'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config arm_freq").split("=")[1].rstrip()
+            self.data['ramfreq'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config sdram_freq").split("=")[1].rstrip()
+            self.data['l2cache'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config disable_l2cache").split("=")[1].rstrip()
+            fwdata = subprocess.getoutput("/opt/vc/bin/vcgencmd version")
             fwdated = False
             for dat in fwdata.split("\n"):
                 if not fwdated:
@@ -103,8 +103,8 @@ class Raspberry(object):
                     fwdated = True
                 if re.match('version', dat):
                     self.data['fwversion'] = dat.split('version ')[1]
-        except:
-            pass
+        except Exception as e:
+            print("Error: {}".format(repr(e)))
 
     def storagedata(self):
         # Obtain the SD card size from proc
