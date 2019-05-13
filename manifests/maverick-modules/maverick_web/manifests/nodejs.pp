@@ -18,6 +18,12 @@ class maverick_web::nodejs (
         file { "/usr/bin/node":
             ensure  => link,
             target  => "/opt/nodejs/bin/node",
+        } ->
+        file { "/etc/profile.d/20-maverick-nodejs-path.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/opt/nodejs/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
     } else {
         class { 'nodejs':

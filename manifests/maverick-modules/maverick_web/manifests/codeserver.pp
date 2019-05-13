@@ -38,7 +38,7 @@ class maverick_web::codeserver (
             creates		=> "/srv/maverick/software/codeserver/node_modules/node-pty",
             timeout		=> 0,
             user        => "mav",
-            require     => Class["maverick_web::nodejs"],
+            require     => [ Class["maverick_web::nodejs"], Package['yarn'] ],
             before      => Exec["codeserver-ext-python"],
         } ->
         exec { "codeserver-build":
