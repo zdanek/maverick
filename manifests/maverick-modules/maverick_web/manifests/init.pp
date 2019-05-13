@@ -1,6 +1,6 @@
 class maverick_web (
-    $cloud9 = false,
-    $codeserver = true,
+    $cloud9 = true,
+    $codeserver = false,
     $nodejs = true,
     $webserver = true,
     $webserver_type = "nginx",
