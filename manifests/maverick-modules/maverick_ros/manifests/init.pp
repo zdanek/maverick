@@ -78,7 +78,7 @@ class maverick_ros (
                     }
                     "9": { # stretch
                         case $::raspberry_present {
-                            "yes": { $autodist = "kinetic" }
+                            "yes": { $autodist = "melodic" }
                             default: { $autodist = "lunar" }
                         }
                         case $::architecture {
@@ -149,7 +149,6 @@ class maverick_ros (
         # Install ROS bootstrap from ros.org packages
         exec { "ros-repo-key":
             command     => "/usr/bin/apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116",
-            #unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
             creates     => "/etc/apt/sources.list.d/ros-latest.list",
             require     => Package["dirmngr"],
         } ->
@@ -166,15 +165,6 @@ class maverick_ros (
             ensure      => installed,
             require     => Exec["apt_update"],
         }
-        /*
-        $wstool_package = $::operatingsystem ? {
-            'Ubuntu'        => 'python-wstool',
-            'Debian'        => 'python-wstools',
-        }
-        package { "python-wstool":
-            name        => $wstool_package
-        }
-        */
         ensure_packages(["python-wstool", "python-wstools"])
     }
 
@@ -255,14 +245,14 @@ class maverick_ros (
             } ->
             exec { "catkin_rosinstall":
                 environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command         => "/usr/bin/rosinstall_generator ${buildtype} --rosdistro ${_distribution} --deps --tar > ${_distribution}-${buildtype}.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${_distribution}-${buildtype}.rosinstall",
+                command         => "/usr/bin/rosinstall_generator ${buildtype} --rosdistro ${_distribution} --deps --tar > ${_distribution}-${buildtype}.rosinstall && /usr/bin/wstool init -j${buildparallel} src ${_distribution}-${buildtype}.rosinstall >/srv/maverick/var/log/build/ros.rosinstall.out 2>&1",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${builddir}/src/.rosinstall"
             } ->
             exec { "catkin_make":
                 environment     => ["CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y ${_osdistro} && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y ${_osdistro} >/srv/maverick/var/log/build/ros.rosdep.out 2>&1 && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel} >/srv/maverick/var/log/build/ros.catkin_make.out 2>&1",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
@@ -285,7 +275,7 @@ class maverick_ros (
             if $module_opencv == true {
                 # Add opencv to the existing workspace through vision_opencv package
                 exec { "ws_add_opencv":
-                    command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${_distribution} --deps --wet-only --tar >${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src ${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src",
+                    command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${_distribution} --deps --wet-only --tar >${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src >/srv/maverick/var/log/build/ros.opencv.wstoolmerge.out 2>&1 ${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.opencv.wstoolupdate.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${builddir}/src/vision_opencv",
@@ -294,7 +284,7 @@ class maverick_ros (
                     require         => [ Package["libpoco-dev"], Exec["catkin_make"] ],
                 } ->
                 exec { "catkin_make_vision_opencv":
-                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel}",
+                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${installdir}/${_distribution}/lib/libopencv_optflow3.so",
@@ -318,7 +308,7 @@ class maverick_ros (
                 # Add mavros to the existing workspace, this also installs mavlink package as dependency
                 exec { "ws_add_mavros":
                     # command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator tf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator geographic_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator control_toolbox --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator nav_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator eigen_conversions --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator diagnostic_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator tf2_eigen --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
-                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink control_toolbox urdf eigen_conversions diagnostic_updater diagnostic_msgs geometry_msgs nav_msgs sensor_msgs geographic_msgs visualization_msgs tf tf2_eigen --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
+                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink control_toolbox urdf eigen_conversions diagnostic_updater diagnostic_msgs geometry_msgs nav_msgs sensor_msgs geographic_msgs visualization_msgs tf tf2_eigen --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall >/srv/maverick/var/log/build/ros.mavros.wstoolmerge.out 2>&1 && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.mavros.wstoolupdate.out 2>&1",
                     # command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --deps --tar >${_distribution}-mavros.rosinstall && /usr/bin/wstool merge --merge-keep -t src ${_distribution}-mavros.rosinstall -y && /usr/bin/wstool update -t src",
                     cwd             => "${builddir}",
                     user            => "mav",
@@ -329,7 +319,7 @@ class maverick_ros (
                 } ->
                 exec { "catkin_make_mavros":
                     # Note must only use -j1 otherwise we get compiler errors
-                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y $_osdistro && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1 >/srv/maverick/var/log/build/ros.mavros.install.out 2>&1",
+                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y $_osdistro >/srv/maverick/var/log/build/ros.mavros.rosdep.out 2>&1 && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1 >/srv/maverick/var/log/build/ros.mavros.catkin_make.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${installdir}/${_distribution}/lib/libmavros.so",
