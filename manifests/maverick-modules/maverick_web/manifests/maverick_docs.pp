@@ -83,14 +83,16 @@ class maverick_web::maverick_docs (
             provider => 'npm',
         } ->
         exec { 'gitbook-px4-install':
-            command => "/usr/bin/gitbook install",
+            path    => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+            command => "gitbook install",
             user    => "mav",
             timeout => 0,
             cwd     => "/srv/maverick/software/px4_user_guide",
             creates => "/srv/maverick/software/px4_user_guide/node_modules/gitbook-plugin-mathjax",
         } ->
         exec { 'gitbook-px4-build':
-            command => "/usr/bin/gitbook build --format website",
+            path    => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+            command => "gitbook build --format website",
             user    => "mav",
             timeout => 0,
             cwd     => "/srv/maverick/software/px4_user_guide",
