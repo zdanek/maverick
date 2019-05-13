@@ -33,7 +33,8 @@ class maverick_web::codeserver (
             dest        => "/srv/maverick/software/codeserver",
         } ->
         exec { "codeserver-preinstall":
-            command		=> "/usr/bin/yarn >/srv/maverick/var/log/build/codeserver.preinstall.log 2>&1",
+            path        => ["/usr/bin", "/opt/nodejs/bin"],
+            command		=> "yarn >/srv/maverick/var/log/build/codeserver.preinstall.log 2>&1",
             cwd		    => "/srv/maverick/software/codeserver",
             creates		=> "/srv/maverick/software/codeserver/node_modules/node-pty",
             timeout		=> 0,
@@ -42,7 +43,8 @@ class maverick_web::codeserver (
             before      => Exec["codeserver-ext-python"],
         } ->
         exec { "codeserver-build":
-            command		=> "/usr/bin/yarn task build:server:binary >/srv/maverick/var/log/build/codeserver.build.log 2>&1",
+            path        => ["/usr/bin", "/opt/nodejs/bin"],
+            command		=> "yarn task build:server:binary >/srv/maverick/var/log/build/codeserver.build.log 2>&1",
             cwd		    => "/srv/maverick/software/codeserver",
             creates		=> "/srv/maverick/software/codeserver/packages/server/cli-",
             timeout		=> 0,
