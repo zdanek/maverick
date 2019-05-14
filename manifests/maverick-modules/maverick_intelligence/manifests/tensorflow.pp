@@ -1,7 +1,8 @@
 class maverick_intelligence::tensorflow (
     $source = "https://github.com/tensorflow/tensorflow.git",
-    $revision = "r1.4",
-    $bazel_version = "0.7.0",
+    $version = "1.13.1",
+    $source_version = "r1.13",
+    $bazel_version = "0.13.0",
     $arch = undef,
     $active = false,
     $install_type = undef,
@@ -27,31 +28,37 @@ class maverick_intelligence::tensorflow (
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi/lastStableBuild/artifact/output-artifacts/tensorflow-1.7.0rc1-cp27-none-any.whl",
+                url         => "https://www.piwheels.org/simple/tensorflow/tensorflow-1.13.1-cp37-none-linux_armv7l.whl",
                 ensure      => present,
+                timeout     => 0,
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                url         => "http://ci.tensorflow.org/view/Nightly/job/nightly-pi-zero/lastSuccessfulBuild/artifact/output-artifacts/tensorflow-1.7.0rc1-cp27-none-any.whl",
+                url         => "https://www.piwheels.org/simple/tensorflow/tensorflow-1.13.1-cp37-none-linux_armv6l.whl",
                 ensure      => present,
+                timeout     => 0,
             }
         } elsif ($::tegra_present == "yes" and $::tegra_model == "TX1") {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
                 url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX1/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
                 ensure      => present,
+                timeout     => 0,
             }
         } elsif ($::tegra_present == "yes" and $::tegra_model == "TX2") {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
                 url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX2/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
                 ensure      => present,
+                timeout     => 0,
             }
         } else {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                ensure      => present,
+                ensure      => exactly,
+                version     => $version,
+                timeout     => 0,
             }
         }
     } elsif $_install_type == "source" {
@@ -113,7 +120,7 @@ class maverick_intelligence::tensorflow (
             oncevcsrepo { "git-tensorflow":
                 gitsource   => $source,
                 dest        => "/srv/maverick/var/build/tensorflow/tensorflow",
-                revision    => $revision,
+                revision    => $source_version,
                 submodules  => true,
             }
             # Do some hacks for arm build
