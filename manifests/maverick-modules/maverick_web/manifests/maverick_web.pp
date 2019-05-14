@@ -27,7 +27,8 @@ class maverick_web::maverick_web (
         depth       => undef,
     } ->
     exec { "yarn-maverick-web":
-        command     => "/usr/bin/yarn install",
+        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+        command     => "yarn install",
         cwd         => "/srv/maverick/code/maverick-web",
         creates     => "/srv/maverick/code/maverick-web/node_modules/@vue",
         user        => "mav",
@@ -85,17 +86,21 @@ class maverick_web::maverick_web (
     } ->
     # Install -web dependencies
     exec { 'maverick-web-install':
-        command     => "/usr/bin/yarn install",
+        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+        command     => "yarn install",
         cwd         => "/srv/maverick/software/maverick-web",
         creates     => "/srv/maverick/software/maverick-web/node_modules",
         user        => "mav",
+        timeout     => 0,
     } ->
     # Build -web
     exec { 'maverick-web-build':
-        command     => "/usr/bin/yarn run build",
+        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+        command     => "yarn run build",
         cwd         => "/srv/maverick/software/maverick-web",
         creates     => "/srv/maverick/software/maverick-web/dist",
         user        => "mav",
+        timeout     => 0,
     }
     /*
     nginx::resource::location { "maverick-web-prod-precache":
