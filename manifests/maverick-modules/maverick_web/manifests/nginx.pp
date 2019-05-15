@@ -85,7 +85,7 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => $server_hostname,
-        require         => [ Class["maverick_gcs::fcs"], ],
+        require         => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
         notify          => Service["maverick-nginx"],
     }
 
@@ -98,7 +98,7 @@ class maverick_web::nginx (
             location_alias  => $downloads_dir,
             index_files     => [],
             server          => $server_hostname,
-            require         => Class["nginx"],
+            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["system-nginx"] ],
         }
     }
     
@@ -115,6 +115,7 @@ class maverick_web::nginx (
         location_cfg_append => $local_config,
         server              => $server_hostname,
         notify              => Service["maverick-nginx"],
+        require             => [ Service_wrapper["system-nginx"] ],
     }
     
     if defined(Class["maverick_analysis::collect"]) {
