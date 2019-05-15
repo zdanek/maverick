@@ -67,4 +67,4 @@ else
     _DEFAULT_PARAMS=""
 fi
 
-/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/dev/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION $_DEFAULT_PARAMS  
+/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/software/python/bin/python3 /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/dev/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION $_DEFAULT_PARAMS  
