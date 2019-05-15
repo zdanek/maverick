@@ -61,7 +61,19 @@ class base::python (
 
         # Remove the pip binary from custom python, it interferes with system python2
         file { "/srv/maverick/software/python/bin/pip":
-            ensure  => absent,
+            ensure  => symlink,
+            target  => "/srv/maverick/software/python/bin/pip3",
+        }
+        
+        # Create symlinks to python, to override old python2
+        file { "/srv/maverick/software/python/bin/python":
+            ensure  => symlink,
+            target  => "/srv/maverick/software/python/bin/python3",
+        }
+        file { "/usr/bin/python":
+            ensure  => symlink,
+            target  => "/srv/maverick/software/python/bin/python3",
+            force   => true,
         }
     }
 
