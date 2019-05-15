@@ -93,7 +93,8 @@ class base::python (
     } ->
     install_python_module { "pip-yaml":
         pkgname     => "PyYAML",
-        ensure      => present,
+        ensure      => exactly,
+        version     => "3.13",
         timeout     => 0,
     } ->
     install_python_module { "pip-pylint":
