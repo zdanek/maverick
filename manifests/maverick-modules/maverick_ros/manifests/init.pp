@@ -386,6 +386,16 @@ class maverick_ros (
         }
     }
 
+    # Install python deps
+    install_python_module { "pip-defusedxml":
+        pkgname     => "defusedxml",
+        ensure      => present,
+    }
+    install_python_module { "pip-rospkg":
+        pkgname     => "rospkg",
+        ensure      => present,
+    }
+
     if $ros2 == true {
         class { "maverick_ros::ros2": }
     }
