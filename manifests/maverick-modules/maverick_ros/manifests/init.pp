@@ -337,7 +337,11 @@ class maverick_ros (
                 }
             }
         }
-
+    }
+    # Install a fixed apm_config.yaml
+    # https://github.com/mavlink/mavros/issues/1210
+    file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
+        source  => "puppet:///modules/maverick_ros/apm_config.yaml",
     }
     
     if $installtype and $_distribution {
