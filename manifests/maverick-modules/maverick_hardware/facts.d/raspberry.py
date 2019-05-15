@@ -117,8 +117,9 @@ class Raspberry(object):
 
     def runall(self):
         self.cpudata()
-        self.gpudata()
-        self.storagedata()
+        if self.data['present'] == "yes":
+            self.gpudata()
+            self.storagedata()
 
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
