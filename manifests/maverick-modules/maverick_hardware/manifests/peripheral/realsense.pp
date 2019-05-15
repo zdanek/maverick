@@ -3,11 +3,12 @@ class maverick_hardware::peripheral::realsense (
     $sdk2 = true,
 ) {
 
+    $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
+ 
     if $sdk1 == true {
         ensure_packages(["libglfw3", "libglfw3-dev", "libusb-1.0-0", "libusb-1.0-0-dev", "pkg-config", "libssl-dev", "liblz4-dev", "liblog4cxx-dev", "libgtk-3-dev", "libglu1-mesa-dev", "freeglut3-dev"])
 
         if ! ("install_flag_realsense-legacy" in $installflags) {
-        
             # Clone source from github
             oncevcsrepo { "git-realsense-librealsense":
                 gitsource   => "https://github.com/IntelRealSense/librealsense.git",
@@ -33,7 +34,7 @@ class maverick_hardware::peripheral::realsense (
             exec { "realsense-legacy-build":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-legacy.build.out 2>&1",
+                command     => "/usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/realsense-legacy.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/realsense-legacy/build",
                 creates     => "/srv/maverick/var/build/realsense-legacy/build/librealsense.so",
                 require     => Exec["realsense-legacy-prepbuild"],
@@ -104,7 +105,7 @@ class maverick_hardware::peripheral::realsense (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["CPLUS_INCLUDE_PATH=/srv/maverick/software/realsense-sdk2/include:/srv/maverick/software/opencv/include", "LIBRARY_PATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/opencv/lib"],
-                command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/realsense-sdk2.build.out 2>&1",
+                command     => "/usr/bin/make -j${buildparallel} >/srv/maverick/var/log/build/realsense-sdk2.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/realsense-sdk2/build",
                 creates     => "/srv/maverick/var/build/realsense-sdk2/build/tools/convert/rs-convert",
                 require     => Exec["realsense-sdk2-prepbuild"],
