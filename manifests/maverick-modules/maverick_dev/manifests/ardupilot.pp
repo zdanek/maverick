@@ -20,7 +20,7 @@ class maverick_dev::ardupilot (
         revision	=> $ardupilot_branch,
         submodules  => true,
     }
-    ensure_packages(["make", "gawk", "g++", "zip", "genromfs", "python-empy"])
+    ensure_packages(["make", "gawk", "g++", "zip", "genromfs", "python-empy", "python-future"])
     if $armeabi_packages == true {
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
             ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-multiarch", "libnewlib-arm-none-eabi", "libstdc++-arm-none-eabi-newlib"], {'ensure'=>'present'})
@@ -42,7 +42,7 @@ class maverick_dev::ardupilot (
         # Compile all vehicle types by default for waf build
         $ardupilot_all_vehicles.each |String $vehicle, String $buildfile| {
             maverick_dev::fwbuildwaf { "sitl_waf_${vehicle}":
-                require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
+                require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"], Package["python-future"] ],
                 board       => "sitl",
                 vehicle     => $vehicle,
                 buildfile   => $buildfile,
