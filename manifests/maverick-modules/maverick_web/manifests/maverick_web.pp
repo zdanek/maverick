@@ -93,6 +93,7 @@ class maverick_web::maverick_web (
         creates     => "/srv/maverick/software/maverick-web/node_modules",
         user        => "mav",
         timeout     => 0,
+        require     => Package['yarn'],
     } ->
     # Build -web
     exec { 'maverick-web-build':
