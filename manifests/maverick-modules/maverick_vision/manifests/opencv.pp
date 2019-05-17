@@ -1,10 +1,10 @@
 class maverick_vision::opencv (
     $contrib = true,
-    $opencv_version = "4.0.1",
+    $opencv_version = "4.1.0",
     $release = "Release", # Release or Debug, OpenCV build type
     $precompile_headers = false,
     $armv7l_optimize = false,
-    $opencv_dldt_version = "2018",
+    $opencv_dldt_version = "2019",
     $openvino = false,
 ) {
     
