@@ -206,6 +206,11 @@ class maverick_ros (
             ensure      => present,
             require     => Exec["ros_apt_update"],
         }
+        # Install a fixed apm_config.yaml
+        # https://github.com/mavlink/mavros/issues/1210
+        file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
+            source  => "puppet:///modules/maverick_ros/apm_config.yaml",
+        }
 
     # Build from source
     } elsif $_installtype == "source" {
@@ -335,13 +340,13 @@ class maverick_ros (
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
                 }
+                # Install a fixed apm_config.yaml
+                # https://github.com/mavlink/mavros/issues/1210
+                file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
+                    source  => "puppet:///modules/maverick_ros/apm_config.yaml",
+                }
             }
         }
-    }
-    # Install a fixed apm_config.yaml
-    # https://github.com/mavlink/mavros/issues/1210
-    file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
-        source  => "puppet:///modules/maverick_ros/apm_config.yaml",
     }
     
     if $installtype and $_distribution {
