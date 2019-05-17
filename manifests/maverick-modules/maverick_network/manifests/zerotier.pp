@@ -16,7 +16,6 @@ class maverick_network::zerotier (
         # Install core zerotier pgp key, repo and package
         apt::key { 'zerotier':
             id      => '74A5E9C458E1A431F1DA57A71657198823E52A61',
-            server  => 'pgp.mit.edu',
         } ->
         apt::source { 'zerotier':
             location      => "https://download.zerotier.com/debian/${_release}",
