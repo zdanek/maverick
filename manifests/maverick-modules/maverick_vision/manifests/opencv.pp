@@ -117,8 +117,8 @@ class maverick_vision::opencv (
             environment => [
                 "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig",
                 "TBB_LIB_DIR=/srv/maverick/software/tbb/lib",
-                "LIBRARY_PATH=/srv/maverick/software/tbb/lib",
-                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib",
+                "LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
                 "TBBROOT=/srv/maverick/software/tbb",
                 "CPATH=/srv/maverick/software/tbb/include",
                 "OpenBLAS_HOME=/srv/maverick/software/openblas",
@@ -132,8 +132,8 @@ class maverick_vision::opencv (
             user        => "mav",
             timeout     => 0,
             environment => [
-                "LIBRARY_PATH=/srv/maverick/software/tbb/lib",
-                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib",
+                "LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
                 "CPATH=/srv/maverick/software/tbb/include",
             ],
             command     => "/usr/bin/make -j${_makej} >/srv/maverick/var/log/build/opencv.build.out 2>&1",
