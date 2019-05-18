@@ -5,9 +5,12 @@ class maverick_vision::gstreamer (
 ) {
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
     if $gstreamer_installtype == "native" or $raspberry_present == "yes" {
-        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
+        ensure_packages(["libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
+    		
+    		### Raspberry gst rtspserver now available as binary packages
+    		/*
             # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
             if ! ("install_flag_gst-rtsp-server" in $installflags) {
                 if $::operatingsystemmajrelease == "8" {
@@ -32,7 +35,7 @@ class maverick_vision::gstreamer (
                     command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --libdir=/usr/lib/arm-linux-gnueabihf --disable-gtk-doc --prefix=/usr && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
                     creates     => "/usr/lib/arm-linux-gnueabihf/libgstrtspserver-1.0.so",
-                    require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"] ]
+                    require     => Package["gstreamer1.0-omx"],
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_gst-rtsp-server":
                     ensure      => present,
@@ -43,6 +46,7 @@ class maverick_vision::gstreamer (
             } else {
                 ensure_packages(["gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0"])
             }
+            */
         }
         # If odroid and MFC v4l device present, compile and install the custom gstreamer codecs
         if $odroid_present == "yes" and $camera_odroidmfc == "yes" and 1 == 2 {
@@ -169,7 +173,8 @@ class maverick_vision::gstreamer (
                 command     => "/srv/maverick/var/build/gstreamer/core/autogen.sh --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
                 cwd         => "/srv/maverick/var/build/gstreamer/core",
                 creates     => "/srv/maverick/software/gstreamer/bin/gst-launch-1.0",
-                require     => [ Package["libglib2.0-dev", "bison", "flex", "gettext"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ] # ensure we have all the dependencies satisfied
+                require     => [ Package["libglib2.0-dev", "bison", "flex", "gettext"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ], # ensure we have all the dependencies satisfied
+                before      => Exec["gstreamer_gst_rtsp_server"],
             }->
             exec { "gstreamer_gst_plugins_base":
                 user        => "mav",
@@ -292,12 +297,12 @@ class maverick_vision::gstreamer (
                     user        => "mav",
                     timeout     => 0,
                     environment => [
-                        "CFLAGS=-DOMX_SKIP64BIT -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
-                        "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                        "CFLAGS=-DOMX_SKIP64BIT -I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                        "CPPFLAGS=-I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                         "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
                         "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
                     ],
-                    command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer; /usr/bin/make -j${::processorcount}; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1",
+                    command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_omx.configure.out 2>&1; /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.install.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
                     creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
                     require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
