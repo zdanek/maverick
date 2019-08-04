@@ -26,6 +26,8 @@ class base::packages {
         "whois",
         "debian-goodies",
         "apparmor-utils",
+        "libusb-1.0-0",
+        "libusb-1.0-0-dev",
     ])
 
     if $operatingsystem == "Ubuntu" {

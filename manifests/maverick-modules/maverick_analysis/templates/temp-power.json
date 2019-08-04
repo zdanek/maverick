@@ -1,0 +1,244 @@
+{
+  "aliasColors": {},
+  "bars": false,
+  "dashLength": 10,
+  "dashes": false,
+  "datasource": null,
+  "fill": 0,
+  "id": 26,
+  "legend": {
+    "alignAsTable": false,
+    "avg": true,
+    "current": false,
+    "max": true,
+    "min": true,
+    "rightSide": false,
+    "show": true,
+    "total": false,
+    "values": true
+  },
+  "lines": true,
+  "linewidth": 1,
+  "links": [],
+  "nullPointMode": "null",
+  "percentage": false,
+  "pointradius": 5,
+  "points": false,
+  "renderer": "flot",
+  "seriesOverrides": [
+    {
+      "alias": "Volts",
+      "yaxis": 2
+    },
+    {
+      "alias": "Volts (R)",
+      "yaxis": 2
+    },
+    {
+      "alias": "Resistance",
+      "yaxis": 2
+    }
+  ],
+  "spaceLength": 10,
+  "stack": false,
+  "steppedLine": false,
+  "targets": [
+    {
+      "alias": "Volts (R)",
+      "dsType": "influxdb",
+      "groupBy": [
+        {
+          "params": [
+            "$__interval"
+          ],
+          "type": "time"
+        },
+        {
+          "params": [
+            "linear"
+          ],
+          "type": "fill"
+        }
+      ],
+      "measurement": "flight_bat",
+      "orderByTime": "ASC",
+      "policy": "flightdata",
+      "refId": "A",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": [
+              "VoltR"
+            ],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": []
+    },
+    {
+      "alias": "Volts",
+      "dsType": "influxdb",
+      "groupBy": [
+        {
+          "params": [
+            "$__interval"
+          ],
+          "type": "time"
+        },
+        {
+          "params": [
+            "linear"
+          ],
+          "type": "fill"
+        }
+      ],
+      "hide": false,
+      "measurement": "flight_bat",
+      "orderByTime": "ASC",
+      "policy": "flightdata",
+      "refId": "B",
+      "resultFormat": "time_series",
+      "select": [
+        [
+          {
+            "params": [
+              "Volt"
+            ],
+            "type": "field"
+          },
+          {
+            "params": [],
+            "type": "mean"
+          }
+        ]
+      ],
+      "tags": []
+    },
+    {
+      "refId": "C",
+      "policy": "flightdata",
+      "resultFormat": "time_series",
+      "orderByTime": "ASC",
+      "tags": [],
+      "groupBy": [
+        {
+          "type": "time",
+          "params": [
+            "$__interval"
+          ]
+        },
+        {
+          "type": "fill",
+          "params": [
+            "null"
+          ]
+        }
+      ],
+      "select": [
+        [
+          {
+            "type": "field",
+            "params": [
+              "Curr"
+            ]
+          },
+          {
+            "type": "mean",
+            "params": []
+          }
+        ]
+      ],
+      "measurement": "flight_bat",
+      "alias": "Current"
+    },
+    {
+      "refId": "D",
+      "policy": "flightdata",
+      "resultFormat": "time_series",
+      "orderByTime": "ASC",
+      "tags": [],
+      "groupBy": [
+        {
+          "type": "time",
+          "params": [
+            "$__interval"
+          ]
+        },
+        {
+          "type": "fill",
+          "params": [
+            "null"
+          ]
+        }
+      ],
+      "select": [
+        [
+          {
+            "type": "field",
+            "params": [
+              "Res"
+            ]
+          },
+          {
+            "type": "mean",
+            "params": []
+          }
+        ]
+      ],
+      "measurement": "flight_bat",
+      "alias": "Resistance"
+    }
+  ],
+  "thresholds": [],
+  "timeFrom": null,
+  "timeShift": null,
+  "title": "Main Power",
+  "tooltip": {
+    "shared": true,
+    "sort": 0,
+    "value_type": "individual"
+  },
+  "type": "graph",
+  "xaxis": {
+    "buckets": null,
+    "mode": "time",
+    "name": null,
+    "show": true,
+    "values": []
+  },
+  "yaxes": [
+    {
+      "format": "amp",
+      "label": null,
+      "logBase": 1,
+      "max": null,
+      "min": null,
+      "show": true
+    },
+    {
+      "format": "volt",
+      "label": null,
+      "logBase": 1,
+      "max": null,
+      "min": null,
+      "show": true
+    }
+  ],
+  "gridPos": {
+    "x": 0,
+    "y": 21,
+    "w": 24,
+    "h": 10
+  },
+  "yaxis": {
+    "align": false,
+    "alignLevel": null
+  },
+  "decimals": 2
+}
