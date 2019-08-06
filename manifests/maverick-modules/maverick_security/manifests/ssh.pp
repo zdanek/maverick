@@ -18,8 +18,8 @@ class maverick_security::ssh {
         storeconfigs_enabled    => false,
         server_options          => {
             'PasswordAuthentication' => 'yes',
-            'AllowTcpForwarding' => 'no',
-            'X11Forwarding' => 'no',
+            'AllowTcpForwarding' => 'yes',
+            'X11Forwarding' => 'yes',
             'Banner' => '/etc/issue.net',
             'PrintMotd' => 'no',
         }
