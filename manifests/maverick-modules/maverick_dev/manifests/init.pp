@@ -2,7 +2,8 @@ class maverick_dev (
     $apsitl_dev = true,
     $ardupilot = true,
     $px4 = false,
-    $px4sitl_dev = true
+    $px4sitl_dev = true,
+    $vscode_watchers = 8192,
 ) {
    
     # Create various dev directories
@@ -49,6 +50,11 @@ class maverick_dev (
         class { "maverick_dev::px4":
             sitl    => $px4sitl_dev,
         }
+    }
+
+    # Increase kernel inotify watcher limits
+    base::sysctl::conf { 
+        "fs.inotify.max_user_watches": 	value => $vscode_watchers;
     }
 
 }
