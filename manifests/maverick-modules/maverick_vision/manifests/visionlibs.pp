@@ -1,8 +1,8 @@
 class maverick_vision::visionlibs (
     $tbb = true,
-    $tbb_version = "2019_U1",
+    $tbb_version = "2019_U8",
     $openblas = true,
-    $openblas_version = "v0.3.3",
+    $openblas_version = "v0.3.6",
 ) {
     
     if $openblas == true {
