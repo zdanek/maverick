@@ -1,7 +1,7 @@
 class maverick_analysis (
     $influxdb = true,
     $collectd = true,
-    $grafana = true,
+    $grafana = false,
     $mavlogd = true,
 ) {
     
