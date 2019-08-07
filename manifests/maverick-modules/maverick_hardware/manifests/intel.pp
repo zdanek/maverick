@@ -1,7 +1,7 @@
 class maverick_hardware::intel (
     $mraa = true,
-    $intel_graphics = true,
-    $opencl = true,
+    $intel_graphics = false,
+    $opencl = false,
 ) {
 
     ### Install MRAA - Intel GPIO access library
