@@ -268,7 +268,7 @@ class maverick_vision::gstreamer (
     
             # Install vaapi for Intel platform
             # if $::hardwaremodel == "x86_64" {
-            if defined(Class["maverick_hardware::intel"]) {
+            if defined(Class["maverick_hardware::intel"]) and getvar("maverick_hardware::intel::intel_graphics") {
                 ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
                 oncevcsrepo { "git-gstreamer_vaapi":
                     gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
