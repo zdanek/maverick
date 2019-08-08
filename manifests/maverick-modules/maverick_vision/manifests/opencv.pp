@@ -173,7 +173,10 @@ class maverick_vision::opencv (
         content     => 'NEWPATH="/srv/maverick/software/opencv/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-opencv-ldlibrarypath.sh":
-        ensure      => absent,
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/opencv/lib"; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
     } ->
     file { "/etc/ld.so.conf.d/maverick-opencv.conf":
         mode        => "644",
