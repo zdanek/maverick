@@ -149,13 +149,13 @@ class maverick_ros (
         # Remove compromised ROS repo key
         exec { "ros-repo-badkey":
             command     => "/usr/bin/apt-key del '421C 365B D9FF 1F71 7815  A389 5523 BAEE B01F A116'",
-            onlyif      => "/usr/bin/apt-key list -k |/bin/grep 'A389 5523 BAEE B01F A116'",
+            onlyif      => "/usr/bin/apt-key list --fingerprint |/bin/grep 'A389 5523 BAEE B01F A116'",
             require     => Package["dirmngr"],
         } ->
         # Install ROS bootstrap from ros.org packages
         exec { "ros-repo-key":
             command     => "/usr/bin/apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654",
-            unless      => "/usr/bin/apt-key list -k |/bin/grep 'C1CF 6E31 E6BA DE88 68B1  72B4 F42E D6FB AB17 C654'",
+            unless      => "/usr/bin/apt-key list --fingerprint |/bin/grep 'C1CF 6E31 E6BA DE88 68B1  72B4 F42E D6FB AB17 C654'",
             require     => Package["dirmngr"],
             notify      => Exec["ros_apt_update"],            
         } ->
