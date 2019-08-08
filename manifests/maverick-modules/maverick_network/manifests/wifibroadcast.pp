@@ -57,7 +57,7 @@ class maverick_network::wifibroadcast (
             } ->
             exec { "compile-wifibc":
                 command     => "/usr/bin/make all_bin gs.key",
-                creates     => "/srv/maverick/var/build/wifibc/tx",
+                creates     => "/srv/maverick/var/build/wifibc/wfb_tx",
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/wifibc",
             } ->
