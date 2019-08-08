@@ -10,19 +10,37 @@ class maverick_dev::dronecore (
             gitsource   => "https://github.com/dronecore/DroneCore.git",
             dest        => "/srv/maverick/var/build/dronecore",
             submodules  => true,
-        } -> exec { "dronecore-make":
-            environment => ["BUILD_TYPE=Release", "INSTALL_PREFIX=/srv/maverick/software/dronecore"],
-            command     => "/usr/bin/make default install >/srv/maverick/var/log/build/dronecore.make.log 2>&1",
+        } ->
+        file { ["/srv/maverick/var/build/dronecore/build", "/srv/maverick/var/build/dronecore/build/default"]:
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
+        exec { "dronecore-prepbuild":
             user        => "mav",
             timeout     => 0,
-            cwd         => "/srv/maverick/var/build/dronecore",
+            command     => "/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/dronecore -DBUILD_BACKEND=ON ../.. >/srv/maverick/var/log/build/dronecore.cmake.out 2>&1",
+            cwd         => "/srv/maverick/var/build/dronecore/build/default",
+            creates     => "/srv/maverick/var/build/dronecore/build/default/Makefile",
+        } ->
+        exec { "dronecore-build":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/dronecore.build.out 2>&1",
+            cwd         => "/srv/maverick/var/build/dronecore/build/default",
+            creates     => "/srv/maverick/var/build/dronecore/build/default/aruco_tracker",
+        } ->
+        exec { "dronecore-install":
+            user        => "mav",
+            timeout     => 0,
+            command     => "/usr/bin/make install >/srv/maverick/var/log/build/dronecore.install.out 2>&1",
+            cwd         => "/srv/maverick/var/build/dronecore/build/default",
             creates     => "/srv/maverick/software/dronecore/lib/libdronecore.so",
         } ->
         file { "/srv/maverick/var/build/.install_flag_dronecore":
             ensure      => present,
             owner       => "mav",
-            group       => "mav",
-            mode        => "0644",
         }
     }
 
