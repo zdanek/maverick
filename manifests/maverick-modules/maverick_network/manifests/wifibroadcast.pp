@@ -34,7 +34,11 @@ class maverick_network::wifibroadcast (
         }
     } elsif $type == "svpcom" {
         ensure_packages(["libpcap-dev", "gcc", "make", "libcap2-bin", "libsodium-dev"])
-        
+        install_python_module { 'pip-pyroute2':
+            pkgname     => 'pyroute2',
+            ensure      => present,
+        }
+
         # Install software
         if ! ("install_flag_wifibc" in $installflags) {
             install_python_module { 'pip-twisted':
@@ -53,7 +57,7 @@ class maverick_network::wifibroadcast (
                 gitsource   => "https://github.com/svpcom/wifibroadcast.git",
                 dest        => "/srv/maverick/var/build/wifibc",
                 owner       => "mav",
-                require     => [ Package["gcc"], Package["make"], Package["libsodium-dev"], Package["libpcap-dev"] ]
+                require     => [ Package["gcc"], Package["make"], Package["libsodium-dev"], Package["libpcap-dev"], Install_python_module["pip-pyroute2"], ]
             } ->
             exec { "compile-wifibc":
                 command     => "/usr/bin/make all_bin gs.key",
