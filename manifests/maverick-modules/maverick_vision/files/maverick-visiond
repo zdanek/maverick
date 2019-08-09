@@ -252,7 +252,9 @@ class Streamer(object):
             self.h264enc = Gst.ElementFactory.make("omxh264enc", "raspberry-h264-encode")
             self.h264enc.set_property('control-rate', 'variable')
             self.h264enc.set_property('target-bitrate', 2000000)
+        """
         # Detect Odroid/MFC
+        # Note this is disabled as it is now triggered on Raspberry and possibly other platforms, with latest gstreamer
         try:
             odroid264encoder = subprocess.check_output("gst-inspect-1.0 video4linux2 | grep 'H.264 Encoder' |awk -F: {'print $1'} |sed 's/\s//g' |tr -d '\n'", shell=True)
             if odroid264encoder:
@@ -268,6 +270,7 @@ class Streamer(object):
                 self.h264enc.set_property('extra-controls', h264struct)
         except subprocess.CalledProcessError as e:
             pass
+        """
         # Detect Intel/VAAPI
         try:
             # Determine vaapi encoder exists, but suppress output
