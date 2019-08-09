@@ -857,13 +857,14 @@ fi
 #fi
 
 # ^^ Better kludge fix: #469 #613 Hack puppet to use systemd service provider as default on recent Ubuntu
-puppet_systemd_provider=$(find /var/lib/gems -name 'systemd.rb' -exec grep '"16.10"]' {} \;)
+#  - Ubuntu support has been properly refactored.  Debian has not, so kludge for recent debian
+puppet_systemd_provider=$(find /var/lib/gems -name 'systemd.rb' -exec grep ':debian' {} \;)
 if [ ! -z "$puppet_systemd_provider" ]; then
-    echo "Fixing broken puppet systemd provider"
+    echo "Fixing broken puppet systemd provider for Debian"
     if [ $EUID -eq 0 ]; then
-        /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's/\"15.04\",\"15.10\",\"16.04\",\"16.10\"]/\"15.04\",\"15.10\",\"16.04\",\"16.10\", \"17.04\", \"17.10\", \"18.04\"]/' {} \;
+        /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's#"9", "buster/sid\"#"9", "buster/sid", "10"#' {} \;
     else
-        sudo /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's/\"15.04\",\"15.10\",\"16.04\",\"16.10\"]/\"15.04\",\"15.10\",\"16.04\",\"16.10\", \"17.04\", \"17.10\", \"18.04\"]/' {} \;
+        sudo /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's#"9", "buster/sid"#"9", "buster/sid", "10"#' {} \;
     fi
 fi
 
