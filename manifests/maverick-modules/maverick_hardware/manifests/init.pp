@@ -9,7 +9,6 @@ class maverick_hardware (
     $camera_ocam_install = false,
     $camera_picam_install = false,
     $realsense_install = true,
-    $seekthermal_install = true,
     $flirone_install = true,
 ) {
 	
@@ -55,11 +54,6 @@ class maverick_hardware (
 	# Setup realsense depth cameras
 	if $camera_realsense == "yes" or $realsense_install == true {
 		class { "maverick_hardware::peripheral::realsense": }
-	}
-	
-	# Setup Seek thermal cameras
-	if $seekthermal_present == "yes" or $seekthermal_install == true {
-		class { "maverick_hardware::peripheral::seekthermal": }
 	}
 	
 	# Setup FlirOne thermal cameras

@@ -42,7 +42,6 @@
 	"maverick_gcs::fcs": true,
 	
 	"maverick_hardware::camera_picam_install": true,
-	"maverick_hardware::seekthermal_install": true,
 	"maverick_hardware::flirone_install": true,
 	"maverick_hardware::remove_glpackages": true,
 	"maverick_hardware::raspberry::swapsize": 100,
