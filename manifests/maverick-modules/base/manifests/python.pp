@@ -10,7 +10,7 @@ class base::python (
         if ! ("install_flag_python" in $installflags) {
             warning("Optimized Python3 will be built and can take a long time, please be patient..")
             # Pull python from git
-            ensure_packages(["libffi-dev", "libncurses5-dev", "libncursesw5-dev", "libgdbm-dev", "libreadline-dev", "tk-dev", "liblzma-dev", "libbz2-dev", "libsqlite3-dev"])
+            ensure_packages(["libffi-dev", "libncurses5-dev", "libncursesw5-dev", "libgdbm-dev", "libreadline-dev", "tk-dev", "liblzma-dev", "libbz2-dev", "libsqlite3-dev", "libatlas-base-dev"])
             oncevcsrepo { "git-python":
                 gitsource   => "https://github.com/python/cpython.git",
                 dest        => "/srv/maverick/var/build/python",
