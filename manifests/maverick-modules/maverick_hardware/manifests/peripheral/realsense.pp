@@ -100,6 +100,11 @@ class maverick_hardware::peripheral::realsense (
 
         if $raspberry_present == "yes" {
             $uvcparam = "-DFORCE_LIBUVC=true"
+            # https://github.com/IntelRealSense/librealsense/issues/4565
+            exec { "patch-realsense-raspbian":
+                command => "/bin/cat 'set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -latomic\")' >>/srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
+                unless  => "/bin/grep 'CMAKE_CXX_FLAGS' /srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
+            }
         } else {
             $uvcparam = ""
         }
