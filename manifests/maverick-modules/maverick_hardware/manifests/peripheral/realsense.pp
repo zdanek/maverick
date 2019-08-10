@@ -3,6 +3,8 @@ class maverick_hardware::peripheral::realsense (
     $sdk2 = true,
 ) {
 
+    require base::python
+
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
  
     if $sdk1 == true {
@@ -69,6 +71,7 @@ class maverick_hardware::peripheral::realsense (
 
     if $sdk2 == true {
         ensure_packages(["libglfw3", "libglfw3-dev", "libusb-1.0-0-dev", "pkg-config", "libssl-dev", "libgtk-3-dev", "libgl1-mesa-dev", "libglu1-mesa-dev"])
+        ensure_packages(["libprotobuf-dev", "libtbb-dev"])
 
         # Install cmake path
         file { "/etc/profile.d/70-maverick-realsense-sdk2-cmake.sh":
@@ -76,6 +79,29 @@ class maverick_hardware::peripheral::realsense (
             owner       => "root",
             group       => "root",
             content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
+        }
+
+        if $::hardwaremodel == "x86_64" and $::operatingsystem == "Ubuntu" {
+            if $::lsbdistcodename == "xenial" or $::lsbdistcodename == "bionic" {
+                apt::source { 'realsense':
+                    location => 'http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo',
+                    release  => $::lsbdistcodename,
+                    repos    => 'main',
+                    key      => {
+                        'id'     => 'F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE',
+                        'server' => 'keys.gnupg.net',
+                    },
+                } ->
+                package { ["librealsense2-dkms", "librealsense2-utils", "librealsense2-dev", "librealsense2-dbg"]:
+                    ensure  => installed,
+                }
+            }
+        }
+
+        if $raspberry_present == "yes" {
+            $uvcparam = "-DFORCE_LIBUVC=true"
+        } else {
+            $uvcparam = ""
         }
 
         if ! ("install_flag_realsense-sdk2" in $installflags) {
@@ -96,7 +122,7 @@ class maverick_hardware::peripheral::realsense (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv"],
-                command     => "/usr/bin/cmake -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DBUILD_PYTHON_BINDINGS=bool:true -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib .. >/srv/maverick/var/log/build/realsense-sdk2.cmake.out 2>&1",
+                command     => "/usr/bin/cmake ${uvcparam} -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DBUILD_PYTHON_BINDINGS=bool:true -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/realsense-sdk2 -DCMAKE_INSTALL_RPATH=/srv/maverick/software/realsense-sdk2/lib:/srv/maverick/software/librealsense/lib .. >/srv/maverick/var/log/build/realsense-sdk2.cmake.out 2>&1",
                 cwd         => "/srv/maverick/var/build/realsense-sdk2/build",
                 creates     => "/srv/maverick/var/build/realsense-sdk2/build/Makefile",
                 require     => [ File["/srv/maverick/var/build/realsense-sdk2/build"], Class["base::python"] ], # ensure we have all the dependencies satisfied
