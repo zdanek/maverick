@@ -1,7 +1,7 @@
 class maverick_hardware::intel (
     $mraa = true,
-    $intel_graphics = false,
-    $opencl = false,
+    $intel_graphics = true,
+    $opencl = true,
 ) {
 
     ### Install MRAA - Intel GPIO access library
@@ -16,40 +16,22 @@ class maverick_hardware::intel (
         }
     }
 
+    # Remove deprecated intel repo
+    file { "/etc/apt/sources.list.d/01org-graphics.list":
+        ensure => absent,
+    }
+
     if $intel_graphics == true {
-        if $::operatingsystem == "ubuntu" {
-            # Install vaapi support
-            exec { "01org-gfx-repo-key":
-                command         => "/usr/bin/wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg-4 -O - | apt-key add -",
-                unless          => "/usr/bin/apt-key list |/bin/grep 39B88DE4",
-            } ->
-            file { "/etc/apt/sources.list.d/01org-graphics.list":
-                content     => "deb https://download.01.org/gfx/ubuntu/16.04/main xenial main",
-                notify      => Exec["apt_update"],
-            } ->
-            package { ["i915-4.6.3-4.4.0-dkms"]:
-                ensure          => latest,
-                require         => Exec["apt_update"],
-                before          => Package["i965-va-driver"],
-            } ->
-            # Install GL support
-            #package { ["libegl1-mesa-drivers", "libgles1-mesa", "libosmesa6", "mesa-va-drivers", "libegl1-mesa", "libgl1-mesa-dri", "libgl1-mesa-glx", "libglapi-mesa", "libgles2-mesa"]:
-            #    ensure          => latest,
-            #} ->
-            # Yes this is wierd, but it's needed for intel graphics updater.  Remove.
-            package { ["fonts-ancient-scripts", "ttf-ancient-fonts" ]:
-                ensure          => purged,
-            }
-        }
-        # Install misc support
-        ensure_packages(["i965-va-driver", "intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2", "libva-x11-1", "libvdpau-va-gl1", "vainfo", "libva1", "libva-dev", "libva-drm1", "libva-egl1", "libva-glx1", "libva-tpi1", "va-driver-all"])
+        ensure_packages(["i965-va-driver", "intel-gpu-tools", "libcairo2", "libdrm-intel1", "libdrm2", "libva-x11-2", "libvdpau-va-gl1", "vainfo", "libva-dev", "libva-drm2", "libva-glx2", "va-driver-all", "vdpau-va-driver", "mesa-va-drivers"])
     }
 
     ### Install beignet/opencl
     if $opencl == true {
         # Install dependencies
         ensure_packages(["cmake", "pkg-config", "ocl-icd-dev", "libegl1-mesa-dev", "ocl-icd-opencl-dev", "libdrm-dev", "libxfixes-dev", "libxext-dev", "libtinfo-dev", "libedit-dev", "zlib1g-dev", "clinfo"])
-        if ($::operatingsystem == "Debian" and versioncmp($::operatingsystemmajrelease, "9") >= 0) or ($::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "17") >= 0) {
+        if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemrelease, "18.04") == 0 {
+            $_packages = ["llvm-dev", "clang", "libclang-dev"]
+        } elsif ($::operatingsystem == "Debian" and versioncmp($::operatingsystemmajrelease, "9") >= 0) or ($::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "17") == 0) {
             $_packages = ["llvm-3.8-dev", "clang-3.8", "libclang-3.8-dev"]
         } elsif $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemrelease, "16.04") == 0 {
             $_packages = ["llvm-3.6-dev", "clang-3.6", "libclang-3.6-dev"]
@@ -62,7 +44,7 @@ class maverick_hardware::intel (
             oncevcsrepo { "git-beignet":
                 gitsource   => "https://github.com/intel/beignet.git",
                 dest        => "/srv/maverick/var/build/beignet",
-                revision    => "Release_v1.3.2",
+                revision    => "master",
             } ->
             # Create build directory
             file { "/srv/maverick/var/build/beignet/build":
