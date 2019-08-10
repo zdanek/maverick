@@ -1,6 +1,6 @@
 class base::python (
     $maverick_python = true,
-    $python_version = "v3.7.3"
+    $python_version = "v3.7.4"
 ) {
 
     # Install custom python 3.7
