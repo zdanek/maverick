@@ -3,19 +3,19 @@ class maverick_hardware::beagle::services {
     # These services are being stopped to save cpu and memory at boot.
     # This is a somewhat temporary situation, in the long term we should deal with these properly
     #  in their own manifests, particularly apache.
-    service_wrapper { "jekyll-autorun":
+    service { "jekyll-autorun":
         ensure      => stopped,
         enable      => false,
     }
-    service_wrapper { "bonescript-autorun":
+    service { "bonescript-autorun":
         ensure      => stopped,
         enable      => false,
     }
-    service_wrapper { "ofono":
+    service { "ofono":
         ensure      => stopped,
         enable      => false,
     }
-    service_wrapper { "bluetooth":
+    service { "bluetooth":
         ensure      => stopped,
         enable      => false,
     }

@@ -17,7 +17,7 @@ define maverick_mavlink::cmavnode (
     $replaceconfig = true,
 ) {
     if $active {
-        $service_notify = Service_wrapper["maverick-cmavnode@${name}"]
+        $service_notify = Service["maverick-cmavnode@${name}"]
     } else {
         $service_notify = undef
     }
@@ -47,7 +47,7 @@ define maverick_mavlink::cmavnode (
     }
 
     if $active == true {
-    	service_wrapper { "maverick-cmavnode@${name}":
+    	service { "maverick-cmavnode@${name}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-cmavnode@.service"] ]
@@ -68,7 +68,7 @@ define maverick_mavlink::cmavnode (
             }
         }
     } else {
-    	service_wrapper { "maverick-cmavnode@${name}":
+    	service { "maverick-cmavnode@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-cmavnode@.service"] ]

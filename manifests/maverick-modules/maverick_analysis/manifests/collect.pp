@@ -119,7 +119,7 @@ class maverick_analysis::collect (
         service_name    => 'maverick-collectd',
         typesdb         => [$typesdb],
     }
-    service_wrapper { "collectd":
+    service { "collectd":
         ensure          => stopped,
         enable          => false,
     }

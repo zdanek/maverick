@@ -9,7 +9,7 @@ class base::console {
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service_wrapper { "maverick-motd": 
+    service { "maverick-motd": 
         enable      => true,
         ensure      => running,
     }

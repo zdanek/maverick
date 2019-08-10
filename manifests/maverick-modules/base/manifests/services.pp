@@ -8,7 +8,7 @@ class base::services {
 
     # Here is where we would disable any services by default
     # Disable cups by default.  It breaks things like iptables and who prints on a UAV?!
-    service_wrapper { ["cups", "cups-browsed"]:
+    service { ["cups", "cups-browsed"]:
         enable      => false,
         ensure      => "stopped",
     } ->
@@ -16,10 +16,13 @@ class base::services {
         ensure      => purged,
     }
     # Stop postfix, we don't need a mail service/relay for now
-    service_stop { "postfix": }
+    service { "postfix":
+        ensure      => stopped,
+        enable      => false,
+    }
 
     # Here is where we would enable any services by default
-    # service_wrapper { "example":
+    # service { "example":
     #   ensure      => running,
     #   enable      => true
     # }

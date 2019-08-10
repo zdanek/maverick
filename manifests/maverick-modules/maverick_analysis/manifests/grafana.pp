@@ -99,13 +99,13 @@ class maverick_analysis::grafana (
             package_source        => $package_source,
             service_name          => "maverick-grafana",
             version               => $grafana_version,
-            notify                => Service_wrapper[grafana-server],
+            notify                => Service[grafana-server],
         } ->
-        service_wrapper { "grafana":
+        service { "grafana":
             ensure      => "stopped",
             enable      => false,
         } ->
-        service_wrapper { "grafana-server":
+        service { "grafana-server":
             ensure      => "stopped",
             enable      => false,
         } ->

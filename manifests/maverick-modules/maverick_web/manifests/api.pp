@@ -20,7 +20,7 @@ define maverick_web::api (
         group       => "mav",
         mode        => "644",
         content     => template("maverick_web/api.conf.erb"),
-        notify      => Service_wrapper["maverick-api@${instance}"],
+        notify      => Service["maverick-api@${instance}"],
     } ->
     file { "/srv/maverick/config/web/maverick-api.${instance}.conf":
         ensure      => present,
@@ -28,17 +28,17 @@ define maverick_web::api (
         group       => "mav",
         mode        => "644",
         content     => template("maverick_web/maverick-api.conf.erb"),
-        notify      => Service_wrapper["maverick-api@${instance}"],
+        notify      => Service["maverick-api@${instance}"],
     } 
 
     if $active == true {
-        service_wrapper { "maverick-api@${instance}":
+        service { "maverick-api@${instance}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-api@.service"] ]
         }
     } else {
-        service_wrapper { "maverick-api@${instance}":
+        service { "maverick-api@${instance}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-api@.service"] ]
@@ -50,7 +50,7 @@ define maverick_web::api (
         location                => "/web/api/${instance}/",
         proxy                   => "http://localhost:${apiport}/",
         server                  => $server_hostname,
-        require                 => [ Class["maverick_web::maverick_api"], Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["system-nginx"] ],
+        require                 => [ Class["maverick_web::maverick_api"], Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
     	proxy_connect_timeout   => "7d",
     	proxy_read_timeout      => "7d",
         proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],

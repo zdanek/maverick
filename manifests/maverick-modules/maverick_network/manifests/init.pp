@@ -29,7 +29,7 @@ class maverick_network (
     
     # Ensure wpa_supplicant isn't running
     # Note NetworkManager seems to start this regardless of wpa_supplicant enabled state
-    service_wrapper { "wpa_supplicant":
+    service { "wpa_supplicant":
         ensure      => stopped,
         enable      => false,
         require     => Package["wpasupplicant"]
@@ -65,11 +65,11 @@ class maverick_network (
 
     if $dhcpcd == false {
         # Make sure dhcp client daemons are turned off, for now we depend on dhclient/wpa_supplicant
-        service_wrapper { "udhcpd":
+        service { "udhcpd":
             ensure      => stopped,
             enable      => false
         } ->
-        service_wrapper { "dhcpcd":
+        service { "dhcpcd":
             ensure      => stopped,
             enable      => false,
         }
@@ -168,7 +168,7 @@ class maverick_network (
         if $netman_connmand == "yes" {
             warning("Disabling connman connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
         }
-        service_wrapper { "connman.service":
+        service { "connman.service":
             ensure      => undef,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
@@ -180,11 +180,11 @@ class maverick_network (
         if $netman_networkmanager == "yes" {
             warning("Disabling NetworkManager connection manager: Please reset hardware and log back in if the connection hangs.  Please reboot when maverick is completed to activate new network config.")
         }
-        service_wrapper { "NetworkManager.service":
+        service { "NetworkManager.service":
             ensure      => stopped,
             enable      => false,
         } ->
-        service_wrapper { "NetworkManager-wait-online":
+        service { "NetworkManager-wait-online":
             ensure      => stopped,
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
@@ -233,7 +233,7 @@ class maverick_network (
         notify      => Exec["maverick-systemctl-daemon-reload"],
         require     => Package["rfkill"]
     } ->
-    service_wrapper { "rfkill-unblock.service":
+    service { "rfkill-unblock.service":
         enable      => true,
         ensure      => "running",
     }
@@ -288,7 +288,7 @@ class maverick_network (
         }
         # If no AP interface detected, ensure hostapd is turned off
         if count($combine, 1) == 0 {
-            service_wrapper { "hostapd":
+            service { "hostapd":
                 ensure      => stopped,
                 enable      => false,
             }

@@ -266,13 +266,13 @@ class maverick_mavlink (
         }
         
         if $mavcesium_active == true {
-            service_wrapper { "maverick-mavcesium":
+            service { "maverick-mavcesium":
                 ensure      => running,
                 enable      => true,
                 require     => [ File["/etc/systemd/system/maverick-mavcesium.service"], Exec["maverick-systemctl-daemon-reload"] ],
             }
         } else {
-            service_wrapper { "maverick-mavcesium":
+            service { "maverick-mavcesium":
                 ensure      => stopped,
                 enable      => false,
                 require     => [ File["/etc/systemd/system/maverick-mavcesium.service"], Exec["maverick-systemctl-daemon-reload"] ],

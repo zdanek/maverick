@@ -166,30 +166,30 @@ class maverick_dev::px4 (
             group       => "mav",
             mode        => "644",
             replace     => false,
-            notify      => Service_wrapper["maverick-px4sitl"],
+            notify      => Service["maverick-px4sitl"],
         } ->
         file { "/srv/maverick/config/dev/px4sitl.screen.conf":
             ensure      => present,
             owner       => "mav",
             group       => "mav",
             content     => template("maverick_dev/px4sitl.screen.conf.erb"),
-            notify      => Service_wrapper["maverick-px4sitl"],
+            notify      => Service["maverick-px4sitl"],
         } ->
         file { "/etc/systemd/system/maverick-px4sitl.service":
             content     => template("maverick_dev/maverick-px4sitl.service.erb"),
             owner       => "root",
             group       => "root",
             mode        => "644",
-            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service_wrapper["maverick-px4sitl"] ]
+            notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-px4sitl"] ]
         }
         if $sitl_active == true {
-            service_wrapper { "maverick-px4sitl":
+            service { "maverick-px4sitl":
                 ensure      => running,
                 enable      => true,
                 require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-px4sitl.service"] ],
             }
         } else {
-            service_wrapper { "maverick-px4sitl":
+            service { "maverick-px4sitl":
                 ensure      => stopped,
                 enable      => false,
                 require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-px4sitl.service"] ],
@@ -197,9 +197,9 @@ class maverick_dev::px4 (
         }
         
         if $ros_instance == true {
-            $notifyResources = [ Service_wrapper["maverick-px4sitl"], Service["maverick-rosmaster@px4sitl"] ]
+            $notifyResources = [ Service["maverick-px4sitl"], Service["maverick-rosmaster@px4sitl"] ]
         } else {
-            $notifyResources = Service_wrapper["maverick-px4sitl"]
+            $notifyResources = Service["maverick-px4sitl"]
         }
         if $mavlink_proxy == "mavproxy" {
             maverick_mavlink::cmavnode { "px4sitl":

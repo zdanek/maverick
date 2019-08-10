@@ -15,7 +15,7 @@ define maverick_mavlink::mavproxy (
     $replaceconfig = true,
 ) {
     if $active {
-        $service_notify = Service_wrapper["maverick-mavproxy@${name}"]
+        $service_notify = Service["maverick-mavproxy@${name}"]
     } else {
         $service_notify = undef
     }
@@ -42,7 +42,7 @@ define maverick_mavlink::mavproxy (
     }
 
     if $active == true {
-    	service_wrapper { "maverick-mavproxy@${name}":
+    	service { "maverick-mavproxy@${name}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavproxy@.service"] ]
@@ -63,7 +63,7 @@ define maverick_mavlink::mavproxy (
             }
         }
     } else {
-    	service_wrapper { "maverick-mavproxy@${name}":
+    	service { "maverick-mavproxy@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavproxy@.service"] ]

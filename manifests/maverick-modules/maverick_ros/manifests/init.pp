@@ -86,6 +86,16 @@ class maverick_ros (
                             default: { $_installtype = "source" }
                         }
                     }
+                    "10": { # buster
+                        case $::raspberry_present {
+                            "yes": { $autodist = "melodic" }
+                            default: { $autodist = "melodic" }
+                        }
+                        case $::architecture {
+                            "amd64", "arm64": { $_installtype = "source" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
                     default: {
                         $autodist = undef
                         $_installtype = undef

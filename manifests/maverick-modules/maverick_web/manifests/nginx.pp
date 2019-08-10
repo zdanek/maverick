@@ -35,13 +35,12 @@ class maverick_web::nginx (
     }
     
     # Make sure apache system services are stopped
-    service_wrapper { "apache2":
+    service { "apache2":
         ensure      => stopped,
         enable      => false,
     } ->
     # Make sure nginx system service is stopped
-    service_wrapper { "system-nginx":
-        service_name    => "nginx",
+    service { "nginx":
         ensure          => stopped,
         enable          => false,
     } ->
@@ -61,7 +60,7 @@ class maverick_web::nginx (
         service_name    => "maverick-nginx",
         service_ensure  => $service_ensure,
         service_enable  => $service_enable,
-        require         => Service_wrapper["system-nginx"],
+        require         => Service["nginx"],
     }
 
     # apache2-utils used for htpasswd, even by nginx
@@ -85,7 +84,7 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => $server_hostname,
-        require         => [ Class["maverick_gcs::fcs"], Service_wrapper["system-nginx"] ],
+        require         => [ Class["maverick_gcs::fcs"], Service["nginx"] ],
         notify          => Service["maverick-nginx"],
     }
 
@@ -98,7 +97,7 @@ class maverick_web::nginx (
             location_alias  => $downloads_dir,
             index_files     => [],
             server          => $server_hostname,
-            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["system-nginx"] ],
+            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
         }
     }
     
@@ -115,7 +114,7 @@ class maverick_web::nginx (
         location_cfg_append => $local_config,
         server              => $server_hostname,
         notify              => Service["maverick-nginx"],
-        require             => [ Service_wrapper["system-nginx"] ],
+        require             => [ Service["nginx"] ],
     }
     
     if defined(Class["maverick_analysis::collect"]) {

@@ -242,13 +242,13 @@ class maverick_fc (
     }
 
     if $dflogger_active {
-        service_wrapper { "maverick-dflogger":
+        service { "maverick-dflogger":
             ensure      => running,
             enable      => true,
             require     => [ Exec["install-dronekit-la"], File["/etc/systemd/system/maverick-dflogger.service"] ],
         }
     } else {
-        service_wrapper { "maverick-dflogger":
+        service { "maverick-dflogger":
             ensure      => stopped,
             enable      => false,
         }

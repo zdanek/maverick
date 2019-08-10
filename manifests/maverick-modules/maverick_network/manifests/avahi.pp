@@ -12,10 +12,10 @@ class maverick_network::avahi (
         group       => root,
         mode        => "644",
         content     => template("maverick_network/avahi-daemon.conf.erb"),
-        notify      => Service_wrapper["avahi-daemon"],
+        notify      => Service["avahi-daemon"],
         require     => Package["avahi-daemon"],
     } ->
-    service_wrapper { "avahi-daemon":
+    service { "avahi-daemon":
         ensure      => running,
         enable      => true
     }
@@ -24,7 +24,7 @@ class maverick_network::avahi (
     concat { "/etc/avahi/hosts":
         ensure          => present,
         ensure_newline  => true,
-        notify          => Service_wrapper["avahi-daemon"],
+        notify          => Service["avahi-daemon"],
     }
     
     concat::fragment { "avahi-hosts-main":

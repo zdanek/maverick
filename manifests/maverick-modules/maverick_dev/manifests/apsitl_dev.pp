@@ -24,7 +24,7 @@ class maverick_dev::apsitl_dev (
 ) {
 
     # Remove old sitl setup
-    service_wrapper { "maverick-sitl":
+    service { "maverick-sitl":
         ensure      => stopped,
         enable      => false,
     } ->
@@ -52,7 +52,7 @@ class maverick_dev::apsitl_dev (
         onlyif  => "/bin/ls /srv/maverick/config/dev/sitl.screen.conf",
     } ->
     # Remove old sitl services
-    service_wrapper { [ "maverick-rosmaster@sitl", "maverick-mavros@sitl", "maverick-mavlink-router@sitl", "maverick-api@sitl" ]:
+    service { [ "maverick-rosmaster@sitl", "maverick-mavros@sitl", "maverick-mavlink-router@sitl", "maverick-api@sitl" ]:
         ensure  => stopped,
         enable  => false,
     }

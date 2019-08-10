@@ -44,7 +44,7 @@ class maverick_analysis::influx (
         content     => template("maverick_analysis/influxdb.conf.erb"),
         owner       => "mav",
         group       => "mav",
-        notify      => Service_wrapper["maverick-influxd"],
+        notify      => Service["maverick-influxd"],
     } ->
     file { ["/srv/maverick/data/analysis/influxdb", "/srv/maverick/data/analysis/influxdb/meta", "/srv/maverick/data/analysis/influxdb/wal", "/srv/maverick/data/analysis/influxdb/data", "/srv/maverick/var/log/analysis"]:
         owner       => "mav",
@@ -60,7 +60,7 @@ class maverick_analysis::influx (
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
     # Ensure system influxd instance is stopped
-    service_wrapper { "influxdb":
+    service { "influxdb":
         ensure      => stopped,
         enable      => false,
     }
@@ -70,16 +70,16 @@ class maverick_analysis::influx (
             command     => "/bin/systemctl daemon-reload",
             unless      => "/bin/systemctl list-units |grep maverick-influxd",
         } ->
-        service_wrapper { "maverick-influxd":
+        service { "maverick-influxd":
             ensure      => running,
             enable      => true,
-            require     => [ Service_wrapper["influxdb"], Class["maverick_analysis::collect"] ],
+            require     => [ Service["influxdb"], Class["maverick_analysis::collect"] ],
         }
     } else {
-        service_wrapper { "maverick-influxd":
+        service { "maverick-influxd":
             ensure      => stopped,
             enable      => false,
-            require     => [ Service_wrapper["influxdb"], Class["maverick_analysis::collect"] ],
+            require     => [ Service["influxdb"], Class["maverick_analysis::collect"] ],
         }
     }
     
@@ -89,7 +89,7 @@ class maverick_analysis::influx (
     #    command         => "/bin/sleep 10; /usr/bin/influx -execute 'create database maverick'",
     #    unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
     #    user            => "mav",
-    #    require         => Service_wrapper["maverick-influxd"],
+    #    require         => Service["maverick-influxd"],
     #}
     
     # Install python library
@@ -103,7 +103,7 @@ class maverick_analysis::influx (
     collectd::plugin::network::server{'localhost':
         port            => 25826,
         securitylevel   => "None",
-        require         => Service_wrapper["maverick-influxd"],
+        require         => Service["maverick-influxd"],
     }
 
 }

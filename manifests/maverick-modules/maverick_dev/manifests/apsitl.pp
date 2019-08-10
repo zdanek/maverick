@@ -211,7 +211,7 @@ define maverick_dev::apsitl (
         owner       => "mav",
         group       => "mav",
         content     => template("maverick_dev/apsitl.screen.conf.erb"),
-        notify      => Service_wrapper["maverick-apsitl@${instance_name}"],
+        notify      => Service["maverick-apsitl@${instance_name}"],
     }
     file { "/srv/maverick/config/dev/apsitl_${instance_name}.conf":
         content     => template("maverick_dev/apsitl.conf.erb"),
@@ -219,20 +219,20 @@ define maverick_dev::apsitl (
         group       => "mav",
         mode        => "644",
         replace     => false,
-        notify      => Service_wrapper["maverick-apsitl@${instance_name}"],
+        notify      => Service["maverick-apsitl@${instance_name}"],
     } ->
     file { "/srv/maverick/config/mavlink/mavlink_params-apsitl_${instance_name}.json":
         ensure      => absent,
     }
     
     if $sitl_active == true {
-        service_wrapper { "maverick-apsitl@${instance_name}":
+        service { "maverick-apsitl@${instance_name}":
             ensure      => running,
             enable      => true,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-apsitl@.service"] ],
         }
     } else {
-        service_wrapper { "maverick-apsitl@${instance_name}":
+        service { "maverick-apsitl@${instance_name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-apsitl@.service"] ],
@@ -240,9 +240,9 @@ define maverick_dev::apsitl (
     }
 
     if $ros_instance == true {
-        $notifyResources = [ Service_wrapper["maverick-apsitl@${instance_name}"], Service["maverick-rosmaster@apsitl_${instance_name}"] ]
+        $notifyResources = [ Service["maverick-apsitl@${instance_name}"], Service["maverick-rosmaster@apsitl_${instance_name}"] ]
     } else {
-        $notifyResources = Service_wrapper["maverick-apsitl@${instance_name}"]
+        $notifyResources = Service["maverick-apsitl@${instance_name}"]
     }
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "apsitl_${instance_name}":

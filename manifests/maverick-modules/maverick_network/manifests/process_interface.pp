@@ -74,7 +74,7 @@ define maverick_network::process_interface (
 	}
 	# If not defined as monitor mode, ensure monitor disabled for this interface
 	if $mode != "monitor" {
-	    service_wrapper { "monitor-interface@${name}":
+	    service { "monitor-interface@${name}":
             ensure      => stopped,
             enable      => false,
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/monitor-interface@.service"] ]

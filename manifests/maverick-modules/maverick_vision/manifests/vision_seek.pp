@@ -28,7 +28,7 @@ class maverick_vision::vision_seek (
                 command     => "/usr/bin/make install PREFIX=/srv/maverick/software/libseek-thermal",
                 cwd         => "/srv/maverick/var/build/libseek-thermal",
                 creates     => "/srv/maverick/software/libseek-thermal/lib/libseek.so",
-                before      => Service_wrapper["maverick-vision_seek"],
+                before      => Service["maverick-vision_seek"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_libseek-thermal":
                 ensure      => present,
@@ -78,12 +78,12 @@ class maverick_vision::vision_seek (
     
     # Activate or inactivate service
     if $active == true {
-        service_wrapper { "maverick-vision_seek":
+        service { "maverick-vision_seek":
             ensure  => running,
             enable  => true,
         }
     } else {
-        service_wrapper { "maverick-vision_seek":
+        service { "maverick-vision_seek":
             ensure  => stopped,
             enable  => false
         }

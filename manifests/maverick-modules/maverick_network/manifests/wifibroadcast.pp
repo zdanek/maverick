@@ -142,13 +142,13 @@ class maverick_network::wifibroadcast (
 
         # Control tx service
         if $tx_active == true {
-            service_wrapper { "maverick-wifibc_tx":
+            service { "maverick-wifibc_tx":
                 ensure  => running,
                 enable  => true,
                 require => [ Exec["maverick-systemctl-daemon-reload"], Exec["setcaps-wifibc_tx"] ],
             }
         } else {
-            service_wrapper { "maverick-wifibc_tx":
+            service { "maverick-wifibc_tx":
                 ensure  => stopped,
                 enable  => false,
                 require => Exec["maverick-systemctl-daemon-reload"],

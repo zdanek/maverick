@@ -180,64 +180,6 @@ define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
         }
     }
 }
-
-# Define a function that only stops services if they exist
-define service_stop () {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
-        $_provider = "systemd"
-    } else {
-        $_provider = undef
-    }
-    if ! empty(grep($::installed_services, $name)) {
-        service { $name:
-            ensure      => stopped,
-            enable      => false,
-            provider    => $_provider,
-        }
-    }
-}
-
-# Define a function that only starts services if they exist
-define service_start () {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
-        $_provider = "systemd"
-    } else {
-        $_provider = undef
-    }
-    if ! empty(grep($::installed_services, $name)) {
-        service { $name:
-            ensure      => running,
-            enable      => true,
-            provider    => $_provider,
-        }
-    }
-}
-
-# Define a function that only starts services if they exist
-define service_wrapper ($enable, $ensure, $service_name=$name) {
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "15.04" or $operatingsystemrelease == "15.10" or $operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10" or $operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
-        $_provider = "systemd"
-    } else {
-        $_provider = undef
-    }
-    if ! ($ensure == "stopped" and empty(grep($::installed_services, $service_name))) {
-        if $service_name != $name {
-            service { $name:
-                name        => $service_name,
-                ensure      => $ensure,
-                enable      => $enable,
-                provider    => $_provider,
-            }
-        } else {
-            service { $name:
-                ensure      => $ensure,
-                enable      => $enable,
-                provider    => $_provider,
-            }
-        }
-    }
-}
-
 ### End of defines
 
 node default {

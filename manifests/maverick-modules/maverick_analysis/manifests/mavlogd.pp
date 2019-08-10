@@ -42,7 +42,7 @@ class maverick_analysis::mavlogd (
         #replace         => false,
         #source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
         content         => template("maverick_analysis/maverick-mavlogd.conf.erb"),
-        notify          => Service_wrapper["maverick-mavlogd"],
+        notify          => Service["maverick-mavlogd"],
     } ->
     file { "/etc/systemd/system/maverick-mavlogd.service":
         ensure          => present,
@@ -51,18 +51,18 @@ class maverick_analysis::mavlogd (
         group           => "mav",
         source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.service",
         notify          => Exec["maverick-systemctl-daemon-reload"],
-        require         => [Service_wrapper["maverick-influxd"], Service["maverick-grafana"]],
-        before          => Service_wrapper["maverick-mavlogd"],
+        require         => [Service["maverick-influxd"], Service["maverick-grafana"]],
+        before          => Service["maverick-mavlogd"],
     }
     
     if $active == true {
-        service_wrapper{ "maverick-mavlogd":
+        service{ "maverick-mavlogd":
             ensure          => running,
             enable          => true,
             require         => Package["python-lockfile"],
         }
     } else {
-        service_wrapper{ "maverick-mavlogd":
+        service{ "maverick-mavlogd":
             ensure          => stopped,
             enable          => false,
             require         => Package["python-lockfile"],
@@ -87,7 +87,7 @@ class maverick_analysis::mavlogd (
         }
         
         if $active == true {
-            service_wrapper { "maverick-uploader":
+            service { "maverick-uploader":
                 ensure          => running,
                 enable          => true,
                 require         => File["/etc/systemd/system/maverick-uploader.service"],
@@ -96,10 +96,10 @@ class maverick_analysis::mavlogd (
                 location    => "/analysis/uploader/",
                 proxy       => 'http://localhost:6792/',
                 server      => getvar("maverick_web::server_fqdn"),
-                require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service_wrapper["maverick-uploader"], ],
+                require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["maverick-uploader"], ],
             }
         } else {
-            service_wrapper { "maverick-uploader":
+            service { "maverick-uploader":
                 ensure      => stopped,
                 enable      => false,
             }

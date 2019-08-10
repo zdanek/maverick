@@ -44,7 +44,7 @@ class maverick_security (
 	if $fail2ban {
 		class { "maverick_security::fail2ban": }
 	} else {
-		service_wrapper { "fail2ban":
+		service { "fail2ban":
 			ensure		=> stopped,
 			enable		=> false
 		}

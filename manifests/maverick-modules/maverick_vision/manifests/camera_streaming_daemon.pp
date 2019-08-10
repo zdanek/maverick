@@ -40,12 +40,12 @@ class maverick_vision::camera_streaming_daemon (
             group       => "root",
             mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
-            before      => Service_wrapper["maverick-csd"],
+            before      => Service["maverick-csd"],
         }
     }
 
     if $active == true {
-        service_wrapper { "maverick-csd":
+        service { "maverick-csd":
             ensure      => running,
             enable      => true,
         }
@@ -63,7 +63,7 @@ class maverick_vision::camera_streaming_daemon (
             }
         }
     } else {
-        service_wrapper { "maverick-csd":
+        service { "maverick-csd":
             ensure      => stopped,
             enable      => false,
         }

@@ -150,7 +150,7 @@ class base::maverick (
         mode        => "644",
         notify      => Exec["maverick-systemctl-daemon-reload"],
     } ->
-    service_wrapper { "maverick-firstboot": 
+    service { "maverick-firstboot": 
         enable      => true,
         ensure      => undef,
     }

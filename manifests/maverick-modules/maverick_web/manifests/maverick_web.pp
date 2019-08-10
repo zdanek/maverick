@@ -53,7 +53,7 @@ class maverick_web::maverick_web (
     	proxy_read_timeout      => "7d",
         proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
     	proxy_http_version      => "1.1",
-        require                 => [ Class["nginx"], Service_wrapper["system-nginx"] ],
+        require                 => [ Class["nginx"], Service["nginx"] ],
     } ->
     # Define nginx location for webdev proxy
     nginx::resource::location { "maverick-webdev":
@@ -64,7 +64,7 @@ class maverick_web::maverick_web (
         server      => $server_hostname,
         auth_basic  => $auth_message,
         auth_basic_user_file => $auth_file,
-        require     => [ Class["nginx"], Service_wrapper["system-nginx"] ],
+        require     => [ Class["nginx"], Service["nginx"] ],
     }
     
     # Install prod repo, register nginx location
@@ -83,7 +83,7 @@ class maverick_web::maverick_web (
         server          => $server_hostname,
         auth_basic      => $auth_message,
         auth_basic_user_file => $auth_file,
-        require         => [ Class["nginx"], Service_wrapper["system-nginx"] ],
+        require         => [ Class["nginx"], Service["nginx"] ],
     } ->
     # Install -web dependencies
     exec { 'maverick-web-install':

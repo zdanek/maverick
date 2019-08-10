@@ -16,13 +16,14 @@ class maverick_intelligence::tensorflow (
     } else {
         $_install_type = "source"
     }
-    
+
+    ensure_packages(["libblas-dev", "liblapack-dev", "libatlas-base-dev", "gfortran", "libhdf5-dev"])
+
     # Ensure package dependencies are installed
     install_python_module { "tensorflow-numpy":
         pkgname     => "numpy",
         ensure      => present,
     }
-    ensure_packages(["libblas-dev", "liblapack-dev", "libatlas-base-dev", "gfortran"])
 
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {

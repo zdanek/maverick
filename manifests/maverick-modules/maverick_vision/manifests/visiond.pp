@@ -56,7 +56,7 @@ class maverick_vision::visiond (
     }
     
     if $active == true {
-        service_wrapper { "maverick-visiond":
+        service { "maverick-visiond":
             ensure      => running,
             enable      => true,
             require     => Class["maverick_vision::gstreamer"],
@@ -75,7 +75,7 @@ class maverick_vision::visiond (
             }
         }
     } else {
-        service_wrapper { "maverick-visiond":
+        service { "maverick-visiond":
             ensure      => stopped,
             enable      => false,
             require     => Class["maverick_vision::gstreamer"],
@@ -105,13 +105,13 @@ class maverick_vision::visiond (
         }
 
         if $webvision_active == true {
-            service_wrapper { "maverick-webvision":
+            service { "maverick-webvision":
                 ensure          => running,
                 enable          => true,
                 require         => Exec["maverick-systemctl-daemon-reload"],
             }
         } else {
-            service_wrapper { "maverick-webvision":
+            service { "maverick-webvision":
                 ensure          => stopped,
                 enable          => false,
                 require         => Exec["maverick-systemctl-daemon-reload"],

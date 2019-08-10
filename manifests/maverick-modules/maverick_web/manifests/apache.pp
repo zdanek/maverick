@@ -4,7 +4,7 @@ class maverick_web::apache (
     $server_hostname = $maverick_web::server_fqdn,
 ) {
     
-    service_wrapper { "nginx":
+    service { "nginx":
         ensure      => stopped,
         enable      => false,
     } ->

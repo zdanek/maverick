@@ -20,7 +20,7 @@ class maverick_hardware::raspberry::fbcp (
         command     => "/bin/cp /srv/maverick/var/build/raspi2fb/raspi2fb@.service /etc/systemd/system",
         creates     => "/etc/systemd/system/raspi2fb@.service",
     } ->
-    service_wrapper { "raspi2fb@1":
+    service { "raspi2fb@1":
         enable      => true,
         ensure      => running
     }
