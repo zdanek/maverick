@@ -208,11 +208,6 @@ class maverick_ros (
             group       => "root",
             content     => "source /opt/ros/${_distribution}/setup.bash",
         } ->
-        # Install a fixed apm_config.yaml
-        # https://github.com/mavlink/mavros/issues/1210
-        file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
-            source  => "puppet:///modules/maverick_ros/apm_config.yaml",
-        }
         # Install python3 packages
         package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
             ensure      => present,
