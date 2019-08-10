@@ -5,8 +5,6 @@ class maverick_hardware::peripheral::realsense (
 
     require base::python
 
-    $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
- 
     if $sdk1 == true {
         ensure_packages(["libglfw3", "libglfw3-dev", "pkg-config", "libssl-dev", "liblz4-dev", "liblog4cxx-dev", "libgtk-3-dev", "libglu1-mesa-dev", "freeglut3-dev"])
 
@@ -80,6 +78,37 @@ class maverick_hardware::peripheral::realsense (
             group       => "root",
             content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
         }
+        file { "/etc/profile.d/70-maverick-realsense-sdk2-path.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
+        }
+        file { "/etc/profile.d/70-maverick-realsense-sdk2-pkgconfig.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+        }
+        file { "/etc/profile.d/70-maverick-realsense-sdk2-ldlibrarypath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+        }
+        file { "/etc/profile.d/70-maverick-realsense-sdk2-pythonpath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+        }
+        file { "/etc/ld.so.conf.d/maverick-realsense-sdk2.conf":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "/srv/maverick/software/realsense-sdk2/lib",
+            notify      => Exec["maverick-ldconfig"],
+        }
 
         if $::hardwaremodel == "x86_64" and $::operatingsystem == "Ubuntu" {
             if $::lsbdistcodename == "xenial" or $::lsbdistcodename == "bionic" {
@@ -98,30 +127,36 @@ class maverick_hardware::peripheral::realsense (
             }
         }
 
-        if $raspberry_present == "yes" {
-            $uvcparam = "-DFORCE_LIBUVC=true"
-            # https://github.com/IntelRealSense/librealsense/issues/4565
-            exec { "patch-realsense-raspbian":
-                command => "/bin/cat 'set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -latomic\")' >>/srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
-                unless  => "/bin/grep 'CMAKE_CXX_FLAGS' /srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
-            }
-        } else {
-            $uvcparam = ""
-        }
-
         if ! ("install_flag_realsense-sdk2" in $installflags) {
             # Clone realsense-sdk
-            oncevcsrepo { "git-realsense-realsense_sdk":
+            oncevcsrepo { "git-realsense-realsense_sdk2":
                 gitsource   => "https://github.com/IntelRealSense/librealsense.git",
                 dest        => "/srv/maverick/var/build/realsense-sdk2",
                 revision    => "master",
-            } ->
+            }
+
+            if $raspberry_present == "yes" {
+                $uvcparam = "-DFORCE_LIBUVC=true"
+                # https://github.com/IntelRealSense/librealsense/issues/4565
+                exec { "patch-realsense-raspbian":
+                    command => "/bin/echo 'set(CMAKE_CXX_FLAGS \"\${CMAKE_CXX_FLAGS} -latomic\")' >>/srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
+                    unless  => "/bin/grep 'CMAKE_CXX_FLAGS' /srv/maverick/var/build/realsense-sdk2/CMakeLists.txt",
+                    before  => Exec["realsense-sdk2-prepbuild"],
+                    require => Oncevcsrepo["git-realsense-realsense_sdk2"],
+                }
+                $buildparallel = 1
+            } else {
+                $uvcparam = ""
+                $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
+            }
+
             # Create build directory
             file { "/srv/maverick/var/build/realsense-sdk2/build":
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
                 mode        => "755",
+                require     => Oncevcsrepo["git-realsense-realsense_sdk2"]
             } ->
             exec { "realsense-sdk2-prepbuild":
                 user        => "mav",
