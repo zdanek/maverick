@@ -9,8 +9,8 @@ class maverick_hardware (
     $camera_ocam_install = false,
     $camera_picam_install = false,
     $realsense_install = true,
-    $seekthermal_install = false,
-    $flirone_install = false,
+    $seekthermal_install = true,
+    $flirone_install = true,
 ) {
 	
 	# Setup hardware sensors (lmsensors)
