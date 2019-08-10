@@ -13,6 +13,8 @@ class maverick_analysis::influx (
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian jessie stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         } elsif $::operatingsystemmajrelease == "9" {
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian stretch stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } elsif $::operatingsystemmajrelease == "10" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian buster stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         }
     } elsif $::operatingsystem == "Ubuntu" {
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
