@@ -1,4 +1,5 @@
 class maverick_hardware::tegra (
+    $jtx1inst = false,
 ) {
 
     ### Disable nvidia report_ip_to_host
@@ -7,7 +8,7 @@ class maverick_hardware::tegra (
         onlyif          => "/bin/grep report_ip_to_host /etc/rc.local",
     }
     
-    if ! ("install_flag_jtx1inst" in $installflags) {
+    if ! ("install_flag_jtx1inst" in $installflags) and $jtx1inst == true {
         # Pull jtx1inst fix from git mirror
         oncevcsrepo { "git-jtx1inst":
             gitsource   => "https://github.com/fnoop/jtx1inst.git",
