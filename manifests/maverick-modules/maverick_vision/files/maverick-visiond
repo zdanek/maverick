@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/srv/maverick/software/python/bin/python3
 
 # (c) 2016-2017 Fnoop
 # http://github.com/goodrobots/maverick
 # This is an experimental daemon that controls a video source, transmutes formats and transmits it over wireless
 
+import io
 import os
 import sys
 import signal
@@ -506,7 +507,7 @@ class App():
                 else:
                     self.autoconstruct()
             except ValueError as e:
-                logger.critical("Error constructing pipeline: {}, retrying in {} sec".format(repr(e.message), self.retry))
+                logger.critical("Error constructing pipeline: {}, retrying in {} sec".format(repr(e), self.retry))
                 time.sleep(float(self.retry))
 
     def manualconstruct(self):
@@ -542,10 +543,11 @@ class App():
 
         # Check the camera has a valid input
         try:
-            self.vd = open(cameradev, 'rw')
+            #self.vd = open(cameradev, 'r+')
+            self.vd = io.TextIOWrapper(open(cameradev, "r+b", buffering=0))
             cp = v4l2.v4l2_capability()
-        except:
-            raise ValueError('Camera not specified in config, or camera not valid')
+        except Exception as e:
+            raise ValueError("Camera not specified in config, or camera not valid: {}".format(repr(e)))
         if not self.check_input():
             raise ValueError('Specified camera not valid')
 
@@ -555,9 +557,10 @@ class App():
         # Try and autodetect MFC device
         self.mfcdev = None
         for devicepath in devicepaths:
-            ioctl(open(devicepath, 'rw'), v4l2.VIDIOC_QUERYCAP, cp)
+            dp = io.TextIOWrapper(open(devicepath, "r+b", buffering=0))
+            ioctl(dp, v4l2.VIDIOC_QUERYCAP, cp)
             if cp.card == "s5p-mfc-enc":
-                self.mfcdev = open(devicepath, 'rw')
+                self.mfcdev = dp
                 logger.info('MFC Hardware encoder detected, autoselecting '+devicepath)
 
         # If format set in config use it, otherwise autodetect
@@ -566,7 +569,7 @@ class App():
             if self.config['format']:
                 streamtype = self.config['format']
         except:
-            if re.search("C920", self.card):
+            if re.search("C920", self.card.decode()):
                 logger.info("Logitech C920 detected, forcing H264 passthrough")
                 streamtype = 'h264'                                                                     
             # format not set, carry on and try to autodetect
@@ -633,8 +636,8 @@ class App():
         # Log capability info
         cp = v4l2.v4l2_capability() 
         ioctl(self.vd, v4l2.VIDIOC_QUERYCAP, cp) 
-        logger.debug("driver: "+cp.driver)
-        logger.debug("card: "+cp.card)
+        logger.debug("driver: " + cp.driver.decode())
+        logger.debug("card: " + cp.card.decode())
         self.driver = cp.driver
         self.card = cp.card
         
@@ -648,7 +651,7 @@ class App():
                 assert e.errno == errno.EINVAL
                 queryctrl.id += 1
                 continue
-            logger.debug("Camera control: "+queryctrl.name)
+            logger.debug("Camera control: " + queryctrl.name.decode())
             queryctrl = v4l2.v4l2_queryctrl(queryctrl.id + 1)
         queryctrl.id = v4l2.V4L2_CID_PRIVATE_BASE
         while True:
@@ -658,7 +661,7 @@ class App():
                 # no more custom controls available on this device
                 assert e.errno == errno.EINVAL
                 break
-            logger.debug("Camera control: "+queryctrl.name)
+            logger.debug("Camera control: " + queryctrl.name.decode())
             queryctrl = v4l2.v4l2_queryctrl(queryctrl.id + 1)
         
         # Log formats available
@@ -667,7 +670,7 @@ class App():
         capture.type = v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE
         try:
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
-                    logger.debug("Camera format: "+capture.description)
+                    logger.debug("Camera format: " + capture.description.decode())
                     capture.index += 1
         except:
             pass
@@ -680,11 +683,12 @@ class App():
         input = v4l2.v4l2_input(index)
         try:
             ioctl(vd, v4l2.VIDIOC_ENUMINPUT, input)
-            logger.debug('V4l2 device input: '+input.name+':'+str(input.type))
+            logger.debug('V4l2 device input: ' + input.name.decode() + ':' + str(input.type))
             if input.type != 2:
                 return False # If input type is not camera (2) then return false
             return True
-        except:
+        except Exception as e:
+            logger.debug("Error checking input: {}".format(repr(e)))
             return False
 
     def check_format(self, format):
@@ -695,16 +699,16 @@ class App():
         try:
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
                 if format.lower() == "h264":
-                    if re.search('H264', capture.description.lower()) or re.search('H.264', capture.description.lower()):
+                    if re.search('H264', capture.description.decode().lower()) or re.search('H.264', capture.description.decode().lower()):
                         available = True
                 elif format.lower() == "mjpeg":
-                    if re.search('jpeg', capture.description.lower()):
+                    if re.search('jpeg', capture.description.decode().lower()):
                         available = True
                 elif format.lower() == "yuv" or format.lower() == "raw":
-                    if re.search('^yu', capture.description.lower()):
+                    if re.search('^yu', capture.description.decode().lower()):
                         available = True
                 else:
-                    if re.search(format.lower(), capture.description.lower()):
+                    if re.search(format.lower(), capture.description.decode().lower()):
                         available = True
                 capture.index += 1
         except:
