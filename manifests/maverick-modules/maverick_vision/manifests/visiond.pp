@@ -4,10 +4,12 @@ class maverick_vision::visiond (
     $webvision_active = true,
 ) {
 
+    require maverick_vision::gstreamer
+
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
-    # Add v4l2 python2 bindings
+    # Add v4l2 python bindings
     install_python_module { "pip-v4l2":
         pkgname     => "v4l2",
         url         => "git+https://github.com/fnoop/python-v4l2.git",
