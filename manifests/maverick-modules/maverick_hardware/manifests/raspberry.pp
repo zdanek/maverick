@@ -284,4 +284,12 @@ class maverick_hardware::raspberry (
         command     => "/bin/sed -i -e 's/^CONF_SWAPSIZE=.*/CONF_SWAPSIZE=${swapsize}/' /etc/dphys-swapfile",
         unless      => "/bin/grep -e '^CONF_SWAPSIZE=${swapsize}$' /etc/dphys-swapfile",
     }
+
+    # Set CXXFLAGS so Raspbian Buster broadcasts atomic library
+    file { "/etc/profile.d/20-maverick-raspbian-cxxflags.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'export CXXFLAGS="-latomic"',
+    }
 }
