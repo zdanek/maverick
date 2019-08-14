@@ -8,13 +8,13 @@ class maverick_vision::visiond (
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
     # Add v4l2 python2 bindings
-    install_python_module { 'pip-v4l2':
-        pkgname     => 'v4l2',
+    install_python_module { "pip-v4l2":
+        pkgname     => "v4l2",
+        url         => "git+https://github.com/fnoop/python-v4l2.git",
         ensure      => present,
-        pip_provider => "pip",
-        env         => "global",
+        timeout     => 0,
     }
-     
+
     # Link maverick-visiond into central bin directory
     file { "/srv/maverick/software/maverick/bin/maverick-visiond":
         ensure      => link,
