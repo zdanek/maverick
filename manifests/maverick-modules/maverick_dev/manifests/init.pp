@@ -4,6 +4,7 @@ class maverick_dev (
     $px4 = false,
     $px4sitl_dev = true,
     $vscode_watchers = 8192,
+    $mavsdk = true,
 ) {
    
     # Create various dev directories
@@ -30,8 +31,10 @@ class maverick_dev (
     # Install dronekit
     class { "maverick_dev::dronekit": }
 
-    # Install dronecode
-    class { "maverick_dev::dronecore": }
+    if $mavsdk == true {
+        # Install dronecode
+        class { "maverick_dev::mavsdk": }
+    }
 
     # Install/compile ardupilot and SITL
     if $ardupilot {
