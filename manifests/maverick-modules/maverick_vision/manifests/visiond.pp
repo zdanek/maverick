@@ -4,8 +4,6 @@ class maverick_vision::visiond (
     $webvision_active = true,
 ) {
 
-    require maverick_vision::gstreamer
-
     # Setup standard packages for all platforms
     ensure_packages(["v4l-utils", "v4l-conf","uvcdynctrl"])
 
