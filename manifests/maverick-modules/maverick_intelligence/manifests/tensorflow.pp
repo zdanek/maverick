@@ -1,6 +1,6 @@
 class maverick_intelligence::tensorflow (
     $source = "https://github.com/tensorflow/tensorflow.git",
-    $version = "1.13.1",
+    $version = "1", # 1 or 2
     $source_version = "r1.13",
     $bazel_version = "0.13.0",
     $arch = undef,
@@ -27,41 +27,43 @@ class maverick_intelligence::tensorflow (
 
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
-            install_python_module { "tensorflow-pip":
-                pkgname     => "tensorflow",
-                url         => "https://www.piwheels.org/simple/tensorflow/tensorflow-1.13.1-cp37-none-linux_armv7l.whl",
-                ensure      => present,
-                timeout     => 0,
+            if $version == "1" {
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.14.0-cp37-cp37m-linux_armv7l.whl"
+            } elsif $version == "2" {
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0b1-cp37-cp37m-linux_armv7l.whl"
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
-            install_python_module { "tensorflow-pip":
-                pkgname     => "tensorflow",
-                url         => "https://www.piwheels.org/simple/tensorflow/tensorflow-1.13.1-cp37-none-linux_armv6l.whl",
-                ensure      => present,
-                timeout     => 0,
+            warning("No tensorflow install available for Pi Zero/armv6l")
+        } elsif ($::tegra_present == "yes") {
+            if $version == "1" {
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.14.0-cp37-cp37m-linux_aarch64.whl"
+            } elsif $version == "2" {
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0b1-cp37-cp37m-linux_aarch64.whl"
             }
-        } elsif ($::tegra_present == "yes" and $::tegra_model == "TX1") {
-            install_python_module { "tensorflow-pip":
-                pkgname     => "tensorflow",
-                url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX1/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
-                ensure      => present,
-                timeout     => 0,
+        } else {
+            $tensorflow_url = ""
+            if $version == "1" {
+                $tensorflow_pkgname = "tensorflow"
+            } else {
+                $tensorflow_pkgname = "tensorflow==2.0.0-beta1"
             }
-        } elsif ($::tegra_present == "yes" and $::tegra_model == "TX2") {
+        }
+
+        if $tensorflow_url == "" {
             install_python_module { "tensorflow-pip":
-                pkgname     => "tensorflow",
-                url         => "https://github.com/jetsonhacks/installTensorFlowJetsonTX/raw/master/TX2/tensorflow-1.3.0-cp27-cp27mu-linux_aarch64.whl",
+                pkgname     => $tensorflow_pkgname,
                 ensure      => present,
                 timeout     => 0,
             }
         } else {
             install_python_module { "tensorflow-pip":
                 pkgname     => "tensorflow",
-                ensure      => exactly,
-                version     => $version,
+                url         => $tensorflow_url,
+                ensure      => present,
                 timeout     => 0,
             }
         }
+
     } elsif $_install_type == "source" {
         if ! ("install_flag_tensorflow" in $installflags) {
             ensure_packages(["openjdk-8-jdk", "zlib1g-dev", "swig"])
