@@ -10,6 +10,7 @@ class maverick_vision::gstreamer (
     		ensure_packages(["gstreamer1.0-omx"])
     		
             install_python_module { "pip-pygobject":
+                pkgname     => "pygobject",
                 ensure      => present,
                 require     => Package["libgirepository1.0-dev"],
             }
