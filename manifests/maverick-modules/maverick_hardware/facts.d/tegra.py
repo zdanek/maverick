@@ -36,8 +36,8 @@ class Tegra(object):
         try:
             with open('/proc/device-tree/model', 'r') as f:
                 board = f.readline().strip()
-                if 'nano' in board:
-                    self.data['model'] = 'Nano'
+                if re.search('nano', board, re.IGNORECASE):
+                    self.data['model'] = 'Jetson Nano'
         except:
             pass
         
