@@ -6,11 +6,6 @@ class maverick_dev::mavsdk (
 
     # Install mavsdk
     if ! ("install_flag_mavsdk" in $installflags) {
-        if $raspberry_present == "yes" {
-            $environment = ["CXXFLAGS=-latomic"]
-        } else {
-            $environment = []
-        }
         oncevcsrepo { "git-mavsdk":
             gitsource   => "https://github.com/mavlink/MAVSDK.git",
             dest        => "/srv/maverick/var/build/mavsdk",
@@ -25,7 +20,6 @@ class maverick_dev::mavsdk (
         exec { "mavsdk-prepbuild":
             user        => "mav",
             timeout     => 0,
-            environment => $environment,
             command     => "/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_BACKEND=ON -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/mavsdk ../.. >/srv/maverick/var/log/build/mavsdk.cmake.out 2>&1",
             cwd         => "/srv/maverick/var/build/mavsdk/build/default",
             creates     => "/srv/maverick/var/build/mavsdk/build/default/Makefile",
@@ -33,7 +27,6 @@ class maverick_dev::mavsdk (
         exec { "mavsdk-build":
             user        => "mav",
             timeout     => 0,
-            environment => $environment,
             command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/mavsdk.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/mavsdk/build/default",
             creates     => "/srv/maverick/var/build/mavsdk/build/default/src/core/libmavsdk.so",
