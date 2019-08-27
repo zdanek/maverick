@@ -315,32 +315,35 @@ class maverick_ros (
             }
         }
         
-        if ! ("install_flag_ros_mavros" in $installflags) {
-            if $module_mavros == true {
+        if $module_mavros == true {
+            if ! ("install_flag_ros_mavros" in $installflags) {
                 if "install_flag_ros" in $installflags {
                     $_mavros_deps = undef
                 } else {
                     $_mavros_deps = Exec["catkin_make"]
                 }
                 # Add mavros to the existing workspace, this also installs mavlink package as dependency
-                exec { "ws_add_mavros":
-                    # command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator visualization_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator tf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator geographic_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator control_toolbox --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator urdf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator nav_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator eigen_conversions --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator diagnostic_msgs --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator tf2_eigen --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool update -t src",
-                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink control_toolbox urdf eigen_conversions diagnostic_updater diagnostic_msgs geometry_msgs nav_msgs sensor_msgs geographic_msgs visualization_msgs tf tf2_eigen --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall >/srv/maverick/var/log/build/ros.mavros.wstoolmerge.out 2>&1 && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.mavros.wstoolupdate.out 2>&1",
-                    # command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --deps --tar >${_distribution}-mavros.rosinstall && /usr/bin/wstool merge --merge-keep -t src ${_distribution}-mavros.rosinstall -y && /usr/bin/wstool update -t src",
+                exec { "mavros_ws_add":
+                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink mavros_extras mavros_msgs test_mavros sensor_msgs  control_toolbox realtime_tools tf tf2_ros python_orocos_kdl urdf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall >/srv/maverick/var/log/build/ros.mavros.wstoolmerge.out 2>&1 && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.mavros.wstoolupdate.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
                     creates         => "${builddir}/src/mavros",
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
                     timeout         => 0,
                     require         => $_mavros_deps, 
                 } ->
-                exec { "catkin_make_mavros":
+                exec { "mavros_rosdep_install":
                     # Note must only use -j1 otherwise we get compiler errors
-                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y $_osdistro >/srv/maverick/var/log/build/ros.mavros.rosdep.out 2>&1 && ${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j1 >/srv/maverick/var/log/build/ros.mavros.catkin_make.out 2>&1",
+                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src -y >/srv/maverick/var/log/build/ros.mavros.rosdep.out 2>&1",
                     cwd             => "${builddir}",
                     user            => "mav",
-                    creates         => "${installdir}/${_distribution}/lib/libmavros.so",
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
+                    timeout         => 0,
+                    require         => File["${installdir}/${_distribution}"]
+                } ->
+                exec { "mavros_catkin_make":
+                    # Note must only use -j1 otherwise we get compiler errors
+                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -j2 >/srv/maverick/var/log/build/ros.mavros.catkin_make.out 2>&1",
+                    cwd             => "${builddir}",
+                    user            => "mav",
                     timeout         => 0,
                     require         => File["${installdir}/${_distribution}"]
                 } ->
@@ -351,12 +354,12 @@ class maverick_ros (
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
-                } ->
-                # Install a fixed apm_config.yaml
-                # https://github.com/mavlink/mavros/issues/1210
-                file { "/srv/maverick/software/ros/current/share/mavros/launch/apm_config.yaml":
-                    source  => "puppet:///modules/maverick_ros/apm_config.yaml",
                 }
+            }
+            # Install a fixed apm_config.yaml
+            # https://github.com/mavlink/mavros/issues/1210
+            file { "/srv/maverick/software/ros/melodic/share/mavros/launch/apm_config.yaml":
+                content     => template("maverick_ros/apm_config.yaml.erb")
             }
         }
     }
@@ -385,7 +388,7 @@ class maverick_ros (
         }
         
         # Create log directories
-        file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc", "/srv/maverick/var/log/ros/sitl"]:
+        file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc"]:
             ensure      => directory,
             mode        => "755",
             owner       => "mav",
