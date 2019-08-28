@@ -7,10 +7,10 @@ class maverick_network (
     $avahi = true,
     $dnsmasq = false,
     $dnsclient = false, 
-    $ntpclient = false,
     $ipv6 = undef,
     $wpasupplicant_template = true,
     $zerotier = true,
+    $timesync = true,
     ) {
 
     # Install software 
@@ -47,8 +47,8 @@ class maverick_network (
         manage_order    => 0,
     }
 
-    if $ntpclient == true {
-        class { "maverick_network::ntpclient": }
+    if $timesync == true {
+        class { "maverick_network::timesync": }
     }
     
     if $dnsclient == true {
