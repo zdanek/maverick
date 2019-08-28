@@ -356,11 +356,6 @@ class maverick_ros (
                     ensure      => present,
                 }
             }
-            # Install a fixed apm_config.yaml
-            # https://github.com/mavlink/mavros/issues/1210
-            file { "/srv/maverick/software/ros/melodic/share/mavros/launch/apm_config.yaml":
-                content     => template("maverick_ros/apm_config.yaml.erb")
-            }
         }
     }
     
@@ -407,6 +402,11 @@ class maverick_ros (
         file { "/srv/maverick/software/maverick/bin/mavros.sh":
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
+        }
+        # Install a fixed apm_config.yaml
+        # https://github.com/mavlink/mavros/issues/1210
+        file { "/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml":
+            content     => template("maverick_ros/apm_config.yaml.erb")
         }
     }
 
