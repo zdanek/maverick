@@ -1,0 +1,12 @@
+[Unit]
+Description=Maverick - Dronecode Camera Manager
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+ExecStart=/srv/maverick/software/camera-manager/bin/dcm -c /srv/maverick/config/vision/dcm.conf
+TimeoutStartSec=0
+User=mav
+
+[Install]
+WantedBy=multi-user.target

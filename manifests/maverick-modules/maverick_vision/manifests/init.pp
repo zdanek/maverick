@@ -9,7 +9,7 @@ class maverick_vision (
     $orb_slam2 = false,
     $vision_landing = true,
     $vision_seek = true,
-    $camera_streaming_daemon = true,
+    $camera_manager = true,
     $collision_avoidance = false,
     $rtabmap = false,
 ) {
@@ -53,8 +53,8 @@ class maverick_vision (
         class { "maverick_vision::vision_landing": }
     }
 
-    if $camera_streaming_daemon == true {
-        class { "maverick_vision::camera_streaming_daemon": }
+    if $camera_manager == true {
+        class { "maverick_vision::camera_manager": }
     }
 
     if $vision_seek == true {

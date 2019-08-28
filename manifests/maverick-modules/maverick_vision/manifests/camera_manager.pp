@@ -1,5 +1,5 @@
-class maverick_vision::camera_streaming_daemon (
-    $camera_streaming_daemon_source = "https://github.com/intel/camera-streaming-daemon.git",
+class maverick_vision::camera_manager (
+    $camera_manager_source = "https://github.com/Dronecode/camera-manager.git",
     $rtsp_port = 8554,
     $active = false,
 ) {
@@ -7,45 +7,45 @@ class maverick_vision::camera_streaming_daemon (
     # Ensure gstreamer resources are applied before this class
     require maverick_vision::gstreamer
     
-    if ! ("install_flag_camera-streaming-daemon" in $installflags) {
+    if ! ("install_flag_camera-manager" in $installflags) {
         ensure_packages(["libavahi-common-dev", "libavahi-core-dev", "libavahi-glib-dev", "libavahi-client-dev"])
-        oncevcsrepo { "git-camera-streaming-daemon":
-            gitsource   => $camera_streaming_daemon_source,
-            dest        => "/srv/maverick/var/build/camera-streaming-daemon",
+        oncevcsrepo { "git-camera-manager":
+            gitsource   => $camera_manager_source,
+            dest        => "/srv/maverick/var/build/camera-manager",
             submodules  => true,
         } ->
-        exec { "camera-streaming-daemon-build":
+        exec { "camera-manager-build":
             user        => "mav",
             timeout     => 0,
             environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig"],
-            command     => "/srv/maverick/var/build/camera-streaming-daemon/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-streaming-daemon/configure --disable-systemd --prefix=/srv/maverick/software/camera-streaming-daemon && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-streaming-daemon.build.out 2>&1",
-            cwd         => "/srv/maverick/var/build/camera-streaming-daemon",
-            creates     => "/srv/maverick/software/camera-streaming-daemon/bin/csd",
+            command     => "/srv/maverick/var/build/camera-manager/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-manager/configure --enable-avahi --enable-mavlink --disable-systemd --prefix=/srv/maverick/software/camera-manager && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-manager.build.out 2>&1",
+            cwd         => "/srv/maverick/var/build/camera-manager",
+            creates     => "/srv/maverick/software/camera-manager/bin/dcm",
             require     => [ Package["libavahi-common-dev"], Class["maverick_vision::gstreamer"] ],
         } ->
-        file { "/srv/maverick/var/build/.install_flag_camera-streaming-daemon":
+        file { "/srv/maverick/var/build/.install_flag_camera-manager":
             ensure      => file,
             owner       => "mav",
         } ->
-        file { "/srv/maverick/config/vision/csd.conf":
-            source      => "puppet:///modules/maverick_vision/csd.conf",
+        file { "/srv/maverick/config/vision/camera-manager.conf":
+            source      => "puppet:///modules/maverick_vision/camera-manager.conf",
             owner       => "mav",
             group       => "mav",
             mode        => "644",
             replace     => false,
         } ->
-        file { "/etc/systemd/system/maverick-csd.service":
-            source      => "puppet:///modules/maverick_vision/csd.service",
+        file { "/etc/systemd/system/maverick-camera-manager.service":
+            source      => "puppet:///modules/maverick_vision/camera-manager.service",
             owner       => "root",
             group       => "root",
             mode        => "644",
             notify      => Exec["maverick-systemctl-daemon-reload"],
-            before      => Service["maverick-csd"],
+            before      => Service["maverick-camera-manager"],
         }
     }
 
     if $active == true {
-        service { "maverick-csd":
+        service { "maverick-camera-manager":
             ensure      => running,
             enable      => true,
         }
@@ -63,7 +63,7 @@ class maverick_vision::camera_streaming_daemon (
             }
         }
     } else {
-        service { "maverick-csd":
+        service { "maverick-camera-manager":
             ensure      => stopped,
             enable      => false,
         }
