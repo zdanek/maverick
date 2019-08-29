@@ -2,7 +2,7 @@ class maverick_dev::px4 (
     $px4_source = "https://github.com/PX4/Firmware.git",
     $px4_setupstream = true,
     $px4_upstream = "https://github.com/PX4/Firmware.git",
-    $px4_branch = "master",
+    $px4_branch = "v1.9.2",
     $sitl = false,
     $sitl_active = true,
     $cross_compile = true,
@@ -28,26 +28,44 @@ class maverick_dev::px4 (
 ) {
 
     # Install px4 dev/build dependencies
-    ensure_packages(["git", "zip", "qtcreator", "cmake", "build-essential", "genromfs", "ninja-build", "openjdk-8-jdk", "gradle", "protobuf-compiler"])
+    ensure_packages(["zip", "qtcreator", "cmake", "build-essential", "genromfs", "ninja-build", "openjdk-8-jdk", "gradle", "protobuf-compiler"])
 
     # Install Gazebo
-    ensure_packages(["gazebo7", "libgazebo7-dev"])
+    case $::operatingsystem {
+        "Ubuntu": {
+            case $::lsbdistcodename {
+                "bionic": {
+                    ensure_packages(["gazebo9", "libgazebo9-dev"])
+                }
+                default: {
+                    ensure_packages(["gazebo7", "libgazebo7-dev"])
+                }
+            }
+        }
+        default: {
+            ensure_packages(["gazebo7", "libgazebo7-dev"])
+        }
+    }
     
     # Install px4 python dependencies
     ensure_packages(["python-empy", "python-toml", "python-numpy"])
     install_python_module { 'pip-px4-pandas':
+        pip_provider => 'pip',
         pkgname     => 'pandas',
         ensure      => present,
     } ->
     install_python_module { 'pip-px4-jinja2':
+        pip_provider => 'pip',
         pkgname     => 'jinja2',
         ensure      => present,
     } ->
     install_python_module { 'pip-px4-pyserial':
+        pip_provider => 'pip',
         pkgname     => 'pyserial',
         ensure      => present,
     } ->
     install_python_module { 'pip-px4-pyulog':
+        pip_provider => 'pip',
         pkgname     => 'pyulog',
         ensure      => present,
     }
@@ -133,6 +151,7 @@ class maverick_dev::px4 (
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
             creates     => "/srv/maverick/code/px4/build/posix_sitl_default/px4",
+            require     => Install_python_module['pip-px4-pandas'],
         }
     }
 
@@ -156,6 +175,7 @@ class maverick_dev::px4 (
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
             creates     => "/srv/maverick/code/px4/build/posix_sitl_default/px4",
+            require     => Install_python_module['pip-px4-pandas'],
         } ->
         file { "/srv/maverick/software/maverick/bin/px4sitl.sh":
             ensure      => link,
@@ -352,7 +372,7 @@ class maverick_dev::px4 (
 
     if $cross_compile == true {
         ensure_packages(["python-serial", "openocd", "flex", "bison", "libncurses5-dev", "autoconf", "texinfo", "libftdi-dev", "libtool", "zlib1g-dev"])
-        ensure_packages(["gcc-arm-none-eabi", "gdb-arm-none-eabi", "binutils-arm-none-eabi"])
+        ensure_packages(["gcc-arm-none-eabi", "gdb-multiarch", "binutils-arm-none-eabi"])
     }
 
     if $api_instance == true {
