@@ -7,6 +7,7 @@ class maverick_dev::px4 (
     $sitl_active = true,
     $cross_compile = true,
     $mavlink_proxy = "mavlink-router",
+    $mavlink_logging = false,
     $mavlink_active = true,
     $mavlink_startingtcp = 5790,
     $mavlink_tcpports = 3,
@@ -227,6 +228,7 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
+                logging     => $mavlink_logging,
                 active      => false,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
@@ -269,6 +271,7 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
+                logging     => $mavlink_logging,
                 active      => false,
             } ->
             maverick_mavlink::cmavnode { "px4sitl":
@@ -325,6 +328,7 @@ class maverick_dev::px4 (
                 outflow     => $mavlink_outflow,
                 active      => $mavlink_active,
                 notify      => $notifyResources,
+                logging     => $mavlink_logging,
             }
         }
 

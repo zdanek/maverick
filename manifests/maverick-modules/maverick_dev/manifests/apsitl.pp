@@ -10,6 +10,7 @@ define maverick_dev::apsitl (
     $vehicle_paramfile = undef,
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
+    $mavlink_logging = false,
     $mavlink_startingtcp = 6000,
     $mavlink_tcpports = 3,
     $mavlink_startingudp = 14000,
@@ -29,71 +30,6 @@ define maverick_dev::apsitl (
 ) {
     
     # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl_dev
-
-    # Install a virtual environment for dronekit sitl
-    # NB: The python virtualenv is disabled as it is probably overly-complicated and unnecessary.
-    # The code remains in case it is useful as an option in the future.
-    /*
-    file { "/srv/maverick/code/sitl":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    python::virtualenv { '/srv/maverick/code/sitl':
-        ensure       => present,
-        version      => 'system',
-        systempkgs   => false,
-        distribute   => true,
-        venv_dir     => '/srv/maverick/.virtualenvs/sitl',
-        owner        => 'mav',
-        group        => 'mav',
-        cwd          => '/srv/maverick/code/sitl',
-        timeout      => 0,
-    } ->
-    file { "/srv/maverick/.virtualenvs/sitl/lib/python2.7/no-global-site-packages.txt":
-        ensure  => absent
-    } ->
-    oncevcsrepo { "git-sitl-dronekit-python":
-        gitsource   => $sitl_dronekit_source,
-        dest        => "/srv/maverick/code/sitl/dronekit-python",
-    }
-    
-    install_python_module { 'pip-dronekit-sitl':
-        pkgname     => 'dronekit-sitl',
-        ensure      => present,
-        timeout     => 0,
-    }
-    */
-
-    /*
-    # Install dronekit into sitl
-    install_python_module { 'pip-dronekit-sitl':
-        pkgname     => 'dronekit',
-        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
-        ensure      => present,
-        owner       => 'mav',
-        timeout     => 0,
-        env         => "sitl",
-    }
-    install_python_module { 'pip-dronekit-sitl-sitl':
-        pkgname     => 'dronekit-sitl',
-        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
-        ensure      => present,
-        owner       => 'mav',
-        timeout     => 0,
-        env         => "sitl",
-    }
-    install_python_module { 'pip-mavproxy-sitl':
-        pkgname     => 'MAVProxy',
-        virtualenv  => '/srv/maverick/.virtualenvs/sitl',
-        ensure      => present,
-        owner       => 'mav',
-        timeout     => 0,
-        require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
-        env         => "sitl",
-    }
-    */
 
     file { [ "/srv/maverick/var/log/dev/apsitl_${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
         ensure      => directory,
@@ -270,6 +206,7 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            logging     => $mavlink_logging,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "apsitl_${instance_name}":
@@ -312,6 +249,7 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            logging     => $mavlink_logging,
             active      => false,
         } ->
         maverick_mavlink::cmavnode { "apsitl_${instance_name}":
@@ -368,6 +306,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             active      => $mavlink_active,
             notify      => $notifyResources,
+            logging     => $mavlink_logging,
         }
     }
 

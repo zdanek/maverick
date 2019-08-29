@@ -13,6 +13,7 @@ define maverick_mavlink::mavlink_router (
     $outbaud = undef,
     $outflow = false,
     $active = true,
+    $logging = true,
     $replaceconfig = true,
 ) {
     if $active {

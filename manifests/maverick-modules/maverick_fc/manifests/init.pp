@@ -2,6 +2,7 @@ class maverick_fc (
     $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
+    $mavlink_logging = true,
     $mavlink_input = "/dev/ttyAMA0",
     $mavlink_inbaud = 115200,
     $mavlink_inflow = false,
@@ -111,6 +112,7 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            logging     => $mavlink_logging,
             active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
@@ -157,6 +159,7 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            logging     => $mavlink_logging,
             active      => false,
         } ->
         maverick_mavlink::cmavnode { "fc":
@@ -217,6 +220,7 @@ class maverick_fc (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             active      => $mavlink_active,
+            logging     => $mavlink_logging,
         }
     }
 
