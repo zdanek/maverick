@@ -84,11 +84,6 @@ class maverick_vision::visiond (
     
     if defined(Class["::maverick_web"]) {
         # Add a temporary service to run web vision
-        install_python_module { "webvision-tornado":
-            pkgname     => "tornado",
-            ensure      => atleast,
-            version     => "4.5.2",
-        } ->
         file { "/etc/systemd/system/maverick-webvision.service":
             ensure          => present,
             mode            => "644",

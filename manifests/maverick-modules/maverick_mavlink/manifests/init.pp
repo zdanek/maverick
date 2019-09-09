@@ -222,11 +222,6 @@ class maverick_mavlink (
             owner       => "mav",
             require     => Package["libffi-dev"],
         } ->
-        install_python_module { "mavcesium-tornado":
-            pkgname     => "tornado",
-            ensure      => atleast,
-            version     => "4.5.2",
-        } ->
         install_python_module { "mav-configparser":
             pkgname     => "configparser",
             ensure      => atleast,

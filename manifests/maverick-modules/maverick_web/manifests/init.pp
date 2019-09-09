@@ -13,6 +13,13 @@ class maverick_web (
     $server_fqdn = $::fqdn,
 ) {
     
+    # Install tornado here as it is used across maverick modules
+    install_python_module { "tornado":
+        pkgname     => "tornado",
+        ensure      => atleast,
+        version     => "6.0.3",
+    }
+
     if $nodejs == true {
         class { "maverick_web::nodejs": }
     }
