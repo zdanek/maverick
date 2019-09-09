@@ -53,21 +53,25 @@ class maverick_dev::px4 (
         pip_provider => 'pip',
         pkgname     => 'pandas',
         ensure      => present,
+        env         => "global",
     } ->
     install_python_module { 'pip-px4-jinja2':
         pip_provider => 'pip',
         pkgname     => 'jinja2',
         ensure      => present,
+        env         => "global",
     } ->
     install_python_module { 'pip-px4-pyserial':
         pip_provider => 'pip',
         pkgname     => 'pyserial',
         ensure      => present,
+        env         => "global",
     } ->
     install_python_module { 'pip-px4-pyulog':
         pip_provider => 'pip',
         pkgname     => 'pyulog',
         ensure      => present,
+        env         => "global",
     }
 
     # Install eProsima Fastrtps
@@ -150,7 +154,7 @@ class maverick_dev::px4 (
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
-            creates     => "/srv/maverick/code/px4/build/posix_sitl_default/px4",
+            creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
             require     => Install_python_module['pip-px4-pandas'],
         }
     }
@@ -174,7 +178,7 @@ class maverick_dev::px4 (
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
-            creates     => "/srv/maverick/code/px4/build/posix_sitl_default/px4",
+            creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
             require     => Install_python_module['pip-px4-pandas'],
         } ->
         file { "/srv/maverick/software/maverick/bin/px4sitl.sh":
