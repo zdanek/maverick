@@ -7,7 +7,7 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner=undef, $env="maverick", $version=undef, $url=undef, $pip_provider="pip3") {
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner="mav", $env="maverick", $version=undef, $url=undef, $pip_provider="pip3") {
   $module_version = $python_modules[$env][$pkgname]
   if $pip_provider == "pip3" {
     $path = ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"]
