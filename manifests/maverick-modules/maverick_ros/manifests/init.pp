@@ -6,6 +6,7 @@ class maverick_ros (
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
+    $module_realsense = false,
     $module_opencv = false,
     $ros2 = false,
 ) {
@@ -359,6 +360,52 @@ class maverick_ros (
         }
     }
     
+    if $module_realsense == true {
+        if ! ("install_flag_ros_realsense" in $installflags) {
+            if "install_flag_ros" in $installflags {
+                $_realsense_deps = undef
+            } else {
+                $_realsense_deps = Exec["catkin_make"]
+            }
+            file { ["/srv/maverick/var/build/catkin_ws_realsense", "/srv/maverick/var/build/catkin_ws_realsense/src"]:
+                ensure  => directory,
+                owner   => "mav",
+            } ->
+            package { "ros-${_distribution}-ddynamic-reconfigure": } ->
+            oncevcsrepo { "git-ros-realsense":
+                gitsource   => "https://github.com/IntelRealSense/realsense-ros.git",
+                dest        => "/srv/maverick/var/build/catkin_ws_realsense/src/realsense-ros",
+                revision    => "2.2.8",
+                depth       => undef,
+            } ->
+            exec { "ros-realsense-init-workspace":
+                user        => "mav",
+                cwd         => "/srv/maverick/var/build/catkin_ws_realsense/src",
+                command     => "/opt/ros/current/bin/catkin_init_workspace",
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages"],
+                creates     => "/srv/maverick/var/build/catkin_ws_realsense/src/CMakeLists.txt",
+            } ->
+            exec { "ros-realsense-catkin-make":
+                user        => "mav",
+                cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
+                command     => "/opt/ros/current/bin/catkin_make clean; /opt/ros/current/bin/catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.realsense.catkin_make.out 2>&1",
+                timeout     => 0,
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
+                creates     => "/srv/maverick/var/build/catkin_ws_realsense/build/realsense-ros/realsense2_camera/catkin_generated/installspace/realsense2_camera.pc",
+            } ->
+            exec { "ros-realsense-catkin-install":
+                cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
+                command     => "/opt/ros/current/bin/catkin_make install -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.realsense.catkin_install.out 2>&1",
+                timeout     => 0,
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
+                creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
+            }
+            file { "/srv/maverick/var/build/.install_flag_ros_mavros":
+                ensure      => present,
+            }
+        }
+    }
+
     if $installtype and $_distribution {
         # Install rosmaster systemd manifest.  Note it's not activated here, other modules will call the rosmaster define
         file { "/etc/systemd/system/maverick-rosmaster@.service":
