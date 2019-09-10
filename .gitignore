@@ -28,6 +28,7 @@ bin/wifi-setup
 bin/flirone_v4l2.sh
 bin/wifibc.sh
 bin/api.sh
+bin/mavlink.sh
 conf/local-nodes/
 conf/maverick-branch.conf
 conf/maverick-environment.conf
