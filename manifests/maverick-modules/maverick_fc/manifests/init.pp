@@ -97,7 +97,6 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
@@ -113,7 +112,6 @@ class maverick_fc (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
-            active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
             inputaddress => $mavlink_input,
@@ -144,7 +142,6 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",
@@ -160,7 +157,6 @@ class maverick_fc (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
-            active      => false,
         } ->
         maverick_mavlink::cmavnode { "fc":
             inputaddress => $mavlink_input,
@@ -189,7 +185,6 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavproxy { "fc":
             inputaddress => $mavlink_input,
@@ -204,7 +199,6 @@ class maverick_fc (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "fc":
             inputtype   => "serial",

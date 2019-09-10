@@ -44,7 +44,7 @@ class maverick_mavlink (
         mode        => "755",
     }
     
-    # Install mavlink-params@ service
+    # Remove old maverick-params@ service
     file { "/srv/maverick/software/maverick/bin/mavlink_params":
         ensure      => absent,
     } ->
@@ -52,7 +52,20 @@ class maverick_mavlink (
         ensure      => absent,
         notify      => Exec["maverick-systemctl-daemon-reload"],
     }
-        
+
+    # Install maverick-mavlink service
+    file { "/etc/systemd/system/maverick-mavlink@.service":
+        source      => "puppet:///modules/maverick_mavlink/maverick-mavlink@.service",
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
+    }
+    file { "/srv/maverick/software/maverick/bin/mavlink.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_mavlink/files/mavlink.sh",
+    }
+
     ### cmavnode
     # Install cmavnode from gitsource
     if $cmavnode_install {
@@ -99,10 +112,7 @@ class maverick_mavlink (
             }
         }
         file { "/etc/systemd/system/maverick-cmavnode@.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-cmavnode@.service",
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
+            ensure      => absent,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
         file { "/srv/maverick/software/maverick/bin/cmavnode.sh":
@@ -136,10 +146,7 @@ class maverick_mavlink (
             }
         }
         file { "/etc/systemd/system/maverick-mavlink-router@.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-mavlink-router@.service",
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
+            ensure      => absent,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
     }
@@ -156,10 +163,7 @@ class maverick_mavlink (
             require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
         } ->
         file { "/etc/systemd/system/maverick-mavproxy@.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
+            ensure      => absent,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
@@ -199,10 +203,7 @@ class maverick_mavlink (
             }
         }
         file { "/etc/systemd/system/maverick-mavproxy@.service":
-            source      => "puppet:///modules/maverick_mavlink/maverick-mavproxy@.service",
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
+            ensure      => absent,
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
         file { "/srv/maverick/software/maverick/bin/mavproxy.sh":
@@ -293,22 +294,6 @@ class maverick_mavlink (
                 server      => getvar("maverick_web::server_fqdn"),
                 require     => [ Class["maverick_gcs::fcs"], Service["maverick-nginx"] ],
             }
-        }
-
-        /*
-        # This is disabled now as mavcesium will be reverse proxied through nginx
-        if defined(Class["::maverick_security"]) {
-            maverick_security::firewall::firerule { "mavcesium":
-                ports       => $mavcesium_port,
-                ips         => lookup("firewall_ips"),
-                proto       => "tcp"
-            }
-        }
-        */
-        
-        # Temporary collectd process entry to profile mavcesium memory usage
-        collectd::plugin::processes::processmatch { 'mavcesium' :
-            regex => 'python /srv/maverick/software/mavcesium/app/cesium_web_server.py'
         }
     }
 

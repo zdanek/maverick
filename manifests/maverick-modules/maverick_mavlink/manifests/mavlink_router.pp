@@ -12,12 +12,12 @@ define maverick_mavlink::mavlink_router (
     $serialout = undef,
     $outbaud = undef,
     $outflow = false,
-    $active = true,
+    $active = undef,
     $logging = true,
     $replaceconfig = true,
 ) {
-    if $active {
-        $service_notify = Service["maverick-mavlink-router@${name}"]
+    if $active == true {
+        $service_notify = Service["maverick-mavlink@${name}"]
     } else {
         $service_notify = undef
     }
@@ -31,10 +31,16 @@ define maverick_mavlink::mavlink_router (
     }
 
     if $active == true {
-    	service { "maverick-mavlink-router@${name}":
+        file { "/srv/maverick/config/mavlink/mavlink-${name}.service.conf":
+            content     => template("maverick_mavlink/mavlink-router.service.conf.erb"),
+            owner       => "mav",
+            group       => "mav",
+            notify      => Service["maverick-mavlink@${name}"],
+        }
+    	service { "maverick-mavlink@${name}":
             ensure      => running,
             enable      => true,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink@.service"] ]
         }
         # Punch some holes in the firewall for mavlink-router
         if defined(Class["::maverick_security"]) {
@@ -51,11 +57,11 @@ define maverick_mavlink::mavlink_router (
                 proto       => "tcp"
             }
         }
-    } else {
-    	service { "maverick-mavlink-router@${name}":
+    } elsif $active == false {
+    	service { "maverick-mavlink@${name}":
             ensure      => stopped,
             enable      => false,
-            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink-router@.service"] ]
+            require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavlink@.service"] ]
         }
     }
     

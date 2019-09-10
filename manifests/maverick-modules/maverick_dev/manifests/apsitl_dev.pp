@@ -50,11 +50,6 @@ class maverick_dev::apsitl_dev (
         command => "/bin/mv /srv/maverick/config/dev/sitl.screen.conf /srv/maverick/config/dev/apsitl_${instance_name}.screen.conf",
         creates => "/srv/maverick/config/dev/apsitl_${instance_name}.screen.conf",
         onlyif  => "/bin/ls /srv/maverick/config/dev/sitl.screen.conf",
-    } ->
-    # Remove old sitl services
-    service { [ "maverick-rosmaster@sitl", "maverick-mavros@sitl", "maverick-mavlink-router@sitl", "maverick-api@sitl" ]:
-        ensure  => stopped,
-        enable  => false,
     }
 
     maverick_dev::apsitl { $instance_name:
@@ -62,6 +57,7 @@ class maverick_dev::apsitl_dev (
         instance_number     => $instance_number,
         sitl_active         => $sitl_active,
         rosmaster_active    => $rosmaster_active,
+        mavlink_proxy       => $mavlink_proxy,
         mavros_active       => $mavros_active,
         mavlink_active      => $mavlink_active,
         api_active          => $api_active,

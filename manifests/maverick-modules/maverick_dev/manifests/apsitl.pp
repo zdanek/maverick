@@ -182,7 +182,6 @@ define maverick_dev::apsitl (
     }
     if $mavlink_proxy == "mavproxy" {
         maverick_mavlink::cmavnode { "apsitl_${instance_name}":
-            active      => false,
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -207,7 +206,6 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
-            active      => false,
         } ->
         maverick_mavlink::mavproxy { "apsitl_${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
@@ -235,7 +233,6 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
             inputtype   => "tcp",
@@ -250,7 +247,6 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
-            active      => false,
         } ->
         maverick_mavlink::cmavnode { "apsitl_${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
@@ -267,7 +263,6 @@ define maverick_dev::apsitl (
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "apsitl_${instance_name}":
-            active      => false,
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -290,7 +285,6 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
-            active      => false,
         } ->
         maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
             inputtype   => "tcp",

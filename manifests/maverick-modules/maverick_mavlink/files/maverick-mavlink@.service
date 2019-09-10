@@ -1,0 +1,13 @@
+[Unit]
+Description=Maverick Mavlink Proxy - %I
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+EnvironmentFile=/srv/maverick/config/mavlink/mavlink-%I.service.conf
+ExecStart=/srv/maverick/software/maverick/bin/mavlink.sh %I
+User=mav
+
+[Install]
+WantedBy=multi-user.target
