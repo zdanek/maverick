@@ -2,12 +2,11 @@ class maverick_ros (
     $installtype = "auto",
     $distribution = "auto",
     $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
-    $binarytype = ["ros-kinetic-perception", "ros-kinetic-viz"], # Binary packages install type, can be ros-kinetic-ros-base, ros-kinetic-desktop, ros-kinetic-desktop-full, ros-kinetic-viz, ros-kinetic-perception
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
     $module_realsense = true,
-    $module_opencv = false,
+    $module_opencv = true,
     $ros2 = false,
 ) {
     # If installtype is set then use it and skip autodetection
@@ -289,77 +288,123 @@ class maverick_ros (
             }
         }
         
-        if ! ("install_flag_ros_opencv" in $installflags) {
-            if $module_opencv == true {
-                # Add opencv to the existing workspace through vision_opencv package
-                exec { "ws_add_opencv":
-                    command         => "/usr/bin/rosinstall_generator vision_opencv --rosdistro ${_distribution} --deps --wet-only --tar >${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool merge -t src >/srv/maverick/var/log/build/ros.opencv.wstoolmerge.out 2>&1 ${_distribution}-vision_opencv-wet.rosinstall && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.opencv.wstoolupdate.out 2>&1",
-                    cwd             => "${builddir}",
-                    user            => "mav",
-                    creates         => "${builddir}/src/vision_opencv",
-                    timeout         => 0,
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
-                    require         => [ Package["libpoco-dev"], Exec["catkin_make"] ],
-                } ->
-                exec { "catkin_make_vision_opencv":
-                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCMAKE_BUILD_TYPE=Release -j${buildparallel} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
-                    cwd             => "${builddir}",
-                    user            => "mav",
-                    creates         => "${installdir}/${_distribution}/lib/libopencv_optflow3.so",
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/srv/maverick/software/opencv/lib/pkgconfig"],
-                    timeout         => 0,
-                    require         => File["${installdir}/${_distribution}"]
-                } ->
-                file { "/srv/maverick/var/build/.install_flag_ros_opencv":
-                    ensure      => present,
-                }
-            }
-        }
-        
         if $module_mavros == true {
             if ! ("install_flag_ros_mavros" in $installflags) {
-                if "install_flag_ros" in $installflags {
-                    $_mavros_deps = undef
-                } else {
-                    $_mavros_deps = Exec["catkin_make"]
-                }
-                # Add mavros to the existing workspace, this also installs mavlink package as dependency
-                exec { "mavros_ws_add":
-                    command         => "/usr/bin/rosinstall_generator --upstream mavros --rosdistro ${_distribution} --wet-only --tar >${_distribution}-mavros-wet.rosinstall && /usr/bin/rosinstall_generator mavlink mavros_extras mavros_msgs test_mavros sensor_msgs  control_toolbox realtime_tools tf tf2_ros python_orocos_kdl urdf --rosdistro ${_distribution} --deps --wet-only --tar >>${_distribution}-mavros-wet.rosinstall && /usr/bin/wstool merge --merge-keep -y -t src ${_distribution}-mavros-wet.rosinstall >/srv/maverick/var/log/build/ros.mavros.wstoolmerge.out 2>&1 && /usr/bin/wstool update -t src >/srv/maverick/var/log/build/ros.mavros.wstoolupdate.out 2>&1",
-                    cwd             => "${builddir}",
-                    user            => "mav",
-                    creates         => "${builddir}/src/mavros",
-                    timeout         => 0,
-                    require         => $_mavros_deps, 
+                file { ["/srv/maverick/var/build/catkin_ws_mavros", "/srv/maverick/var/build/catkin_ws_mavros/src"]:
+                    ensure  => directory,
+                    owner   => "mav",
                 } ->
-                exec { "mavros_rosdep_install":
-                    # Note must only use -j1 otherwise we get compiler errors
-                    command         => "/usr/bin/rosdep install --from-paths src --ignore-src -y >/srv/maverick/var/log/build/ros.mavros.rosdep.out 2>&1",
-                    cwd             => "${builddir}",
-                    user            => "mav",
-                    timeout         => 0,
-                    require         => File["${installdir}/${_distribution}"]
+                exec { "ros-mavros-catkin-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
+                    environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/.catkin_tools/profiles/default/config.yaml",
                 } ->
-                exec { "mavros_catkin_make":
-                    # Note must only use -j1 otherwise we get compiler errors
-                    command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -j2 >/srv/maverick/var/log/build/ros.mavros.catkin_make.out 2>&1",
-                    cwd             => "${builddir}",
-                    user            => "mav",
-                    timeout         => 0,
-                    require         => File["${installdir}/${_distribution}"]
+                exec { "ros-mavros-wstool-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/wstool init src",
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/.rosinstall",
+                } ->
+                exec { "ros-mavros-rosinstall_mavlink":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} mavlink >/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                } ->
+                exec { "ros-mavros-rosinstall_mavros":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development mavros mavros_extras mavros_msgs test_mavros sensor_msgs control_toolbox realtime_tools python_orocos_kdl urdf >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    unless      => "/bin/grep mavros mavros.rosinstall",
+                } ->
+                exec { "ros-mavros-wstool-merge":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/wstool merge -t src mavros.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/.rosinstall.bak",
+                } ->
+                exec { "ros-mavros-wstool-update":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/wstool update -t src -j4",
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros",
                 } ->
                 # Install mavros geographiclib dependencies
                 exec { "mavros_geoinstall":
                     command         => "/bin/bash /srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
                     creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
                 } ->
+                package { "python-sip-dev": 
+                    ensure      => present,
+                } ->
+                exec { "ros-mavros-catkin-build":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
+                    creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros >/var/",
+                    timeout     => 0,
+                    before      => File["/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml"],
+                } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
                 }
             }
         }
+
+        if $module_opencv == true {
+            if ! ("install_flag_ros_opencv" in $installflags) {
+                file { ["/srv/maverick/var/build/catkin_ws_opencv", "/srv/maverick/var/build/catkin_ws_opencv/src"]:
+                    ensure  => directory,
+                    owner   => "mav",
+                } ->
+                exec { "ros-opencv-catkin-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
+                    environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/.catkin_tools/profiles/default/config.yaml",
+                } ->
+                exec { "ros-opencv-wstool-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/wstool init src",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/.rosinstall",
+                } ->
+                exec { "ros-opencv-rosinstall_opencv":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} vision_opencv cv_bridge image_geometry >/srv/maverick/var/build/catkin_ws_opencv/opencv.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/opencv.rosinstall",
+                } ->
+                exec { "ros-opencv-wstool-merge":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/wstool merge -t src opencv.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/.rosinstall.bak",
+                } ->
+                exec { "ros-opencv-wstool-update":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/wstool update -t src -j4",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/cv_bridge",
+                } ->
+                exec { "ros-opencv-catkin-build":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                    command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release >/srv/maverick/var/log/build/opencv-catkin-build.out 2>&1",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/cv_bridge >/var/",
+                    timeout     => 0,
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_ros_opencv":
+                    ensure      => present,
+                }
+            }
+        }
+
     }
-    
+  
     if $module_realsense == true {
         if ! ("install_flag_ros_realsense" in $installflags) {
             if "install_flag_ros" in $installflags {
@@ -400,7 +445,7 @@ class maverick_ros (
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
             }
-            file { "/srv/maverick/var/build/.install_flag_ros_mavros":
+            file { "/srv/maverick/var/build/.install_flag_ros_realsense":
                 ensure      => present,
             }
         }
