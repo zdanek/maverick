@@ -228,7 +228,6 @@ class maverick_dev::px4 (
         }
         if $mavlink_proxy == "mavproxy" {
             maverick_mavlink::cmavnode { "px4sitl":
-                active      => false,
                 inputaddress => "udp:0.0.0.0:14550",
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -253,7 +252,6 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 logging     => $mavlink_logging,
-                active      => false,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
                 inputaddress => "udp:0.0.0.0:14550",
@@ -281,7 +279,6 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
-                active      => false,
             } ->
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
@@ -296,7 +293,6 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 logging     => $mavlink_logging,
-                active      => false,
             } ->
             maverick_mavlink::cmavnode { "px4sitl":
                 inputaddress => "udp:0.0.0.0:14550", # Note cmavnode doesn't support sitl/tcp yet
@@ -313,7 +309,6 @@ class maverick_dev::px4 (
             }
         } elsif $mavlink_proxy == "mavlink-router" {
             maverick_mavlink::cmavnode { "px4sitl":
-                active      => false,
                 inputaddress => "udp:0.0.0.0:14550", # Note cmavnode doesn't support sitl/tcp yet
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -336,7 +331,6 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
-                active      => false,
             } ->
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
