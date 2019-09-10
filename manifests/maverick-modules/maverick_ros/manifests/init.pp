@@ -6,7 +6,7 @@ class maverick_ros (
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
-    $module_realsense = false,
+    $module_realsense = true,
     $module_opencv = false,
     $ros2 = false,
 ) {
