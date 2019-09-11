@@ -15,7 +15,7 @@ class base::console {
     }
 
     # Leave the ubuntu motd header in place as it usually contains the OS+kernel version, but remove the help stuff
-    file { [ "/etc/update-motd.d/00-header", "/etc/update-motd.d/10-help-text", "/etc/update-motd.d/50-motd-news", "/etc/update-motd.d/80-livepatch" ]:
+    file { [ "/etc/update-motd.d/00-header", "/etc/update-motd.d/10-help-text", "/etc/update-motd.d/50-motd-news", "/etc/update-motd.d/80-livepatch", "/etc/update-motd.d/51-cloudguest" ]:
         ensure      => absent
     }
     file { "/etc/legal":
