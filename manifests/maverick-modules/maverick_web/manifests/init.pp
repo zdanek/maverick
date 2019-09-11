@@ -13,6 +13,18 @@ class maverick_web (
     $server_fqdn = $::fqdn,
 ) {
     
+    # Create status.d directory for maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web/__init__":
+        owner       => "mav",
+        content     => "Web Services",
+    }
+
     # Install tornado here as it is used across maverick modules
     install_python_module { "tornado":
         pkgname     => "tornado",

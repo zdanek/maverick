@@ -62,4 +62,9 @@ class maverick_vision::vision_landing (
         }
     }
 
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/103.vision-landing.status":
+        owner   => "mav",
+        content => "vision_landing,Precision Landing\n",
+    }
 }

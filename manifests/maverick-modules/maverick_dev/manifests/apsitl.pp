@@ -1,6 +1,6 @@
 define maverick_dev::apsitl (
     $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $instance_name = "dev",
+    $instance_name = "apsitl",
     $instance_number = 0,
     $sitl_active = true,
     $sitl_port = 5000,
@@ -26,12 +26,14 @@ define maverick_dev::apsitl (
     $mavros_startup_delay = 10,
     $api_instance = true,
     $api_active = true,
-    $api_port = 7000
+    $api_port = 7000,
+    $status_priority = "151",
+    $status_entries = true,
 ) {
     
-    # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl_dev
+    # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl
 
-    file { [ "/srv/maverick/var/log/dev/apsitl_${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
+    file { [ "/srv/maverick/var/log/dev/${instance_name}", "/srv/maverick/data/dev/mavlink/${instance_name}" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
@@ -142,14 +144,14 @@ define maverick_dev::apsitl (
         $actual_api_port = $api_port
     }
 
-    file { "/srv/maverick/config/dev/apsitl_${instance_name}.screen.conf":
+    file { "/srv/maverick/config/dev/${instance_name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         content     => template("maverick_dev/apsitl.screen.conf.erb"),
         notify      => Service["maverick-apsitl@${instance_name}"],
     }
-    file { "/srv/maverick/config/dev/apsitl_${instance_name}.conf":
+    file { "/srv/maverick/config/dev/${instance_name}.conf":
         content     => template("maverick_dev/apsitl.conf.erb"),
         owner       => "mav",
         group       => "mav",
@@ -157,7 +159,7 @@ define maverick_dev::apsitl (
         replace     => false,
         notify      => Service["maverick-apsitl@${instance_name}"],
     } ->
-    file { "/srv/maverick/config/mavlink/mavlink_params-apsitl_${instance_name}.json":
+    file { "/srv/maverick/config/mavlink/mavlink_params-${instance_name}.json":
         ensure      => absent,
     }
     
@@ -176,12 +178,12 @@ define maverick_dev::apsitl (
     }
 
     if $ros_instance == true {
-        $notifyResources = [ Service["maverick-apsitl@${instance_name}"], Service["maverick-rosmaster@apsitl_${instance_name}"] ]
+        $notifyResources = [ Service["maverick-apsitl@${instance_name}"], Service["maverick-rosmaster@${instance_name}"] ]
     } else {
         $notifyResources = Service["maverick-apsitl@${instance_name}"]
     }
     if $mavlink_proxy == "mavproxy" {
-        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
+        maverick_mavlink::cmavnode { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -193,7 +195,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
         } ->
-        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
+        maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => $actual_sitl_port,
@@ -207,7 +209,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
         } ->
-        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+        maverick_mavlink::mavproxy { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
             startingudp => $actual_mavlink_startingudp,
@@ -222,7 +224,7 @@ define maverick_dev::apsitl (
             notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "cmavnode" {
-        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+        maverick_mavlink::mavproxy { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
             startingudp => $actual_mavlink_startingudp,
@@ -234,7 +236,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
         } ->
-        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
+        maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => $actual_sitl_port,
@@ -248,7 +250,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
         } ->
-        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
+        maverick_mavlink::cmavnode { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -262,7 +264,7 @@ define maverick_dev::apsitl (
             notify      => $notifyResources,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
-        maverick_mavlink::cmavnode { "apsitl_${instance_name}":
+        maverick_mavlink::cmavnode { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
             startingudp => $actual_mavlink_startingudp,
             udpports    => $mavlink_udpports,
@@ -274,7 +276,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
         } ->
-        maverick_mavlink::mavproxy { "apsitl_${instance_name}":
+        maverick_mavlink::mavproxy { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
             instance    => 1,
             startingudp => $actual_mavlink_startingudp,
@@ -286,7 +288,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
         } ->
-        maverick_mavlink::mavlink_router { "apsitl_${instance_name}":
+        maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
             inputaddress => "127.0.0.1",
             inputport   => $actual_sitl_port,
@@ -307,26 +309,58 @@ define maverick_dev::apsitl (
     # maverick_dev::sitl::ros_instance allows ros to be completely optional
     if $ros_instance == true {
         # Add a ROS master for SITL
-        maverick_ros::rosmaster { "apsitl_${instance_name}":
+        maverick_ros::rosmaster { "${instance_name}":
             active  => $rosmaster_active,
             port    => $actual_rosmaster_port,
         } ->
-        maverick_ros::mavros { "apsitl_${instance_name}":
+        maverick_ros::mavros { "${instance_name}":
             active              => $mavros_active,
             rosmaster_port      => $actual_rosmaster_port,
             mavlink_port        => $actual_mavlink_startingtcp,
             mavros_startup_delay => $mavros_startup_delay,
         }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/102.rosmaster.status":
+            owner   => "mav",
+            content => "rosmaster@${instance_name},ROS (${instance_name})\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/103.mavros.status":
+            owner   => "mav",
+            content => "mavros@${instance_name},MavROS (${instance_name})\n",
+        }
     }
 
     if $api_instance == true {
         # Create an API instance
-        maverick_web::api { "api-apsitl_${instance_name}":
-            instance    => "apsitl_${instance_name}",
+        maverick_web::api { "api-${instance_name}":
+            instance    => "${instance_name}",
             active      => $api_active,
             apiport     => $actual_api_port,
             rosport     => $actual_rosmaster_port,
         }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/104.api.status":
+            owner   => "mav",
+            content => "api@${instance_name},MavAPI (${instance_name})\n",
+        }
     }
 
+    if $status_entries == true {
+        # status.d entry for collectd
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/":
+            ensure  => directory,
+            owner   => "mav",
+            mode    => "755",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/__init__":
+            owner   => "mav",
+            content => "APSITL (${instance_name})\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/100.apsitl.status":
+            owner   => "mav",
+            content => "apsitl@${instance_name},AP SITL (${instance_name})\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/101.mavlink.status":
+            owner   => "mav",
+            content => "mavlink@${instance_name},Mavlink (${instance_name})\n",
+        }        
+    }
 }

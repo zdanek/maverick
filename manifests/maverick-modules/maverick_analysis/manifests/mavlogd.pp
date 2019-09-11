@@ -100,4 +100,10 @@ class maverick_analysis::mavlogd (
             }
         }
     }
+
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis/104.mavlogd.status":
+        owner   => "mav",
+        content => "mavlogd,Maverick Log Importer\nuploader,Maverick Log Uploader\n",
+    }
 }

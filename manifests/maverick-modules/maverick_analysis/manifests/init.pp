@@ -5,6 +5,18 @@ class maverick_analysis (
     $mavlogd = true,
 ) {
     
+    # Create status.d directory for maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis/__init__":
+        owner       => "mav",
+        content     => "Analysis Services",
+    }
+
     file { ["/srv/maverick/data/analysis", "/srv/maverick/config/analysis"]:
         owner       => "mav",
         group       => "mav",

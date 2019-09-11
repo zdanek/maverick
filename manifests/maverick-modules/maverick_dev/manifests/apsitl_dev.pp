@@ -20,7 +20,7 @@ class maverick_dev::apsitl_dev (
     $mavros_active = true,
     $mavros_startup_delay = 10,
     $api_instance = true,
-    $api_active = false,
+    $api_active = true,
 ) {
 
     # Remove old sitl setup
@@ -61,6 +61,7 @@ class maverick_dev::apsitl_dev (
         mavros_active       => $mavros_active,
         mavlink_active      => $mavlink_active,
         api_active          => $api_active,
+        status_priority     => "154",
     }
 
 }

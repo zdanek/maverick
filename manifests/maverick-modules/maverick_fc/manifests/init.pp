@@ -25,6 +25,7 @@ class maverick_fc (
     $api_active = false,
     $dflogger_active = false,
     $dflogger_port = 14570,
+    $status_entries = true,
 ) {
 
     # Install a virtual environment for dronekit fc
@@ -218,6 +219,22 @@ class maverick_fc (
         }
     }
 
+    # Create status.d directory for maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d/150.fc":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/150.fc/__init__":
+        owner       => "mav",
+        content     => "Flight Controller",
+    }
+    file { "/srv/maverick/software/maverick/bin/status.d/150.fc/101.mavlink.status":
+        owner   => "mav",
+        content => "mavlink@fc,Mavlink (FC)\n",
+    }
+
     file { "/srv/maverick/config/mavlink/dataflash_logger.conf":
         owner       => "mav",
         group       => "mav",
@@ -265,6 +282,14 @@ class maverick_fc (
             mavlink_port        => $mavlink_port,
             mavros_startup_delay => $mavros_startup_delay,
         }
+        file { "/srv/maverick/software/maverick/bin/status.d/150.fc/102.rosmaster.status":
+            owner   => "mav",
+            content => "rosmaster@fc,Rosmaster (FC)\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/150.fc/103.mavros.status":
+            owner   => "mav",
+            content => "rosmaster@fc,Rosmaster (FC)\n",
+        }
     }
     
     if $api_instance == true {
@@ -275,6 +300,9 @@ class maverick_fc (
             apiport     => 6800,
             rosport     => $rosmaster_port,
         }
+        file { "/srv/maverick/software/maverick/bin/status.d/150.fc/104.api.status":
+            owner   => "mav",
+            content => "api@fc,MavAPI (FC)\n",
+        }
     }
-    
 }

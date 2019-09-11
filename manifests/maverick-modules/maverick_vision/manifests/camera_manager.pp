@@ -71,4 +71,10 @@ class maverick_vision::camera_manager (
         }
     }
 
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/102.camera-manager.status":
+        owner   => "mav",
+        content => "camera-manager,Intel Camera Manager\n",
+    }
+
 }

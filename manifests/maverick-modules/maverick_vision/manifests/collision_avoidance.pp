@@ -64,5 +64,10 @@ class maverick_vision::collision_avoidance (
             enable      => false,
         }
     }
-    
+
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/106.coav.status":
+        owner   => "mav",
+        content => "coav,Collision Avoidance\n",
+    }   
 }

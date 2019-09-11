@@ -123,4 +123,9 @@ class maverick_web::nginx (
         }
     }
 
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web/101.nginx.status":
+        owner   => "mav",
+        content => "nginx,Webserver\n",
+    }
 }

@@ -440,6 +440,13 @@ if [ "$STATUS" == "true" ]; then
         mavenv ${environment}
         echo
 
+        # If status directory doesn't exist, display an error and exit
+        if [ ! -d /srv/maverick/software/maverick/bin/status.d ]; then
+            echo "${bold}${red}Error: ~/software/maverick/bin/status.d directory does not exist${reset}"
+            echo
+            exit 0
+        fi
+
         # Set output title
         statusout+="Service:Description: Status | At Boot\n"
         statusout+="------------:------------:------------------\n"

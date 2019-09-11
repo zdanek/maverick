@@ -211,4 +211,10 @@ class maverick_analysis::collect (
             notify      => Service["maverick-collectd"],
         }
     }
+
+    # status.d entry for collectd
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis/103.collectd.status":
+        owner   => "mav",
+        content => "collectd,System Metrics Collector\n",
+    }
 }

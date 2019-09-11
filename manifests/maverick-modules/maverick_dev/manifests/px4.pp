@@ -24,7 +24,9 @@ class maverick_dev::px4 (
     $mavros_startup_delay = 10,
     $mavlink_port = 5790,
     $api_instance = true,
-    $api_active = false,
+    $api_active = true,
+    $status_priority = "152",
+    $status_entries = true,
 ) {
 
     # Install px4 dev/build dependencies
@@ -364,6 +366,14 @@ class maverick_dev::px4 (
                 mavros_startup_delay => $mavros_startup_delay,
                 mavros_launcher     => "px4.launch"
             }
+            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/102.rosmaster.status":
+                owner   => "mav",
+                content => "rosmaster@px4sitl,ROS (PX4 SITL)\n",
+            }
+            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/103.mavros.status":
+                owner   => "mav",
+                content => "mavros@px4sitl,MavROS (PX4 SITL)\n",
+            }
         }
     
     }
@@ -381,6 +391,30 @@ class maverick_dev::px4 (
             apiport     => 6802,
             rosport     => $rosmaster_port,
         }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/104.api.status":
+            owner   => "mav",
+            content => "api@px4sitl,MavAPI (PX4 SITL)\n",
+        }
     }
 
+    if $status_entries == true {
+        # status.d entry for collectd
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/":
+            ensure  => directory,
+            owner   => "mav",
+            mode    => "755",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/__init__":
+            owner   => "mav",
+            content => "PX4 SITL\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/100.px4sitl.status":
+            owner   => "mav",
+            content => "px4sitl,PX4 SITL\n",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/101.px4sitl.status":
+            owner   => "mav",
+            content => "mavlink@px4sitl,Mavlink (PX4 SITL)\n",
+        }        
+    }
 }

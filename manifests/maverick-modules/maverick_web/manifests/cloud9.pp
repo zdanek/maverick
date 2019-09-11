@@ -95,4 +95,9 @@ class maverick_web::cloud9 (
         }
     }
     
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web/102.cloud9.status":
+        owner   => "mav",
+        content => "cloud9,Cloud9 IDE\n",
+    }
 }

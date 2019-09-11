@@ -13,6 +13,18 @@ class maverick_network (
     $timesync = true,
     ) {
 
+    # Create status.d directory for maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d/122.network":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/122.network/__init__":
+        owner       => "mav",
+        content     => "Network Services",
+    }
+
     # Install software 
     ensure_packages(["ethtool", "iw", "wpasupplicant", "wireless-tools", "rfkill", "dnsutils", "resolvconf", "nload", "hostapd"])
     

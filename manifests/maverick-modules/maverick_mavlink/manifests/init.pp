@@ -295,6 +295,12 @@ class maverick_mavlink (
                 require     => [ Class["maverick_gcs::fcs"], Service["maverick-nginx"] ],
             }
         }
+
+        # status.d entry
+        file { "/srv/maverick/software/maverick/bin/status.d/123.vision/103.mavcesium.status":
+            owner   => "mav",
+            content => "mavcesium,MavCesium\n",
+        }
     }
 
     # Install cuav

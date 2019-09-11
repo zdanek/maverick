@@ -17,7 +17,15 @@ class base::maverick (
         group   => "mav",
         mode    => "755",
     }
-    
+
+    # Create status.d directory for `maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    }
+
     # If the gitbranch fact is set, use that to set the branch while setting up maverick
     if $::gitbranch {
         $_gitbranch = $::gitbranch

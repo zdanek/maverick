@@ -114,4 +114,13 @@ class maverick_vision::visiond (
         }
     }
     
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/101.visiond.status":
+        owner   => "mav",
+        content => "visiond,Vision Service\n",
+    }
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/107.webvision.status":
+        owner   => "mav",
+        content => "webvision,Web Vision\n",
+    }
 }

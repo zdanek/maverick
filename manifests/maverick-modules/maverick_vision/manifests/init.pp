@@ -20,6 +20,18 @@ class maverick_vision (
         group       => "mav",
         mode        => "755",
     }
+
+    # Create status.d directory for maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/__init__":
+        owner       => "mav",
+        content     => "Vision Services",
+    }
     
     if $visionlibs == true {
         class { "maverick_vision::visionlibs": }

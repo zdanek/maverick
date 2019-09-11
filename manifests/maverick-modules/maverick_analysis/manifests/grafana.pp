@@ -253,4 +253,11 @@ class maverick_analysis::grafana (
             enable => false,
         }
     }
+
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis/101.grafana.status":
+        owner   => "mav",
+        content => "grafana,Analysis Dashboard\n",
+    }
+
 }

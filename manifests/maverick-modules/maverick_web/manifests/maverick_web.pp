@@ -150,4 +150,9 @@ class maverick_web::maverick_web (
         }
     }
 
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web/100.webdev.status":
+        owner   => "mav",
+        content => "webdev,Web Devserver\n",
+    }
 }

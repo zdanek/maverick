@@ -106,4 +106,9 @@ class maverick_analysis::influx (
         require         => Service["maverick-influxd"],
     }
 
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/121.analysis/102.influx.status":
+        owner   => "mav",
+        content => "influxd,TimeSeries Database\n",
+    }
 }

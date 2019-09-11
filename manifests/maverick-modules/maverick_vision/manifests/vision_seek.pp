@@ -122,4 +122,10 @@ class maverick_vision::vision_seek (
             enable  => false
         }
     }
+
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/104.vision_seek.status":
+        owner   => "mav",
+        content => "vision_seek,Seek Thermal Vision\n",
+    }
 }
