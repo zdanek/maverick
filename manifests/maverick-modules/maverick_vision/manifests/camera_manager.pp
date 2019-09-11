@@ -33,21 +33,22 @@ class maverick_vision::camera_manager (
             group       => "mav",
             mode        => "644",
             replace     => false,
-        } ->
-        file { "/etc/systemd/system/maverick-camera-manager.service":
-            source      => "puppet:///modules/maverick_vision/camera-manager.service",
-            owner       => "root",
-            group       => "root",
-            mode        => "644",
-            notify      => Exec["maverick-systemctl-daemon-reload"],
-            before      => Service["maverick-camera-manager"],
         }
+    }
+
+    file { "/etc/systemd/system/maverick-camera-manager.service":
+        source      => "puppet:///modules/maverick_vision/camera-manager.service",
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => Exec["maverick-systemctl-daemon-reload"],
     }
 
     if $active == true {
         service { "maverick-camera-manager":
             ensure      => running,
             enable      => true,
+            require     => File["/etc/systemd/system/maverick-camera-manager.service"],
         }
         # Punch some holes in the firewall for rtsp
         if defined(Class["::maverick_security"]) {
@@ -66,6 +67,7 @@ class maverick_vision::camera_manager (
         service { "maverick-camera-manager":
             ensure      => stopped,
             enable      => false,
+            require     => File["/etc/systemd/system/maverick-camera-manager.service"],
         }
     }
 
