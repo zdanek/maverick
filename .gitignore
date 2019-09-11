@@ -1,6 +1,7 @@
 nodes/
 ssl/
 *.pyc
+bin/status.d/*
 bin/cpu-control
 bin/ocam-viewer
 bin/wifibroadcast-if.sh
