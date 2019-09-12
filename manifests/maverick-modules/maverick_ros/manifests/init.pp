@@ -7,7 +7,7 @@ class maverick_ros (
     $module_mavros = true,
     $module_realsense = true,
     $module_opencv = true,
-    $ros2 = false,
+    $ros2 = true,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {

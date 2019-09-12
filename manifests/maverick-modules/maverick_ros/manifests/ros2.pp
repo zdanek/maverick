@@ -2,6 +2,7 @@ class maverick_ros::ros2 (
     $installtype = "auto",
     $distribution = "auto",
     $installdir = "/srv/maverick/software/ros2",
+    $metapackage = "desktop", # desktop or ros-base
 ) {
 
     # If installtype is set then use it and skip autodetection
@@ -21,23 +22,18 @@ class maverick_ros::ros2 (
             "Ubuntu": {
                 case $::lsbdistcodename {
                     "xenial": {
-                        $autodist = "ardent"
+                        $autodist = "crystal"
                         case $architecture {
                             "amd64", "arm64", "aarch64": { $_installtype = "native" }
                             default: { $_installtype = "source" }
                         }
                     }
-                    "yakkety": {
-                        $autodist = "ardent"
-                        $_installtype = "source"
-                    }
-                    "zesty": {
-                        $autodist = "ardent"
-                        $_installtype = "source"
-                    }
                     "bionic": {
-                        $autodist = "ardent"
-                        $_installtype = "source"
+                        $autodist = "dashing"
+                        case $architecture {
+                            "amd64", "arm64", "aarch64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
                     }
                     default: {
                         $autodist = undef
@@ -49,11 +45,11 @@ class maverick_ros::ros2 (
                 case $::operatingsystemmajrelease {
                     # For Debian OS use version number instead of codename, for derivatives like rasbian and ubilinux
                     "8": { # jessie
-                        $autodist = "ardent"
+                        $autodist = "crystal"
                         $_installtype = "source"
                     }
                     "9": { # stretch
-                        $autodist = "ardent"
+                        $autodist = "dashing"
                         $_installtype = "source"
                     }
                     default: {
@@ -114,19 +110,41 @@ class maverick_ros::ros2 (
             target      => "${installdir}/${_distribution}",
             force       => true,
         }
-        
-        /*
+
+        # Install python module that provides autocomplete        
+        install_python_module { "ros2-argcomplete":
+            pkgname     => "argcomplete",
+            ensure      => present,
+        }
+
         # Install ROS2 repo/key
         exec { "ros2-repo-key":
-            command     => "/usr/bin/curl http://repo.ros2.org/repos.key | apt-key add -",
+            command     => "/usr/bin/curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -",
             unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
         } ->
         exec { "ros2-repo":
-            command     => "/bin/echo \"deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main ${_distro} main\" > /etc/apt/sources.list.d/ros2-latest.list",
+            command     => "/bin/echo \"deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros2-latest.list",
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros2-latest.list",
-            notify      => Exec["apt_update"],
+            notify      => Exec["ros2_apt_update"],
+        } ->
+        exec { "ros2_apt_update":
+            command     => "/usr/bin/apt update",
+            refreshonly => true,
+            before      => Package["ros-${_distribution}-${metapackage}"]
         }
-        */
-
     }
+
+    # Install from ros repos
+    if $_installtype == "native" {
+        package { "ros-${_distribution}-${metapackage}":
+            ensure      => present,
+        } ->
+        package { "ros-${_distribution}-ros1-bridge":
+            ensure      => present,
+        } ->
+        package { ["ros-${_distribution}-cv-bridge", "ros-${_distribution}-vision-opencv", "ros-${_distribution}-image-geometry"]:
+            ensure      => present,
+        }
+    }
+
 }
