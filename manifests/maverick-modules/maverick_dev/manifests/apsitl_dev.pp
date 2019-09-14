@@ -14,6 +14,7 @@ class maverick_dev::apsitl_dev (
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
     $mavlink_outflow = false,
+    $mavlink_replaceconfig = true,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = 11000,
@@ -21,6 +22,9 @@ class maverick_dev::apsitl_dev (
     $mavros_startup_delay = 10,
     $api_instance = true,
     $api_active = true,
+    $api_devmode = false,
+    $api_debug = false,
+    $api_replaceconfig = true,
 ) {
 
     # Remove old sitl setup
@@ -60,8 +64,12 @@ class maverick_dev::apsitl_dev (
         mavlink_proxy       => $mavlink_proxy,
         mavros_active       => $mavros_active,
         mavlink_active      => $mavlink_active,
+        mavlink_replaceconfig => $mavlink_replaceconfig,
         api_active          => $api_active,
         status_priority     => "154",
+        api_devmode         => $api_devmode,
+        api_debug           => $api_debug,
+        api_replaceconfig   => $api_replaceconfig,
     }
 
 }

@@ -4,6 +4,9 @@ define maverick_web::api (
     $apiport = 6800,
     $rosport = 11311,
     $server_hostname = $maverick_web::server_fqdn,
+    $devmode = false,
+    $debug = false,
+    $replaceconfig = true,
 ) {
     # This class creates an instance of maverick-api.
     # The actual installation of the maverick-api and dependencies happens in maverick_web::maverick_api
@@ -21,6 +24,7 @@ define maverick_web::api (
         mode        => "644",
         content     => template("maverick_web/api.conf.erb"),
         notify      => Service["maverick-api@${instance}"],
+        replace     => $replaceconfig,
     } ->
     file { "/srv/maverick/config/web/maverick-api.${instance}.conf":
         ensure      => present,
@@ -29,6 +33,7 @@ define maverick_web::api (
         mode        => "644",
         content     => template("maverick_web/maverick-api.conf.erb"),
         notify      => Service["maverick-api@${instance}"],
+        replace     => $replaceconfig,
     } 
 
     if $active == true {

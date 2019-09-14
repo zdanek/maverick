@@ -17,6 +17,7 @@ class maverick_dev::px4 (
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
     $mavlink_outflow = false,
+    $mavlink_replaceconfig = true,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = 11315,
@@ -25,6 +26,9 @@ class maverick_dev::px4 (
     $mavlink_port = 5790,
     $api_instance = true,
     $api_active = true,
+    $api_devmode = false,
+    $api_debug = false,
+    $api_replaceconfig = true,
     $status_priority = "152",
     $status_entries = true,
 ) {
@@ -240,6 +244,7 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 notify      => $notifyResources,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
@@ -254,6 +259,7 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 logging     => $mavlink_logging,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
                 inputaddress => "udp:0.0.0.0:14550",
@@ -268,6 +274,7 @@ class maverick_dev::px4 (
                 outflow     => $mavlink_outflow,
                 active      => $mavlink_active,
                 notify      => $notifyResources,
+                replaceconfig => $mavlink_replaceconfig,
             }
         } elsif $mavlink_proxy == "cmavnode" {
             maverick_mavlink::mavproxy { "px4sitl":
@@ -281,6 +288,7 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
@@ -295,6 +303,7 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 logging     => $mavlink_logging,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::cmavnode { "px4sitl":
                 inputaddress => "udp:0.0.0.0:14550", # Note cmavnode doesn't support sitl/tcp yet
@@ -308,6 +317,7 @@ class maverick_dev::px4 (
                 outflow     => $mavlink_outflow,
                 active      => $mavlink_active,
                 notify      => $notifyResources,
+                replaceconfig => $mavlink_replaceconfig,
             }
         } elsif $mavlink_proxy == "mavlink-router" {
             maverick_mavlink::cmavnode { "px4sitl":
@@ -321,6 +331,7 @@ class maverick_dev::px4 (
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
                 notify      => $notifyResources,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
                 inputaddress => "udp:0.0.0.0:14550",
@@ -333,6 +344,7 @@ class maverick_dev::px4 (
                 serialout   => $mavlink_serialout,
                 outbaud     => $mavlink_outbaud,
                 outflow     => $mavlink_outflow,
+                replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
@@ -349,6 +361,7 @@ class maverick_dev::px4 (
                 active      => $mavlink_active,
                 notify      => $notifyResources,
                 logging     => $mavlink_logging,
+                replaceconfig => $mavlink_replaceconfig,
             }
         }
 
@@ -390,6 +403,9 @@ class maverick_dev::px4 (
             active      => $api_active,
             apiport     => 6802,
             rosport     => $rosmaster_port,
+            devmode     => $api_devmode,
+            debug       => $api_debug,
+            replaceconfig    => $api_replaceconfig,
         }
         file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/104.api.status":
             owner   => "mav",

@@ -19,6 +19,7 @@ define maverick_dev::apsitl (
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
     $mavlink_outflow = false,
+    $mavlink_replaceconfig = true,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = 11000,
@@ -27,6 +28,9 @@ define maverick_dev::apsitl (
     $api_instance = true,
     $api_active = true,
     $api_port = 7000,
+    $api_debug = false,
+    $api_devmode = false,
+    $api_replaceconfig = true,
     $status_priority = "151",
     $status_entries = true,
 ) {
@@ -194,6 +198,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
@@ -208,6 +213,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::mavproxy { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
@@ -222,6 +228,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             active      => $mavlink_active,
             notify      => $notifyResources,
+            replaceconfig => $mavlink_replaceconfig,
         }
     } elsif $mavlink_proxy == "cmavnode" {
         maverick_mavlink::mavproxy { "${instance_name}":
@@ -235,6 +242,7 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
@@ -249,6 +257,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             logging     => $mavlink_logging,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::cmavnode { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}", # Note cmavnode doesn't support sitl/tcp yet
@@ -262,6 +271,7 @@ define maverick_dev::apsitl (
             outflow     => $mavlink_outflow,
             active      => $mavlink_active,
             notify      => $notifyResources,
+            replaceconfig => $mavlink_replaceconfig,
         }
     } elsif $mavlink_proxy == "mavlink-router" {
         maverick_mavlink::cmavnode { "${instance_name}":
@@ -275,6 +285,7 @@ define maverick_dev::apsitl (
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
             notify      => $notifyResources,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::mavproxy { "${instance_name}":
             inputaddress => "tcp:localhost:${actual_sitl_port}",
@@ -287,6 +298,7 @@ define maverick_dev::apsitl (
             serialout   => $mavlink_serialout,
             outbaud     => $mavlink_outbaud,
             outflow     => $mavlink_outflow,
+            replaceconfig => $mavlink_replaceconfig,
         } ->
         maverick_mavlink::mavlink_router { "${instance_name}":
             inputtype   => "tcp",
@@ -303,6 +315,7 @@ define maverick_dev::apsitl (
             active      => $mavlink_active,
             notify      => $notifyResources,
             logging     => $mavlink_logging,
+            replaceconfig => $mavlink_replaceconfig,
         }
     }
 
@@ -336,6 +349,9 @@ define maverick_dev::apsitl (
             active      => $api_active,
             apiport     => $actual_api_port,
             rosport     => $actual_rosmaster_port,
+            devmode     => $api_devmode,
+            debug       => $api_debug,
+            replaceconfig    => $api_replaceconfig,
         }
         file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/104.api.status":
             owner   => "mav",

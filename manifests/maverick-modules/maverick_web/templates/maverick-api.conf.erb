@@ -11,10 +11,10 @@ app_secretkey = 'super_s3cret'
 datadir = '/srv/maverick/data/web/api/<%= @instance %>/'
 
 # Turn on development options - Not safe for deployment
-development = False
+development = <% if @devmode == true %>True<% else %>False<% end %>
 
 # Turn on debug mode
-debug = False
+debug = <% if @debug == true %>True<% else %>False<% end %>
 
 # Log Directory
 logdir = '/srv/maverick/var/log/web/api/<%= @instance %>/'
