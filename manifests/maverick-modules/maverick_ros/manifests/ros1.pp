@@ -55,7 +55,7 @@ class maverick_ros::ros1 (
                     "bionic": {
                         $autodist = "melodic"
                         case $architecture {
-                            "amd64", "armhf", "arm64": { $_installtype = "native" }
+                            "amd64", "armhf", "arm64", "aarch64": { $_installtype = "native" }
                             default: { $_installtype = "source" }
                         }
                     }
