@@ -117,10 +117,12 @@ class maverick_ros::ros2 (
             ensure      => present,
         }
 
-        # Install ROS2 repo/key
-        exec { "ros2-repo-key":
-            command     => "/usr/bin/curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -",
-            unless      => "/usr/bin/apt-key list |/bin/egrep 'B01F\s?A116'",
+        # Install ROS bootstrap from ros.org packages
+        apt::key { 'ros2-repo-key':
+            id      => 'C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654',
+            server  => 'keyserver.ubuntu.com',
+            require     => Package["dirmngr"],
+            notify      => Exec["ros_apt_update"],            
         } ->
         exec { "ros2-repo":
             command     => "/bin/echo \"deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros2-latest.list",
