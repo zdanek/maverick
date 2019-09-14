@@ -101,6 +101,12 @@ class maverick_analysis::grafana (
             version               => $grafana_version,
             notify                => Service[grafana-server],
         } ->
+        /*
+        exec { "grafana-hold-package":
+            command     => "/usr/bin/apt-mark hold grafana",
+            unless      => "/usr/bin/apt-mark showhold grafana",
+        } ->
+        */
         service { "grafana":
             ensure      => "stopped",
             enable      => false,
