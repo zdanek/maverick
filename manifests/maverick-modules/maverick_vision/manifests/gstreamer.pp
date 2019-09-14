@@ -4,16 +4,26 @@ class maverick_vision::gstreamer (
     $libx264 = "installed",
 ) {
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
-    if $gstreamer_installtype == "native" or $raspberry_present == "yes" {
-        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-clutter-gst-2.0", "python-gi"])
+    if $gstreamer_installtype == "native" or $raspberry_present == "yes" or $tegra_present == "yes" {
+        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "python-gi"])
+        if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
+            package { "gir1.2-clutter-gst-3.0":
+                ensure => present,
+            }
+        } else {
+            package { "gir1.2-clutter-gst-2.0":
+                ensure => present,
+            }
+        }
+        install_python_module { "pip-pygobject":
+            pkgname     => "pygobject",
+            ensure      => present,
+            require     => Package["libgirepository1.0-dev"],
+        }
+
         if ($raspberry_present == "yes") {
     		ensure_packages(["gstreamer1.0-omx"])
     		
-            install_python_module { "pip-pygobject":
-                pkgname     => "pygobject",
-                ensure      => present,
-                require     => Package["libgirepository1.0-dev"],
-            }
 
     		### Raspberry gst rtspserver now available as binary packages
     		/*
