@@ -238,10 +238,11 @@ class maverick_ros::ros2 (
                 } ->
                 exec { "ros2-colcon-build-ros1_bridge":
                     cwd     => "${builddir}",
-                    environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"],
-                    command => "/bin/bash --login -c 'source /srv/maverick/software/ros/${_distribution}/setup.bash; source /srv/maverick/software/ros2/${_distribution}/setup.bash; /srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-select ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.ros1_bridge.build' 2>&1",
+                    environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"],
+                    command => "/bin/bash --login -c 'source /srv/maverick/software/ros/current/setup.bash; source /srv/maverick/software/ros2/${_distribution}/setup.bash; /srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-select ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.ros1_bridge.build 2>&1'",
                     creates => "/srv/maverick/software/ros2/${_distribution}/ros1_bridge/lib/libros1_bridge.so",
                     user    => "mav",
+                    timeout => 0,
                 }
             }
             file { "/srv/maverick/var/build/.install_flag_ros":
