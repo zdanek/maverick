@@ -169,22 +169,30 @@ class maverick_ros::ros2 (
             }
             
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
-            install_python_module { ["colcon-common-extensions", "rosdep", "vcstool"]:
+            install_python_module { ["colcon-common-extensions", "rosdep", "vcstool", "rosinstall-generator"]:
                 ensure  => present,
             } ->
             package { ["libasio-dev", "libtinyxml2-dev"]:
                 ensure  => present,
             } ->
+            /*
             exec { "ros2-src-repo":
                 cwd     => "${builddir}",
                 command => "/usr/bin/wget https://raw.githubusercontent.com/ros2/ros2/dashing/ros2.repos",
                 creates => "${builddir}/ros2.repos",
                 user    => "mav",
             } ->
+            */
+            exec { "ros2-rosinstall":
+                cwd     => "${builddir}",
+                command => "/srv/maverick/software/python/bin/rosinstall_generator ros_base --rosdistro ${_distribution} --deps >ros2.repos",
+                creates => "${builddir}/ros2.repos",
+                user    => "mav",
+            }
             exec { "ros2-vcs-import":
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/vcs import src <ros2.repos",
-                creates => "${builddir}/src/ros2",
+                creates => "${builddir}/src/ros2cli",
                 user    => "mav",
             } ->
             exec { "ros2-rosdep-init":
@@ -207,11 +215,22 @@ class maverick_ros::ros2 (
             exec { "ros2-colcon build":
                 cwd     => "${builddir}",
                 environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3"],
-                command => "/srv/maverick/software/python/bin/colcon build --cmake-args -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --symlink-install --packages-skip ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
-                #command => "/srv/maverick/software/python/bin/colcon build --cmake-args -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --symlink-install --packages-skip python_qt_binding qt_gui qt_gui_py_common qt_gui_cpp qt_dotgraph qt_gui_app ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
-                #creates => "/etc/ros/rosdep/sources.list.d/20-default.list",
+                command => "/srv/maverick/software/python/bin/colcon build --cmake-args -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-skip ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
                 user    => "mav",
+                creates => "/srv/maverick/software/ros2/current/ros2cli/bin/ros2",
                 timeout => 0,
+            } ->
+            exec { "ros2-rosinstall-ros1_bridge":
+                cwd     => "${builddir}",
+                command => "/srv/maverick/software/python/bin/rosinstall_generator ros1_bridge --rosdistro ${_distribution} >ros1_bridge.repos",
+                creates => "${builddir}/ros1_bridge.repos",
+                user    => "mav",
+            } ->
+            exec { "ros2-vcs-import-ros1_bridge":
+                cwd     => "${builddir}",
+                command => "/srv/maverick/software/python/bin/vcs import src <ros1_bridge.repos",
+                creates => "${builddir}/src/ros1_bridge",
+                user    => "mav",
             }
         }
     }
