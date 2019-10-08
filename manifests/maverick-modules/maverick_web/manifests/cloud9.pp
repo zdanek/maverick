@@ -1,5 +1,5 @@
 class maverick_web::cloud9 (
-    $cloud9_active = true,
+    $cloud9_active = false,
     $webport = "6789",
     $basepath = "/srv/maverick",
     $cloud9_password = "wingman",

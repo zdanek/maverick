@@ -6,7 +6,7 @@ Requires=network-online.target
 [Service]
 TimeoutStartSec=0
 WorkingDirectory=/srv/maverick
-ExecStart=/srv/maverick/software/codeserver/packages/server/code-server --user-data-dir /srv/maverick/data/web/codeserver --port <%= @webport %> --allow-http --disable-telemetry --password <%= @password %> /srv/maverick
+ExecStart=/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --port <%= @webport %> --disable-telemetry --disable-open --auth password /srv/maverick
 User=mav
 
 [Install]
