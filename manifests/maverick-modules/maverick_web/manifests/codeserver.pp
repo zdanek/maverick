@@ -64,6 +64,11 @@ class maverick_web::codeserver (
             creates     => "/srv/maverick/software/codeserver/codeserver",
             user        => "mav",        
         } ->
+        exec { "codeserver-install-extensions":
+            command     => "/bin/cp -R /srv/maverick/var/build/codeserver/build/code-server${build_type}-vsc${vscode_version}*/extensions /srv/maverick/software/codeserver",
+            creates     => "/srv/maverick/software/codeserver/extensions/git/package.json",
+            user        => "mav",
+        } ->
         file { "/srv/maverick/var/build/.install_flag_codeserver":
             ensure      => present,
         }
