@@ -6,7 +6,6 @@ class maverick_web::codeserver (
     $replace_password = false,
     $vscode_version = "1.38.1",
     $build_type = "production",
-    $install_extensions = true,
 ) {
 
     file { [ "/srv/maverick/data/web/codeserver", "/srv/maverick/data/web/codeserver/User", "/srv/maverick/.vscode", "/srv/maverick/software/codeserver", "/etc/systemd/system/maverick-codeserver.service.d"]:
@@ -42,6 +41,7 @@ class maverick_web::codeserver (
             timeout		=> 0,
             user        => "mav",
             require     => [ Class["maverick_web::nodejs"], Package['yarn'] ],
+            before      => Exec["codeserver-ext-python"],
         } ->
         exec { "codeserver-build":
             path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
@@ -74,72 +74,70 @@ class maverick_web::codeserver (
         }
     }
 
-    if $install_extensions == true {
-        # Install some default extensions
-        exec { "codeserver-ext-python":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension ms-python.python",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-python.python-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-cplusplus":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension ms-vscode.cpptools",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-vscode.cpptools-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-vscodeicons":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension vscode-icons-team.vscode-icons",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/vscode-icons-team.vscode-icons-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-onedarkpro":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension zhuangtongfa.material-theme",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/zhuangtongfa.material-theme-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-nightowl":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension sdras.night-owl",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/sdras.night-owl-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-gitlens":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension eamodio.gitlens",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/eamodio.gitlens-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-vetur":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension octref.vetur",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/octref.vetur-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        } ->
-        exec { "codeserver-ext-puppet":
-            command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension jpogran.puppet-vscode",
-            user        => "mav",
-            timeout     => 0,
-            unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/jpogran.puppet-vscode-*/package.json",
-            before      => Service["maverick-codeserver"],
-            notify      => Service["maverick-codeserver"],
-        }
+    # Install some default extensions
+    exec { "codeserver-ext-python":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension ms-python.python",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-python.python-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-cplusplus":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension ms-vscode.cpptools",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/ms-vscode.cpptools-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-vscodeicons":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension vscode-icons-team.vscode-icons",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/vscode-icons-team.vscode-icons-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-onedarkpro":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension zhuangtongfa.material-theme",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/zhuangtongfa.material-theme-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-nightowl":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension sdras.night-owl",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/sdras.night-owl-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-gitlens":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension eamodio.gitlens",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/eamodio.gitlens-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-vetur":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension octref.vetur",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/octref.vetur-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
+    } ->
+    exec { "codeserver-ext-puppet":
+        command     => "/srv/maverick/software/codeserver/codeserver --user-data-dir /srv/maverick/data/web/codeserver --install-extension jpogran.puppet-vscode",
+        user        => "mav",
+        timeout     => 0,
+        unless      => "/bin/ls -ld /srv/maverick/data/web/codeserver/extensions/jpogran.puppet-vscode-*/package.json",
+        before      => Service["maverick-codeserver"],
+        notify      => Service["maverick-codeserver"],
     }
   
     if defined(Class["::maverick_security"]) {
