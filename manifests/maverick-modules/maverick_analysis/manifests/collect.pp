@@ -2,7 +2,7 @@ class maverick_analysis::collect (
     $active = true,
     $install_type = "source",
     $git_source = "https://github.com/collectd/collectd.git",
-    $git_revision = "collectd-5.9.1",
+    $git_revision = "collectd-5.9.2",
 ) {
     # Install from source
     if $install_type == "source" {
