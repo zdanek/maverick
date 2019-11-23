@@ -36,15 +36,14 @@ The declarative code files are called manifests and are arranged in modules.  Th
 
 ### Hardware support
 Maverick is designed to be cross platform and hardware agnostic. Initially it is being developed and tested on the following platforms:
-- Raspberry Pi (3, 2 Model B, A+, Raspbian and Ubuntu)
+- Raspberry Pi (4, 3, 2 Model B, A+, Zero, Zero W - Raspbian and Ubuntu)
 - ODROID (XU3/XU4, Ubuntu)
 - Intel Joule
 - Beaglebone Black (Debian and Ubuntu)
-
-Support will hopefully be added for more hardware in the future, eg:
-- Nvidia TX1/TX2
-- Intel Edison
 - Up Board/Squared
+- Nvidia TX1/TX2, Jetson Nano
+
+Support is easily added for other hardware, please raise an issue if you need help!
 
 Maverick will detect the base hardware platform and attached peripherals and apply software and default settings as necessary. Further base and peripheral config is available by specifying config parameters and including new modules.
 
@@ -52,12 +51,17 @@ Maverick will detect the base hardware platform and attached peripherals and app
 Like hardware support, Maverick is designed to be software agnostic. Currently most of the support is Debian/Ubuntu based, but the underlying Configuration Management system (Puppet) that does most of the heavy lifting is completely cross platform and has providers for almost every OS.
 Currently it supports:
 - Raspbian (Raspberry Pi official debian based OS)
-- Odroid Ubuntu (Official ubuntu OS for Odroid XU3/4) + Experimental 4.9 kernel
-- Beaglebone Black Ubuntu
-- Ubuntu for Joule
+- Ubuntu/Jetpack for Jetson platform (TX1/TX2/Nano)
+- Ubuntu/Debian for x86 computers - eg. VMs, Linux PCs
 
 It has also been lightly tested with:
 - Ubuntu for Raspberry
+
+Platforms that it used to support (should still work but developers no longer have hardware for):
+- Odroid Ubuntu (Official ubuntu OS for Odroid XU3/4) + Experimental 4.9 kernel
+- Beaglebone Black Ubuntu
+- Ubuntu for Joule
+- Ubuntu for Up boards
 
 ### Environments
 Maverick can place the system in one of several modes, or environments.  
