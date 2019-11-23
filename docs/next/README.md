@@ -70,23 +70,6 @@ Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images
 
 If you have a TX2, replace references in the above instructions from 'tx1' to 'tx2'.
 
-#### Odroid Instructions
-The Odroid XU4 installation is similar to the Raspberry.  Running from eMMC is not supported (at least not tested).
-- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
-- Boot from the SD card
-- (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
-- [Get Started](#get-Started)
-Note: The Odroid OS image is an old version, but should be upgradable to the latest version.  If anyone is interested in contributing an updated image, please get in touch.
-
-#### Intel Joule Instructions
-The Intel Joule is/was a fantastic tiny embedded platform which Intel inexplicably killed off.  Like the Odroid, the OS image is an old version but should upgrade to the latest after installation.  Joule 570 has a fast 16Gb onboard eMMC storage.  The Joule 550 only has 8Gb onboard storage and should work but has not been tested, and will have little space free after flashing.  Flashing onboard MMC is more tricky than booting from an SD card, so this platform uses a Clonezilla flashing mechanism.
-- Write the ISO file to an SD card (like the one that comes with the Joule), or write the tar file to a USB stick, and boot from it.  Follow the default prompts and it should flash Maverick to the onboard eMMC drive.
-- Reboot, take the SD card out and boot to the newly flashed OS
-- Login as 'mav' user (default password is 'wingman')
-- Run 'wifi-setup' to setup wireless networking so you can connect to it, as there is no onboard ethernet
-- Reboot again to activate the new network settings
-- [Get Started](#get-Started)
-
 #### Get Started
 If the installation and network setup was successful, you should now be able to connect over ssh (if you're using an OS that talks zeroconf like MacOS or Linux):  
 Raspberry: `ssh maverick-raspberry.local`  
