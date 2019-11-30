@@ -228,7 +228,7 @@ class maverick_ros::ros2 (
                     creates => "${builddir}/ros1_bridge.repos",
                     user    => "mav",
                     require => Exec["ros2-colcon-build"],
-                    before  => File["/srv/maverick/var/build/.install_flag_ros"],
+                    before  => File["/srv/maverick/var/build/.install_flag_ros2"],
                 } ->
                 exec { "ros2-vcs-import-ros1_bridge":
                     cwd     => "${builddir}",
@@ -245,7 +245,7 @@ class maverick_ros::ros2 (
                     timeout => 0,
                 }
             }
-            file { "/srv/maverick/var/build/.install_flag_ros":
+            file { "/srv/maverick/var/build/.install_flag_ros2":
                 ensure      => present,
                 require     => Exec["ros2-colcon-build"],
             }
