@@ -54,7 +54,7 @@ class maverick_hardware::peripheral::flirone (
     }
 
     # status.d entry
-    file { "/srv/maverick/software/maverick/bin/status.d/123.vision/105.flirone.status":
+    file { "/srv/maverick/software/maverick/bin/status.d/124.hardware/105.flirone.status":
         owner   => "mav",
         content => "flirone,Flir One Vision\n",
     }

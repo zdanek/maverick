@@ -12,6 +12,18 @@ class maverick_hardware (
     $flirone_install = true,
 ) {
 	
+	# Create status.d directory for maverick status`
+	file { "/srv/maverick/software/maverick/bin/status.d/124.hardware":
+			ensure      => directory,
+			owner       => "mav",
+			group       => "mav",
+			mode        => "755",
+	} ->
+	file { "/srv/maverick/software/maverick/bin/status.d/124.hardware/__init__":
+			owner       => "mav",
+			content     => "Hardware Services",
+	}
+
 	# Setup hardware sensors (lmsensors)
 	if $sensors {
     	class { "maverick_hardware::sensors": }

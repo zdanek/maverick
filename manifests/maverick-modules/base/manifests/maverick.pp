@@ -5,25 +5,11 @@ class base::maverick (
    
    # Note: The mav user is setup in base::users
    
-   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/code/maverick", "/srv/maverick/code/maverick/custom-modules", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib"]:
+   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/code/maverick", "/srv/maverick/code/maverick/custom-modules", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib", "/srv/maverick/.virtualenvs"]:
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
         mode    => "755",
-    }
-    file { "/srv/maverick/.virtualenvs":
-        ensure	=> directory,
-        owner   => "mav",
-        group   => "mav",
-        mode    => "755",
-    }
-
-    # Create status.d directory for `maverick status`
-    file { "/srv/maverick/software/maverick/bin/status.d":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
     }
 
     # If the gitbranch fact is set, use that to set the branch while setting up maverick
@@ -87,7 +73,16 @@ class base::maverick (
         order       => 1,
         content     => 'NEWPATH="/srv/maverick/software/maverick/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
     }
-    
+
+    # Create status.d directory for `maverick status`
+    file { "/srv/maverick/software/maverick/bin/status.d":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "755",
+        require => Oncevcsrepo["git-maverick"],
+    }
+
     # Create symlinks for maverick subcommands
     file { "/srv/maverick/software/maverick/bin/maverick-info":
         ensure  => link,
