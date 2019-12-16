@@ -2,7 +2,7 @@ class maverick_dev::mavsdk (
 ) {
 
     # Install px4 dev/build dependencies
-    ensure_packages(["cmake", "build-essential", "colordiff", "astyle", "libcurl4-openssl-dev", "doxygen"])
+    ensure_packages(["cmake", "build-essential", "colordiff", "astyle", "libcurl4-openssl-dev", "doxygen", "libgrpc-dev", "libgrpc++-dev"])
 
     # Install mavsdk
     if ! ("install_flag_mavsdk" in $installflags) {
@@ -30,6 +30,7 @@ class maverick_dev::mavsdk (
             command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/mavsdk.build.out 2>&1",
             cwd         => "/srv/maverick/var/build/mavsdk/build/default",
             creates     => "/srv/maverick/var/build/mavsdk/build/default/src/core/libmavsdk.so",
+            require     => [ Package["libgrpc-dev"], Package["libgrpc++-dev"] ],
         } ->
         exec { "mavsdk-install":
             user        => "mav",
