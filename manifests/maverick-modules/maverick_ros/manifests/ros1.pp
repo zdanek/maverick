@@ -415,7 +415,9 @@ class maverick_ros::ros1 (
                 ensure  => directory,
                 owner   => "mav",
             } ->
-            package { "ros-${_distribution}-ddynamic-reconfigure": } ->
+            package { "ros-${_distribution}-ddynamic-reconfigure":
+               require  => Exec["ros_apt_update"],
+            } ->
             oncevcsrepo { "git-ros-realsense":
                 gitsource   => "https://github.com/IntelRealSense/realsense-ros.git",
                 dest        => "/srv/maverick/var/build/catkin_ws_realsense/src/realsense-ros",
@@ -496,9 +498,9 @@ class maverick_ros::ros1 (
         }
         # Install a fixed apm_config.yaml
         # https://github.com/mavlink/mavros/issues/1210
-        file { "/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml":
-            content     => template("maverick_ros/apm_config.yaml.erb")
-        }
+        #file { "/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml":
+        #    content     => template("maverick_ros/apm_config.yaml.erb")
+        #}
     }
 
     # Install python deps
