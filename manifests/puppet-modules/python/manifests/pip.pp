@@ -91,9 +91,9 @@ define python::pip (
   }
 
   # Parameter validation
-  if $virtualenv == 'system' and $owner != 'root' {
-    fail('python::pip: root user must be used when virtualenv is system')
-  }
+  #if $virtualenv == 'system' and $owner != 'root' {
+  #  fail('python::pip: root user must be used when virtualenv is system')
+  #}
 
   $cwd = $virtualenv ? {
     'system' => '/',
