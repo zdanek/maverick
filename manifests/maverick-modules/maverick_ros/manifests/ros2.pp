@@ -124,8 +124,7 @@ class maverick_ros::ros2 (
             id      => 'C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654',
             server  => 'keyserver.ubuntu.com',
             require     => Package["dirmngr"],
-            notify      => Exec["ros_apt_update"],
-            before      => Exec["ros_apt_update"],
+            notify      => Exec["ros2_apt_update"],            
         } ->
         exec { "ros2-repo":
             command     => "/bin/echo \"deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros2-latest.list",
@@ -136,6 +135,7 @@ class maverick_ros::ros2 (
             command     => "/usr/bin/apt update",
             refreshonly => true,
         }
+
     }
 
     # Install from ros repos
