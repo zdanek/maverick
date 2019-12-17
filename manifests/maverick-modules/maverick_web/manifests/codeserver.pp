@@ -32,6 +32,7 @@ class maverick_web::codeserver (
         oncevcsrepo { "git-codeserver":
             gitsource   => "https://github.com/codercom/code-server.git",
             dest        => "/srv/maverick/var/build/codeserver",
+            revision    => $vscode_version,
         } ->
         exec { "codeserver-preinstall":
             path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
