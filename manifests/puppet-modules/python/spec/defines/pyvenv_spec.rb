@@ -2,18 +2,26 @@ require 'spec_helper'
 
 describe 'python::pyvenv', type: :define do
   on_supported_os.each do |os, facts|
-    context "on #{os} " do
+    next if os == 'gentoo-3-x86_64'
+    context "on #{os}" do
       let :facts do
-        facts
+        # python3 is required to use pyvenv
+        facts.merge(
+          python3_version: '3.5.1'
+        )
       end
       let :title do
         '/opt/env'
       end
 
-      it {
-        is_expected.to contain_file('/opt/env')
-        is_expected.to contain_exec('python_virtualenv_/opt/env').with_command('pyvenv --clear  /opt/env')
-      }
+      context 'with default parameters' do
+        it { is_expected.to contain_file('/opt/env') }
+        it { is_expected.to contain_exec('python_virtualenv_/opt/env').with_command('pyvenv-3.5 --clear  /opt/env && /opt/env/bin/pip --log /opt/env/pip.log install --upgrade pip && /opt/env/bin/pip --log /opt/env/pip.log install --upgrade setuptools') }
+
+        if %w[xenial bionic cosmic disco jessie stretch buster].include?(facts[:lsbdistcodename])
+          it { is_expected.to contain_package('python3.5-venv').that_comes_before('File[/opt/env]') }
+        end
+      end
 
       describe 'when ensure' do
         context 'is absent' do
@@ -28,6 +36,6 @@ describe 'python::pyvenv', type: :define do
           }
         end
       end
-    end
+    end # context
   end
 end

@@ -1,5 +1,5 @@
 {
-  "CHANGELOG.md": "bfc3b397d8aee2bc2745c43b3269a60c",
+  "CHANGELOG.md": "94eec3079a3e9bf9094e6963ed906687",
   "CONTRIBUTING.md": "4d17f3c942e7c93d1577cc4438a231e4",
   "Gemfile": "ee4c9c171cc962d88021e2dfc111dd46",
   "LICENSE": "3b83ef96387f14655fc854ddc3c6bd57",
@@ -12,7 +12,7 @@
   "manifests/init.pp": "1105a0f013505a99cb383339f4e5a90c",
   "manifests/params.pp": "447468bfcbc6a374beec3f963f81db80",
   "manifests/service.pp": "44dc6c7a966f67ef0d63493a92343406",
-  "metadata.json": "186e5633ccf27b84c27c2867e4bd765d",
+  "metadata.json": "a20085564d1c386bf558bbf74bdd1e5b",
   "spec/acceptance/nodesets/centos-7-x64.yml": "a713f3abd3657f0ae2878829badd23cd",
   "spec/acceptance/nodesets/debian-8-x64.yml": "d2d2977900989f30086ad251a14a1f39",
   "spec/acceptance/nodesets/default.yml": "b42da5a1ea0c964567ba7495574b8808",

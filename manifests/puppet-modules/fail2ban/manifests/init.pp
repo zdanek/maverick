@@ -11,6 +11,12 @@
 #
 # @see https://github.com/fail2ban/fail2ban/blob/0.11/man/jail.conf.5 jail.conf(5)
 #
+# @note `blocktype` is not offered as a global option since it's not a great
+#   idea to set a globally used default value for this option. It's used
+#   differently by all actions and different values are expected from each
+#   action, so it's generally recommended to override this for each action
+#   individually by creating a `.local` file in `actions.d`.
+#
 #
 # @example basic usage
 #   class { 'fail2ban: }
@@ -33,6 +39,8 @@
 #   Write out banned IPs to a file on teardown and restore bans when starting
 #   fail2ban back up. This option is deprecated and is bound to be removed in
 #   puppet-fail2ban 4.0
+# @param config_file_mode
+#   File mode set on all fail2ban configuration files managed by this module.
 #
 # @param loglvl
 #   Set fail2ban's loglevel.
@@ -122,15 +130,20 @@ class fail2ban (
   Boolean            $purge_fail2ban_dot_d = true,
   Boolean            $purge_jail_dot_d     = true,
   Boolean            $persistent_bans      = false,
+  String             $config_file_mode     = '0644',
   # Options for fail2ban.conf
-  Fail2ban::Loglevel $loglvl       = 'INFO',
-  String             $logtarget    = '/var/log/fail2ban.log',
-  String             $syslogsocket = 'auto',
-  String             $socket       = '/var/run/fail2ban/fail2ban.sock',
-  String             $pidfile      = '/var/run/fail2ban/fail2ban.pid',
-  String             $dbfile       = '/var/lib/fail2ban/fail2ban.sqlite3',
-  Integer            $dbpurgeage   = 86400,
+  String[1]          $fail2ban_conf_template
+    = 'fail2ban/fail2ban.conf.erb',
+  Fail2ban::Loglevel $loglvl           = 'INFO',
+  String             $logtarget        = '/var/log/fail2ban.log',
+  String             $syslogsocket     = 'auto',
+  String             $socket           = '/var/run/fail2ban/fail2ban.sock',
+  String             $pidfile          = '/var/run/fail2ban/fail2ban.pid',
+  String             $dbfile           = '/var/lib/fail2ban/fail2ban.sqlite3',
+  Integer            $dbpurgeage       = 86400,
   # Options for jail.conf
+  String[1]         $jail_conf_template
+    = $fail2ban::params::jail_conf_template,
   Boolean            $enabled            = false,
   String             $filter             = '%(__name__)s',
   Array[String, 0]   $ignoreip           = ['127.0.0.1'],
@@ -154,7 +167,7 @@ class fail2ban (
   String             $logencoding        = 'auto',
   Optional[String]   $failregex          = undef,
   Optional[String]   $ignoreregex        = undef,
-) {
+) inherits fail2ban::params {
 
   if $persistent_bans {
     deprecation(

@@ -15,6 +15,9 @@
     <%- if @ssl_compression -%>
   SSLCompression <%= scope.call_function('apache::bool2httpd', [@ssl_compression]) %>
     <%- end -%>
+    <%- unless @ssl_sessiontickets.nil? -%>
+  SSLSessionTickets <%= scope.call_function('apache::bool2httpd', [@ssl_sessiontickets]) %>
+    <%- end -%>
   <%- else -%>
   SSLMutex <%= @_ssl_mutex %>
   <%- end -%>
@@ -34,7 +37,7 @@
   <%- if not @ssl_stapling_return_errors.nil? -%>
   SSLStaplingReturnResponderErrors <%= scope.call_function('apache::bool2httpd', [@ssl_stapling_return_errors]) %>
   <%- end -%>
-  SSLStaplingCache "shmcb:<%= @stapling_cache %>"
+  SSLStaplingCache "shmcb:<%= @_stapling_cache %>"
 <% end -%>
   SSLCipherSuite <%= @ssl_cipher %>
   SSLProtocol <%= @ssl_protocol.compact.join(' ') %>

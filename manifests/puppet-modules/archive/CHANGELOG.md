@@ -4,6 +4,65 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.4.0](https://github.com/voxpupuli/puppet-archive/tree/v4.4.0) (2019-11-04)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v4.3.0...v4.4.0)
+
+**Implemented enhancements:**
+
+- Extract .zip using PowerShell \(native\) as alternative to 7-zip [\#380](https://github.com/voxpupuli/puppet-archive/issues/380)
+- Add support for .tar.Z files and uncompress [\#385](https://github.com/voxpupuli/puppet-archive/pull/385) ([hajee](https://github.com/hajee))
+
+**Merged pull requests:**
+
+- Put the cookie option at the end when using curl [\#349](https://github.com/voxpupuli/puppet-archive/pull/349) ([kapouik](https://github.com/kapouik))
+
+## [v4.3.0](https://github.com/voxpupuli/puppet-archive/tree/v4.3.0) (2019-10-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v4.2.0...v4.3.0)
+
+**Implemented enhancements:**
+
+- Add Archlinux compatibility [\#383](https://github.com/voxpupuli/puppet-archive/pull/383) ([bastelfreak](https://github.com/bastelfreak))
+- Add CentOS/RHEL 8 compatibility [\#382](https://github.com/voxpupuli/puppet-archive/pull/382) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v4.2.0](https://github.com/voxpupuli/puppet-archive/tree/v4.2.0) (2019-08-14)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v4.1.0...v4.2.0)
+
+**Implemented enhancements:**
+
+- add bunzip2 filetype support [\#378](https://github.com/voxpupuli/puppet-archive/pull/378) ([Dan33l](https://github.com/Dan33l))
+
+## [v4.1.0](https://github.com/voxpupuli/puppet-archive/tree/v4.1.0) (2019-07-04)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v4.0.0...v4.1.0)
+
+**Closed issues:**
+
+- 4 Certificates expired, 3 expiring soon in cacert.pem [\#372](https://github.com/voxpupuli/puppet-archive/issues/372)
+
+**Merged pull requests:**
+
+- Update cacert.pem [\#373](https://github.com/voxpupuli/puppet-archive/pull/373) ([alexjfisher](https://github.com/alexjfisher))
+- drop Ubuntu 14.04 support [\#371](https://github.com/voxpupuli/puppet-archive/pull/371) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v4.0.0](https://github.com/voxpupuli/puppet-archive/tree/v4.0.0) (2019-05-29)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v3.2.1...v4.0.0)
+
+**Breaking changes:**
+
+- modulesync 2.7.0 and drop puppet 4 [\#368](https://github.com/voxpupuli/puppet-archive/pull/368) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- Allow `puppetlabs/stdlib` 6.x [\#369](https://github.com/voxpupuli/puppet-archive/pull/369) ([alexjfisher](https://github.com/alexjfisher))
+
+**Merged pull requests:**
+
+- explain how to download as simple as possible [\#366](https://github.com/voxpupuli/puppet-archive/pull/366) ([Dan33l](https://github.com/Dan33l))
+
 ## [v3.2.1](https://github.com/voxpupuli/puppet-archive/tree/v3.2.1) (2018-10-19)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-archive/compare/v3.2.0...v3.2.1)

@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v2.1.0](https://github.com/puppetlabs/puppetlabs-translate/tree/v2.1.0) (2019-11-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-translate/compare/v2.0.0...v2.1.0)
+
+### Added
+
+- \(FM-8682\) - Addition of Support for CentOS 8 [\#59](https://github.com/puppetlabs/puppetlabs-translate/pull/59) ([david22swan](https://github.com/david22swan))
+- FM-8414  - Add support on Debian 10 [\#52](https://github.com/puppetlabs/puppetlabs-translate/pull/52) ([lionce](https://github.com/lionce))
+
+## [v2.0.0](https://github.com/puppetlabs/puppetlabs-translate/tree/v2.0.0) (2019-06-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-translate/compare/1.2.0...v2.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#39](https://github.com/puppetlabs/puppetlabs-translate/pull/39) ([david22swan](https://github.com/david22swan))
+- \(FM-7711\) - Remove Debian 7 testing/support for Translate module [\#31](https://github.com/puppetlabs/puppetlabs-translate/pull/31) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(FM-8034\) Add RedHat 8 support [\#42](https://github.com/puppetlabs/puppetlabs-translate/pull/42) ([eimlav](https://github.com/eimlav))
+- \[FM-7939\] Puppet Strings [\#41](https://github.com/puppetlabs/puppetlabs-translate/pull/41) ([carabasdaniel](https://github.com/carabasdaniel))
+- \(FM-7720/FM-7722/FM-7723\) - Update to windows support [\#33](https://github.com/puppetlabs/puppetlabs-translate/pull/33) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#28](https://github.com/puppetlabs/puppetlabs-translate/pull/28) ([tphoney](https://github.com/tphoney))
+
 ## [1.2.0](https://github.com/puppetlabs/puppetlabs-translate/tree/1.2.0) (2018-09-27)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-translate/compare/1.1.0...1.2.0)

@@ -1,1 +1,9 @@
 * add more tests to get better code coverage
+
+* init.pp: add params to create jails/filters/actions with hashes (pass them on
+  to create_resources with the already present defined types). This will make
+  it possible for folks to use hiera to define them.
+
+* symlinks are not allowed in "puppet module build". need to find another way
+  to have a test setup that works
+

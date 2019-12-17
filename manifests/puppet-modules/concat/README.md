@@ -60,7 +60,7 @@ class motd {
     mode  => '0644'
   }
 
-  concat::fragment{ 'motd_header':
+  concat::fragment { 'motd_header':
     target  => $motd,
     content => "\nPuppet modules on this server:\n\n",
     order   => '01'
@@ -68,7 +68,7 @@ class motd {
 
   # let local users add to the motd by creating a file called
   # /etc/motd.local
-  concat::fragment{ 'motd_local':
+  concat::fragment { 'motd_local':
     target => $motd,
     source => '/etc/motd.local',
     order  => '15'
@@ -76,14 +76,17 @@ class motd {
 }
 
 # let other modules register themselves in the motd
-define motd::register($content="", $order='10') {
+define motd::register (
+  $content = "",
+  $order   = '10',
+) {
   if $content == "" {
     $body = $name
   } else {
     $body = $content
   }
 
-  concat::fragment{ "motd_fragment_$name":
+  concat::fragment { "motd_fragment_$name":
     target  => '/etc/motd',
     order   => $order,
     content => "    -- $body\n"
@@ -97,7 +100,7 @@ Then, in the declarations for each module on the node, add `motd::register{ 'Apa
 class apache {
   include apache::install, apache::config, apache::service
 
-  motd::register{ 'Apache': }
+  motd::register { 'Apache': }
 }
 ~~~
 
@@ -145,11 +148,13 @@ For an extensive list of supported operating systems, see [metadata.json](https:
 <a id="development"></a>
 ## Development
 
+We are experimenting with a new tool for running acceptance tests. It's name is [puppet_litmus](https://github.com/puppetlabs/puppet_litmus) this replaces beaker as the test runner. To run the acceptance tests follow the instructions [here](https://github.com/puppetlabs/puppet_litmus/wiki/Tutorial:-use-Litmus-to-execute-acceptance-tests-with-a-sample-module-(MoTD)#install-the-necessary-gems-for-the-module).
+
 Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
 
 We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
-For more information, see our [module contribution guide](https://docs.puppetlabs.com/forge/contributing.html).
+For more information, see our [module contribution guide](https://puppet.com/docs/puppet/latest/contributing.html).
 
 ### Contributors
 

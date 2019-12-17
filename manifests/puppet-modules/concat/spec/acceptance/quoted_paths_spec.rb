@@ -3,17 +3,14 @@ require 'spec_helper_acceptance'
 describe 'quoted paths' do
   before(:all) do
     @basedir = setup_test_directory
-    pp = <<-MANIFEST
-      file { '#{@basedir}/concat test':
-        ensure => directory,
-      }
-    MANIFEST
-    apply_manifest(pp)
   end
 
   describe 'with path with blanks' do
     let(:pp) do
       <<-MANIFEST
+        file { '#{@basedir}/concat test':
+          ensure => directory,
+        }
         concat { '#{@basedir}/concat test/foo':
         }
         concat::fragment { '1':
@@ -28,7 +25,7 @@ describe 'quoted paths' do
     end
 
     it 'applies the manifest twice with no stderr' do
-      idempotent_apply(default, pp)
+      idempotent_apply(pp)
       expect(file("#{@basedir}/concat test/foo")).to be_file
       expect(file("#{@basedir}/concat test/foo").content).to match %r{string1string2}
     end

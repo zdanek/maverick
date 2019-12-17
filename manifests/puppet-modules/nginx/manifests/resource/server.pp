@@ -77,6 +77,8 @@
 #   [*www_root*]                   - Specifies the location on disk for files to be read from. Cannot be set in conjunction with $proxy
 #   [*rewrite_www_to_non_www*]     - Adds a server directive and rewrite rule to rewrite www.domain.com to domain.com in order to avoid
 #     duplicate content (SEO);
+#   [*rewrite_non_www_to_www*]     - Adds a server directive and rewrite rule to rewrite domain.com to www.domain.com in order to avoid
+#     duplicate content (SEO);
 #   [*try_files*]                  - Specifies the locations for files to be checked as an array. Cannot be used in conjuction with $proxy.
 #   [*proxy_cache*]                - This directive sets name of zone for caching. The same zone can be used in multiple places.
 #   [*proxy_cache_key*]            - Override the default proxy_cache_key of $scheme$proxy_host$request_uri
@@ -131,7 +133,6 @@
 #   [*error_pages*]                - Hash: setup errors pages, hash key is the http code and hash value the page
 #   [*locations*]                  - Hash of servers resources used by this server
 #   [*locations_defaults*]         - Hash of location default settings
-#   [*add_listen_directive*]       - Boolean to determine if we should add 'ssl on;' to the vhost or not. defaults to true for nginx 1.14 and older, otherwise false
 # Actions:
 #
 # Requires:
@@ -225,6 +226,7 @@ define nginx::resource::server (
   Array[String] $server_name                                                     = [$name],
   Optional[String] $www_root                                                     = undef,
   Boolean $rewrite_www_to_non_www                                                = false,
+  Boolean $rewrite_non_www_to_www                                                = false,
   Optional[Hash] $location_custom_cfg                                            = undef,
   Optional[Hash] $location_cfg_prepend                                           = undef,
   Optional[Hash] $location_cfg_append                                            = undef,
@@ -269,11 +271,14 @@ define nginx::resource::server (
   $error_pages                                                                   = undef,
   Hash $locations                                                                = {},
   Hash $locations_defaults                                                       = {},
-  Boolean $add_listen_directive                                                  = $nginx::add_listen_directive,
 ) {
 
   if ! defined(Class['nginx']) {
     fail('You must include the nginx base class before using any defined resources')
+  }
+
+  if $rewrite_www_to_non_www == true and $rewrite_non_www_to_www == true {
+    fail('You must not set both $rewrite_www_to_non_www and $rewrite_non_www_to_www to true')
   }
 
   # Variables

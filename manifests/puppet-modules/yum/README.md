@@ -303,12 +303,16 @@ yum::versionlock { '0:bash-4.1.2-9.el6_2.*':
 
 ### Install or remove *yum* package group
 
+Install yum [package groups](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/sec-working_with_package_groups).  To list groups: `yum group list`. Then use that name in your puppet manifest. With support for install_options (e.g. enable repos if disabled by default).
+
 ```puppet
 yum::group { 'X Window System':
-  ensure  => present,
-  timeout => 600,
+  ensure          => present,
+  timeout         => 600,
+  install_options => ['--enablerepo=*'];
 }
 ```
+
 
 ### Install or remove packages via `yum install`
 
@@ -334,7 +338,7 @@ yum::install { 'package-name':
 
 Please note that resource name must be same as installed package name.
 
-### Puppet tasks 
+### Puppet tasks
 
 The module has a puppet task that allows to run `yum update` or `yum upgrade`.
 Please refer to the [Bolt documentation](https://puppet.com/docs/bolt/latest/bolt.html) on how to execute a task.
@@ -349,9 +353,9 @@ bolt task run --nodes <node-name> yum action=<value> [quiet=<value>]
 
 PARAMETERS:
 - action: Enum['update', 'upgrade']
-    Action to perform 
+    Action to perform
 - quiet: Optional[Boolean]
-    Run without output 
+    Run without output
 ```
 
 ---

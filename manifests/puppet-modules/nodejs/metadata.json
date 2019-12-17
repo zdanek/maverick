@@ -1,6 +1,6 @@
 {
   "name": "puppet-nodejs",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "author": "Vox Pupuli",
   "summary": "Install Node.js package and npm package provider.",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.13.1 < 6.0.0"
+      "version_requirement": ">= 4.25.0 < 7.0.0"
     }
   ],
   "data_provider": null,

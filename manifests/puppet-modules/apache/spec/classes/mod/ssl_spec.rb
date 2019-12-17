@@ -255,6 +255,27 @@ describe 'apache::mod::ssl', type: :class do
 
       it { is_expected.to contain_file('ssl.conf').with_content(%r{^  SSLCompression On$}) }
     end
+
+    context 'with Apache version >= 2.4 - ssl_sessiontickets with default value' do
+      let :params do
+        {
+          apache_version: '2.4',
+        }
+      end
+
+      it { is_expected.not_to contain_file('ssl.conf').with_content(%r{^  SSLSessionTickets (Off|On)$}) }
+    end
+    context 'with Apache version >= 2.4 - setting ssl_sessiontickets to false' do
+      let :params do
+        {
+          apache_version: '2.4',
+          ssl_sessiontickets: false,
+        }
+      end
+
+      it { is_expected.to contain_file('ssl.conf').with_content(%r{^  SSLSessionTickets Off$}) }
+    end
+
     context 'with Apache version >= 2.4 - setting ssl_stapling to true' do
       let :params do
         {
@@ -274,6 +295,16 @@ describe 'apache::mod::ssl', type: :class do
       end
 
       it { is_expected.to contain_file('ssl.conf').with_content(%r{^  SSLStaplingReturnResponderErrors On$}) }
+    end
+    context 'with Apache version >= 2.4 - setting stapling_cache' do
+      let :params do
+        {
+          apache_version: '2.4',
+          stapling_cache: '/tmp/customstaplingcache(51200)',
+        }
+      end
+
+      it { is_expected.to contain_file('ssl.conf').with_content(%r{^  SSLStaplingCache "shmcb:/tmp/customstaplingcache\(51200\)"$}) }
     end
 
     context 'setting ssl_pass_phrase_dialog' do

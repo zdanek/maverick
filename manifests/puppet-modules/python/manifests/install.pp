@@ -1,27 +1,22 @@
-# == Class: python::install
+# @api private
+# @summary Installs core python packages
 #
-# Installs core python packages,
-#
-# === Examples
-#
-# include python::install
-#
-# === Authors
-#
-# Sergey Stankevich
-# Ashley Penney
-# Fotis Gimian
-# Garrett Honeycutt <code@garretthoneycutt.com>
+# @example
+#  include python::install
 #
 class python::install {
 
-  $python = $::python::version ? {
-    'system' => 'python',
-    'pypy'   => 'pypy',
-    default  => "${python::version}", # lint:ignore:only_variable_string
+  $python = $python::version ? {
+    'system'                 => 'python',
+    'pypy'                   => 'pypy',
+    /\A(python[23]\.[0-9]+)/ => $1,
+    /\A(python)?([0-9]+)/    => "python${2}",
+    /\Arh-python[0-9]{2}/    => $python::version,
+    default                  => "python${python::version}",
   }
 
-  $pythondev = $::osfamily ? {
+  $pythondev = $facts['os']['family'] ? {
+    'AIX'    => "${python}-devel",
     'RedHat' => "${python}-devel",
     'Debian' => "${python}-dev",
     'Suse'   => "${python}-devel",
@@ -62,6 +57,7 @@ class python::install {
 
   package { 'virtualenv':
     ensure  => $venv_ensure,
+    name    => "${python}-virtualenv",
     require => Package['python'],
   }
 
@@ -80,50 +76,55 @@ class python::install {
         }
       }
 
-      # Install pip without pip, see https://pip.pypa.io/en/stable/installing/.
-      exec { 'bootstrap pip':
-        command => '/usr/bin/curl https://bootstrap.pypa.io/get-pip.py | python',
-        unless  => 'which pip',
-        path    => [ '/bin', '/usr/bin', '/usr/local/bin' ],
-        require => Package['python'],
-      }
+      # Respect the $pip_ensure setting
+      unless $pip_ensure == 'absent' {
+        # Install pip without pip, see https://pip.pypa.io/en/stable/installing/.
+        include 'python::pip::bootstrap'
 
-      # Puppet is opinionated about the pip command name
-      file { 'pip-python':
-        ensure  => link,
-        path    => '/usr/bin/pip-python',
-        target  => '/usr/bin/pip',
-        require => Exec['bootstrap pip'],
-      }
+        Exec['bootstrap pip'] -> File['pip-python'] -> Package <| provider == pip |>
 
-      Exec['bootstrap pip'] -> File['pip-python'] -> Package <| provider == pip |>
-
-      Package <| title == 'pip' |> {
-        name     => 'pip',
-        provider => 'pip',
-      }
-      Package <| title == 'virtualenv' |> {
-        name     => 'virtualenv',
-        provider => 'pip',
-        require  => Package['python-dev']
+        Package <| title == 'pip' |> {
+          name     => 'pip',
+          provider => 'pip',
+        }
+        if $pythondev {
+          Package <| title == 'virtualenv' |> {
+            name     => 'virtualenv',
+            provider => 'pip',
+            require  => Package['python-dev'],
+          }
+        } else {
+          Package <| title == 'virtualenv' |> {
+            name     => 'virtualenv',
+            provider => 'pip',
+          }
+        }
       }
     }
     'scl': {
       # SCL is only valid in the RedHat family. If RHEL, package must be
       # enabled using the subscription manager outside of puppet. If CentOS,
       # the centos-release-SCL will install the repository.
-      $install_scl_repo_package = $::operatingsystem ? {
-        'CentOS' => 'present',
-        default  => 'absent',
-      }
+      if $python::manage_scl {
+        $install_scl_repo_package = $facts['os']['name'] ? {
+          'CentOS' => 'present',
+          default  => 'absent',
+        }
 
-      package { 'centos-release-scl':
-        ensure => $install_scl_repo_package,
-        before => Package['scl-utils'],
-      }
-      package { 'scl-utils':
-        ensure => 'latest',
-        before => Package['python'],
+        package { 'centos-release-scl':
+          ensure => $install_scl_repo_package,
+          before => Package['scl-utils'],
+        }
+        package { 'scl-utils':
+          ensure => 'present',
+          before => Package['python'],
+        }
+
+        Package['scl-utils'] -> Package["${python}-scldevel"]
+
+        if $pip_ensure != 'absent' {
+          Package['scl-utils'] -> Exec['python-scl-pip-install']
+        }
       }
 
       # This gets installed as a dependency anyway
@@ -132,24 +133,22 @@ class python::install {
       #   require => Package['scl-utils'],
       # }
       package { "${python}-scldevel":
-        ensure  => $dev_ensure,
-        require => Package['scl-utils'],
+        ensure => $dev_ensure,
       }
       if $pip_ensure != 'absent' {
         exec { 'python-scl-pip-install':
           command => "${python::exec_prefix}easy_install pip",
           path    => ['/usr/bin', '/bin'],
           creates => "/opt/rh/${python::version}/root/usr/bin/pip",
-          require => Package['scl-utils'],
         }
       }
     }
     'rhscl': {
       # rhscl is RedHat SCLs from softwarecollections.org
-      if $::python::rhscl_use_public_repository {
-        $scl_package = "rhscl-${::python::version}-epel-${::operatingsystemmajrelease}-${::architecture}"
+      if $python::rhscl_use_public_repository {
+        $scl_package = "rhscl-${python::version}-epel-${facts['os']['release']['major']}-${facts['os']['architecture']}"
         package { $scl_package:
-          source   => "https://www.softwarecollections.org/en/scls/rhscl/${::python::version}/epel-${::operatingsystemmajrelease}-${::architecture}/download/${scl_package}.noarch.rpm",
+          source   => "https://www.softwarecollections.org/en/scls/rhscl/${python::version}/epel-${facts['os']['release']['major']}-${facts['os']['architecture']}/download/${scl_package}.noarch.rpm",
           provider => 'rpm',
           tag      => 'python-scl-repo',
         }
@@ -173,7 +172,7 @@ class python::install {
         tag    => 'python-pip-package',
       }
 
-      if $::python::rhscl_use_public_repository {
+      if $python::rhscl_use_public_repository {
         Package <| tag == 'python-scl-repo' |>
         -> Package <| tag == 'python-scl-package' |>
       }
@@ -185,80 +184,116 @@ class python::install {
       $installer_path = '/var/tmp/anaconda_installer.sh'
 
       file { $installer_path:
-        source => $::python::anaconda_installer_url,
+        source => $python::anaconda_installer_url,
         mode   => '0700',
       }
       -> exec { 'install_anaconda_python':
-        command   => "${installer_path} -b -p ${::python::anaconda_install_path}",
-        creates   => $::python::anaconda_install_path,
+        command   => "${installer_path} -b -p ${python::anaconda_install_path}",
+        creates   => $python::anaconda_install_path,
         logoutput => true,
       }
       -> exec { 'install_anaconda_virtualenv':
-        command => "${::python::anaconda_install_path}/bin/pip install virtualenv",
-        creates => "${::python::anaconda_install_path}/bin/virtualenv",
+        command => "${python::anaconda_install_path}/bin/pip install virtualenv",
+        creates => "${python::anaconda_install_path}/bin/virtualenv",
       }
     }
     default: {
+      case $facts['os']['family'] {
+        'AIX': {
+          if String($python::version) =~ /^python3/ {
+            class { 'python::pip::bootstrap':
+                    version => 'pip3',
+            }
+          } else {
+            package { 'python-pip':
+              ensure   => $pip_ensure,
+              require  => Package['python'],
+              provider => 'yum',
+            }
+          }
+          if $pythondev {
+            package { 'python-dev':
+              ensure   => $dev_ensure,
+              name     => $pythondev,
+              alias    => $pythondev,
+              provider => 'yum',
+            }
+          }
 
-      package { 'pip':
-        ensure  => $pip_ensure,
-        require => Package['python'],
+        }
+        default: {
+          package { 'pip':
+            ensure  => $pip_ensure,
+            require => Package['python'],
+          }
+          if $pythondev {
+            package { 'python-dev':
+              ensure => $dev_ensure,
+              name   => $pythondev,
+              alias  => $pythondev,
+            }
+          }
+
+        }
       }
 
-      if $pythondev {
-        package { 'python-dev':
-          ensure => $dev_ensure,
-          name   => $pythondev,
-          alias  => $pythondev,
-        }
-      }
+      case $facts['os']['family'] {
+        'RedHat': {
+          if $pip_ensure != 'absent' {
+            if $python::use_epel == true {
+              include 'epel'
+              Class['epel'] -> Package['pip']
+            }
+          }
+          if ($venv_ensure != 'absent') and ($facts['os']['release']['full'] =~ /^6/) {
+            if $python::use_epel == true {
+              include 'epel'
+              Class['epel'] -> Package['virtualenv']
+            }
+          }
 
-      if $::osfamily == 'RedHat' {
-        if $pip_ensure != 'absent' {
-          if $python::use_epel == true {
-            include 'epel'
-            Class['epel'] -> Package['pip']
+          $virtualenv_package = "${python}-virtualenv"
+        }
+        'Debian': {
+          if fact('lsbdistcodename') == 'trusty' {
+            $virtualenv_package = 'python-virtualenv'
+          } else {
+            $virtualenv_package = 'virtualenv'
           }
         }
-        if ($venv_ensure != 'absent') and ($::operatingsystemrelease =~ /^6/) {
-          if $python::use_epel == true {
-            include 'epel'
-            Class['epel'] -> Package['virtualenv']
-          }
+        'Gentoo': {
+          $virtualenv_package = 'virtualenv'
         }
-
-        $virtualenv_package = "${python}-virtualenv"
-      } else {
-        if fact('lsbdistcodename') == 'jessie' {
-          $virtualenv_package = 'virtualenv'
-        } elsif fact('lsbdistcodename') == 'stretch' {
-          $virtualenv_package = 'virtualenv'
-        } elsif fact('lsbdistcodename') == 'xenial' {
-          $virtualenv_package = 'virtualenv'
-        } elsif $facts['os']['family'] == 'Gentoo' {
-          $virtualenv_package = 'virtualenv'
-        } else {
+        default: {
           $virtualenv_package = 'python-virtualenv'
         }
       }
 
-      if "${::python::version}" =~ /^python3/ { #lint:ignore:only_variable_string
+      if String($python::version) =~ /^python3/ {
         $pip_category = undef
-        $pip_package = 'python3-pip'
-      } elsif ($::osfamily == 'RedHat') and (versioncmp($::operatingsystemmajrelease, '7') >= 0) {
+        $pip_package = "${python}-pip"
+        $pip_provider = $python.regsubst(/^.*python3\.?/,'pip3.').regsubst(/\.$/,'')
+      } elsif ($facts['os']['family'] == 'RedHat') and (versioncmp($facts['os']['release']['major'], '7') >= 0) {
         $pip_category = undef
         $pip_package = 'python2-pip'
-      } elsif $::osfamily == 'Gentoo' {
+        $pip_provider = pip2
+      } elsif $facts['os']['family'] == 'Gentoo' {
         $pip_category = 'dev-python'
         $pip_package = 'pip'
+        $pip_provider = 'pip'
       } else {
         $pip_category = undef
         $pip_package = 'python-pip'
+        $pip_provider = 'pip'
       }
 
       Package <| title == 'pip' |> {
         name     => $pip_package,
         category => $pip_category,
+      }
+
+      Python::Pip <| |> {
+        pip_provider => $pip_provider,
       }
 
       Package <| title == 'virtualenv' |> {

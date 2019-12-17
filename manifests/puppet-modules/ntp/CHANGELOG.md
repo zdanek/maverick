@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.2.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/v8.2.0) (2019-12-09)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/v8.1.0...v8.2.0)
+
+### Added
+
+- FM-8407 - Add support on Debian 10 [\#528](https://github.com/puppetlabs/puppetlabs-ntp/pull/528) ([lionce](https://github.com/lionce))
+
+## [v8.1.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/v8.1.0) (2019-09-23)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/v8.0.0...v8.1.0)
+
+### Added
+
+- \(FM-8188\) convert ntp to use litmus [\#517](https://github.com/puppetlabs/puppetlabs-ntp/pull/517) ([tphoney](https://github.com/tphoney))
+
+### Fixed
+
+- Fix disable\_dhclient [\#521](https://github.com/puppetlabs/puppetlabs-ntp/pull/521) ([raphink](https://github.com/raphink))
+
+## [v8.0.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/v8.0.0) (2019-05-14)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/7.4.0...v8.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#510](https://github.com/puppetlabs/puppetlabs-ntp/pull/510) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- Service hasstatus and hasrestart atributes [\#499](https://github.com/puppetlabs/puppetlabs-ntp/pull/499) ([ffapitalle](https://github.com/ffapitalle))
+
 ## [7.4.0](https://github.com/puppetlabs/puppetlabs-ntp/tree/7.4.0) (2019-02-01)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-ntp/compare/7.3.0...7.4.0)

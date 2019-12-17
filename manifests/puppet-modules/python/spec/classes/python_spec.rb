@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe 'python', type: :class do
   on_supported_os.each do |os, facts|
-    context "on #{os} " do
+    next if os == 'gentoo-3-x86_64'
+    context "on #{os}" do
       let :facts do
         facts
       end
@@ -19,6 +20,18 @@ describe 'python', type: :class do
           it { is_expected.to contain_package('pip') }
           # Basic python packages (from pip)
           it { is_expected.to contain_package('virtualenv') }
+
+          describe 'with python::version' do
+            context 'python3.7' do
+              let(:params) { { version: 'python3.7' } }
+
+              it { is_expected.to compile.with_all_deps }
+              it { is_expected.to contain_package('pip').with_name('python3.7-pip') }
+              it { is_expected.to contain_package('python').with_name('python3.7') }
+              it { is_expected.to contain_package('python-dev').with_name('python3.7-dev') }
+              it { is_expected.to contain_package('virtualenv').with_name('virtualenv') }
+            end
+          end
 
           describe 'with python::dev' do
             context 'true' do
@@ -42,6 +55,58 @@ describe 'python', type: :class do
             end
           end
 
+          describe 'with python::python_virtualenvs' do
+            context 'when `proxy` set' do
+              let(:params) do
+                {
+                  python_virtualenvs: {
+                    '/opt/env1' => {
+                      proxy: 'http://example.com:3128'
+                    }
+                  }
+                }
+              end
+
+              it { is_expected.to contain_exec('python_virtualenv_/opt/env1').with_environment(['HTTP_PROXY=http://example.com:3128', 'HTTPS_PROXY=http://example.com:3128']) }
+            end
+            context 'when `proxy` and `environment` have conflicting parameters' do
+              let(:params) do
+                {
+                  python_virtualenvs: {
+                    '/opt/env1' => {
+                      proxy: 'http://example.com:3128',
+                      environment: ['HTTP_PROXY=http://example.com:8080']
+                    }
+                  }
+                }
+              end
+
+              it { is_expected.to contain_exec('python_virtualenv_/opt/env1').with_environment(['HTTP_PROXY=http://example.com:3128', 'HTTPS_PROXY=http://example.com:3128']) }
+            end
+          end
+
+          describe 'with python::python_pyvenvs' do
+            context 'with two pyenvs' do
+              let(:params) do
+                {
+                  python_pyvenvs: {
+                    '/opt/env1' => {
+                      version: '3.8'
+                    },
+                    '/opt/env2' => {
+                      version: '3.8'
+                    }
+                  }
+                }
+              end
+
+              it { is_expected.to compile }
+
+              it { is_expected.to contain_python__pyvenv('/opt/env1').with_ensure('present') }
+              it { is_expected.to contain_python__pyvenv('/opt/env2').with_ensure('present') }
+            end
+          end
+
           describe 'with manage_gunicorn' do
             context 'true' do
               let(:params) { { manage_gunicorn: true } }
@@ -61,7 +126,7 @@ describe 'python', type: :class do
 
           describe 'with python::provider' do
             context 'pip' do
-              let(:params) { { provider: 'pip' } }
+              let(:params) { { pip: 'present', provider: 'pip' } }
 
               it {
                 is_expected.to contain_package('virtualenv').with(
@@ -129,7 +194,7 @@ describe 'python', type: :class do
               end
             end
           end
-        when 'RedHat'
+        when 'RedHat', 'CentOS'
           case facts[:os]['release']['major']
           when '5'
             # written for RHEL 5
@@ -245,12 +310,86 @@ describe 'python', type: :class do
             context 'on a Redhat 6 OS' do
               it { is_expected.to contain_class('python::install') }
               it { is_expected.to contain_package('pip').with_name('python-pip') }
+
+              describe 'with python::provider' do
+                context 'scl' do
+                  describe 'with version' do
+                    context '3.6 SCL meta package' do
+                      let(:params) { { version: 'rh-python36' } }
+
+                      it { is_expected.to compile.with_all_deps }
+                    end
+                    context '3.6 SCL python package' do
+                      let(:params) { { version: 'rh-python36-python' } }
+
+                      it { is_expected.to compile.with_all_deps }
+                    end
+                  end
+                  describe 'with manage_scl' do
+                    context 'true' do
+                      let(:params) { { provider: 'scl', manage_scl: true } }
+
+                      it { is_expected.to contain_package('centos-release-scl') }
+                      it { is_expected.to contain_package('scl-utils') }
+                    end
+                    context 'false' do
+                      let(:params) { { provider: 'scl', manage_scl: false } }
+
+                      it { is_expected.not_to contain_package('centos-release-scl') }
+                      it { is_expected.not_to contain_package('scl-utils') }
+                    end
+                  end
+                end
+              end
             end
+
           when '7'
 
             context 'on a Redhat 7 OS' do
               it { is_expected.to contain_class('python::install') }
               it { is_expected.to contain_package('pip').with_name('python2-pip') }
+
+              describe 'with python::version' do
+                context 'python36' do
+                  let(:params) { { version: 'python36' } }
+
+                  it { is_expected.to compile.with_all_deps }
+                  it { is_expected.to contain_package('pip').with_name('python36-pip') }
+                  it { is_expected.to contain_package('python').with_name('python36') }
+                  it { is_expected.to contain_package('python-dev').with_name('python36-devel') }
+                  it { is_expected.to contain_package('virtualenv').with_name('python36-virtualenv') }
+                end
+              end
+              describe 'with python::provider' do
+                context 'scl' do
+                  describe 'with version' do
+                    context '3.6 SCL meta package' do
+                      let(:params) { { version: 'rh-python36' } }
+
+                      it { is_expected.to compile.with_all_deps }
+                    end
+                    context '3.6 SCL python package' do
+                      let(:params) { { version: 'rh-python36-python' } }
+
+                      it { is_expected.to compile.with_all_deps }
+                    end
+                  end
+                  describe 'with manage_scl' do
+                    context 'true' do
+                      let(:params) { { provider: 'scl', manage_scl: true } }
+
+                      it { is_expected.to contain_package('centos-release-scl') }
+                      it { is_expected.to contain_package('scl-utils') }
+                    end
+                    context 'false' do
+                      let(:params) { { provider: 'scl', manage_scl: false } }
+
+                      it { is_expected.not_to contain_package('centos-release-scl') }
+                      it { is_expected.not_to contain_package('scl-utils') }
+                    end
+                  end
+                end
+              end
             end
           end
         end
@@ -384,7 +523,7 @@ describe 'python', type: :class do
 
           describe 'with python::provider' do
             context 'pip' do
-              let(:params) { { provider: 'pip' } }
+              let(:params) { { pip: 'present', provider: 'pip' } }
 
               it {
                 is_expected.to contain_package('virtualenv').with(

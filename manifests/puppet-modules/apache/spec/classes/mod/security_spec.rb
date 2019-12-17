@@ -24,10 +24,17 @@ describe 'apache::mod::security', type: :class do
             )
           }
           it { is_expected.to contain_package('mod_security_crs') }
-          if facts[:os]['release']['major'].to_i > 6
+          if facts[:os]['release']['major'].to_i > 6 && facts[:os]['release']['major'].to_i <= 7
             it {
               is_expected.to contain_file('security.conf').with(
                 path: '/etc/httpd/conf.modules.d/security.conf',
+              )
+            }
+          end
+          if facts[:os]['release']['major'].to_i >= 8
+            it {
+              is_expected.to contain_file('security.conf').with(
+                path: '/etc/httpd/conf.d/security.conf',
               )
             }
           end
@@ -174,6 +181,21 @@ describe 'apache::mod::security', type: :class do
                 )
               }
             end
+          end
+
+          describe 'with mod security version' do
+            let :params do
+              {
+                version: 2,
+              }
+            end
+
+            it { is_expected.to contain_apache__mod('security2') }
+            it {
+              is_expected.to contain_file('security.conf').with(
+                path: '/etc/apache2/mods-available/security2.conf',
+              )
+            }
           end
         end
       end

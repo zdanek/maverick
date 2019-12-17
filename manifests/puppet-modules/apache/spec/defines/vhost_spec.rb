@@ -3,9 +3,9 @@ require 'spec_helper'
 describe 'apache::vhost', type: :define do
   describe 'os-independent items' do
     on_supported_os.each do |os, facts|
-      # this setup uses fastcgi wich isn't available on RHEL 7 / Ubuntu 18.04
+      # this setup uses fastcgi wich isn't available on RHEL 7 / RHEL 8 / Ubuntu 18.04
       next if facts[:os]['release']['major'] == '18.04'
-      next if facts[:os]['release']['major'] == '7' && facts[:os]['family']['RedHat']
+      next if (facts[:os]['release']['major'] == '7' || facts[:os]['release']['major'] == '8') && facts[:os]['family']['RedHat']
       # next if facts[:os]['name'] == 'SLES'
 
       apache_name = case facts[:os]['family']
@@ -44,7 +44,7 @@ describe 'apache::vhost', type: :define do
           it { is_expected.to contain_class('apache::params') }
           it { is_expected.to contain_apache__listen(params[:port]) }
           # namebased virualhost is only created on apache 2.2 and older
-          if (facts[:os]['family'] == 'RedHat' && facts[:os]['release']['major'].to_i < 7) ||
+          if (facts[:os]['family'] == 'RedHat' && facts[:os]['release']['major'].to_i < 8) ||
              (facts[:os]['name'] == 'Amazon') ||
              (facts[:os]['name'] == 'SLES' && facts[:os]['release']['major'].to_i < 12)
             it { is_expected.to contain_apache__namevirtualhost("*:#{params[:port]}") }
@@ -184,6 +184,25 @@ describe 'apache::vhost', type: :define do
                   ],
                 },
                 {
+                  'path'                => '/',
+                  'provider'            => 'location',
+                  'auth_ldap_referrals' => 'off',
+                },
+                {
+                  'path'       => '/proxy',
+                  'provider'   => 'location',
+                  'proxy_pass' => [
+                    {
+                      'url'             => 'http://backend-b/',
+                      'keywords'        => ['noquery', 'interpolate'],
+                      'params' => {
+                        'retry'   => '0',
+                        'timeout' => '5',
+                      },
+                    },
+                  ],
+                },
+                {
                   'path'                                                => '/var/www/node-app/public',
                   'passenger_enabled'                                   => true,
                   'passenger_base_uri'                                  => '/app',
@@ -279,6 +298,7 @@ describe 'apache::vhost', type: :define do
                   'setenv' => ['proxy-nokeepalive 1', 'force-proxy-request-1.0 1'],
                 },
               ],
+              'proxy_requests'              => false,
               'suphp_addhandler'            => 'foo',
               'suphp_engine'                => 'on',
               'suphp_configpath'            => '/var/www/html',
@@ -320,7 +340,7 @@ describe 'apache::vhost', type: :define do
               'setenvifnocase'              => 'REMOTE_ADDR ^127.0.0.1 localhost=true',
               'block'                       => 'scm',
               'wsgi_application_group'      => '%{GLOBAL}',
-              'wsgi_daemon_process'         => 'wsgi',
+              'wsgi_daemon_process'         => { 'foo' => { 'python-home' => '/usr' }, 'bar' => {} },
               'wsgi_daemon_process_options' => {
                 'processes'    => '2',
                 'threads'      => '15',
@@ -598,6 +618,16 @@ describe 'apache::vhost', type: :define do
           it {
             is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
               content: %r{^\s+Require any-valid2$},
+            )
+          }
+          it {
+            is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+              content: %r{^\s+LDAPReferrals off$},
+            )
+          }
+          it {
+            is_expected.to contain_concat__fragment('rspec.example.com-directories').with(
+              content: %r{^\s+ProxyPass http://backend-b/ retry=0 timeout=5 noquery interpolate$},
             )
           }
           it {
@@ -1691,7 +1721,7 @@ describe 'apache::vhost', type: :define do
           let :params do
             {
               'docroot'                    => '/rspec/docroot',
-              'wsgi_daemon_process' => 'wsgi',
+              'wsgi_daemon_process' => { 'foo' => { 'python-home' => '/usr' }, 'bar' => {} },
             }
           end
 

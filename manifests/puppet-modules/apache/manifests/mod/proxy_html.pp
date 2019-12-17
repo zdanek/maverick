@@ -1,3 +1,8 @@
+# @summary
+#   Installs `mod_proxy_html`.
+#
+# @see https://httpd.apache.org/docs/current/mod/mod_proxy_html.html for additional documentation.
+#
 class apache::mod::proxy_html {
   include ::apache
   Class['::apache::mod::proxy'] -> Class['::apache::mod::proxy_html']
@@ -23,6 +28,7 @@ class apache::mod::proxy_html {
         ::apache::mod { 'xml2enc': }
       }
     }
+    default: { }
   }
 
   ::apache::mod { 'proxy_html':

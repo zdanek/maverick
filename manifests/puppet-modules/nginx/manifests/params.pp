@@ -107,7 +107,7 @@ class nginx::params {
       }
     }
     'Debian': {
-      if ($facts['os']['name'] == 'ubuntu' and $facts['lsbdistcodename'] in ['lucid', 'precise', 'trusty', 'xenial'])
+      if ($facts['os']['name'] == 'ubuntu' and $facts['lsbdistcodename'] in ['lucid', 'precise', 'trusty', 'xenial', 'bionic'])
       or ($facts['os']['name'] == 'debian' and $facts['os']['release']['major'] in ['6', '7', '8', '9']) {
         $_module_os_overrides = {
           'manage_repo' => true,
@@ -227,11 +227,5 @@ class nginx::params {
   $sites_available_group = $_module_parameters['root_group']
   $sites_available_mode  = '0644'
   $super_user            = true
-  if fact('nginx_version') {
-    # enable only for releases that are older than 1.15.0
-    $add_listen_directive = versioncmp(fact('nginx_version'), '1.15.0') < 0
-  } else {
-    $add_listen_directive = true
-  }
   ### END Referenced Variables
 }

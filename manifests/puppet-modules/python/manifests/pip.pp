@@ -1,99 +1,81 @@
-# == Define: python::pip
+# @summary Installs and manages packages from pip.
 #
-# Installs and manages packages from pip.
+# @param name must be unique
+# @param pkgname the name of the package.
+# @param ensure Require pip to be available.
+# @param virtualenv virtualenv to run pip in.
+# @param pip_provider version of pip you wish to use.
+# @param url URL to install from.
+# @param owner The owner of the virtualenv being manipulated.
+# @param group The group of the virtualenv being manipulated.
+# @param index Base URL of Python package index.
+# @param proxy Proxy server to use for outbound connections.
+# @param editable If true the package is installed as an editable resource.
+# @param environment Additional environment variables required to install the packages.
+# @param extras Extra features provided by the package which should be installed.
+# @param timeout The maximum time in seconds the "pip install" command should take.
+# @param install_args Any additional installation arguments that will be supplied when running pip install.
+# @param uninstall_args Any additional arguments that will be supplied when running pip uninstall.
+# @param log_dir Log directory
+# @param egg The egg name to use
+# @param umask
 #
-# === Parameters
-#
-# [*name]
-#  must be unique
-#
-# [*pkgname]
-#  name of the package. If pkgname is not specified, use name (title) instead.
-#
-# [*ensure*]
-#  present|absent. Default: present
-#
-# [*virtualenv*]
-#  virtualenv to run pip in.
-#
-# [*pip_provider*]
-#  version of pip you wish to use. Default: pip
-#
-# [*url*]
-#  URL to install from. Default: none
-#
-# [*owner*]
-#  The owner of the virtualenv being manipulated. Default: root
-#
-# [*group*]
-#  The group of the virtualenv being manipulated. Default: root
-#
-# [*index*]
-#  Base URL of Python package index. Default: none (http://pypi.python.org/simple/)
-#
-# [*proxy*]
-#  Proxy server to use for outbound connections. Default: none
-#
-# [*editable*]
-#  Boolean. If true the package is installed as an editable resource.
-#
-# [*environment*]
-#  Additional environment variables required to install the packages. Default: none
-#
-# [*extras*]
-#  Extra features provided by the package which should be installed. Default: none
-#
-# [*timeout*]
-#  The maximum time in seconds the "pip install" command should take. Default: 1800
-#
-# [*install_args*]
-#  String. Any additional installation arguments that will be supplied
-#  when running pip install.
-#
-# [*uninstall_args*]
-# String. Any additional arguments that will be supplied when running
-# pip uninstall.
-#
-# [*log_dir*]
-# String. Log directory.
-#
-# === Examples
-#
-# python::pip { 'flask':
-#   virtualenv => '/var/www/project1',
-#   proxy      => 'http://proxy.domain.com:3128',
-#   index      => 'http://www.example.com/simple/',
-# }
-#
-# === Authors
-#
-# Sergey Stankevich
-# Fotis Gimian
-# Daniel Quackenbush
+# @example Install Flask to /var/www/project1 using a proxy
+#   python::pip { 'flask':
+#     virtualenv => '/var/www/project1',
+#     proxy      => 'http://proxy.domain.com:3128',
+#     index      => 'http://www.example.com/simple/',
+#   }
+# @example Install cx_Oracle with pip
+#   python::pip { 'cx_Oracle' :
+#     pkgname       => 'cx_Oracle',
+#     ensure        => '5.1.2',
+#     virtualenv    => '/var/www/project1',
+#     owner         => 'appuser',
+#     proxy         => 'http://proxy.domain.com:3128',
+#     environment   => 'ORACLE_HOME=/usr/lib/oracle/11.2/client64',
+#     install_args  => '-e',
+#     timeout       => 1800,
+#   }
+# @example Install Requests with pip3
+#   python::pip { 'requests' :
+#     ensure        => 'present',
+#     pkgname       => 'requests',
+#     pip_provider  => 'pip3',
+#     virtualenv    => '/var/www/project1',
+#     owner         => 'root',
+#     timeout       => 1800
+#   }
 #
 define python::pip (
-  $pkgname                             = $name,
-  $ensure                              = present,
-  $virtualenv                          = 'system',
-  Enum['pip', 'pip3'] $pip_provider    = 'pip',
-  $url                                 = false,
-  $owner                               = 'root',
-  $group                               = 'root',
-  $umask                               = undef,
-  $index                               = false,
-  $proxy                               = false,
-  $egg                                 = false,
-  $editable                            = false,
-  $environment                         = [],
-  $extras                              = [],
-  $install_args                        = '',
-  $uninstall_args                      = '',
-  $timeout                             = 1800,
-  $log_dir                             = '/tmp',
-  $path                                = ['/usr/local/bin','/usr/bin','/bin', '/usr/sbin'],
-) {
+  String $pkgname                                            = $name,
+  Variant[Enum[present, absent, latest], String[1]] $ensure  = present,
+  Variant[Enum['system'], Stdlib::Absolutepath] $virtualenv  = 'system',
+  String[1] $pip_provider                                    = 'pip',
+  Variant[Boolean, String] $url                              = false,
+  String[1] $owner                                           = 'root',
+  $group                                                     = getvar('python::params::group'),
+  $umask                                                     = undef,
+  $index                                                     = false,
+  Optional[Stdlib::HTTPUrl] $proxy                           = undef,
+  $egg                                                       = false,
+  Boolean $editable                                          = false,
+  $environment                                               = [],
+  $extras                                                    = [],
+  String $install_args                                       = '',
+  String $uninstall_args                                     = '',
+  Numeric $timeout                                           = 1800,
+  String[1] $log_dir                                         = '/tmp',
+  Array[String] $path                                        = ['/usr/local/bin','/usr/bin','/bin', '/usr/sbin'],
+  String[1] $exec_provider                                   = 'shell',
+){
   $python_provider = getparam(Class['python'], 'provider')
   $python_version  = getparam(Class['python'], 'version')
+
+  if $virtualenv != 'system' {
+    Python::Pyvenv <| |> -> Python::Pip[$name]
+    Python::Virtualenv <| |> -> Python::Pip[$name]
+  }
 
   # Get SCL exec prefix
   # NB: this will not work if you are running puppet from scl enabled shell
@@ -104,25 +86,19 @@ define python::pip (
   }
 
   $_path = $python_provider ? {
-    'anaconda' => concat(["${::python::anaconda_install_path}/bin"], $path),
+    'anaconda' => concat(["${python::anaconda_install_path}/bin"], $path),
     default    => $path,
   }
 
   # Parameter validation
-  if ! $virtualenv {
-    fail('python::pip: virtualenv parameter must not be empty')
+  if $virtualenv == 'system' and $owner != 'root' {
+    fail('python::pip: root user must be used when virtualenv is system')
   }
-
-  #if $virtualenv == 'system' and $owner != 'root' {
-  #  fail('python::pip: root user must be used when virtualenv is system')
-  #}
 
   $cwd = $virtualenv ? {
     'system' => '/',
     default  => $virtualenv,
   }
-
-  validate_absolute_path($cwd)
 
   $log = $virtualenv ? {
     'system' => $log_dir,
@@ -139,13 +115,8 @@ define python::pip (
       default => "--index-url=${index}",
     }
 
-  $pypi_search_index = $index ? {
-      false   => '',
-      default => "--index=${index}",
-    }
-
   $proxy_flag = $proxy ? {
-    false    => '',
+    undef    => '',
     default  => "--proxy=${proxy}",
   }
 
@@ -165,14 +136,23 @@ define python::pip (
     fail('python::pip cannot provide uninstall_args with ensure => present')
   }
 
-  # Check if searching by explicit version.
-  if $ensure =~ /^((19|20)[0-9][0-9]-(0[1-9]|1[1-2])-([0-2][1-9]|3[0-1])|[0-9]+\.\w+\+?\w*(\.\w+)*)$/ {
-    $grep_regex = "^${pkgname}==${ensure}\$"
-  } else {
-    $grep_regex = $pkgname ? {
-      /==/    => "^${pkgname}\$",
-      default => "^${pkgname}==",
+  if $pkgname =~ /==/ {
+    $parts = split($pkgname, '==')
+    $real_pkgname = $parts[0]
+    $_ensure = $ensure ? {
+      'absent' => 'absent',
+      default => $parts[1],
     }
+  } else {
+    $real_pkgname = $pkgname
+    $_ensure = $ensure
+  }
+
+  # Check if searching by explicit version.
+  if $_ensure =~ /^((19|20)[0-9][0-9]-(0[1-9]|1[1-2])-([0-2][1-9]|3[0-1])|[0-9]+\.\w+\+?\w*(\.\w+)*)$/ {
+    $grep_regex = "^${real_pkgname}[[:space:]]\\+(\\?${_ensure}\\()$\\|$\\|, \\|[[:space:]]\\)"
+  } else {
+    $grep_regex = "^${real_pkgname}[[:space:]].*$"
   }
 
   $extras_string = empty($extras) ? {
@@ -181,124 +161,87 @@ define python::pip (
   }
 
   $egg_name = $egg ? {
-    false   => "${pkgname}${extras_string}",
+    false   => "${real_pkgname}${extras_string}",
     default => $egg
   }
 
   $source = $url ? {
-    false               => "${pkgname}${extras_string}",
-    /^(\/|[a-zA-Z]\:)/  => $url,
-    /^(git\+|hg\+|bzr\+|svn\+)(http|https|ssh|svn|sftp|ftp|lp)(:\/\/).+$/ => $url,
-    default             => "${url}#egg=${egg_name}",
+    false               => "${real_pkgname}${extras_string}",
+    /^(\/|[a-zA-Z]\:)/  => "'${url}'",
+    /^(git\+|hg\+|bzr\+|svn\+)(http|https|ssh|svn|sftp|ftp|lp|git)(:\/\/).+$/ => "'${url}'",
+    default             => "'${url}#egg=${egg_name}'",
   }
-
-  # We need to jump through hoops to make sure we issue the correct pip command
-  # depending on wheel support and versions.
-  #
-  # Pip does not support wheels prior to version 1.4.0
-  # Pip wheels require setuptools/distribute > 0.8
-  # Python 2.6 and older does not support setuptools/distribute > 0.8
-  # Pip >= 1.5 tries to use wheels by default, even if wheel package is not
-  # installed, in this case the --no-use-wheel flag needs to be passed
-  # Versions prior to 1.5 don't support the --no-use-wheel flag
-  #
-  # To check for this we test for wheel parameter using help and then using
-  # show, this makes sure we only use wheels if they are supported and
-  # installed
-  $wheel_check = "${pip_env} wheel --help > /dev/null 2>&1 && { ${pip_env} show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; }"
 
   $pip_install = "${pip_env} --log ${log}/pip.log install"
   $pip_common_args = "${pypi_index} ${proxy_flag} ${install_args} ${install_editable} ${source}"
 
   # Explicit version out of VCS when PIP supported URL is provided
-  if $source =~ /^(git\+|hg\+|bzr\+|svn\+)(http|https|ssh|svn|sftp|ftp|lp)(:\/\/).+$/ {
-    if $ensure != present and $ensure != latest {
-      exec { "pip_install_${name}":
-        command     => "${wheel_check} ; { ${pip_install} ${install_args} \$wheel_support_flag ${pip_common_args}@${ensure}#egg=${egg_name} || ${pip_install} ${install_args} ${pip_common_args}@${ensure}#egg=${egg_name} ;}",
-        unless      => "${pip_env} freeze --all | grep -i -e ${grep_regex}",
-        user        => $owner,
-        group       => $group,
-        umask       => $umask,
-        cwd         => $cwd,
-        environment => $environment,
-        timeout     => $timeout,
-        path        => $_path,
-      }
+  if $source =~ /^'(git\+|hg\+|bzr\+|svn\+)(http|https|ssh|svn|sftp|ftp|lp|git)(:\/\/).+'$/ {
+    if $_ensure != present and $_ensure != latest {
+      $command = "${pip_install} ${install_args} ${pip_common_args}@${_ensure}#egg=${egg_name}"
+      $unless_command = "${pip_env} list | grep -i -e '${grep_regex}'"
     } else {
-      exec { "pip_install_${name}":
-        command     => "${wheel_check} ; { ${pip_install} ${install_args} \$wheel_support_flag ${pip_common_args} || ${pip_install} ${install_args} ${pip_common_args} ;}",
-        unless      => "${pip_env} freeze --all | grep -i -e ${grep_regex}",
-        user        => $owner,
-        group       => $group,
-        umask       => $umask,
-        cwd         => $cwd,
-        environment => $environment,
-        timeout     => $timeout,
-        path        => $_path,
-      }
+      $command = "${pip_install} ${install_args} ${pip_common_args}"
+      $unless_command = "${pip_env} list | grep -i -e '${grep_regex}'"
     }
   } else {
-    case $ensure {
+    case $_ensure {
       /^((19|20)[0-9][0-9]-(0[1-9]|1[1-2])-([0-2][1-9]|3[0-1])|[0-9]+\.\w+\+?\w*(\.\w+)*)$/: {
         # Version formats as per http://guide.python-distribute.org/specification.html#standard-versioning-schemes
         # Explicit version.
-        exec { "pip_install_${name}":
-          command     => "${wheel_check} ; { ${pip_install} ${install_args} \$wheel_support_flag ${pip_common_args}==${ensure} || ${pip_install} ${install_args} ${pip_common_args}==${ensure} ;}",
-          unless      => "${pip_env} freeze --all | grep -i -e ${grep_regex} || ${pip_env} list | sed -e 's/[ ]\\+/==/' -e 's/[()]//g' | grep -i -e ${grep_regex}",
-          user        => $owner,
-          group       => $group,
-          umask       => $umask,
-          cwd         => $cwd,
-          environment => $environment,
-          timeout     => $timeout,
-          path        => $_path,
-        }
+        $command = "${pip_install} ${install_args} ${pip_common_args}==${_ensure}"
+        $unless_command = "${pip_env} list | grep -i -e '${grep_regex}'"
       }
-#
+
       'present': {
         # Whatever version is available.
-        exec { "pip_install_${name}":
-          command     => "${wheel_check} ; { ${pip_install} \$wheel_support_flag ${pip_common_args} || ${pip_install} ${pip_common_args} ;}",
-          unless      => "${pip_env} freeze --all | grep -i -e ${grep_regex} || ${pip_env} list | sed -e 's/[ ]\\+/==/' -e 's/[()]//g' | grep -i -e ${grep_regex}",
-          user        => $owner,
-          group       => $group,
-          umask       => $umask,
-          cwd         => $cwd,
-          environment => $environment,
-          timeout     => $timeout,
-          path        => $_path,
-        }
+        $command = "${pip_install} ${pip_common_args}"
+        $unless_command = "${pip_env} list | grep -i -e '${grep_regex}'"
       }
 
       'latest': {
-        # Latest version.
-        exec { "pip_install_${name}":
-          command     => "${wheel_check} ; { ${pip_install} --upgrade \$wheel_support_flag ${pip_common_args} || ${pip_install} --upgrade ${pip_common_args} ;}",
-          unless      => "${pip_env} search ${pypi_search_index} ${proxy_flag} ${source} | grep -i INSTALLED.*latest",
-          user        => $owner,
-          group       => $group,
-          umask       => $umask,
-          cwd         => $cwd,
-          environment => $environment,
-          timeout     => $timeout,
-          path        => $_path,
-        }
+        # Unfortunately this is the smartest way of getting the latest available package version with pip as of now
+        # Note: we DO need to repeat ourselves with "from version" in both grep and sed as on some systems pip returns
+        # more than one line with paretheses.
+        $latest_version = join(["${pip_install} ${pypi_index} ${proxy_flag} ${install_args} ${install_editable} ${real_pkgname}==notreallyaversion 2>&1",
+                                ' | grep -oP "\(from versions: .*\)" | sed -E "s/\(from versions: (.*?, )*(.*)\)/\2/g"',
+                                ' | tr -d "[:space:]"'])
+
+        # Packages with underscores in their names are listed with dashes in their place in `pip freeze` output
+        $pkgname_with_dashes = regsubst($real_pkgname, '_', '-', 'G')
+        $grep_regex_pkgname_with_dashes = "^${pkgname_with_dashes}=="
+        $installed_version = join(["${pip_env} freeze --all",
+                                  " | grep -i -e ${grep_regex_pkgname_with_dashes} | cut -d= -f3",
+                                  " | tr -d '[:space:]'"])
+
+        $command = "${pip_install} --upgrade ${pip_common_args}"
+        $unless_command = "[ \$(${latest_version}) = \$(${installed_version}) ]"
       }
 
       default: {
         # Anti-action, uninstall.
-        exec { "pip_uninstall_${name}":
-          command     => "echo y | ${pip_env} uninstall ${uninstall_args} ${proxy_flag} ${name}",
-          onlyif      => "${pip_env} freeze --all | grep -i -e ${grep_regex}",
-          user        => $owner,
-          group       => $group,
-          umask       => $umask,
-          cwd         => $cwd,
-          environment => $environment,
-          timeout     => $timeout,
-          path        => $_path,
-        }
+        $command = "echo y | ${pip_env} uninstall ${uninstall_args} ${proxy_flag} ${name}"
+        $unless_command = "! ${pip_env} list | grep -i -e '${grep_regex}'"
       }
     }
   }
+
+  $pip_installer = ($ensure == 'absent') ? {
+    true  => "pip_uninstall_${name}",
+    false => "pip_install_${name}",
+  }
+
+  exec { $pip_installer:
+    command     => $command,
+    unless      => $unless_command,
+    user        => $owner,
+    group       => $group,
+    umask       => $umask,
+    cwd         => $cwd,
+    environment => $environment,
+    timeout     => $timeout,
+    path        => $_path,
+    provider    => $exec_provider,
+  }
+
 }

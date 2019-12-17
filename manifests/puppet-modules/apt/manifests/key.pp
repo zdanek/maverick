@@ -36,13 +36,13 @@
 #   Passes additional options to `apt-key adv --keyserver-options`.
 #
 define apt::key (
-  Pattern[/\A(0x)?[0-9a-fA-F]{8}\Z/, /\A(0x)?[0-9a-fA-F]{16}\Z/, /\A(0x)?[0-9a-fA-F]{40}\Z/] $id     = $title,
-  Enum['present', 'absent', 'refreshed'] $ensure                                                     = present,
-  Optional[String] $content                                                                          = undef,
-  Optional[Pattern[/\Ahttps?:\/\//, /\Aftp:\/\//, /\A\/\w+/]] $source                                = undef,
-  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$/] $server = $::apt::keyserver,
-  Boolean $weak_ssl                                                                                  = false,
-  Optional[String] $options                                                                          = undef,
+  Pattern[/\A(0x)?[0-9a-fA-F]{8}\Z/, /\A(0x)?[0-9a-fA-F]{16}\Z/, /\A(0x)?[0-9a-fA-F]{40}\Z/] $id                        = $title,
+  Enum['present', 'absent', 'refreshed'] $ensure                                                                        = present,
+  Optional[String] $content                                                                                             = undef,
+  Optional[Pattern[/\Ahttps?:\/\//, /\Aftp:\/\//, /\A\/\w+/]] $source                                                   = undef,
+  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$/] $server = $::apt::keyserver,
+  Boolean $weak_ssl                                                                                                     = false,
+  Optional[String] $options                                                                                             = $::apt::key_options,
   ) {
 
   case $ensure {
@@ -66,13 +66,13 @@ define apt::key (
         case $facts['os']['name'] {
           'Debian': {
             if versioncmp($facts['os']['release']['major'], '9') >= 0 {
-              ensure_packages(['dirmngr'])
+              ensure_packages(['gnupg'])
               Apt::Key<| title == $title |>
             }
           }
           'Ubuntu': {
             if versioncmp($facts['os']['release']['full'], '17.04') >= 0 {
-              ensure_packages(['dirmngr'])
+              ensure_packages(['gnupg'])
               Apt::Key<| title == $title |>
             }
           }

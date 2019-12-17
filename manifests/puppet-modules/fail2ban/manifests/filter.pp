@@ -31,6 +31,8 @@
 #   the first one.
 # @param ensure
 #   Whether the resources should be installed or removed.
+# @param config_file_mode
+#   Permission mode given to the filter file created by this defined type.
 # @param ignoreregexes
 #   List of Python regular expressions that should prevent a log line from
 #   being considered for banning. If a line matches regular expressions
@@ -53,6 +55,7 @@
 define fail2ban::filter (
   Array[String, 1] $failregexes,
   Enum['present', 'absent'] $ensure = 'present',
+  String           $config_file_mode = '0644',
   Array[String, 0] $ignoreregexes = [],
   Array[String, 0] $includes = [],
   Array[String, 0] $includes_after = [],
@@ -65,7 +68,7 @@ define fail2ban::filter (
     content => template('fail2ban/filter.erb'),
     owner   => 'root',
     group   => 0,
-    mode    => '0644',
+    mode    => $config_file_mode,
     require => Class['fail2ban::config'],
     notify  => Class['fail2ban::service'],
   }

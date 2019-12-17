@@ -24,7 +24,7 @@ describe 'python::pip', type: :define do # rubocop:disable RSpec/MultipleDescrib
       context 'fails with non qualified path' do
         let(:params) { { virtualenv: 'venv' } }
 
-        it { is_expected.to raise_error(%r{"venv" is not an absolute path.}) }
+        it { is_expected.to raise_error(%r{expects a match for Variant\[Enum\['system'\].*Stdlib::Windowspath = Pattern\[\/.*\/\], Stdlib::Unixpath = Pattern\[\/.*\/\]\]}) }
       end
       context 'suceeds with qualified path' do
         let(:params) { { virtualenv: '/opt/venv' } }
@@ -64,22 +64,10 @@ describe 'python::pip', type: :define do # rubocop:disable RSpec/MultipleDescrib
 
         it { is_expected.not_to contain_exec('pip_install_rpyc').with_command(%r{--proxy}) }
       end
-      context 'does not add proxy to search command if set to latest and proxy is unset' do
-        let(:params) { { ensure: 'latest' } }
-
-        it { is_expected.not_to contain_exec('pip_install_rpyc').with_command(%r{--proxy}) }
-        it { is_expected.to contain_exec('pip_install_rpyc').without_unless(%r{--proxy}) }
-      end
       context 'adds proxy to install command if proxy set' do
         let(:params) { { proxy: 'http://my.proxy:3128' } }
 
-        it { is_expected.to contain_exec('pip_install_rpyc').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install $wheel_support_flag  --proxy=http://my.proxy:3128   rpyc || pip --log /tmp/pip.log install  --proxy=http://my.proxy:3128   rpyc ;}") }
-      end
-      context 'adds proxy to search command if set to latest' do
-        let(:params) { { proxy: 'http://my.proxy:3128', ensure: 'latest' } }
-
-        it { is_expected.to contain_exec('pip_install_rpyc').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install --upgrade $wheel_support_flag  --proxy=http://my.proxy:3128   rpyc || pip --log /tmp/pip.log install --upgrade  --proxy=http://my.proxy:3128   rpyc ;}") }
-        it { is_expected.to contain_exec('pip_install_rpyc').with_unless('pip search  --proxy=http://my.proxy:3128 rpyc | grep -i INSTALLED.*latest') }
+        it { is_expected.to contain_exec('pip_install_rpyc').with_command('pip --log /tmp/pip.log install  --proxy=http://my.proxy:3128   rpyc') }
       end
     end
 
@@ -92,21 +80,40 @@ describe 'python::pip', type: :define do # rubocop:disable RSpec/MultipleDescrib
       context 'adds index to install command if index set' do
         let(:params) { { index: 'http://www.example.com/simple/' } }
 
-        it { is_expected.to contain_exec('pip_install_rpyc').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install $wheel_support_flag --index-url=http://www.example.com/simple/    rpyc || pip --log /tmp/pip.log install --index-url=http://www.example.com/simple/    rpyc ;}") }
-      end
-      context 'adds index to search command if set to latest' do
-        let(:params) { { index: 'http://www.example.com/simple/', ensure: 'latest' } }
-
-        it { is_expected.to contain_exec('pip_install_rpyc').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install --upgrade $wheel_support_flag --index-url=http://www.example.com/simple/    rpyc || pip --log /tmp/pip.log install --upgrade --index-url=http://www.example.com/simple/    rpyc ;}") }
+        it { is_expected.to contain_exec('pip_install_rpyc').with_command('pip --log /tmp/pip.log install --index-url=http://www.example.com/simple/    rpyc') }
       end
     end
 
     describe 'path as' do
       context 'adds anaconda path to pip invocation if provider is anaconda' do
         let(:params) { {} }
-        let(:pre_condition) { 'class {"::python": provider => "anaconda", anaconda_install_path => "/opt/python3"}' }
+        let(:pre_condition) { 'class {"python": provider => "anaconda", anaconda_install_path => "/opt/python3"}' }
 
         it { is_expected.to contain_exec('pip_install_rpyc').with_path(['/opt/python3/bin', '/usr/local/bin', '/usr/bin', '/bin', '/usr/sbin']) }
+      end
+    end
+
+    describe 'install latest' do
+      context 'does not use pip search in unless' do
+        let(:params) { { ensure: 'latest' } }
+
+        it { is_expected.not_to contain_exec('pip_install_rpyc').with_unless(%r{search}) }
+      end
+      context 'checks installed version of a package by converting underscores in its name to dashes' do
+        let(:params) { { ensure: 'latest', pkgname: 'wordpress_json' } }
+
+        # yes, the exec title does not change if we use different pgkname
+        it { is_expected.to contain_exec('pip_install_rpyc').with_unless(%r{wordpress-json}) }
+      end
+    end
+
+    describe 'uninstall' do
+      context 'adds correct title' do
+        let(:params) { { ensure: 'absent' } }
+
+        it { is_expected.not_to contain_exec('pip_install_rpyc') }
+
+        it { is_expected.to contain_exec('pip_uninstall_rpyc').with_command(%r{uninstall.*rpyc$}) }
       end
     end
   end
@@ -136,12 +143,12 @@ describe 'python::pip', type: :define do
       context 'suceeds with no extras' do
         let(:params) { {} }
 
-        it { is_expected.to contain_exec('pip_install_requests').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install $wheel_support_flag     requests || pip --log /tmp/pip.log install     requests ;}") }
+        it { is_expected.to contain_exec('pip_install_requests').with_command('pip --log /tmp/pip.log install     requests') }
       end
       context 'succeeds with extras' do
         let(:params) { { extras: ['security'] } }
 
-        it { is_expected.to contain_exec('pip_install_requests').with_command("pip wheel --help > /dev/null 2>&1 && { pip show wheel > /dev/null 2>&1 || wheel_support_flag='--no-binary :all:'; } ; { pip --log /tmp/pip.log install $wheel_support_flag     requests[security] || pip --log /tmp/pip.log install     requests[security] ;}") }
+        it { is_expected.to contain_exec('pip_install_requests').with_command('pip --log /tmp/pip.log install     requests[security]') }
       end
     end
   end

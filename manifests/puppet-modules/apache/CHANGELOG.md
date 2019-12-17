@@ -2,7 +2,80 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [4.1.0](https://github.com/puppetlabs/puppetlabs-apache/tree/4.1.0) (2019-04-03)
+## [v5.3.0](https://github.com/puppetlabs/puppetlabs-apache/tree/v5.3.0) (2019-12-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apache/compare/v5.2.0...v5.3.0)
+
+### Added
+
+- \(FM-8672\) - Addition of Support for CentOS 8 [\#1977](https://github.com/puppetlabs/puppetlabs-apache/pull/1977) ([david22swan](https://github.com/david22swan))
+- \(MODULES-9948\) Allow switching of thread modules [\#1961](https://github.com/puppetlabs/puppetlabs-apache/pull/1961) ([tuxmea](https://github.com/tuxmea))
+
+### Fixed
+
+- Fix newline being added before proxy params [\#1984](https://github.com/puppetlabs/puppetlabs-apache/pull/1984) ([oxc](https://github.com/oxc))
+- When using mod jk, we expect the libapache2-mod-jk package to be installed [\#1979](https://github.com/puppetlabs/puppetlabs-apache/pull/1979) ([tuxmea](https://github.com/tuxmea))
+- move unless into manage\_security\_corerules [\#1976](https://github.com/puppetlabs/puppetlabs-apache/pull/1976) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
+- Change mod\_proxy's ProxyTimeout to follow Apache's global timeout [\#1975](https://github.com/puppetlabs/puppetlabs-apache/pull/1975) ([gcoxmoz](https://github.com/gcoxmoz))
+- \(FM-8721\) fix php version and ssl error on redhat8 [\#1973](https://github.com/puppetlabs/puppetlabs-apache/pull/1973) ([sheenaajay](https://github.com/sheenaajay))
+
+## [v5.2.0](https://github.com/puppetlabs/puppetlabs-apache/tree/v5.2.0) (2019-11-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apache/compare/v5.1.0...v5.2.0)
+
+### Added
+
+- Add parameter version for mod security [\#1953](https://github.com/puppetlabs/puppetlabs-apache/pull/1953) ([tuxmea](https://github.com/tuxmea))
+- add possibility to define variables inside VirtualHost definition [\#1947](https://github.com/puppetlabs/puppetlabs-apache/pull/1947) ([trefzer](https://github.com/trefzer))
+
+### Fixed
+
+- \(FM-8662\) Correct  in manifests/mod/ssl.pp for SLES 11 [\#1963](https://github.com/puppetlabs/puppetlabs-apache/pull/1963) ([cmccrisken-puppet](https://github.com/cmccrisken-puppet))
+- always quote ExpiresDefault in vhost::directories [\#1958](https://github.com/puppetlabs/puppetlabs-apache/pull/1958) ([evgeni](https://github.com/evgeni))
+- MODULES-9904 Fix lbmethod module load order [\#1956](https://github.com/puppetlabs/puppetlabs-apache/pull/1956) ([optiz0r](https://github.com/optiz0r))
+- Add owner, group, file\_mode and show\_diff to apache::custom\_config [\#1942](https://github.com/puppetlabs/puppetlabs-apache/pull/1942) ([treydock](https://github.com/treydock))
+- Add shibboleth support for Debian 10 [\#1939](https://github.com/puppetlabs/puppetlabs-apache/pull/1939) ([fabbks](https://github.com/fabbks))
+
+## [v5.1.0](https://github.com/puppetlabs/puppetlabs-apache/tree/v5.1.0) (2019-09-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apache/compare/v5.0.0...v5.1.0)
+
+### Added
+
+- \(FM-8393\) add support on Debian 10 [\#1945](https://github.com/puppetlabs/puppetlabs-apache/pull/1945) ([ThoughtCrhyme](https://github.com/ThoughtCrhyme))
+- FM-8140 Add Redhat 8 support [\#1941](https://github.com/puppetlabs/puppetlabs-apache/pull/1941) ([sheenaajay](https://github.com/sheenaajay))
+- \(FM-8214\) converted to use litmus [\#1938](https://github.com/puppetlabs/puppetlabs-apache/pull/1938) ([tphoney](https://github.com/tphoney))
+- \(MODULES-9668 \) Please make ProxyRequests setting in vhost.pp configurable [\#1935](https://github.com/puppetlabs/puppetlabs-apache/pull/1935) ([aukesj](https://github.com/aukesj))
+- Added unmanaged\_path and custom\_fragment options to userdir [\#1931](https://github.com/puppetlabs/puppetlabs-apache/pull/1931) ([GeorgeCox](https://github.com/GeorgeCox))
+- Add LDAP parameters to httpd.conf [\#1930](https://github.com/puppetlabs/puppetlabs-apache/pull/1930) ([daveseff](https://github.com/daveseff))
+- Add LDAPReferrals configuration parameter [\#1928](https://github.com/puppetlabs/puppetlabs-apache/pull/1928) ([HT43-bqxFqB](https://github.com/HT43-bqxFqB))
+
+### Fixed
+
+- \(MODULES-9104\) Add file\_mode to config files. [\#1922](https://github.com/puppetlabs/puppetlabs-apache/pull/1922) ([stevegarn](https://github.com/stevegarn))
+- \(bugfix\) Add default package name for mod\_ldap [\#1913](https://github.com/puppetlabs/puppetlabs-apache/pull/1913) ([turnopil](https://github.com/turnopil))
+- Remove event mpm when using prefork, worker or itk [\#1905](https://github.com/puppetlabs/puppetlabs-apache/pull/1905) ([tuxmea](https://github.com/tuxmea))
+
+## [v5.0.0](https://github.com/puppetlabs/puppetlabs-apache/tree/v5.0.0) (2019-05-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apache/compare/4.1.0...v5.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#1908](https://github.com/puppetlabs/puppetlabs-apache/pull/1908) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(FM-7923\) Implement Puppet Strings [\#1916](https://github.com/puppetlabs/puppetlabs-apache/pull/1916) ([eimlav](https://github.com/eimlav))
+- Define SCL package name for mod\_ldap [\#1893](https://github.com/puppetlabs/puppetlabs-apache/pull/1893) ([treydock](https://github.com/treydock))
+
+### Fixed
+
+- \(MODULES-9014\) Improve SSLSessionTickets handling [\#1923](https://github.com/puppetlabs/puppetlabs-apache/pull/1923) ([FredericLespez](https://github.com/FredericLespez))
+- \(MODULES-8931\) Fix stahnma/epel failures [\#1914](https://github.com/puppetlabs/puppetlabs-apache/pull/1914) ([eimlav](https://github.com/eimlav))
+- Fix wsgi\_daemon\_process to support hash data type [\#1884](https://github.com/puppetlabs/puppetlabs-apache/pull/1884) ([mdechiaro](https://github.com/mdechiaro))
+
+## [4.1.0](https://github.com/puppetlabs/puppetlabs-apache/tree/4.1.0) (2019-04-05)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apache/compare/4.0.0...4.1.0)
 
@@ -789,6 +862,7 @@ This release features many improvements and bugfixes, including several new defi
   - passenger_ruby
   - passenger_start_timeout
   - proxy_preserve_host
+  - proxy_requests
   - redirectmatch_dest
   - ssl_crl_check
   - wsgi_chunked_request

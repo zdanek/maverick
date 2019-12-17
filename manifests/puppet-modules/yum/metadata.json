@@ -1,6 +1,6 @@
 {
   "name": "puppet-yum",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "author": "Vox Pupuli",
   "summary": "YUM utilities",
   "license": "MIT",
@@ -63,7 +63,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.10.0 < 7.0.0"
+      "version_requirement": ">= 5.5.8 < 7.0.0"
     }
   ]
 }

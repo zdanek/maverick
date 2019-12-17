@@ -2,9 +2,49 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [v7.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.0.0) (2019-04-24)
+## [v7.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.3.0) (2019-12-11)
 
-[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...v7.0.0)
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.2.0...v7.3.0)
+
+### Added
+
+- Adding a new parameter for dist [\#890](https://github.com/puppetlabs/puppetlabs-apt/pull/890) ([luckyraul](https://github.com/luckyraul))
+
+### Fixed
+
+- MODULES-10063, extend apt::key to support deeplinks, this time with f… [\#894](https://github.com/puppetlabs/puppetlabs-apt/pull/894) ([atarax](https://github.com/atarax))
+- MODULES-10063, extend apt::key to support deeplinks [\#892](https://github.com/puppetlabs/puppetlabs-apt/pull/892) ([atarax](https://github.com/atarax))
+
+## [v7.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.2.0) (2019-10-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.1.0...v7.2.0)
+
+### Added
+
+- Add apt::mark defined type [\#879](https://github.com/puppetlabs/puppetlabs-apt/pull/879) ([tuxmea](https://github.com/tuxmea))
+- \(FM-8394\) add debian 10 testing [\#876](https://github.com/puppetlabs/puppetlabs-apt/pull/876) ([ThoughtCrhyme](https://github.com/ThoughtCrhyme))
+- Add apt::key\_options for default apt::key options [\#873](https://github.com/puppetlabs/puppetlabs-apt/pull/873) ([raphink](https://github.com/raphink))
+- implement apt.conf.d purging [\#869](https://github.com/puppetlabs/puppetlabs-apt/pull/869) ([lelutin](https://github.com/lelutin))
+
+### Fixed
+
+- Install gnupg instead of dirmngr [\#866](https://github.com/puppetlabs/puppetlabs-apt/pull/866) ([martijndegouw](https://github.com/martijndegouw))
+
+## [v7.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.1.0) (2019-07-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.0.1...v7.1.0)
+
+### Added
+
+- \(FM-8215\) Convert to using litmus [\#864](https://github.com/puppetlabs/puppetlabs-apt/pull/864) ([florindragos](https://github.com/florindragos))
+
+## [v7.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.0.1) (2019-05-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/7.0.0...v7.0.1)
+
+## [7.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/7.0.0) (2019-04-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...7.0.0)
 
 ### Changed
 

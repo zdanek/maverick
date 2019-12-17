@@ -1,4 +1,5 @@
-# == Class: python::params
+# @api private
+# @summary The python Module default configuration settings.
 #
 # The python Module default configuration settings.
 #
@@ -11,15 +12,11 @@ class python::params {
   $gunicorn               = 'absent'
   $manage_gunicorn        = true
   $provider               = undef
-  $valid_versions = $::osfamily ? {
-    'RedHat' => ['3','27','33'],
-    'Debian' => ['3', '3.3', '2.7'],
-    'Suse'   => [],
-    'Gentoo' => ['2.7', '3.3', '3.4', '3.5']
-  }
+  $valid_versions         = undef
+  $manage_scl             = true
 
-  if $::osfamily == 'RedHat' {
-    if $::operatingsystem != 'Fedora' {
+  if $facts['os']['family'] == 'RedHat' {
+    if $facts['os']['name'] != 'Fedora' {
       $use_epel           = true
     } else {
       $use_epel           = false
@@ -28,7 +25,17 @@ class python::params {
     $use_epel             = false
   }
 
-  $gunicorn_package_name = $::osfamily ? {
+  $group = $facts['os']['family'] ? {
+    'AIX' => 'system',
+    default => 'root'
+  }
+
+  $pip_lookup_path = $facts['os']['family'] ? {
+    'AIX' => [ '/bin', '/usr/bin', '/usr/local/bin', '/opt/freeware/bin/' ],
+    default => [ '/bin', '/usr/bin', '/usr/local/bin' ]
+  }
+
+  $gunicorn_package_name = $facts['os']['family'] ? {
     'RedHat' => 'python-gunicorn',
     default  => 'gunicorn',
   }

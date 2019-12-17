@@ -35,19 +35,31 @@ This module depends on the following modules to function:
 
 This module supports
 
- * Debian 9
+ * Debian 8, 9, 10
+  * Debian 8 support supposes that clients are using puppet 4.x (e.g. backports
+    or upstream packages)
+ * Ubuntu 18.04
  * RHEL 6 and 7
  * CentOs 6 and 7
 
 Versions        | Puppet 2.7 | Puppet 3.x | Puppet 4.x | Puppet 5.x |
 :---------------|:----------:|:----------:|:----------:|:----------:
 **2.x**         | **yes**    | **yes**    | no         | no
-**3.x**         | no         | no         | **yes**    | **yes**
+**3.x**         | no         | no         | **4.10+**  | **yes**
 
 Version 2.x is in maintenance mode only. If you need to use this module with
 puppet 4.x or 5.x then you should use version 3.x of this module.
 
 ## Upgrade notices ##
+
+ * 3.2: No pre-defined jail sends out an email as an action by default. Users
+     who still want to receive emails when an action is taken can override the
+     `action` field from the predefined jail data and append the action the
+     following: `\n           %(mta)s-whois[name=%(__name__)s,
+     dest=\"%(destemail)s\"]`
+
+     Also note that puppet 4.x prior to 4.10 is not supported anymore, and that
+     hiera 5 is now required (hence the limitation for the puppet version.
 
  * 3.1: `fail2ban.local` and all unmanaged files in `fail2ban.d` are now being
      purged by default. Users who have local modifications that they want to
@@ -335,4 +347,66 @@ Here's the full list of parameters you can use with the defined type:
  * `additional_defs` List of lines that could define more arbitrary values.
    Lines will be placed in the file as they are in the list. Default value is
    an empty list.
+
+## nftables support ##
+
+Fail2ban supports nftables with the `nftables-multiport` and
+`nftables-allports` actions. Since nftables is now used by default since
+debian buster, here's how to quickly enable usage of nftables for fail2ban:
+
+Only two parameters need to be changed.
+
+ * `chain` needs to be set to lowercase
+ * `banaction` needs to be set to the action of your choice.
+
+Here's an example minimal configuration for using nftables:
+
+~~~
+class { 'fail2ban':
+  banaction      => 'nftables-multiport',
+  chain          => 'input',
+}
+$ssh_params = lookup('fail2ban::jail::sshd')
+fail2ban::jail { 'sshd':
+  * => $ssh_params,
+}
+~~~
+
+Do note that upon service restart, fail2ban will not create the ip set and the
+corresponding rule right away. They will only be added whenever the first
+"action" is taken (so when banning the first IP for a jail). After that you
+should see both the set and the rule for that jail when running
+`nft list ruleset`.
+
+## Running tests ##
+
+This module has some tests that you can run to ensure that everything is
+working as expected.
+
+### Unit tests ###
+
+The unit tests are built with rspec-puppet. You can use the Gemfile with the
+`tests` group to install what's needed to run the unit test.
+
+The usual rspec-puppet_helper rake tasks are available. You can also use a
+convenience task `tests` to run everything. The following two commands achieve
+the same result:
+
+    rake syntax lint spec
+    rake tests
+
+### Funtionality testing ###
+
+Unit tests are great, but sometimes it's nice to actually run the code in order
+to see if everything is setup properly and that the software is working as
+expected.
+
+This repository has a `Vagrantfile` that you can use to bring up a VM and run
+this module inside. The `Vagrantfile` expects you to have the vagrant plugin
+`vagrant-librarian-puppet` installed. If you don't have it you can also
+download this module's requirements (see `metadata.json`) and place them inside
+`tests/modules/`.
+
+A couple of manifest files inside `tests/` prepare sets of use cases. You can
+modify the `Vagrantfile` to use any of them for provisioning the VM.
 
