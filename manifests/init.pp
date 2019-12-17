@@ -18,7 +18,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
     case $ensure {
       'present': {
         unless $pkgname in $python_modules[$env] {
-            notice("Installing pip: ${pkgname}")
+            #notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -34,7 +34,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
       }
       'atleast': {
         if empty($module_version) {
-            notice("Installing pip: ${pkgname}")
+            #notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -47,7 +47,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 path => $path,
             }
         } elsif versioncmp($version, $module_version) > 0 {
-            notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
+            #notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is less than requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -63,7 +63,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
       }
       'exactly': {
         if empty($module_version) {
-            notice("Installing pip: ${pkgname}")
+            #notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -76,7 +76,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 path => $path,
             }
         } elsif versioncmp($version, $module_version) != 0 {
-            notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
+            #notice("Upgrading Pip module: ${pkgname}, installed version ${module_version} is not exactly requested version ${version}")
             python::pip { $title:
                 pkgname => "${pkgname}",
                 url => $url,
@@ -117,7 +117,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
     # This depends on gitfiles fact, declared in maverick-modules/base/facts.d/gitrepos.py
     $gitrepos = split($gitrepos, ',')
     if ! ("${dest}/.git" in $gitrepos) {
-        notice("oncevcsrepo: ${dest} git repo doesn't exist locally, cloning may take a while..")
+        #notice("oncevcsrepo: ${dest} git repo doesn't exist locally, cloning may take a while..")
         file { "${dest}":
             ensure      => directory,
             owner       => "${owner}",
