@@ -29,6 +29,7 @@ class base::packages {
         "libusb-1.0-0",
         "libusb-1.0-0-dev",
         "gnupg2",
+        "net-tools",
     ])
 
     if $operatingsystem == "Ubuntu" {
