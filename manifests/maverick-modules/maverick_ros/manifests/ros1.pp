@@ -162,16 +162,11 @@ class maverick_ros::ros1 (
             require     => Package["dirmngr"],
         } ->
         # Install ROS bootstrap from ros.org packages
-        apt::key { 'ros-repo-key':
-            id      => 'C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654',
-            server  => 'keyserver.ubuntu.com',
-            require     => Package["dirmngr"],
-            notify      => Exec["ros_apt_update"],            
-        } ->
         exec { "ros-repo":
             command     => "/bin/echo \"deb http://packages.ros.org/ros/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros-latest.list",
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros-latest.list",
             notify      => Exec["ros_apt_update"],
+            require     => Apt_key['ros-repo-key'],
         } ->
         exec { "ros_apt_update":
             command     => "/usr/bin/apt update",

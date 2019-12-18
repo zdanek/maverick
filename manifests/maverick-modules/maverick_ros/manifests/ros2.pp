@@ -120,16 +120,11 @@ class maverick_ros::ros2 (
         }
 
         # Install ROS bootstrap from ros.org packages
-        apt::key { 'ros2-repo-key':
-            id      => 'C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654',
-            server  => 'keyserver.ubuntu.com',
-            require     => Package["dirmngr"],
-            notify      => Exec["ros2_apt_update"],            
-        } ->
         exec { "ros2-repo":
             command     => "/bin/echo \"deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu ${_distro} main\" > /etc/apt/sources.list.d/ros2-latest.list",
             unless      => "/bin/grep '${_distro}' /etc/apt/sources.list.d/ros2-latest.list",
             notify      => Exec["ros2_apt_update"],
+            require     => Apt_key['ros-repo-key'],
         } ->
         exec { "ros2_apt_update":
             command     => "/usr/bin/apt update",
@@ -146,6 +141,7 @@ class maverick_ros::ros2 (
         } ->
         package { "ros-${_distribution}-ros1-bridge":
             ensure      => present,
+            require     => Exec["ros_apt_update"],
         } ->
         package { ["ros-${_distribution}-cv-bridge", "ros-${_distribution}-vision-opencv", "ros-${_distribution}-image-geometry"]:
             ensure      => present,
