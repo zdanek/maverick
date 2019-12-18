@@ -38,6 +38,7 @@ class maverick_web::codeserver (
             command		=> "yarn build ${vscode_version} ${build_type} >/srv/maverick/var/log/build/codeserver.build.log 2>&1",
             cwd		    => "/srv/maverick/var/build/codeserver",
             unless      => "/bin/ls -ld /srv/maverick/var/build/codeserver/build/code-server${build_type}-vsc${vscode_version}*",
+            require     => Package['yarn'],
             timeout		=> 0,
             user        => "mav",
         } ->
@@ -46,6 +47,7 @@ class maverick_web::codeserver (
             command		=> "yarn binary ${vscode_version} ${build_type} >/srv/maverick/var/log/build/codeserver.package.log 2>&1",
             cwd		    => "/srv/maverick/var/build/codeserver",
             unless      => "/bin/ls -ld /srv/maverick/var/build/codeserver/binaries/code-server${build_type}-vsc${vscode_version}*",
+            require     => Package['yarn'],
             timeout		=> 0,
             user        => "mav",
         } ->
