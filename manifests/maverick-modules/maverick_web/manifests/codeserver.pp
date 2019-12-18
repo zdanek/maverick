@@ -4,7 +4,7 @@ class maverick_web::codeserver (
     $basepath = "/srv/maverick",
     $password = "wingman",
     $replace_password = false,
-    $vscode_version = "1.39.2",
+    $vscode_version = "1.41.0",
     $build_type = "production",
 ) {
 
@@ -30,19 +30,8 @@ class maverick_web::codeserver (
     if ! ("install_flag_codeserver" in $installflags) {
         ensure_packages(["libxkbfile-dev", "libsecret-1-dev"])
         oncevcsrepo { "git-codeserver":
-            gitsource   => "https://github.com/codercom/code-server.git",
+            gitsource   => "https://github.com/cdr/code-server",
             dest        => "/srv/maverick/var/build/codeserver",
-            revision    => $vscode_version,
-        } ->
-        exec { "codeserver-preinstall":
-            path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
-            command		=> "yarn >/srv/maverick/var/log/build/codeserver.preinstall.log 2>&1",
-            cwd		    => "/srv/maverick/var/build/codeserver",
-            creates		=> "/srv/maverick/var/build/codeserver/node_modules/update-notifier",
-            timeout		=> 0,
-            user        => "mav",
-            require     => [ Class["maverick_web::nodejs"], Package['yarn'] ],
-            before      => Exec["codeserver-ext-python"],
         } ->
         exec { "codeserver-build":
             path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
@@ -56,12 +45,12 @@ class maverick_web::codeserver (
             path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
             command		=> "yarn binary ${vscode_version} ${build_type} >/srv/maverick/var/log/build/codeserver.package.log 2>&1",
             cwd		    => "/srv/maverick/var/build/codeserver",
-            unless      => "/bin/ls -ld /srv/maverick/var/build/codeserver/build/code-server${build_type}-vsc${vscode_version}*/code-server${build_type}-vsc${vscode_version}*",
+            unless      => "/bin/ls -ld /srv/maverick/var/build/codeserver/binaries/code-server${build_type}-vsc${vscode_version}*",
             timeout		=> 0,
             user        => "mav",
         } ->
         exec { "codeserver-install":
-            command     => "/bin/cp /srv/maverick/var/build/codeserver/build/code-server${build_type}-vsc${vscode_version}*/code-server${build_type}-vsc${vscode_version}* /srv/maverick/software/codeserver/codeserver",
+            command     => "/bin/cp /srv/maverick/var/build/codeserver/binaries/code-server${build_type}-vsc${vscode_version}* /srv/maverick/software/codeserver/codeserver",
             creates     => "/srv/maverick/software/codeserver/codeserver",
             user        => "mav",        
         } ->
@@ -69,6 +58,7 @@ class maverick_web::codeserver (
             command     => "/bin/cp -R /srv/maverick/var/build/codeserver/build/code-server${build_type}-vsc${vscode_version}*/extensions /srv/maverick/software/codeserver",
             creates     => "/srv/maverick/software/codeserver/extensions/git/package.json",
             user        => "mav",
+            before      => Exec["codeserver-ext-python"],
         } ->
         file { "/srv/maverick/var/build/.install_flag_codeserver":
             ensure      => present,
