@@ -7,7 +7,7 @@ define speak ($message = "", $level = "") {
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
-define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner="mav", $env="maverick", $version=undef, $url=undef, $pip_provider="pip3") {
+define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $timeout=undef, $owner="mav", $group="mav", $env="maverick", $version=undef, $url=undef, $pip_provider="pip3") {
   $module_version = $python_modules[$env][$pkgname]
   if $pip_provider == "pip3" {
     $path = ["/srv/maverick/software/python/bin", "/usr/local/bin", "/usr/bin", "/bin"]
@@ -25,6 +25,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
+                group => $group,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
@@ -41,6 +42,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 ensure => 'present',
                 virtualenv => $virtualenv,
                 owner => $owner,
+                group => $group,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
@@ -54,6 +56,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 ensure => 'latest',
                 virtualenv => $virtualenv,
                 owner => $owner,
+                group => $group,
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
                 pip_provider => $pip_provider,
@@ -70,6 +73,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 ensure => $version,
                 virtualenv => $virtualenv,
                 owner => $owner,
+                group => $group,
                 timeout => $timeout,
                 install_args => "--disable-pip-version-check",
                 pip_provider => $pip_provider,
@@ -83,6 +87,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
                 ensure => $version,
                 virtualenv => $virtualenv,
                 owner => $owner,
+                group => $group,
                 timeout => $timeout,
                 install_args => "--upgrade --disable-pip-version-check",
                 pip_provider => $pip_provider,
@@ -97,6 +102,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
             url => $url,
             ensure => absent,
             owner   => $owner,
+            group => $group,
             timeout => $timeout,
             pip_provider => $pip_provider,
                 path => $path,
