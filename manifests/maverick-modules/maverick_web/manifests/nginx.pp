@@ -39,12 +39,6 @@ class maverick_web::nginx (
         ensure      => stopped,
         enable      => false,
     } ->
-    # Make sure nginx system service is stopped
-    service { "nginx":
-        ensure          => stopped,
-        enable          => false,
-        before          => Service["maverick-nginx"],
-    } ->
     file { "/etc/systemd/system/maverick-nginx.service":
         owner       => "root",
         group       => "root",
@@ -57,11 +51,17 @@ class maverick_web::nginx (
         server_purge    => true,
         manage_repo     => $manage_repo,
         repo_release    => $_release,
-        service_manage  => true,
+        service_manage  => false,
         service_name    => "maverick-nginx",
-        service_ensure  => $service_ensure,
-        service_enable  => $service_enable,
-        require         => Service["nginx"],
+    } ->
+    # Make sure nginx system service is stopped
+    service { "nginx":
+        ensure          => stopped,
+        enable          => false,
+    } ->
+    service { "maverick-nginx":
+        ensure          => $service_ensure,
+        enable          => $service_enable,
     }
 
     # apache2-utils used for htpasswd, even by nginx

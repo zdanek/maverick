@@ -216,6 +216,10 @@ class maverick_ros::ros1 (
         package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
             ensure      => present,
             require     => Exec["ros_apt_update"],
+        } ->
+        exec { "ros-install-marker":
+            command     => "/bin/false",
+            refreshonly => true,
         }
 
     # Build from source
@@ -268,7 +272,7 @@ class maverick_ros::ros1 (
                 user            => "mav",
                 creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
                 timeout         => 0,
-                require         => File["${installdir}/${_distribution}"]
+                require         => File["${installdir}/${_distribution}"],
             } ->
             file { "/etc/profile.d/30-ros-env.sh":
                 ensure      => present,
@@ -280,6 +284,10 @@ class maverick_ros::ros1 (
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
             }
+        }
+        exec { "ros-install-marker":
+            command     => "/bin/false",
+            refreshonly => true,
         }
         
         if $module_mavros == true {
@@ -339,7 +347,7 @@ class maverick_ros::ros1 (
                     command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros >/var/",
                     timeout     => 0,
-                    before      => File["/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml"],
+                    #before      => File["/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml"],
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
@@ -437,6 +445,7 @@ class maverick_ros::ros1 (
                 timeout     => 0,
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/build/realsense-ros/realsense2_camera/catkin_generated/installspace/realsense2_camera.pc",
+                require     => Exec["ros-install-marker"],
             } ->
             exec { "ros-realsense-catkin-install":
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
