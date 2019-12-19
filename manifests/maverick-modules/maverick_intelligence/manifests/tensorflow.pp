@@ -28,17 +28,17 @@ class maverick_intelligence::tensorflow (
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
             if $version == "1" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.14.0-cp37-cp37m-linux_armv7l.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl"
             } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0b1-cp37-cp37m-linux_armv7l.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0-cp37-cp37m-linux_armv7l.whl"
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             warning("No tensorflow install available for Pi Zero/armv6l")
         } elsif ($::tegra_present == "yes") {
             if $version == "1" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.14.0-cp37-cp37m-linux_aarch64.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_aarch64.whl"
             } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0b1-cp37-cp37m-linux_aarch64.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0-cp37-cp37m-linux_aarch64.whl"
             }
         } else {
             $tensorflow_url = ""
