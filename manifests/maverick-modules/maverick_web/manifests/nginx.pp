@@ -43,6 +43,7 @@ class maverick_web::nginx (
     service { "nginx":
         ensure          => stopped,
         enable          => false,
+        before          => Service["maverick-nginx"],
     } ->
     file { "/etc/systemd/system/maverick-nginx.service":
         owner       => "root",
