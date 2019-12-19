@@ -411,7 +411,11 @@ class maverick_ros::ros1 (
                 owner   => "mav",
             } ->
             package { "ros-${_distribution}-ddynamic-reconfigure":
+               ensure   => installed,
                require  => Exec["ros_apt_update"],
+            } ->
+            package { ["ros-${_distribution}-nodelet", "ros-${_distribution}-nodelet-core", "ros-${_distribution}-nodelet-topic-tools"]:
+                ensure  => installed,
             } ->
             oncevcsrepo { "git-ros-realsense":
                 gitsource   => "https://github.com/IntelRealSense/realsense-ros.git",
