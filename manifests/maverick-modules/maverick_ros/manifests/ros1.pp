@@ -368,6 +368,7 @@ class maverick_ros::ros1 (
                     command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
                     environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
                     creates     => "/srv/maverick/var/build/catkin_ws_opencv/.catkin_tools/profiles/default/config.yaml",
+                    require     => Package["python-catkin-tools"],
                 } ->
                 exec { "ros-opencv-wstool-init":
                     user        => "mav",
