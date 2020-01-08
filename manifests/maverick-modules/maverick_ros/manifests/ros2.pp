@@ -167,7 +167,7 @@ class maverick_ros::ros2 (
             }
             
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
-            install_python_module { ["colcon-common-extensions", "rosdep", "vcstool", "rosinstall-generator"]:
+            install_python_module { ["colcon-common-extensions", "rosdep", "vcstool", "rosinstall-generator", "lark-parser"]:
                 ensure  => present,
             } ->
             package { ["libasio-dev", "libtinyxml2-dev"]:
@@ -186,7 +186,7 @@ class maverick_ros::ros2 (
                 command => "/srv/maverick/software/python/bin/rosinstall_generator ros_base --rosdistro ${_distribution} --deps >ros2.repos",
                 creates => "${builddir}/ros2.repos",
                 user    => "mav",
-            }
+            } ->
             exec { "ros2-vcs-import":
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/vcs import src <ros2.repos",
