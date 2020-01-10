@@ -31,9 +31,9 @@ class maverick_ros::ros2 (
                         }
                     }
                     "bionic": {
-                        $autodist = "dashing"
+                        $autodist = "eloquent"
                         case $architecture {
-                            "amd64", "arm64", "aarch64": { $_installtype = "native" }
+                            "amd64", "arm64", "aarch64", "armhf": { $_installtype = "native" }
                             default: { $_installtype = "source" }
                         }
                     }
@@ -47,11 +47,11 @@ class maverick_ros::ros2 (
                 case $::operatingsystemmajrelease {
                     # For Debian OS use version number instead of codename, for derivatives like rasbian and ubilinux
                     "8": { # jessie
-                        $autodist = "crystal"
+                        $autodist = "eloquent"
                         $_installtype = "source"
                     }
                     "9": { # stretch
-                        $autodist = "dashing"
+                        $autodist = "eloquent"
                         $_installtype = "source"
                     }
                     default: {
