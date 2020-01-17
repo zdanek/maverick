@@ -2,7 +2,7 @@ class maverick_dev::px4 (
     $px4_source = "https://github.com/PX4/Firmware.git",
     $px4_setupstream = true,
     $px4_upstream = "https://github.com/PX4/Firmware.git",
-    $px4_branch = "v1.9.2",
+    $px4_branch = "v1.10.0",
     $sitl = false,
     $sitl_active = true,
     $cross_compile = true,
