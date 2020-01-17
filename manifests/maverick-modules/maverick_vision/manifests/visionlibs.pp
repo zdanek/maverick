@@ -1,8 +1,8 @@
 class maverick_vision::visionlibs (
     $tbb = true,
-    $tbb_version = "2019_U8",
+    $tbb_version = "v2020.0",
     $openblas = true,
-    $openblas_version = "v0.3.6",
+    $openblas_version = "v0.3.7",
 ) {
     
     if $openblas == true {
@@ -35,7 +35,7 @@ class maverick_vision::visionlibs (
         # If ~/var/build/.install_flag_tbb exists, skip pulling source and compiling
         if ! ("install_flag_tbb" in $installflags) {
             oncevcsrepo { "git-tbb":
-                gitsource   => "https://github.com/01org/tbb.git",
+                gitsource   => "https://github.com/intel/tbb",
                 dest        => "/srv/maverick/var/build/tbb",
                 revision    => $tbb_version,
             } ->
