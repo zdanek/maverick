@@ -1,7 +1,7 @@
 class maverick_intelligence::tensorflow (
     $source = "https://github.com/tensorflow/tensorflow.git",
-    $version = "1", # 1 or 2
-    $source_version = "r1.13",
+    $version = "2", # 1 or 2
+    $source_version = "v2.1.0",
     $bazel_version = "0.13.0",
     $arch = undef,
     $active = false,
