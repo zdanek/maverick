@@ -21,6 +21,8 @@ class maverick_web::maverick_api (
             fix_requirements_owner => false,
             manage_requirements => false,
             require         => Oncevcsrepo["git-maverick-api"],
+            owner           => "mav",
+            group           => "mav",
         } ->
         file { "/srv/maverick/var/build/.install_flag_apirequirements":
             ensure      => present,
