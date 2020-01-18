@@ -30,7 +30,7 @@ class maverick_intelligence::tensorflow (
             if $version == "1" {
                 $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl"
             } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0-cp37-cp37m-linux_armv7l.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_armv7l.whl"
             }
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             warning("No tensorflow install available for Pi Zero/armv6l")
@@ -38,14 +38,14 @@ class maverick_intelligence::tensorflow (
             if $version == "1" {
                 $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_aarch64.whl"
             } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.0.0-cp37-cp37m-linux_aarch64.whl"
+                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_aarch64.whl"
             }
         } else {
             $tensorflow_url = ""
             if $version == "1" {
                 $tensorflow_pkgname = "tensorflow"
             } else {
-                $tensorflow_pkgname = "tensorflow==2.0.0-beta1"
+                $tensorflow_pkgname = "tensorflow==2.1.0"
             }
         }
 
