@@ -110,6 +110,7 @@ find /srv/maverick/var/log -path /srv/maverick/var/log/build -prune -o -type f -
 rm -f /srv/maverick/var/log/vision_landing/last.log
 rm -rf /srv/maverick/var/log/ros/fc/* /srv/maverick/var/log/ros/sitl/*
 rm -f /srv/maverick/var/run/*
+find /srv/maverick/var/log -type f -delete
 find /run/log/journal -type f -delete
 systemctl restart systemd-journald
 
