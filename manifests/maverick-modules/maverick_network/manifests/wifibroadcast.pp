@@ -47,12 +47,6 @@ class maverick_network::wifibroadcast (
                 version     => "19.2.0",
                 timeout     => 0,
             } ->
-            install_python_module { 'pip-pyroute2':
-                pkgname     => 'pyroute2',
-                ensure      => atleast,
-                version     => "0",
-                timeout     => 0,
-            } ->
             oncevcsrepo { "git-wifibc":
                 gitsource   => "https://github.com/svpcom/wifibroadcast.git",
                 dest        => "/srv/maverick/var/build/wifibc",
