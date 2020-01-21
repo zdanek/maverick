@@ -20,10 +20,9 @@ class maverick_web::cloud9 (
     ensure_packages(["libncurses5", "libncurses5-dev", "tmux"])
 
     oncevcsrepo { "git-cloud9":
-        gitsource   => "https://github.com/c9/core.git",
+        gitsource   => "https://github.com/fnoop/c9-core.git",
         dest        => "/srv/maverick/software/cloud9",
         notify		=> Exec["install-cloud9"],
-        #revision    => "c5d3f33749439f90b4e3f40d18854f1fde31b13a",
         depth       => "",
     } ->
     file { "/srv/maverick/software/cloud9/scripts/maverick.c9.install-sdk.sh":
