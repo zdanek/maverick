@@ -26,7 +26,7 @@
 	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
 	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
-	// "maverick_vision::visiond::active": false,
+	"maverick_vision::visiond::active": false,
 
 	// Add classes here
 	"classes":		[
