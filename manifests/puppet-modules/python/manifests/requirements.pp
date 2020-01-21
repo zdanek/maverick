@@ -45,9 +45,9 @@ define python::requirements (
 
   include python
 
-  if $virtualenv == 'system' and ($owner != 'root' or $group != 'root') {
-    fail('python::pip: root user must be used when virtualenv is system')
-  }
+  #if $virtualenv == 'system' and ($owner != 'root' or $group != 'root') {
+  #  fail('python::pip: root user must be used when virtualenv is system')
+  #}
 
   if $fix_requirements_owner {
     $owner_real = $owner
