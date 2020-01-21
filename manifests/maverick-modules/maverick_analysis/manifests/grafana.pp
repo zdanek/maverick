@@ -21,7 +21,14 @@ class maverick_analysis::grafana (
     if $active == true {
     
         ensure_packages(["sqlite3"])
-    
+
+        # python attrs package needs to be exactly 19.1.0 for grafanalib
+        install_python_module { "grafanalib-attrs":
+            pkgname     => "attrs",
+            ensure      => exactly,
+            version     => "19.1.0",
+        }
+
         file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
             ensure      => directory,
             mode        => "755",
