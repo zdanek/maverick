@@ -1,6 +1,7 @@
 class maverick_web (
-    $cloud9 = true,
+    $cloud9 = false,
     $codeserver = false,
+    $theia = false,
     $nodejs = true,
     $webserver = true,
     $webserver_type = "nginx",
@@ -42,6 +43,10 @@ class maverick_web (
     
     if $codeserver == true {
         class { "maverick_web::codeserver": }
+    }
+
+    if $theia == true {
+        class { "maverick_web::theia": }
     }
 
     file { [ "/srv/maverick/data/web", "/srv/maverick/config/web", "/srv/maverick/var/log/web", "/srv/maverick/var/lib/web", ]:

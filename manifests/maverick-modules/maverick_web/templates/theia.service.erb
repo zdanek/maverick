@@ -1,0 +1,13 @@
+[Unit]
+Description=Theia IDE
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+WorkingDirectory=/srv/maverick/software/theia/examples/browser
+ExecStart=/usr/bin/yarn run start --port <%= @webport %> --hostname 0.0.0.0 
+User=mav
+
+[Install]
+WantedBy=multi-user.target
