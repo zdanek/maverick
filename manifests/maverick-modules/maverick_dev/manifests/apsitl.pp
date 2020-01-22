@@ -37,7 +37,7 @@ define maverick_dev::apsitl (
     
     # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl
 
-    file { [ "/srv/maverick/var/log/dev/${instance_name}", "/srv/maverick/data/dev/mavlink/${instance_name}" ]:
+    file { [ "/srv/maverick/var/log/dev/${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
@@ -148,14 +148,14 @@ define maverick_dev::apsitl (
         $actual_api_port = $api_port
     }
 
-    file { "/srv/maverick/config/dev/${instance_name}.screen.conf":
+    file { "/srv/maverick/config/dev/apsitl_${instance_name}.screen.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
         content     => template("maverick_dev/apsitl.screen.conf.erb"),
         notify      => Service["maverick-apsitl@${instance_name}"],
     }
-    file { "/srv/maverick/config/dev/${instance_name}.conf":
+    file { "/srv/maverick/config/dev/apsitl_${instance_name}.conf":
         content     => template("maverick_dev/apsitl.conf.erb"),
         owner       => "mav",
         group       => "mav",
