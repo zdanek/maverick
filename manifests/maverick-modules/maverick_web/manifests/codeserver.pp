@@ -4,7 +4,7 @@ class maverick_web::codeserver (
     $basepath = "/srv/maverick",
     $password = "wingman",
     $replace_password = false,
-    $vscode_version = "1.41.0",
+    $vscode_version = "1.41.1",
     $build_type = "production",
 ) {
 
