@@ -685,8 +685,8 @@ if [ "z$_rubydev" == "z" ]; then
 fi
 
 # Check that puppet is installed through gem
-declare -A GEMVERSIONS=( [puppet]=6.12.0 [hiera]=3.6.0 [facter]=2.5.6 )
-for pkg in "hiera" "facter" "puppet"; do
+declare -A GEMVERSIONS=( [puppet]=6.12.0 [hiera]=3.6.0 [facter]=2.5.6 [puppet-strings]=2.3.1 )
+for pkg in "hiera" "facter" "puppet" "puppet-strings"; do
     if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
         echo "Installing $pkg from gems"
         if [ $EUID -eq 0 ]; then
