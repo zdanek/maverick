@@ -6,7 +6,7 @@ Requires=network-online.target
 [Service]
 TimeoutStartSec=0
 WorkingDirectory=/srv/maverick/software/theia/examples/browser
-ExecStart=/usr/bin/yarn run start --port <%= @webport %> --hostname 0.0.0.0 
+ExecStart=/bin/bash -c 'PATH=/opt/nodejs/bin:/usr/bin:$PATH $$(which yarn) run start --port <%= @webport %> --hostname 0.0.0.0 '
 User=mav
 
 [Install]
