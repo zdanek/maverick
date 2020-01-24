@@ -81,6 +81,7 @@ class base::python (
     }
 
     # Install basic useful python modules
+    # These all install into python3
     install_python_module { 'pip-numpy':
         pkgname     => 'numpy',
         ensure      => present,
@@ -138,5 +139,9 @@ class base::python (
         pkgname     => 'future',
         ensure      => present,
     }
-
+    
+    # Install future into python2
+    package { "python-future":
+        ensure      => present,
+    }
 }
