@@ -18,7 +18,7 @@ class maverick_vision::camera_manager (
             user        => "mav",
             timeout     => 0,
             environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig"],
-            command     => "/srv/maverick/var/build/camera-manager/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-manager/configure --enable-avahi --enable-mavlink --disable-systemd --prefix=/srv/maverick/software/camera-manager && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-manager.build.out 2>&1",
+            command     => "/srv/maverick/var/build/camera-manager/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-manager/configure --enable-avahi --enable-mavlink --disable-systemd --prefix=/srv/maverick/software/camera-manager >/srv/maverick/var/log/build/camera-manager.configure.log 2>&1 && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-manager.build.log 2>&1",
             cwd         => "/srv/maverick/var/build/camera-manager",
             creates     => "/srv/maverick/software/camera-manager/bin/dcm",
             require     => [ Package["libavahi-common-dev"], Class["maverick_vision::gstreamer"] ],
