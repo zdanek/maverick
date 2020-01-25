@@ -51,5 +51,10 @@ class maverick_mavlink::mavsdk (
             owner       => "mav",
         }
     }
+    
+    install_python_module { "mavsdk-python":
+        pkgname => "mavsdk",
+        ensure  => present,
+    }
 
 }
