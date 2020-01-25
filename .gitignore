@@ -35,3 +35,4 @@ conf/maverick-branch.conf
 conf/maverick-environment.conf
 conf/localconf.json
 manifests/custom-modules/*
+.yardoc/*
