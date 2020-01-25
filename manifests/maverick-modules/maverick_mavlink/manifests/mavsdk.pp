@@ -1,11 +1,8 @@
-class maverick_dev::mavsdk (
+class maverick_mavlink::mavsdk (
 ) {
 
     # Install px4 dev/build dependencies
     ensure_packages(["cmake", "build-essential", "colordiff", "astyle", "libcurl4-openssl-dev", "doxygen", "libgrpc-dev", "libgrpc++-dev"])
-    #package { ["libgrpc-dev", "libgrpc++-dev"]:
-    #    ensure => absent,
-    #}
 
     # Install mavsdk
     if ! ("install_flag_mavsdk" in $installflags) {

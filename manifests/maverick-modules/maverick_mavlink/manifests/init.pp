@@ -18,9 +18,15 @@ class maverick_mavlink (
     $mavcesium_active = false,
     $cuav_install = false,
     $gooey_version = "1.0.2",
+    $mavsdk = true,
 ) {
     
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
+
+    if $mavsdk == true {
+        # Install dronecode
+        class { "maverick_mavlink::mavsdk": }
+    }
 
     # Create config directory for all mavlink configs
     file { "/srv/maverick/config/mavlink":
