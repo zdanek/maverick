@@ -7,7 +7,7 @@
 #
 # @param active If true, set the maverick-influxd service to running and enabled (at boot).
 class maverick_analysis::influx (
-    $active = true,
+    Boolean $active = true,
 ) {
     
     # Install Go
