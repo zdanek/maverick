@@ -19,6 +19,7 @@ class maverick_mavlink (
     $cuav_install = false,
     $gooey_version = "1.0.2",
     $mavsdk = true,
+    $dronekit = true,
 ) {
     
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
@@ -26,6 +27,12 @@ class maverick_mavlink (
     if $mavsdk == true {
         # Install dronecode
         class { "maverick_mavlink::mavsdk": }
+    }
+
+
+    if $dronekit == true {
+        # Install dronekit
+        class { "maverick_dev::dronekit": }
     }
 
     # Create config directory for all mavlink configs
