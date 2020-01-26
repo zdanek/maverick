@@ -1,5 +1,13 @@
+# Base::Python class
+#
+# This class manages /etc/hosts.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
+# @param additional_entries A hash that can contain additional Host/IP entries to be added to /etc/hosts
 class base::hostip (
-    $additional_entries = {},
+    Optional[Hash[String, Variant[String, Integer, Boolean, Hash[String, Variant[String, Integer, Boolean]]]]] $additional_entries = {},
 ) {
     # If we have debian 127.0.1.1 loopaddress set, make sure it's set to current hostname
     exec { "loophost11":

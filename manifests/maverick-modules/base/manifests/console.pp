@@ -1,3 +1,10 @@
+# Base::Console class
+#
+# This class manages the system console.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
 class base::console {
     
     # Instead of using puppet template to fill in motd, instead use a systemd oneshot service so it refreshes on boot

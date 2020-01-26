@@ -1,8 +1,19 @@
+# Base::Users class
+#
+# This class manages the Maverick 'mav' user.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
+# @param mav_password Hashed password for mav user
+# @param mav_sudopass If mav sudo should ask for password or not
+# @param root_password Hashed password for root user
+# @param manage_root_password If root password should be set by $root-password
 class base::users (
-    $mav_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
-    $mav_sudopass = false, # If mav sudo should ask for password or not
-    $root_password = '$6$MIBUXpXc$AA8j.88LvHFBzvVKofKcHnEqvWdv5Cl5D8.O8aB446Mao2X4UkuJ.1VKSr2VcmsbZB7A5ypmmkO0MWGAZr37N.',
-    $manage_root_password = false,
+    String $mav_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
+    Boolean $mav_sudopass = false,
+    String $root_password = '$6$MIBUXpXc$AA8j.88LvHFBzvVKofKcHnEqvWdv5Cl5D8.O8aB446Mao2X4UkuJ.1VKSr2VcmsbZB7A5ypmmkO0MWGAZr37N.',
+    Boolean $manage_root_password = false,
 ) {
     ensure_packages(["ruby-shadow"])
     

@@ -1,3 +1,10 @@
+# Base::Python class
+#
+# This class declares some common functions that can be used in any other manifests.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
 class base::functions {
 
     # Define an exec to do systemctl daemon-reload that can be called through notify

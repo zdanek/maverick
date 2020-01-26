@@ -1,3 +1,11 @@
+# Base::Packages class
+#
+# This class installs/manages basic system software.
+# It strips out a bunch of software that is unlikely to ever be used on a UAV, and installs basic packages that are commonly used.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
 class base::packages {
 
     # Remove some stuff that definitely doesn't belong in a robotics build

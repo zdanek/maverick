@@ -9,7 +9,7 @@
 #   This class is included from base class and should not be included from elsewhere
 #
 # @param maverick_python Whether to install the custom Maverick Python instance.  This should always be true, unless the OS provides a trusted 3.7 instance.
-# @param python_version The custom version of Python to compmile and install.
+# @param python_version The custom version of Python to compile and install.
 class base::python (
     Boolean $maverick_python = true,
     String $python_version = "v3.7.6",

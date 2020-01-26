@@ -1,6 +1,19 @@
+# Base::Sysctl class
+#
+# This class manages system sysctl settings.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#   The defined type 'conf' can be called many times from other manifests, and adds/updates a sysctl entry.  Multiple entries can be declared at once.
+#   base::sysctl::conf {
+#     "net.ipv6.conf.all.disable_ipv6": 					value => 1;
+#     "net.ipv6.conf.default.disable_ipv6": 				value => 1;
+#     "net.ipv6.conf.lo.disable_ipv6": 					value => 1;
+#   }
+#
 class base::sysctl {
     
-  define conf ( $value ) {
+  define conf ( Variant[String, Integer] $value ) {
 
     # $name is provided by define invocation
     $key = $name
