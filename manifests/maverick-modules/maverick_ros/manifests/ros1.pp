@@ -5,8 +5,8 @@ class maverick_ros::ros1 (
     $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     $installdir = "/srv/maverick/software/ros",
     $module_mavros = true,
-    $module_realsense = true,
-    $module_opencv = true,
+    $module_realsense = false,
+    $module_opencv = false,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
@@ -232,6 +232,12 @@ class maverick_ros::ros1 (
             $_osdistro = ""
         }
 
+        ensure_packages(["build-essential"])
+        # Install ros install packages
+        package {["python-rosinstall", "python-rosinstall-generator"]:
+            require         => Exec["ros-repo"]
+        }
+
         if ! ("install_flag_ros" in $installflags) {
             file { "${builddir}":
                 ensure      => directory,
@@ -239,13 +245,7 @@ class maverick_ros::ros1 (
                 group       => "mav",
                 mode        => "755",
             }
-            
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 if raspberry
-            ensure_packages(["build-essential"])
-            # Install ros install packages
-            package {["python-rosinstall", "python-rosinstall-generator"]:
-                require         => Exec["ros-repo"]
-            } ->
             # Initialize rosdep
             exec { "rosdep-init":
                 command         => "/usr/bin/rosdep init",
@@ -283,15 +283,23 @@ class maverick_ros::ros1 (
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
+            } ->
+            exec { "ros-install-marker":
+                command     => "/bin/false",
+                refreshonly => true,
             }
-        }
-        exec { "ros-install-marker":
-            command     => "/bin/false",
-            refreshonly => true,
+        } else {
+            exec { "ros-install-marker":
+                command     => "/bin/false",
+                refreshonly => true,
+            }
         }
         
         if $module_mavros == true {
             if ! ("install_flag_ros_mavros" in $installflags) {
+                package { ["liburdfdom-dev", "liburdfdom-headers-dev", "libtf2-bullet-dev", "libbondcpp-dev"]:
+                    ensure => installed,
+                } ->
                 file { ["/srv/maverick/var/build/catkin_ws_mavros", "/srv/maverick/var/build/catkin_ws_mavros/src"]:
                     ensure  => directory,
                     owner   => "mav",
@@ -302,7 +310,7 @@ class maverick_ros::ros1 (
                     command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
                     environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/.catkin_tools/profiles/default/config.yaml",
-                    require     => Package["python-catkin-tools"],
+                    require     => [ Package["python-catkin-tools"], Package["python-rosinstall-generator"], Exec["ros-install-marker"], ],
                 } ->
                 exec { "ros-mavros-wstool-init":
                     user        => "mav",
@@ -319,13 +327,14 @@ class maverick_ros::ros1 (
                 exec { "ros-mavros-rosinstall_mavros":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development mavros mavros_extras mavros_msgs test_mavros sensor_msgs control_toolbox realtime_tools python_orocos_kdl urdf >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    #command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development mavros dynamic_reconfigure mavros_extras bullet tf tf2 angles uuid_msgs geographic_msgs mavros_msgs test_mavros sensor_msgs control_msgs control_toolbox realtime_tools python_orocos_kdl rosconsole_bridge urdf >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development --deps mavros mavros_extras mavros_msgs >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                     unless      => "/bin/grep mavros mavros.rosinstall",
                 } ->
                 exec { "ros-mavros-wstool-merge":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/wstool merge -t src mavros.rosinstall",
+                    command     => "/usr/bin/wstool merge -y -t src mavros.rosinstall",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/.rosinstall.bak",
                 } ->
                 exec { "ros-mavros-wstool-update":
@@ -336,7 +345,7 @@ class maverick_ros::ros1 (
                 } ->
                 # Install mavros geographiclib dependencies
                 exec { "mavros_geoinstall":
-                    command         => "/bin/bash /srv/maverick/software/ros/${_distribution}/lib/mavros/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
+                    command         => "/bin/bash /srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros/scripts/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
                     creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
                 } ->
                 package { "python-sip-dev": 
@@ -348,7 +357,6 @@ class maverick_ros::ros1 (
                     command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros >/var/",
                     timeout     => 0,
-                    #before      => File["/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml"],
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
@@ -368,7 +376,7 @@ class maverick_ros::ros1 (
                     command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
                     environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
                     creates     => "/srv/maverick/var/build/catkin_ws_opencv/.catkin_tools/profiles/default/config.yaml",
-                    require     => Package["python-catkin-tools"],
+                    require     => [ Package["python-catkin-tools"], Exec["ros-install-marker"], ],
                 } ->
                 exec { "ros-opencv-wstool-init":
                     user        => "mav",
@@ -420,6 +428,7 @@ class maverick_ros::ros1 (
                 ensure  => directory,
                 owner   => "mav",
             } ->
+            /*
             package { "ros-${_distribution}-ddynamic-reconfigure":
                ensure   => installed,
                require  => Exec["ros_apt_update"],
@@ -427,6 +436,7 @@ class maverick_ros::ros1 (
             package { ["ros-${_distribution}-nodelet", "ros-${_distribution}-nodelet-core", "ros-${_distribution}-nodelet-topic-tools"]:
                 ensure  => installed,
             } ->
+            */
             oncevcsrepo { "git-ros-realsense":
                 gitsource   => "https://github.com/IntelRealSense/realsense-ros.git",
                 dest        => "/srv/maverick/var/build/catkin_ws_realsense/src/realsense-ros",
@@ -439,6 +449,7 @@ class maverick_ros::ros1 (
                 command     => "/opt/ros/current/bin/catkin_init_workspace",
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages"],
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/src/CMakeLists.txt",
+                require     => [ Package["python-catkin-tools"], Exec["ros-install-marker"], ],
             } ->
             exec { "ros-realsense-catkin-make":
                 user        => "mav",
@@ -447,7 +458,6 @@ class maverick_ros::ros1 (
                 timeout     => 0,
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/build/realsense-ros/realsense2_camera/catkin_generated/installspace/realsense2_camera.pc",
-                require     => Exec["ros-install-marker"],
             } ->
             exec { "ros-realsense-catkin-install":
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
@@ -455,7 +465,7 @@ class maverick_ros::ros1 (
                 timeout     => 0,
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
-            }
+            } ->
             file { "/srv/maverick/var/build/.install_flag_ros_realsense":
                 ensure      => present,
             }
