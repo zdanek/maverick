@@ -1,8 +1,20 @@
+# Maverick_analysis class
+#
+# This class controls all other classes in maverick_analysis module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param influxdb Whether to include the maverick_analysis::influxdb class.  Note this doesn't activate influxdb itself, just includes the class.
+# @param collectd Whether to include the maverick_analysis::collectd class.  Note this doesn't activate collectd itself, just includes the class.
+# @param collectd Whether to include the maverick_analysis::grafana class.  Note this doesn't activate grafana itself, just includes the class.
+# @param collectd Whether to include the maverick_analysis::mavlogd class.  Note this doesn't activate mavlogd itself, just includes the class.
 class maverick_analysis (
-    $influxdb = true,
-    $collectd = true,
-    $grafana = true,
-    $mavlogd = true,
+    Boolean $influxdb = true,
+    Boolean $collectd = true,
+    Boolean $grafana = true,
+    Boolean $mavlogd = true,
 ) {
     
     # Create status.d directory for maverick status`

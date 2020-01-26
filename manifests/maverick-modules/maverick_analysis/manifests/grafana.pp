@@ -1,21 +1,39 @@
+# Maverick_analysis::Grafana class
+#
+# This class installs/manages Grafana software (grafana.com), which is used to display system and flight metrics.
+# As Grafana deliberately does not support real customistaion or embedding, it is likely this will be deprecated in the future in favour of custom solution that is more flexible.
+#
+# @example Declaring the class
+#   This class is included from maverick_analysis class and should not be included from elsewhere
+#
+# @param active If true, set the maverick-grafana service to running and enabled (at boot).
+# @param webport TCP port number to run the grafana service.  Note this is normally reverse-proxied to the end user so does not need to be open.
+# @param host Hostname/IP to run the grafana service under.  When reverse-proxied this can be set to localhost.
+# @param rootpath Web root path - normally set to something other than / so it can be reverse-proxied without rewrites.
+# @param grafana_version Can be set to a specific version but causes problems with system upgrades.  Easier set to installed.
+# @param grafana_firewall_rules If grafana service reverse-proxied, set to false as service port does not need to be open.
+# @param mav_password Hashed password for mav user (default is 'wingman')
+# @param mav-salt Salt for hashed password for mav user
+# @param admin_user Name of the admin user
+# @param admin_hash Hashed password of the admin user (default is 'theneedforspeed')
+# @param admin_salt Salt for hashed password for root user
+# @param admin_rand ? - TODO
+# @param admin_password ? - TODO
 class maverick_analysis::grafana (
-    $webport = "6790",
-    $host = "127.0.0.1",
-    $rootpath = "/analysis/grafana/",
-    #$grafana_version = "5.4.3",
-    $grafana_version = "installed",
-    $grafana_firewall_rules = false,
-    $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
-    $mav_salt = 'ry48G1ZHyi',
-    # $mav_password = 'wingman',
-    $admin_user = 'admin',
+    Boolean $active = true,
+    String $webport = "6790",
+    String $host = "127.0.0.1",
+    String $rootpath = "/analysis/grafana/",
+    String $grafana_version = "installed",
+    Boolean $grafana_firewall_rules = false,
+    String $mav_password = 'e35f84e5859dfe5dfe2a9f6ed2086884c3a5e41d206c6e704b48cf45a0dda574ad85b4e9362e8d89eee3eb82e7ef34528ea4',
+    String $mav_salt = 'ry48G1ZHyi',
+    String $admin_user = 'admin',
     # To reset the admin hash: grafana-cli -d admin reset-admin-password theneedforspeed --config=/srv/maverick/config/analysis/grafana.ini from /usr/share/grafana
-    $admin_hash = '6eade3d424af57a87cb455d6577a7d92746517db17deda6b73fd40f22850b4491e6513d22763d9891d2a9206e8c61c9da3d6',
-    $admin_salt = 'WwOYa3P4rc',
-    $admin_rand = 'slhNQwWHa7',
-    # $admin_password = 'theneedforspeed',
-    $admin_password = 'admin',
-    $active = true,
+    String $admin_hash = '6eade3d424af57a87cb455d6577a7d92746517db17deda6b73fd40f22850b4491e6513d22763d9891d2a9206e8c61c9da3d6',
+    String $admin_salt = 'WwOYa3P4rc',
+    String $admin_rand = 'slhNQwWHa7',
+    String $admin_password = 'admin',
 ) {
 
     if $active == true {
