@@ -1,5 +1,57 @@
+# @summary
+#   Maverick_fc class
+#   This class manages the flight controller environment, in particular mavlink proxy and services that connect to the flight controller.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param mavlink_proxy
+#   Type of mavlink proxy to use, eg. mavlink-router, mavproxy or cmavnode
+# @param mavlink_active
+#   If true, the mavlink proxy will be activated and enabled at boot time
+# @param mavlink_logging
+#   If true and supported by the mavlink proxy software, then mavlink data will be logged to file
+# @param mavlink_input
+#   Path to serial device that connects to the FC.  This is different for each board, and is usually set in the board sample manifests (~/software/maverick/conf/sample-nodes)
+# @param mavlink_inbaud
+#   Baud rate for serial FC connection
+# @param mavlink_inflow
+#   If set to true, turns on hardware flow control on the FC serial connection.
+# @param mavlink_startingtcp
+#   Start TCP port - if more than one port then each one will be incremented from this starting value
+# @param mavlink_tcpports
+#   Number of TCP ports that the mavlink proxy will listen on
+# @param mavlink_startingudp
+#   Start UDP port - if more than one port then each one will be incremented from this starting value
+# @param mavlink_udpports
+#   Number of UDP ports to listen on
+# @param mavlink_udpinports
+#   Number of UDP In ports to listen on
+# @param mavlink_serialout
+#   If set, proxy mavlink data out on this serial port
+# @param mavlink_outbaud
+#   Baud rate of mavlink_serialout port
+# @param mavlink_outflow
+#   If mavlink_serialout port should use hardware flow control
+# @param mavlink_replaceconfig
+#   If set to true, this will overwrite the mavlink proxy config file.  If false, edits can be made directly to the config file without being managed/overwritten
+# @param ros_instance
+#   If true, create a separate ROS instance for this SITL instance
+# @param rosmaster_active
+#   If true, set this separate ROS instance active and enabled at boot time
+# @param rosmaster_port
+#   Define the port number that the ROS master will listen on.  This must be unique across all ROS instances.
+# @param mavros_active
+#   If true, the separate MAVROS instance will be activated and enabled at boot time
+# @param mavros_startup_delay
+#   This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.
+# @param api_instance
+#   If true, create a separate maverick-api instance
+# @param api_active
+#   If true, this maverick-api instance will be activated and enabled at boot time
+#
 class maverick_fc (
-    $fc_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
     $mavlink_logging = true,
@@ -15,17 +67,14 @@ class maverick_fc (
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
     $mavlink_outflow = false,
+    $mavlink_replaceconfig = true,
     $ros_instance = true,
     $rosmaster_active = true,
     $rosmaster_port = "11311",
     $mavros_active = true,
     $mavros_startup_delay = 10,
-    $mavlink_port = "5770",
     $api_instance = true,
     $api_active = false,
-    $dflogger_active = false,
-    $dflogger_port = 14570,
-    $status_entries = true,
 ) {
 
     # Install a virtual environment for dronekit fc
@@ -48,30 +97,7 @@ class maverick_fc (
     } ->
     file { "/srv/maverick/.virtualenvs/fc/lib/python2.7/no-global-site-packages.txt":
         ensure  => absent
-    } ->
-    oncevcsrepo { "git-fc-dronekit-python":
-        gitsource   => $fc_dronekit_source,
-        dest        => "/srv/maverick/code/fc/dronekit-python",
     }
-    /*
-    install_python_module { 'pip-dronekit-fc':
-        pkgname     => 'dronekit',
-        virtualenv  => '/srv/maverick/.virtualenvs/fc',
-        ensure      => present,
-        owner       => 'mav',
-        timeout     => 0,
-        env         => "fc",
-    }
-    install_python_module { 'pip-mavproxy-fc':
-        pkgname     => 'MAVProxy',
-        virtualenv  => '/srv/maverick/.virtualenvs/fc',
-        ensure      => present,
-        owner       => 'mav',
-        timeout     => 0,
-        require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
-        env         => "fc",
-    }
-    */        
     file { "/srv/maverick/var/log/mavlink-fc":
         ensure      => directory,
         owner       => "mav",
@@ -234,40 +260,6 @@ class maverick_fc (
         owner   => "mav",
         content => "mavlink@fc,Mavlink (FC)\n",
     }
-
-    file { "/srv/maverick/config/mavlink/dataflash_logger.conf":
-        owner       => "mav",
-        group       => "mav",
-        mode        => "644",
-        content     => template("maverick_fc/dataflash_logger.conf.erb")
-    } ->
-    # Create a directory for logs
-    file { "/srv/maverick/data/logs/dataflash":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    file { "/etc/systemd/system/maverick-dflogger.service":
-        source      => "puppet:///modules/maverick_fc/maverick-dflogger.service",
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    }
-
-    if $dflogger_active {
-        service { "maverick-dflogger":
-            ensure      => running,
-            enable      => true,
-            require     => [ Exec["install-dronekit-la"], File["/etc/systemd/system/maverick-dflogger.service"] ],
-        }
-    } else {
-        service { "maverick-dflogger":
-            ensure      => stopped,
-            enable      => false,
-        }
-    }
     
     # maverick_fc::ros_instance allows ros to be completely optional
     if $ros_instance == true {
@@ -279,7 +271,7 @@ class maverick_fc (
         maverick_ros::mavros { "fc":
             active              => $mavros_active,
             rosmaster_port      => $rosmaster_port,
-            mavlink_port        => $mavlink_port,
+            mavlink_port        => $mavlink_startingtcp,
             mavros_startup_delay => $mavros_startup_delay,
         }
         file { "/srv/maverick/software/maverick/bin/status.d/150.fc/102.rosmaster.status":
