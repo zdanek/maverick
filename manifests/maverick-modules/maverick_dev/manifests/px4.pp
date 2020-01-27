@@ -1,36 +1,55 @@
+# @summary
+#   Maverick_dev::px4 class
+#   This class installs/manages the PX4 software/firmware environment.
+#
+# @example Declaring the class
+#   This class is included from maverick_dev class and should not be included from elsewhere
+#   It could be included selectively from eg. minimal environment.
+#
+# @param px4_source
+#   Git repo to use to compile PX4 firmware
+# @param px4_setupstream
+#   If true, set the upstream repo.  Useful if using a forked repo for upstream updates and PRs.
+# @param px4_upstream
+#   Upstream Git repo.  Should usually not be changed.
+# @param px4_branch
+#   Git branch to use when compiling PX4.
+# @param sitl
+#   If true, setup the PX4 SITL environment
+#
 class maverick_dev::px4 (
-    $px4_source = "https://github.com/PX4/Firmware.git",
-    $px4_setupstream = true,
-    $px4_upstream = "https://github.com/PX4/Firmware.git",
-    $px4_branch = "v1.10.0",
-    $sitl = false,
-    $sitl_active = true,
-    $cross_compile = true,
-    $mavlink_proxy = "mavlink-router",
-    $mavlink_logging = false,
-    $mavlink_active = true,
-    $mavlink_startingtcp = 5790,
-    $mavlink_tcpports = 3,
-    $mavlink_startingudp = 14590,
-    $mavlink_udpports = 3,
-    $mavlink_udpinports = 3,
-    $mavlink_serialout = undef,
-    $mavlink_outbaud = 115200,
-    $mavlink_outflow = false,
-    $mavlink_replaceconfig = true,
-    $ros_instance = true,
-    $rosmaster_active = true,
-    $rosmaster_port = 11315,
-    $mavros_active = true,
-    $mavros_startup_delay = 10,
-    $mavlink_port = 5790,
-    $api_instance = true,
-    $api_active = true,
-    $api_devmode = false,
-    $api_debug = false,
-    $api_replaceconfig = true,
-    $status_priority = "152",
-    $status_entries = true,
+    String $px4_source = "https://github.com/PX4/Firmware.git",
+    Boolean $px4_setupstream = true,
+    String $px4_upstream = "https://github.com/PX4/Firmware.git",
+    String $px4_branch = "v1.10.0",
+    Boolean $sitl = false,
+    Boolean $sitl_active = true,
+    Boolean $cross_compile = true,
+    String $mavlink_proxy = "mavlink-router",
+    Boolean $mavlink_logging = false,
+    Boolean $mavlink_active = true,
+    Integer $mavlink_startingtcp = 5790,
+    Integer $mavlink_tcpports = 3,
+    Integer $mavlink_startingudp = 14590,
+    Integer $mavlink_udpports = 3,
+    Integer $mavlink_udpinports = 3,
+    Optional[String] $mavlink_serialout = undef,
+    Integer $mavlink_outbaud = 115200,
+    Boolean $mavlink_outflow = false,
+    Boolean $mavlink_replaceconfig = true,
+    Boolean $ros_instance = true,
+    Boolean $rosmaster_active = true,
+    Integer $rosmaster_port = 11315,
+    Boolean $mavros_active = true,
+    Integer $mavros_startup_delay = 10,
+    Integer $mavlink_port = 5790,
+    Boolean $api_instance = true,
+    Boolean $api_active = true,
+    Boolean $api_devmode = false,
+    Boolean $api_debug = false,
+    Boolean $api_replaceconfig = true,
+    String $status_priority = "152",
+    Boolean $status_entries = true,
 ) {
 
     # Install px4 dev/build dependencies

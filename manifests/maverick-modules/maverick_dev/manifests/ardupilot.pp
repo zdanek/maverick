@@ -1,16 +1,46 @@
+# @summary
+#   Maverick_dev::ardupilot class
+#   This class installs/manages the Ardupilot software/firmware environment.
+#
+# @example Declaring the class
+#   This class is included from maverick_dev class and should not be included from elsewhere
+#   It could be included selectively from eg. minimal environment.
+#
+# @param ardupilot_source
+#   Git repo to clone, that is used to compile ardupilot (in ~/code/ardupilot).  Change this if you want to use a forked repo.
+# @param ardupilot_setupstream
+#   If true, set the upstream repo.  Useful if using a forked repo for upstream updates and PRs.
+# @param ardupilot_upstream
+#   Upstream Git repo.  Should usually not be changed.
+# @param ardupilot_branch
+#   Git branch to use when compiling Arudpilot.
+# @param ardupilot_buildsystem
+#   'waf' is the new buildsystem, 'make' is the old buildsystem.  Should pretty much always be 'waf' these days.
+# @param ardupilot_all_vehicles
+#   The list of all vehicles to pre-compile for the SITL environment.  This makes all of these vehicle's firmware available to SITL instances.
+# @param ardupilot_vehicle
+#   Which vehicle to build for the old 'make' buildsystem.
+# @param sitl
+#   If set to true, compile firmware for the SITL environment.
+# @param armeabi_packages
+#   If set to true, install the compiler chain software needed to cross-compile firmware for actual flight controller hardware.
+# @param install_jsbsim
+#   If set to true, compile and install the jsbsim software which is needed to run ArduPlane SITL.
+# @param jsbsim_source
+#   Git repo to use for jsbsim
+#
 class maverick_dev::ardupilot (
-    $ardupilot_source = "https://github.com/ArduPilot/ardupilot.git",
-    $ardupilot_setupstream = true,
-    $ardupilot_upstream = "https://github.com/ArduPilot/ardupilot.git",
-    $ardupilot_branch = "master", # eg. master, Copter-3.3, ArduPlane-release
-    $ardupilot_board = "px4-v4",
-    $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
-    $ardupilot_all_vehicles = {"copter" => "arducopter", "plane" => "arduplane", "rover" => "ardurover", "sub" => "ardusub", "heli" => "arducopter-heli", "antennatracker" => "antennatracker"},
-    $ardupilot_vehicle = "copter", # copter, plane or rover
-    $sitl, # passed from init.pp
-    $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
-    $install_jsbsim = true,
-    $jsbsim_source = "http://github.com/JSBSim-Team/jsbsim.git",
+    String $ardupilot_source = "https://github.com/ArduPilot/ardupilot.git",
+    Boolean $ardupilot_setupstream = true,
+    String $ardupilot_upstream = "https://github.com/ArduPilot/ardupilot.git",
+    String $ardupilot_branch = "master", # eg. master, Copter-3.3, ArduPlane-release
+    Enum['waf', 'make'] $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
+    Hash $ardupilot_all_vehicles = {"copter" => "arducopter", "plane" => "arduplane", "rover" => "ardurover", "sub" => "ardusub", "heli" => "arducopter-heli", "antennatracker" => "antennatracker"},
+    String $ardupilot_vehicle = "copter", # copter, plane or rover
+    Optional[String] $sitl, # passed from init.pp
+    Boolean $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
+    Boolean $install_jsbsim = true,
+    String $jsbsim_source = "http://github.com/JSBSim-Team/jsbsim.git",
 ) {
     
     # Install ardupilot from git

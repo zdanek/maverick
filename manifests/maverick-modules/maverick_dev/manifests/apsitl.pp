@@ -1,42 +1,124 @@
+# @summary
+#   This function creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl
+#
+# @example
+#   @@maverick_dev::apsitl { $instance_name:
+#        instance_name       => "test_sitl",
+#        instance_number     => 3,
+#        sitl_active         => true,
+#        rosmaster_active    => false,
+#        mavlink_proxy       => 'mavproxy',
+#        mavros_active       => false,
+#        mavlink_active      => true,
+#        mavlink_replaceconfig => true,
+#        status_priority     => "154",
+#        api_active          => false,
+#        api_devmode         => false,
+#        api_debug           => false,
+#        api_replaceconfig   => true,
+#    }
+#
+# @param instance_name
+#   Name of the SITL instance - this is a short name used to generate file/service names, eg. 'apsitl'
+# @param instance_number
+#   This must be a unique integer, used to identify the instance
+# @param sitl_active
+#   If true, the SITL service will be activated and enabled at boot time
+# @param sitl_port
+#   Port number that SITL listens onlyif
+# @param rcin_port
+#   Port number that SITL RC in listens on
+# @param vehicle_type
+#   Type of Ardupilot vehicle to use, eg. copter, plane, sub etc
+# @param vehicle_frame
+#   Frame type - eg. quad, heli, plane, quadplane, rover
+# @param vehicle_paramfile
+#   Specify an optional parameter file to override the default
+# @param mavlink_proxy
+#   Type of mavlink proxy to use, eg. mavlink-router, mavproxy or cmavnode
+# @param mavlink_active
+#   If true, the mavlink proxy will be activated and enabled at boot time
+# @param mavlink_logging
+#   If true and supported by the mavlink proxy software, then mavlink data will be logged to file
+# @param mavlink_startingtcp
+#   Start TCP port - if more than one port then each one will be incremented from this starting value
+# @param mavlink_tcpports
+#   Number of TCP ports that the mavlink proxy will listen on
+# @param mavlink_startingudp
+#   Start UDP port - if more than one port then each one will be incremented from this starting value
+# @param mavlink_udpports
+#   Number of UDP ports to listen on
+# @param mavlink_udpinports
+#   Number of UDP In ports to listen on
+# @param mavlink_serialout
+#   If set, proxy mavlink data out on this serial port
+# @param mavlink_outbaud
+#   Baud rate of mavlink_serialout port
+# @param mavlink_outflow
+#   If mavlink_serialout port should use hardware flow control
+# @param mavlink_replaceconfig
+#   If set to true, this will overwrite the mavlink proxy config file.  If false, edits can be made directly to the config file without being managed/overwritten
+# @param ros_instance
+#   If true, create a separate ROS instance for this SITL instance
+# @param rosmaster_active
+#   If true, set this separate ROS instance active and enabled at boot time
+# @param rosmaster_port
+#   Define the port number that the ROS master will listen on.  This must be unique across all ROS instances.
+# @param mavros_active
+#   If true, the separate MAVROS instance will be activated and enabled at boot time
+# @param mavros_startup_delay
+#   This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.
+# @param api_instance
+#   If true, create a separate maverick-api instance
+# @param api_active
+#   If true, this maverick-api instance will be activated and enabled at boot time
+# @param api_port
+#   Port number that the separate maverick-api instance will listen on.  Must be unique across all -api instances.
+# @param api_debug
+#   If true, turn on the -api debug mode
+# @param api_devmode
+#   If true, turn on the -api dev mode
+# @param api_replaceconfig
+#   If set to true, this will overwrite the -api config file.  If false, edits can be made directly to the config file without being managed/overwritten
+# @param status_priority
+#   This defines the priority of maverick status.d entry for this instance.  This determines the display order in `maverick status`
+# @param status_entries
+#
 define maverick_dev::apsitl (
-    $sitl_dronekit_source = "http://github.com/dronekit/dronekit-python.git",
-    $instance_name = "apsitl",
-    $instance_number = 0,
-    $sitl_active = true,
-    $sitl_port = 5000,
-    $rcin_port = 5500,
-    $vehicle_type = "copter",
-    $vehicle_frame = undef,
-    $vehicle_paramfile = undef,
-    $mavlink_proxy = "mavlink-router",
-    $mavlink_active = true,
-    $mavlink_logging = false,
-    $mavlink_startingtcp = 6000,
-    $mavlink_tcpports = 3,
-    $mavlink_startingudp = 14000,
-    $mavlink_udpports = 3,
-    $mavlink_udpinports = 3,
-    $mavlink_serialout = undef,
-    $mavlink_outbaud = 115200,
-    $mavlink_outflow = false,
-    $mavlink_replaceconfig = true,
-    $ros_instance = true,
-    $rosmaster_active = true,
-    $rosmaster_port = 11000,
-    $mavros_active = true,
-    $mavros_startup_delay = 10,
-    $api_instance = true,
-    $api_active = true,
-    $api_port = 7000,
-    $api_debug = false,
-    $api_devmode = false,
-    $api_replaceconfig = true,
-    $status_priority = "151",
-    $status_entries = true,
+    String $instance_name = "apsitl",
+    Integer $instance_number = 0,
+    Boolean $sitl_active = true,
+    Integer $sitl_port = 5000,
+    Integer $rcin_port = 5500,
+    String $vehicle_type = "copter",
+    Optional[String] $vehicle_frame = undef,
+    Optional[String] $vehicle_paramfile = undef,
+    String $mavlink_proxy = "mavlink-router",
+    Boolean $mavlink_active = true,
+    Boolean $mavlink_logging = false,
+    Integer $mavlink_startingtcp = 6000,
+    Integer $mavlink_tcpports = 3,
+    Integer $mavlink_startingudp = 14000,
+    Integer $mavlink_udpports = 3,
+    Integer $mavlink_udpinports = 3,
+    Optional[String] $mavlink_serialout = undef,
+    Integer $mavlink_outbaud = 115200,
+    Boolean $mavlink_outflow = false,
+    Boolean $mavlink_replaceconfig = true,
+    Boolean $ros_instance = true,
+    Boolean $rosmaster_active = true,
+    Integer $rosmaster_port = 11000,
+    Boolean $mavros_active = true,
+    Integer $mavros_startup_delay = 10,
+    Boolean $api_instance = true,
+    Boolean $api_active = true,
+    Integer $api_port = 7000,
+    Boolean $api_debug = false,
+    Boolean $api_devmode = false,
+    Boolean $api_replaceconfig = true,
+    String $status_priority = "151",
+    Boolean $status_entries = true,
 ) {
-    
-    # This class creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl
-
     file { [ "/srv/maverick/var/log/dev/${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
         ensure      => directory,
         owner       => "mav",

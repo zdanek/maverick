@@ -1,9 +1,29 @@
+# @summary
+#   Maverick_dev class
+#   This class manages the development environment.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#   Note it needs to be included in the flight environment so it can *control* the dev environment - ie. turn off dev services/components.
+#
+# @param ardupilot
+#   If set to true, include the maverick_dev::ardupilot class which clones and compiles the Ardupilot firmware, both for local development and uploading to flight controllers.
+# @param apsitl_dev
+#   If set to true, set up the default Ardupilot SITL instance.
+# @param px4
+#   If set to true, include the maverick_dev::px4 class which clones and compiles the PX4Pro firmware.
+# @param px4sitl_dev
+#   If set to true, setup the PX4 SITL environment
+# @param file_watchers
+#   The max number of OS inotify file watchers that are allowed.  This allows IDEs to track more files, at the expense of kernel/system memory.
+#
 class maverick_dev (
-    $apsitl_dev = true,
-    $ardupilot = true,
-    $px4 = false,
-    $px4sitl_dev = true,
-    $vscode_watchers = 8192,
+    Boolean $apsitl_dev = true,
+    Boolean $ardupilot = true,
+    Boolean $px4 = false,
+    Boolean $px4sitl_dev = true,
+    Integer $file_watchers = 8192,
 ) {
    
     # Create various dev directories
@@ -27,18 +47,15 @@ class maverick_dev (
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/apsitl.sh",
     }
 
-    # Install dronekit
-    class { "maverick_dev::dronekit": }
-
     # Install/compile ardupilot and SITL
-    if $ardupilot {
+    if $ardupilot == true {
         class { "maverick_dev::ardupilot": 
             sitl    => $apsitl_dev,
         }
     }
 
     # Create default dev apsitl instance
-    if $apsitl_dev {
+    if $apsitl_dev == true {
         class { "maverick_dev::apsitl_dev": }
     }
 
@@ -51,7 +68,7 @@ class maverick_dev (
 
     # Increase kernel inotify watcher limits
     base::sysctl::conf { 
-        "fs.inotify.max_user_watches": 	value => $vscode_watchers;
+        "fs.inotify.max_user_watches": 	value => $file_watchers;
     }
 
 }
