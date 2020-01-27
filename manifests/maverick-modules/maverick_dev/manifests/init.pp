@@ -48,6 +48,7 @@ class maverick_dev (
     }
 
     # Install/compile ardupilot and SITL
+    notice("ardupilot: ${ardupilot}")
     if $ardupilot == true {
         class { "maverick_dev::ardupilot": 
             sitl    => $apsitl_dev,

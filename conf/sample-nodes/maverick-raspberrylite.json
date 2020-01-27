@@ -32,15 +32,14 @@
 	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
 	
 	// Dev SITL mavlink setup - note this requires dev environment to be active
-	"maverick_dev::sitl": false,
-	"maverick_dev::sitl::mavros_startup_delay": 30,
-	"maverick_dev::ardupilot": false,
-	// "maverick_dev::sitl::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	"maverick_dev::sitl::sitl_active": false, // Whether SITL is active or not
-	"maverick_dev::sitl::mavlink_active": false, // Whether mavlink proxy is active or not
-	"maverick_dev::sitl::rosmaster_active": false, // Whether ROS master for sitl is active or not
-	"maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
-
+	"maverick_dev::ardupilot": true,
+	"maverick_dev::apsitl_dev::sitl_active": false,
+	"maverick_dev::apsitl_dev::mavros_startup_delay": 30,
+	"maverick_dev::apsitl_dev::mavlink_active": false, // Whether mavlink proxy is active or not
+	"maverick_dev::apsitl_dev::rosmaster_active": false, // Whether ROS master for sitl is active or not
+	"maverick_dev::apsitl_dev::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	"maverick_dev::apsitl_dev::api_active": false,
+	
 	// Flight Controller (fc) mavlink setup
 	"maverick_fc::mavlink_proxy": "mavlink-router", // Default mavlink proxy type to use
 	"maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not

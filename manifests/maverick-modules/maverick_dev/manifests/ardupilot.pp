@@ -37,7 +37,7 @@ class maverick_dev::ardupilot (
     Enum['waf', 'make'] $ardupilot_buildsystem = "waf", # waf (Copter >=3.4) or make (Copter <3.3)
     Hash $ardupilot_all_vehicles = {"copter" => "arducopter", "plane" => "arduplane", "rover" => "ardurover", "sub" => "ardusub", "heli" => "arducopter-heli", "antennatracker" => "antennatracker"},
     String $ardupilot_vehicle = "copter", # copter, plane or rover
-    Optional[String] $sitl, # passed from init.pp
+    Optional[Boolean] $sitl, # passed from init.pp
     Boolean $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
     Boolean $install_jsbsim = true,
     String $jsbsim_source = "http://github.com/JSBSim-Team/jsbsim.git",
