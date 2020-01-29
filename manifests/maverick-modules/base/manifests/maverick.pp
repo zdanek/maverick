@@ -1,13 +1,16 @@
-# Base::Maverick class
-#
-# This class sets up the basic Maverick environment - mav user, /srv/maverick directory structure, git branch, base containers for status,
+# @summary
+#   Base::Maverick class
+#   This class sets up the basic Maverick environment - mav user, /srv/maverick directory structure, git branch, base containers for status,
 #   various scripts and symlinks, and in bootstrap it clones the Maverick software itself (/srv/maverick/software/maverick)
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere
 #
-# @param maverick_branch This determines which git branch is used for Maverick software (/srv/maverick/software/maverick)
-# @param git_credentials_cache Whether to use credentials cache.  Unless using a shared machine set to true, to stop having to re-enter git credentials every push.
+# @param maverick_branch
+#   This determines which git branch is used for Maverick software (/srv/maverick/software/maverick)
+# @param git_credentials_cache
+#   Whether to use credentials cache.  Unless using a shared machine set to true, to stop having to re-enter git credentials every push.
+#
 class base::maverick (
     String $maverick_branch = "stable",
     Boolean $git_credentials_cache = true,

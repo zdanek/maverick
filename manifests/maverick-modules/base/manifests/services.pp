@@ -1,6 +1,6 @@
-# Base::Services class
-#
-# This class primarily disables any services that typically don't need to be running on a UAV.
+# @summary
+#   Base::Services class
+#   This class primarily disables any services that typically don't need to be running on a UAV.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

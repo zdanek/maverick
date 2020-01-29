@@ -1,15 +1,17 @@
-# Base::Python class
-#
-# This class installs/manages Python software.
-# It manages the system python to some degree, but it focuses on
-#   providing a custom optimised python build installed into /srv/maverick/software/python
-# This is currently the latest point release of Python 3.7
+# @summary
+#   Base::Python class
+#   This class installs/manages Python software.
+#   It manages the system python to some degree, but it focuses on providing a custom optimised python build installed into /srv/maverick/software/python.
+#   This currently installs the latest point release of Python 3.7.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere
 #
-# @param maverick_python Whether to install the custom Maverick Python instance.  This should always be true, unless the OS provides a trusted 3.7 instance.
-# @param python_version The custom version of Python to compile and install.
+# @param maverick_python
+#   Whether to install the custom Maverick Python instance.  This should always be true, unless the OS provides a trusted 3.7 instance.
+# @param python_version
+#   The custom version of Python to compile and install.
+#
 class base::python (
     Boolean $maverick_python = true,
     String $python_version = "v3.7.6",

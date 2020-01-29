@@ -1,6 +1,6 @@
-# Base::Console class
-#
-# This class manages the system console.
+# @summary
+#   Base::Console class
+#   This class manages the system console.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

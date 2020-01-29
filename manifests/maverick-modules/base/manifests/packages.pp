@@ -1,7 +1,7 @@
-# Base::Packages class
-#
-# This class installs/manages basic system software.
-# It strips out a bunch of software that is unlikely to ever be used on a UAV, and installs basic packages that are commonly used.
+# @summary
+#   Base::Packages class
+#   This class installs/manages basic system software.
+#   It strips out a bunch of software that is unlikely to ever be used on a UAV, and installs basic packages that are commonly used.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

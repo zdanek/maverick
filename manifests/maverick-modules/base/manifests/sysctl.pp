@@ -1,6 +1,6 @@
-# Base::Sysctl class
-#
-# This class manages system sysctl settings.
+# @summary
+#   Base::Sysctl class
+#   This class manages system sysctl settings.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

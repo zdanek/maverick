@@ -1,6 +1,6 @@
-# Base::Defaults class
-#
-# This class sets some defaults that Puppet uses when constructing the node graph.
+# @summary
+#   Base::Defaults class
+#   This class sets some defaults that Puppet uses when constructing the node graph.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

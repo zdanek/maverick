@@ -1,6 +1,6 @@
-# Base::Stages class
-#
-# This class declares puppet stages.
+# @summary
+#   Base::Stages class
+#   This class declares puppet stages.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere

@@ -1,11 +1,13 @@
-# Base::Python class
-#
-# This class manages /etc/hosts.
+# @summary
+#   Base::Python class
+#   This class manages /etc/hosts.
 #
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere
 #
-# @param additional_entries A hash that can contain additional Host/IP entries to be added to /etc/hosts
+# @param additional_entries
+#   A hash that can contain additional Host/IP entries to be added to /etc/hosts
+#
 class base::hostip (
     Optional[Hash[String, Variant[String, Integer, Boolean, Hash[String, Variant[String, Integer, Boolean]]]]] $additional_entries = {},
 ) {

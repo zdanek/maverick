@@ -1,6 +1,6 @@
-# Base class
-#
-# The Base class sets up the fundamental Maverick environment. It declares the puppet stages and defines the entire bootstrap stage,
+# @summary
+#   Base class
+#   The Base class sets up the fundamental Maverick environment. It declares the puppet stages and defines the entire bootstrap stage,
 #   and calls the other base classes in all stages.
 #
 # @example Declaring the class

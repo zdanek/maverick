@@ -1,7 +1,7 @@
-# Base::Minimal class
-#
-# This class can be used instead of the usual Base class, but makes absolutely minimal changes to the system.
-# It can be used to apply just a very specific small subset of Maverick to an existing system with the most monimal changes.
+# @summary
+#   Base::Minimal class
+#   This class can be used instead of the usual Base class, but makes absolutely minimal changes to the system.
+#   It can be used to apply just a very specific small subset of Maverick to an existing system with the most monimal changes.
 #
 # @example Declaring the class
 #   This is the most fundamental base class, and is only included in the 'minimal' environment.  It should never be included elsewhere.
