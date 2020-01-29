@@ -1,11 +1,13 @@
-# Maverick_analysis::Influx class
-#
-# This class installs/manages InfluxDB software (www.influxdata.com), which is used to store time series metrics, including system and flight controller data.
+# @summary
+#   Maverick_analysis::Influx class
+#   This class installs/manages InfluxDB software (www.influxdata.com), which is used to store time series metrics, including system and flight controller data.
 #
 # @example Declaring the class
 #   This class is included from maverick_analysis class and should not be included from elsewhere
 #
-# @param active If true, set the maverick-influxd service to running and enabled (at boot).
+# @param active
+#   If true, set the maverick-influxd service to running and enabled (at boot).
+#
 class maverick_analysis::influx (
     Boolean $active = true,
 ) {

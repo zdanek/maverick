@@ -1,24 +1,38 @@
-# Maverick_analysis::Grafana class
-#
-# This class installs/manages Grafana software (grafana.com), which is used to display system and flight metrics.
-# As Grafana deliberately does not support real customistaion or embedding, it is likely this will be deprecated in the future in favour of custom solution that is more flexible.
+# @summary
+#   Maverick_analysis::Grafana class
+#   This class installs/manages Grafana software (grafana.com), which is used to display system and flight metrics.
+#   As Grafana deliberately does not support real customistaion or embedding, it is likely this will be deprecated in the future in favour of custom solution that is more flexible.
 #
 # @example Declaring the class
 #   This class is included from maverick_analysis class and should not be included from elsewhere
 #
-# @param active If true, set the maverick-grafana service to running and enabled (at boot).
-# @param webport TCP port number to run the grafana service.  Note this is normally reverse-proxied to the end user so does not need to be open.
-# @param host Hostname/IP to run the grafana service under.  When reverse-proxied this can be set to localhost.
-# @param rootpath Web root path - normally set to something other than / so it can be reverse-proxied without rewrites.
-# @param grafana_version Can be set to a specific version but causes problems with system upgrades.  Easier set to installed.
-# @param grafana_firewall_rules If grafana service reverse-proxied, set to false as service port does not need to be open.
-# @param mav_password Hashed password for mav user (default is 'wingman')
-# @param mav-salt Salt for hashed password for mav user
-# @param admin_user Name of the admin user
-# @param admin_hash Hashed password of the admin user (default is 'theneedforspeed')
-# @param admin_salt Salt for hashed password for root user
-# @param admin_rand ? - TODO
-# @param admin_password ? - TODO
+# @param active
+#   If true, set the maverick-grafana service to running and enabled (at boot).
+# @param webport
+#   TCP port number to run the grafana service.  Note this is normally reverse-proxied to the end user so does not need to be open.
+# @param host
+#   Hostname/IP to run the grafana service under.  When reverse-proxied this can be set to localhost.
+# @param rootpath
+#   Web root path - normally set to something other than / so it can be reverse-proxied without rewrites.
+# @param grafana_version
+#   Can be set to a specific version but causes problems with system upgrades.  Easier set to installed.
+# @param grafana_firewall_rules
+#   If grafana service reverse-proxied, set to false as service port does not need to be open.
+# @param mav_password
+#   Hashed password for mav user (default is 'wingman')
+# @param mav-salt
+#   Salt for hashed password for mav user
+# @param admin_user
+#   Name of the admin user
+# @param admin_hash
+#   Hashed password of the admin user (default is 'theneedforspeed')
+# @param admin_salt
+#   Salt for hashed password for root user
+# @param admin_rand
+#   ? - TODO
+# @param admin_password
+#   ? - TODO
+#
 class maverick_analysis::grafana (
     Boolean $active = true,
     String $webport = "6790",

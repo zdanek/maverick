@@ -1,14 +1,19 @@
-# Maverick_analysis::Mavlogd class
-#
-# This class installs/manages Mavlogd, which is a bespoke script from Maverick that is used to import flight data into influxd.
+# @summary
+#   Maverick_analysis::Mavlogd class
+#   This class installs/manages Mavlogd, which is a bespoke script from Maverick that is used to import flight data into influxd.
 #
 # @example Declaring the class
 #   This class is included from maverick_analysis class and should not be included from elsewhere
 #
-# @param active If true, set the maverick-mavlogd service to running and enabled (at boot).
-# @param grafana_port The port used to communicate with Grafana.  By default taken from maverick_analysis::grafana::webport and should not be set.
-# @param grafana_host The hostname used to communicate with Grafana.  By default taken from maverick_analysis::grafana::host and should not be set.
-# @param grafana_adminpass The admin password used to communicate with Grafana.  By default taken from maverick_analysis::grafana::admin_password and should not be set.
+# @param active
+#   If true, set the maverick-mavlogd service to running and enabled (at boot).
+# @param grafana_port
+#   The port used to communicate with Grafana.  By default taken from maverick_analysis::grafana::webport and should not be set.
+# @param grafana_host
+#   The hostname used to communicate with Grafana.  By default taken from maverick_analysis::grafana::host and should not be set.
+# @param grafana_adminpass
+#   The admin password used to communicate with Grafana.  By default taken from maverick_analysis::grafana::admin_password and should not be set.
+#
 class maverick_analysis::mavlogd (
     Boolean $active = true,
     String $grafana_port = $maverick_analysis::grafana::webport,

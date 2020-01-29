@@ -1,14 +1,19 @@
-# Maverick_analysis::Collect class
-#
-# This class installs/manages collectd software (collectd.org), which is used to log system metrics.
+# @summary
+#   Maverick_analysis::Collect class
+#   This class installs/manages collectd software (collectd.org), which is used to log system metrics.
 #
 # @example Declaring the class
 #   This class is included from maverick_analysis class and should not be included from elsewhere
 #
-# @param active If true, set the maverick-collectd service to running and enabled (at boot).
-# @param install_type If 'source', then compile collectd from git source.  Should always be set to source as it installs into custom location (~/software/collectd).
-# @param git_source Github repo location to clone source code from.
-# @param git_revision Github branch to compile.
+# @param active
+#   If true, set the maverick-collectd service to running and enabled (at boot).
+# @param install_type
+#   If 'source', then compile collectd from git source.  Should always be set to source as it installs into custom location (~/software/collectd).
+# @param git_source
+#   Github repo location to clone source code from.
+# @param git_revision
+#   Github branch to compile.
+#
 class maverick_analysis::collect (
     Boolean $active = true,
     Enum['source', 'binary'] $install_type = "source",
