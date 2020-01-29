@@ -1,14 +1,18 @@
-# Maverick_desktop class
-#
-# This class installs/manages the desktop environment.
+# @summary
+#   Maverick_desktop class
+#   This class installs/manages the desktop environment.
 #
 # @example Declaring the class
 #   This class is included from the environment manifests and is not usually included elsewhere.
 #   It could be included selectively from eg. minimal environment.
 #
-# @param install If set to true or false, will install or uninstall the Raspberry pixel desktop respectively.  Currently has no effect on other platforms.
-# @param enable Whether the desktop environment should be set as active and enabled or not.
-# @param desktop_suspend If set to false and enable set to true, this will attempt to disable the suspend status through dbus.  Use with caution, not always predictable behaviour.
+# @param install
+#   If set to true or false, will install or uninstall the Raspberry pixel desktop respectively.  Currently has no effect on other platforms.
+# @param enable
+#   Whether the desktop environment should be set as active and enabled or not.
+# @param desktop_suspend
+#   If set to false and enable set to true, this will attempt to disable the suspend status through dbus.  Use with caution, not always predictable behaviour.
+#
 class maverick_desktop (
     Optional[Boolean] $install = undef,
     Boolean $enable = false,
