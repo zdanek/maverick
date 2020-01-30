@@ -54,7 +54,7 @@ define maverick_mavlink::cmavnode (
     Integer $tcpports = 3,
     Optional[String] $serialout = undef,
     Optional[Integer] $outbaud = undef,
-    Optional[String] $outflow = false,
+    Optional[Boolean] $outflow = false,
     Boolean $replaceconfig = true,
 ) {
     if $active == true {
