@@ -1,24 +1,69 @@
+# @summary
+#   Maverick_hardware::Raspberry class
+#   This class installs/manages the Raspberry Pi hardware environment
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param expand_root
+#   If true, expand the root filesystem to the full size of the SD card
+# @param gpumem
+#   Set the split of cpu/gpu memory.  128M is recommended to fully enable GPU functions.
+# @param overclock
+#   Set the overclocking state of the CPU.  Recommended to keep None unless cooling hardware and a specific need.
+# @param devicetree
+#   If true, enable devicetree in kernel boot.  Should almost always be true.
+# @param spi
+#   If true, enable SPI support in the kernel.
+# @param i2c
+#   If true, enable I2C support in the kernel.
+# @param serialconsole
+#   Should be set to false to disable the console on the hardware serial port, so it can be used for flight controller link.
+# @param serialoverride
+#   If true, move the serial link back to the more reliable hardware pins.  This gives better high speed serial link.
+# @param camera
+#   If true, install raspberry picam support.
+# @param xgl
+#   If true, Add X GL support.  Only needed if using 3D desktop functions.
+# @param v4l2
+#   If true, add specific kernel support for V4L2 device.
+# @param overpower_usb
+#   If true, allow the USB ports to draw more power than the USB standards.  Useful, but use with care.
+# @param auto_login
+#   If true and using desktop enivronment, automatically login without need for password.
+# @param desktop_autologin_user
+#   The username used to login automatically to the desktop, if auto_login is set.
+# @param manage_pi_password
+#   If true, manage the pi user password, and shut off the default password warnings
+# @param pi_password
+#   Hashed pi user password to set.
+# @param remove_extrapackages
+#   If true, remove large packages that should not be needed in UAV environment, to free up useful space.
+# @param remove_glpackages
+#   If true, remove packages that provide GL support
+# @param swapsize
+#   Set the filesystem swap size.  Default should only normally be changed when needing to compile large components.
+#
 class maverick_hardware::raspberry (
-    $expand_root = true,
-    $gpumem = 128,
-    $overclock = "None", # "None", "High", "Turbo"
-    $devicetree = true,
-    $spi = true,
-    $i2c = true,
-    $serialconsole = false, # Normally leave the serial lines free for pixhawk
-    $serialoverride = true, # Disable bluetooth on Pi 3/ZeroW for more reliable serial
-    $camera = true,
-    $xgl = false,
-    $v4l2 = true,
-    $overpower_usb = false,
-    $auto_login = false,
-    $desktop_autologin_user = "mav",
-    $manage_pi_password = false,
-    $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
-    $remove_extrapackages = true,
-    $remove_more_extrapackages = false,
-    $remove_glpackages = false,
-    $swapsize = 1024, # /var/swap swapfile size in Mb
+    Boolean $expand_root = true,
+    Integer $gpumem = 128,
+    Enum['None', 'High', 'Turbo'] $overclock = "None",
+    Boolean $devicetree = true,
+    Boolean $spi = true,
+    Boolean $i2c = true,
+    Boolean $serialconsole = false, # Normally leave the serial lines free for pixhawk
+    Boolean $serialoverride = true, # Disable bluetooth on Pi 3/ZeroW for more reliable serial
+    Boolean $camera = true,
+    Boolean $xgl = false,
+    Boolean $v4l2 = true,
+    Boolean $overpower_usb = false,
+    Boolean $auto_login = false,
+    String $desktop_autologin_user = "mav",
+    Boolean $manage_pi_password = false,
+    String $pi_password = '$6$YuXyoBZR$cR/cNLGZV.Y/nfW6rvK//fjnr84kckI1HM0fhPnJ3MVVlsl7UxaK8vSw.bM4vTlkF4RTbOSAdi36c5d2hJ9Gj1',
+    Boolean $remove_extrapackages = true,
+    Boolean $remove_glpackages = false,
+    Integer $swapsize = 1024, # /var/swap swapfile size in Mb
     ) {
 
     # https://github.com/goodrobots/maverick/issues/234
@@ -39,7 +84,7 @@ class maverick_hardware::raspberry (
 
     # Remove large packages to save space
     if $remove_extrapackages == true {
-        package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot"]:
+        package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "chromium-browser"]:
             ensure  => purged,
         }
         package { ["libjs-mathjax", "fonts-mathjax", "pyton-picamera-docs", "libraspberrypi-doc", "libllvm3.9", "libc6-dbg"]:
@@ -52,11 +97,6 @@ class maverick_hardware::raspberry (
             }
         }
         
-    }
-    if $remove_more_extrapackages == true {
-        package {["chromium-browser"]:
-            ensure  => purged,
-        }
     }
     if $remove_glpackages == true {
         package { ["libgl1-mesa-dri"]:

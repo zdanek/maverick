@@ -1,6 +1,16 @@
+# @summary
+#   Maverick_hardware::Beagle class
+#   This class installs/manages the Beaglebone hardware environment
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param included_cloud9
+#   If false (default), disable the provided cloud9 IDE.  Maverick provides it's own cloud9 environment.
+#
 class maverick_hardware::beagle (
-    $included_cloud9 = false,
-    ) {
+    Boolean $included_cloud9 = false,
+) {
     
     file { "/etc/modprobe.d/can-blacklist.conf":
         content     => template("maverick_hardware/can-blacklist.conf.erb"),
@@ -9,7 +19,25 @@ class maverick_hardware::beagle (
         group       => "root",
     }
 
-    class { "maverick_hardware::beagle::services": }
+    # These services are being stopped to save cpu and memory at boot.
+    # This is a somewhat temporary situation, in the long term we should deal with these properly
+    #  in their own manifests, particularly apache.
+    service { "jekyll-autorun":
+        ensure      => stopped,
+        enable      => false,
+    }
+    service { "bonescript-autorun":
+        ensure      => stopped,
+        enable      => false,
+    }
+    service { "ofono":
+        ensure      => stopped,
+        enable      => false,
+    }
+    service { "bluetooth":
+        ensure      => stopped,
+        enable      => false,
+    }
 
     # Remove unnecessary packages from beagle installs to save space - space is at a premium on emmc.  Lots more we can add later on.
     package { ["aglfn", "alsa-utils", "ap-hotspot", "blt", "bmap-tools", "dmidecode", "libbluray1", "libcdio-cdda1", "libcdio-paranoia1", "libcdio13", "libcups2", "libdc1394-22", "libdc1394-22-dev", "libdrm-exynos1", "libdrm-nouveau2", "libdrm-radeon1", "libdrm-tegra0", "libflac8", "libid3tag0", "libimobiledevice4", "libogg0", "libraw1394-11", "libraw1394-dev", "libraw1394-tools", "libsamplerate0", "libschroedinger", "libthai-data", "libthai0"]:

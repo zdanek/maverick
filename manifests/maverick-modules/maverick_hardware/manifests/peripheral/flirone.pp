@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_hardware::Peripheral::Flirone class
+#   This class installs/manages the FLIR One thermal imager support.
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param active
+#   If true, activate the maverick-flirone service
+#
 class maverick_hardware::peripheral::flirone (
-    $active = false,
+    Boolean $active = false,
 ) {
     
     # Install dependencies

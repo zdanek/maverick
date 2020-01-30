@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_hardware::Intel class
+#   This class installs/manages the common Intel hardware environment
+#
+# @example Declaring the class
+#   This class is included from various maverick_hardware classes that are based on Intel hardware.
+#
+# @param mraa
+#   If true, install the MRAA GPIO access library.
+# @param intel_graphics
+#   If true, install accelerated Intel graphics support.
+# @param opencl
+#   If true, install Beignet OpenCL software
+#
 class maverick_hardware::intel (
-    $mraa = true,
-    $intel_graphics = true,
-    $opencl = true,
+    Boolean $mraa = true,
+    Boolean $intel_graphics = true,
+    Boolean $opencl = true,
 ) {
 
     ### Install MRAA - Intel GPIO access library

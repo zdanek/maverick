@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_hardware::Peripheral::Ocam class
+#   This class installs/manages the Odroid Ocam camera support.
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware::odroid class and should not be included from elsewhere
+#
 class maverick_hardware::peripheral::ocam (
 ) {
     

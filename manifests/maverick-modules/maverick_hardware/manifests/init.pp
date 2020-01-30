@@ -1,15 +1,42 @@
+# @summary
+#   Maverick_hardware class
+#   This class controls all other classes in maverick_hardware module.
+#
+# @example Declaring the class
+#   This class is included from the base manifest and is not usually included elsewhere.
+#
+# @param raspberry_install
+#   If true, include the maverick_hardware::raspberry support class
+#	@param beagle_install
+#		If true, include the maverick_hardware::beagle support class
+# @param odroid_install
+#		If true, include the maverick_hardware::odroid support class
+# @param joule_install
+#		If true, include the maverick_hardware::joule support class
+# @param up_install
+#		If true, include the maverick_hardware::up support class
+# @param tegra_install
+#		If true, include the maverick_hardware::tegra support class
+# @param camera_ocam_install
+#		If true, include the maverick_hardware::camera_ocam support class
+# @param camera_picam_install
+#		If true, include the maverick_hardware::camera_picam support class
+# @param realsense install
+#		If true, include the maverick_hardware::realsense support class
+# @param flirone_install
+#		If true, include the maverick_hardware::flirone support class
+#
 class maverick_hardware (
-    $sensors = false,
-    $raspberry_install = false,
-    $beagle_install = false,
-    $odroid_install = false,
-    $joule_install = false,
-    $up_install = false,
-    $tegra_install = false,
-    $camera_ocam_install = false,
-    $camera_picam_install = false,
-    $realsense_install = true,
-    $flirone_install = true,
+    Boolean $raspberry_install = false,
+    Boolean $beagle_install = false,
+    Boolean $odroid_install = false,
+    Boolean $joule_install = false,
+    Boolean $up_install = false,
+    Boolean $tegra_install = false,
+    Boolean $camera_ocam_install = false,
+    Boolean $camera_picam_install = false,
+    Boolean $realsense_install = true,
+    Boolean $flirone_install = true,
 ) {
 	
 	# Create status.d directory for maverick status`
@@ -22,11 +49,6 @@ class maverick_hardware (
 	file { "/srv/maverick/software/maverick/bin/status.d/124.hardware/__init__":
 			owner       => "mav",
 			content     => "Hardware Services",
-	}
-
-	# Setup hardware sensors (lmsensors)
-	if $sensors {
-    	class { "maverick_hardware::sensors": }
 	}
 
 	if $raspberry_present == "yes" or $raspberry_install == true {

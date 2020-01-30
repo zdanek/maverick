@@ -1,8 +1,24 @@
+# @summary
+#   Maverick_hardware::Joule class
+#   This class installs/manages the Intel Joule hardware environment
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param remove_more_packages
+#   If true, remove packages that won't normally be used in a UAV environment to reclaim necessary space.
+# @param ipu4_blacklist
+#   If true, add the buggy ipu4 modules to kernel blacklist.
+# @param serialconsole
+#   If true, enable the serial console.  This should be disabled by default, to allow serial communication with the flight controller.
+# @param install_caspa
+#   If true, install the caspa camera software support.
+#
 class maverick_hardware::joule (
-    $remove_more_packages = true,
-    $ipu4_blacklist = true,
-    $serialconsole = false,
-    $install_caspa = true,
+    Boolean $remove_more_packages = true,
+    Boolean $ipu4_blacklist = true,
+    Boolean $serialconsole = false,
+    Boolean $install_caspa = true,
 ) {
 
     # Include Intel platform manifest

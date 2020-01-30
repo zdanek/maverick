@@ -1,6 +1,18 @@
+# @summary
+#   Maverick_hardware::Peripheral::Realsense class
+#   This class installs/manages the Intel Realsense camera support.
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param sdk1
+#   Install SDK1 software.  Used for legacy realsense devices like R200.
+# @param sdk2
+#   Install SDK2 software.  Used for all modern realsense hardware.
+#
 class maverick_hardware::peripheral::realsense (
-    $sdk1 = false,
-    $sdk2 = true,
+    Boolean $sdk1 = false,
+    Boolean $sdk2 = true,
 ) {
 
     require base::python

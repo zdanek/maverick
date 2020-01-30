@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_hardware::Peripheral::Caspa class
+#   This class installs/manages the Intel Caspa camera support.
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware::joule class and should not be included from elsewhere
+#
 class maverick_hardware::peripheral::caspa (
 ) {
     

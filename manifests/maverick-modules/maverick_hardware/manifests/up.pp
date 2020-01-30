@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_hardware::Up class
+#   This class installs/manages the Aaeon Up hardware environment
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param swapsize
+#   Set the swap size using file.
+#
 class maverick_hardware::up (
-    $swapsize = 1000,
+    Integer $swapsize = 1024,
 ) {
  
     # Include Intel platform manifest

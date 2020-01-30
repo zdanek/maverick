@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_hardware::Tegra class
+#   This class installs/manages the Nvidia Tegra hardware environment, including support for TX1/TX2 and Jetson Nano.
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param jtx1inst
+#   If true, install software that can be used to monitor the TX1 power use.
+#
 class maverick_hardware::tegra (
-    $jtx1inst = false,
+    Boolean $jtx1inst = false,
 ) {
 
     ### Disable nvidia report_ip_to_host

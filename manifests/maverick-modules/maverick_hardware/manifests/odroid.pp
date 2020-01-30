@@ -1,7 +1,18 @@
+# @summary
+#   Maverick_hardware::Odroid class
+#   This class installs/manages the Odroid XU4 hardware environment
+#
+# @example Declaring the class
+#   This class is included from maverick_hardware class and should not be included from elsewhere
+#
+# @param governor_atboot
+#   This determines the hardware power governor to use.  Recommended to use performance.
+# @param remove_more_packages
+#   If true, remove large packages that should not be needed in UAV environment to reclaim useful space.
+#
 class maverick_hardware::odroid (
-    $governor_atboot = "performance",
-    $kernel4x = false,
-    $remove_more_packages = true,
+    String $governor_atboot = "performance",
+    Boolean $remove_more_packages = true,
 ) {
 
     ensure_packages(["axel", "whiptail"])
@@ -87,14 +98,6 @@ class maverick_hardware::odroid (
         command     => "/srv/maverick/software/odroid-wiringpi/build >/srv/maverick/var/log/build/odroid-wiringpi.build.log 2>&1",
         cwd         => "/srv/maverick/software/odroid-wiringpi",
         creates     => "/srv/maverick/software/odroid-wiringpi/wiringPi/libwiringPi.so.2.0",
-    }
-    
-    if $kernel4x == true and $::odroid_kernel_install_flag == "no" {
-        class { "maverick_hardware::odroid::kernel4x": }
-    } elsif $kernel4x == true and $::odroid_kernel_install_flag == "yes" {
-        # do nothing
-    } else {
-        class { "maverick_hardware::odroid::kernel3x": }
     }
     
 }
