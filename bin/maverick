@@ -783,18 +783,6 @@ if hash git 2>/dev/null; then
     fi
 fi
 
-# ^^ Kludge fix: #469 #613 Hack puppet to use systemd service provider as default on recent Ubuntu
-#  - Ubuntu support has been properly refactored.  Debian has not, so kludge for recent debian
-puppet_systemd_provider=$(find /var/lib/gems -name 'systemd.rb' -exec grep ':debian' {} \; |grep -v '\"10\"')
-if [ ! -z "$puppet_systemd_provider" ]; then
-    echo "Fixing broken puppet systemd provider for Debian"
-    if [ $EUID -eq 0 ]; then
-        /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's#"9", "buster/sid\"#"9", "buster/sid", "10"#' {} \;
-    else
-        sudo /usr/bin/find /var/lib/gems -name 'systemd.rb' -exec sed -ie 's#"9", "buster/sid"#"9", "buster/sid", "10"#' {} \;
-    fi
-fi
-
 # Check that maverick configure or puppet apply is not already running
 _puppet_apply=$(ps -ef |grep 'puppet apply' |grep -v grep)
 if [ ! -z "$_puppet_apply" ]; then
