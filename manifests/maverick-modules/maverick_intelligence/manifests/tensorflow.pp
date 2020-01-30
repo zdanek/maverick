@@ -1,11 +1,30 @@
+# @summary
+#   Maverick_intelligence:tensorflow class
+#   This class installs/manages the tensorflow Machine Learning software (tensorflow.org).
+#
+# @example Declaring the class
+#   This class is included from maverick_intelligence class and should not be included from elsewhere
+#
+# @param source
+#   Github repo to use when compiling from source.
+# @param source_version
+#   Github tag/branch to use when compiling from source.
+# @param bazel_version
+#   Version of bazel to use when compiling from source.
+# @param version
+#   Major version to use - 1 or 2.  Now defaults to 2.
+# @param arch
+#   Force architecture to use when installing from binary on raspberry.  Useful when preparing Pi Zero/Lite image on a Pi 3/4 board for speed.
+# @param install_type
+#   Force type of install - source or binary (pip wheel).
+#
 class maverick_intelligence::tensorflow (
-    $source = "https://github.com/tensorflow/tensorflow.git",
-    $version = "2", # 1 or 2
-    $source_version = "v2.1.0",
-    $bazel_version = "0.13.0",
-    $arch = undef,
-    $active = false,
-    $install_type = undef,
+    String $source = "https://github.com/tensorflow/tensorflow.git",
+    String $source_version = "v2.1.0",
+    String $bazel_version = "0.13.0",
+    String $version = "2", # 1 or 2
+    Optional[Enum['armv6l', 'armv7l']] $arch = undef,
+    Optional[Enum['pip', 'source']] $install_type = undef,
 ) {
     
     # Work out if source is install is necessary
