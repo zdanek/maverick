@@ -1,10 +1,30 @@
+# @summary
+#   Maverick_ros::Ros2 class
+#   This class installs/manages ROS2 (ros.org).
+#
+# @example Declaring the class
+#   This class is included from maverick_ros class and should not be included from elsewhere
+#
+# @param installtype
+#   If 'auto' then the type of install needed will be detected based on the operating system version and architecture.  This can be overidden with 'native' or 'source'.
+# @param distribution
+#   Specify the ROS distribution to use - eg. kinetic, melodic
+# @param builddir
+#   Set the build location.
+# @param installdir
+#   Set the install location, should always be /srv/maverick/sofware/ros2 (which is symlinked to /opt/ros2) in Maverick
+# @param metapackage
+#   The metapackage to use for binary install.
+# @param ros1_bridge
+#   If true, build and install the ROS1 bridge.
+#
 class maverick_ros::ros2 (
-    $installtype = "auto",
-    $distribution = "auto",
-    $builddir = "/srv/maverick/var/build/ros2",
-    $installdir = "/srv/maverick/software/ros2",
-    $metapackage = "ros-base", # desktop or ros-base
-    $ros1_bridge = true,
+    Enum['native', 'source', 'auto'] $installtype = "auto",
+    String $distribution = "auto",
+    String $builddir = "/srv/maverick/var/build/ros2",
+    String $installdir = "/srv/maverick/software/ros2",
+    String $metapackage = "ros-base", # desktop or ros-base
+    Boolean $ros1_bridge = true,
 ) {
 
     # If installtype is set then use it and skip autodetection

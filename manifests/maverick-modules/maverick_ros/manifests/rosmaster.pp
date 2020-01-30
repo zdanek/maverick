@@ -1,6 +1,19 @@
+# @summary
+#   This function creates a rosmaster instance.  It is typically called by modules that also create mavlink proxy and mavros instances.
+#
+# @example
+#   @@maverick_ros::rosmaster { $instance_name:
+#       ...
+#   }
+#
+# @param active
+#   If true, starts the maverick-rosmaster@[instance] service and enables at boot.
+# @param port
+#   The port that the rosmaster instance will be set to listen on.
+#
 define maverick_ros::rosmaster (
-    $port = "11311",
-    $active = true,
+    Boolean $active = true,
+    String $port = "11311",
 ) {
     
     file { "/srv/maverick/config/ros/rosmaster-${name}.conf":

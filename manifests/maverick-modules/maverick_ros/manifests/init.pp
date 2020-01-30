@@ -1,6 +1,19 @@
+# @summary
+#   Maverick_ros class
+#   This class controls all other classes in maverick_ros module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param ros1
+#   If true, include the maverick_ros::ros1 class which manages ROS1.
+# @param ros2
+#   If true, include the maverick_ros::ros2 class which manages ROS2.
+#
 class maverick_ros (
-    $ros1 = true,
-    $ros2 = true,
+    Boolean $ros1 = true,
+    Boolean $ros2 = true,
 ) {
 
     # Install ros gpg key - used for both ros1 and ros2

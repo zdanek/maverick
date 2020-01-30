@@ -1,12 +1,36 @@
+# @summary
+#   Maverick_ros::Ros1 class
+#   This class installs/manages ROS (ros.org).
+#
+# @example Declaring the class
+#   This class is included from maverick_ros class and should not be included from elsewhere
+#
+# @param installtype
+#   If 'auto' then the type of install needed will be detected based on the operating system version and architecture.  This can be overidden with 'native' or 'source'.
+# @param distribution
+#   Specify the ROS distribution to use - eg. kinetic, melodic
+# @param buildtype
+#   ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
+# @param builddir
+#   Set the build location.
+# @param installdir
+#   Set the install location, should always be /srv/maverick/sofware/ros (which is symlinked to /opt/ros) in Maverick
+# @param module_mavros
+#   If true, install mavros
+# @param module_realsense
+#   If true, install realsense support
+# @param module_opencv
+#   If true, install opencv ros module
+#
 class maverick_ros::ros1 (
-    $installtype = "auto",
-    $distribution = "auto",
-    $buildtype = "ros_comm", # ROS core variant, ros_comm is base without GUI, can also be desktop, desktop_full.  mobile and perception variants useful for drones.  desktop_full includes everything.
-    $builddir = "/srv/maverick/var/build/ros_catkin_ws",
-    $installdir = "/srv/maverick/software/ros",
-    $module_mavros = true,
-    $module_realsense = false,
-    $module_opencv = false,
+    Enum['native', 'source', 'auto'] $installtype = "auto",
+    String $distribution = "auto",
+    String $buildtype = "ros_comm",
+    String $builddir = "/srv/maverick/var/build/ros_catkin_ws",
+    String $installdir = "/srv/maverick/software/ros",
+    Boolean $module_mavros = true,
+    Boolean $module_realsense = false,
+    Boolean $module_opencv = false,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
