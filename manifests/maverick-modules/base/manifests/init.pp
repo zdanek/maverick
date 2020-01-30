@@ -63,6 +63,9 @@ class base {
         class { "apt": }
     }
 
+    ### Setup desktop environment
+    class { "base::desktop": }
+
     ### Setup python
     class { "base::python": }
     

@@ -28,8 +28,7 @@
 	"maverick_analysis::mavlogd::active": false,
 	"maverick_analysis::grafana::active": false,
 
-	"maverick_desktop::install": false, // Ensure desktop is installed by default
-	"maverick_desktop::enable": false, // Desktop depends on type of raspbian used
+	"base::desktop::install": false, // Ensure desktop is installed by default
 	
 	// Dev SITL mavlink setup - note this requires dev environment to be active
 	"maverick_dev::ardupilot": true,

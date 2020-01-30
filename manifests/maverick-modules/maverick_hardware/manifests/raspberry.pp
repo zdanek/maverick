@@ -104,7 +104,7 @@ class maverick_hardware::raspberry (
         }
     }
     
-    if getvar("maverick_desktop::enable") == true {
+    if getvar("base::desktop::enable") == true {
         confval { "rpi-desktop-autologin":
             file        => "/etc/lightdm/lightdm.conf",
             field       => "autologin-user",
@@ -245,13 +245,6 @@ class maverick_hardware::raspberry (
         onlyif      => "/bin/ls /etc/profile.d/raspi-config.sh",
         require     => Package["raspi-config"],
     }
-    
-    # This is disabled and handled by other classes such as maverick_desktop instead
-    #exec { "raspberry-bootenv":
-    #    command     => "/usr/bin/raspi-config nonint do_boot_behaviour_new B1",
-    #    unless      => "/bin/systemctl get-default |/bin/grep multi-user",
-    #    require     => Package["raspi-config"],
-    #}
     
     if $v4l2 == true {
         exec { "raspberry-v4l2-kernelmodule":

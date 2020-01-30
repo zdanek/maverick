@@ -7,9 +7,9 @@
 		"eth0": {}
     },
 
-	"maverick_dev::ardupilot::armeabi_packages": true,
+	"base::desktop::enable": true, // Desktop is enabled by default
 
-	"maverick_desktop::enable": true, // Desktop is enabled by default
+	"maverick_dev::ardupilot::armeabi_packages": true,
 
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use

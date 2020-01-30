@@ -27,7 +27,7 @@
         	}
 	},
 
-	// "maverick_desktop::enable": true, // Desktop is disabled by default
+	// "base::desktop::enable": true, // Desktop is disabled by default
 
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use

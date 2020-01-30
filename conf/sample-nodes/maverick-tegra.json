@@ -10,7 +10,6 @@
         }  
     },
 
-	"maverick_desktop::enable": false, // Desktop is enabled by default
 	// "maverick_intelligence::tensorflow": false, // Temporarily disabled until gpu build in place
 
 	// "maverick_intelligence::openkai": true,

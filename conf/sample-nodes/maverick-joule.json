@@ -11,8 +11,6 @@
 	
 	"maverick_hardware::camera_realsense_install": true, // Force realsense support
 	
-	"maverick_desktop::enable": false, // Desktop is enabled by default
-
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
 	// "maverick_fc::mavlink_active": true, // Whether the mavlink proxy is active or not
