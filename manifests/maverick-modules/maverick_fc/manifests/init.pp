@@ -70,7 +70,7 @@ class maverick_fc (
     Boolean $mavlink_replaceconfig = true,
     Boolean $ros_instance = true,
     Boolean $rosmaster_active = true,
-    String $rosmaster_port = "11311",
+    Integer $rosmaster_port = 11311,
     Boolean $mavros_active = true,
     Integer $mavros_startup_delay = 10,
     Boolean $api_instance = true,

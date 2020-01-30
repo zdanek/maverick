@@ -27,8 +27,8 @@
 #
 define maverick_ros::mavros (
     Boolean $active = true,
-    String $rosmaster_port = "11311",
-    String $mavlink_port = "5770",
+    Integer $rosmaster_port = 11311,
+    Integer $mavlink_port = 5770,
     Integer $mavros_startup_delay = 10,
     String $mavros_launcher = "apm.launch",
     Optional[Integer] $source_sysid = undef,

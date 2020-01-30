@@ -13,7 +13,7 @@
 #
 define maverick_ros::rosmaster (
     Boolean $active = true,
-    String $port = "11311",
+    Integer $port = 11311,
 ) {
     
     file { "/srv/maverick/config/ros/rosmaster-${name}.conf":
