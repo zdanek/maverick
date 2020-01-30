@@ -107,7 +107,7 @@ class maverick_analysis::mavlogd (
                 location    => "/analysis/uploader/",
                 proxy       => 'http://localhost:6792/',
                 server      => getvar("maverick_web::server_fqdn"),
-                require     => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["maverick-uploader"], ],
+                require     => [ Class["maverick_web::fcs"], Class["nginx"], Service["maverick-uploader"], ],
             }
         } else {
             service { "maverick-uploader":

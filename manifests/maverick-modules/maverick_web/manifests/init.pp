@@ -12,8 +12,13 @@ class maverick_web (
     $maverick_web = true,
     $maverick_api = true,
     $server_fqdn = $::fqdn,
+    $fcs = true,
 ) {
     
+    if $fcs == true {
+        class { "maverick_web::fcs": }
+    }
+
     # Create status.d directory for maverick status`
     file { "/srv/maverick/software/maverick/bin/status.d/120.web":
         ensure      => directory,

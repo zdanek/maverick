@@ -74,7 +74,7 @@ class maverick_web::nginx (
         ssl_cert    => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.crt",
         ssl_key     => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.key",
         www_root    => $www_root,
-        require     => [ Class["maverick_gcs::fcs"], ],
+        require     => [ Class["maverick_web::fcs"], ],
         notify      => Service["maverick-nginx"],
     }
     
@@ -85,7 +85,7 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => $server_hostname,
-        require         => [ Class["maverick_gcs::fcs"], Service["nginx"] ],
+        require         => [ Class["maverick_web::fcs"], Service["nginx"] ],
         notify          => Service["maverick-nginx"],
     }
 
@@ -98,7 +98,7 @@ class maverick_web::nginx (
             location_alias  => $downloads_dir,
             index_files     => [],
             server          => $server_hostname,
-            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
+            require         => [ Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
         }
     }
     

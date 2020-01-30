@@ -1,4 +1,11 @@
-class maverick_gcs::fcs (
+# @summary
+#   Maverick_web::Fcs class
+#   This class installs/manages the legacy 'FCS' environment, which will disappear as soon as maverick-web is ready.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+class maverick_web::fcs (
 ) {
     # FCS (Flying Control Station) is the concept of an onboard GCS.  It will have multiple interfaces, initially touchscreen and web.
     # The central process (maverickd) is a RESTful API that all the interfaces talk to

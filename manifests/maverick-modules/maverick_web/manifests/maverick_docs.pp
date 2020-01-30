@@ -16,7 +16,7 @@ class maverick_web::maverick_docs (
         location_alias  => "/srv/maverick/software/maverick/docs",
         index_files     => ["index.html"],
         server          => $server_hostname,
-        require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
+        require         => [ Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
     }
 
     if $ardupilot_docs == true {
@@ -69,7 +69,7 @@ class maverick_web::maverick_docs (
             location_alias  => "/srv/maverick/var/lib/web/ardupilot_wiki",
             index_files     => ["index.html"],
             server          => $server_hostname,
-            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
+            require         => [ Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
         }
     }
 
@@ -105,7 +105,7 @@ class maverick_web::maverick_docs (
             location_alias  => "/srv/maverick/software/px4_user_guide/_book",
             index_files     => ["index.html"],
             server          => $server_hostname,
-            require         => [ Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
+            require         => [ Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
         }
     }
 }

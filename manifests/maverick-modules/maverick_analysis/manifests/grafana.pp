@@ -280,7 +280,7 @@ class maverick_analysis::grafana (
                 location    => "/analysis/grafana/",
                 proxy       => "http://localhost:${webport}/",
                 server      => getvar("maverick_web::server_fqdn"),
-                require     => [ Class["maverick_gcs::fcs"], Class["nginx"] ],
+                require     => [ Class["maverick_web::fcs"], Class["nginx"] ],
             }
         }
     

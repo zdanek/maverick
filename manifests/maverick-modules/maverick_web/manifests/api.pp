@@ -55,7 +55,7 @@ define maverick_web::api (
         location                => "/web/api/${instance}/",
         proxy                   => "http://localhost:${apiport}/",
         server                  => $server_hostname,
-        require                 => [ Class["maverick_web::maverick_api"], Class["maverick_gcs::fcs"], Class["nginx"], Service["nginx"] ],
+        require                 => [ Class["maverick_web::maverick_api"], Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
     	proxy_connect_timeout   => "7d",
     	proxy_read_timeout      => "7d",
         proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
