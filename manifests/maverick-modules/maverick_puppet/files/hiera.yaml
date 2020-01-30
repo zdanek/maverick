@@ -1,9 +1,0 @@
----
-:backends:
-  - json
-:json:
-  :datadir: conf/ 
-:hierarchy:
-  - defaults
-  - "%{environment}/defaults"
-  - "%{environment}/nodes/%{::hostname}"

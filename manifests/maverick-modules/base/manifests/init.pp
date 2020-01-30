@@ -32,7 +32,7 @@ class base {
     }
 
     ### Bootstrap puppet
-    class { "maverick_puppet::client":
+    class { "base::puppet":
         stage   => "bootstrap",
         require => Class["base::defaults", "base::packages", "base::locale"],
     }
@@ -40,7 +40,7 @@ class base {
     ### Before we do anything, set our IP in /etc/hosts
     class { "base::hostip":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::locale", "maverick_puppet::client"],
+        require => Class["base::defaults", "base::locale", "base::puppet"],
     }
     
     ### Setup base system users

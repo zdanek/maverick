@@ -1,5 +1,11 @@
-class maverick_puppet::client (
-    $puppetlabs = false,
+# @summary
+#   Base::Puppet class
+#   This class installs/manages the puppet client.
+#
+# @example Declaring the class
+#   This class is included from base class and should not be included from elsewhere
+#
+class base::puppet (
 ) {
 
     # Ensure system puppet is not installed, Maverick uses puppet from gems
@@ -25,7 +31,7 @@ class maverick_puppet::client (
     } ->
     file { "/etc/puppetlabs/puppet/puppet.conf":
         ensure      => file,
-        content     => template("maverick_puppet/puppet-client.conf.erb"),
+        content     => template("base/puppet-client.conf.erb"),
         mode        => "644",
         owner       => "root",
         group       => "root",
