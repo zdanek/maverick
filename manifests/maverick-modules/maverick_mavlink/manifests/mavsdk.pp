@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_mavlink::Mavsdk class
+#   This class installs MavSDK software.
+#
+# @example Declaring the class
+#   This class is included from maverick_mavlink class and should not be included from elsewhere
+#
 class maverick_mavlink::mavsdk (
 ) {
 

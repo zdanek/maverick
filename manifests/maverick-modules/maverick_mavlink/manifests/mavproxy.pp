@@ -1,18 +1,55 @@
+# @summary
+#   This function creates an instance of a MAVProxy mavlink proxy.  It is called by other classes whenever a mavlink proxy is needed, such as flight controller or SITL connection.
+#
+# @example
+#   @@maverick_mavlink::mavproxy { $instance_name:
+#       ...
+#   }
+#
+# @param active
+#   If true, starts the maverick-mavlink@[instance] service and enables at boot.
+# @param inputaddress
+#   Serial or network address of incoming mavlink link.
+# @param inputbaud
+#   If using serial input, baud rate to use.
+# @param inputflow
+#   If using serial input, whether to use hardware flow control.
+# @instance
+#   This must be a unique number for each instance
+# @param startingudp
+#   Starting udp port number to listen on.
+# @param udpports
+#   Number of udp ports to define.
+# @param udpinports
+#   Number of udp in ports to define.
+# @param startingtcp
+#    Starting TCP port to listen on.
+# @param tcpports
+#   Number of TCP ports to listen on.
+# @param serialout
+#   If set, mavlink data will be proxied out to this serial address.
+# @param outbaud
+#   If set, defines the serial baud rate for serialout.
+# @param outflow
+#   If set, defines the serialout hardware flow control.
+# @param replaceconfig
+#   If true, fully manage the cmavnode instance configuration and overwrite each configure run.
+#
 define maverick_mavlink::mavproxy (
-    $inputaddress = "",
-    $inputbaud = undef,
-    $inputflow = false,
-    $instance = 0,
-    $startingudp = 14570,
-    $udpports = 3,
-    $udpinports = 3,
-    $startingtcp = 5770,
-    $tcpports = 3,
-    $serialout = undef,
-    $outbaud = undef,
-    $outflow = false,
-    $active = undef,
-    $replaceconfig = true,
+    Optional[Boolean] $active = undef,
+    Optional[String] $inputaddress = "",
+    Optional[Integer] $inputbaud = undef,
+    Optional[Boolean] $inputflow = false,
+    Integer $instance = 0,
+    Integer $startingudp = 14570,
+    Integer $udpports = 3,
+    Integer $udpinports = 3,
+    Integer $startingtcp = 5770,
+    Integer $tcpports = 3,
+    Optional[String] $serialout = undef,
+    Optional[Integer] $outbaud = undef,
+    Optional[Boolean] $outflow = false,
+    Boolean $replaceconfig = true,
 ) {
     if $active == true {
         $service_notify = Service["maverick-mavlink@${name}"]

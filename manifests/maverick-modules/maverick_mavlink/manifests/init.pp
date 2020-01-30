@@ -1,22 +1,62 @@
+# @summary
+#   Maverick_mavlink class
+#   This class controls all other classes in maverick_mavlink module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param cmavnode_install
+#   If true, install cmavnode software.
+# @param cmavnode_source
+#   Github repo to use to install cmavnode.
+# @param mavlink_router_install
+#   If true, install mavlink-router software.
+# @param mavlink_router_source
+#   Git repo to use to install mavlink-router.
+# @param mavproxy_install
+#   If true, install mavproxy software.
+# @param mavproxy_type
+#   Whether to install mavproxy from source or through pip.
+# @param mavcesium_install
+#   If true, install mavcesium software.
+# @param mavcesium_apikey
+#   API key for Bing maps to be used in mavcesium.
+# @param mavcesium_port
+#   TCP port to run mavcesium service.
+# @param mavcesium_mavlink_port
+#   TCP port to connect mavcesium to for mavlink data.
+# @param mavcesium_source
+#   Git repo to use to install mavcesium.
+# @param mavcesium_active
+#   If true, activate the mavcesium service and enable at boot time.
+# @param cuav_install
+#   If true, install CUAV software.
+# @param gooey_version
+#   Gooey is a CUAV dependency, can be version sensitive.
+# @param mavsdk
+#   If true, install MavSDK software.
+# @param dronekit
+#   If true, install Dronekit software.
+#
 class maverick_mavlink (
-    $cmavnode_install = true,
-    $cmavnode_source = "https://github.com/MonashUAS/cmavnode.git",
-    $mavlink_router_install = true,
-    $mavlink_router_source = "https://github.com/intel/mavlink-router.git",
-    $mavproxy_install = true,
-    $mavproxy_source = "https://github.com/ArduPilot/MAVProxy.git",
-    $mavproxy_type = "pip",
-    $mavcesium = true,
-    $mavcesium_install = true,
-    $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
-    $mavcesium_port = "6791",
-    $mavcesium_mavlink_port = "5770",
-    $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
-    $mavcesium_active = false,
-    $cuav_install = false,
-    $gooey_version = "1.0.2",
-    $mavsdk = true,
-    $dronekit = true,
+    Boolean $cmavnode_install = true,
+    String $cmavnode_source = "https://github.com/MonashUAS/cmavnode.git",
+    Boolean $mavlink_router_install = true,
+    String $mavlink_router_source = "https://github.com/intel/mavlink-router.git",
+    Boolean $mavproxy_install = true,
+    String $mavproxy_source = "https://github.com/ArduPilot/MAVProxy.git",
+    Enum['pip', 'source'] $mavproxy_type = "pip",
+    Boolean $mavcesium_install = true,
+    String $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
+    String $mavcesium_port = "6791",
+    String $mavcesium_mavlink_port = "5770",
+    String $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
+    Boolean $mavcesium_active = false,
+    Boolean $cuav_install = false,
+    String $gooey_version = "1.0.2",
+    Boolean $mavsdk = true,
+    Boolean $dronekit = true,
 ) {
     
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
