@@ -1,5 +1,16 @@
+# @summary
+#   This function creates an instance of a monitor/injection interface.  It is called by process_interface for each monitor interface declared in the configuration.
+#
+# @example
+#   @@maverick_network::interface_monitor { $instance_name:
+#       ...
+#   }
+#
+# @param macaddress
+#   If set, locks onto the hardware/virtual interface with this MAC address.
+#
 define maverick_network::interface_monitor (
-    $macaddress = undef,
+    Optional[String] $macaddress = undef,
 ) {
 
     # Define a basic interface with a post-up action to deal with the special monitor/injection setup

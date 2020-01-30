@@ -1,8 +1,24 @@
+# @summary
+#   Maverick_network::Zerotier class
+#   This class installs/manages Zerotier network software/configuration.
+#
+# @example Declaring the class
+#   This class is included from maverick_network class and should not be included from elsewhere
+#
+# @param active
+#   If true, starts the zerotier service and enables at boot time.
+# @param libzt
+#   If true, compiles and installs the libzt component.
+# @param join_network
+#   If true, network specified in $network_id param will eb joined.  If false, the network will be left.
+# @param network_id
+#   The zerotier network to use.
+#
 class maverick_network::zerotier (
-    $libzt = false,
-    $active = false,
-    $join_network = true,
-    $network_id = "8056c2e21c000001",
+    Boolean $active = false,
+    Boolean $libzt = false,
+    Boolean $join_network = true,
+    String $network_id = "8056c2e21c000001",
 ) {
 
     # Workaround for ubilinux

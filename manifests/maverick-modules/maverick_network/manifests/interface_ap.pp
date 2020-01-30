@@ -1,14 +1,43 @@
+# @summary
+#   This function creates an instance of a wireless AP interface.  It is called by process_interface for each AP interface declared in the configuration.
+#
+# @example
+#   @@maverick_network::interface_ap { $instance_name:
+#       ...
+#   }
+#
+# @param macaddress
+#   If set, locks onto the hardware/virtual interface with this MAC address.
+# @param ssid
+#   The SSID to use to create this AP.
+# @psk
+#   The PSK to use to create this AP, that associating clients will need to know in order to associate.
+# @driver
+#   The kernel driver to use for this interface.
+# @channel
+#   The wireless channel to use for this AP.
+# @hw_mode
+#   The wireless mode to use for this AP interface.
+# @disable_broadcast_ssid
+#   If true, do not broadcast the SSID for this AP.  Clients will have to specify it in order to associate.
+# @param dhcp_range
+#		If defining a wireless AP, use this range of IP addresses for associated clients
+# @param dhcp_leasetime
+#		Length of lease time to use for dhcp server
+# @param forward
+#		If defining an AP interface, turn on network forwarding to bridge network flow between interfaces.
+#
 define maverick_network::interface_ap (
-    $macaddress = undef,
-    $ssid = "Maverick",
-    $psk = "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d",
-    $driver = "nl80211",
-    $channel = 1,
-    $hw_mode = "g",
-    $disable_broadcast_ssid = false,
-    $dhcp_range = "192.168.10.10,192.168.10.50",
-    $dhcp_leasetime = "24h",
-    $forward = false,
+    Optional[String] $macaddress = undef,
+    String $ssid = "Maverick",
+    String $psk = "8097a204e44b0a740d5daad37d0e34ac16e4df353bc827dcd57d49b36d49740d",
+    String $driver = "nl80211",
+    Integer $channel = 1,
+    String $hw_mode = "g",
+    Boolean $disable_broadcast_ssid = false,
+    String $dhcp_range = "192.168.10.10,192.168.10.50",
+    String $dhcp_leasetime = "24h",
+    Boolean $forward = false,
 ) {
     ## Note, in order to keep this as simple as possible this AP setup does NOT allow for bridging, routing or NATing.
     ## It is a deliberately simple setup just to allow remote connection to the OBC for telemetry, video etc

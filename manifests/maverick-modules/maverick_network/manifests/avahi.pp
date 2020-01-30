@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_network::Avahi class
+#   This class installs/manages Avahi zeroconf software/service.
+#
+# @example Declaring the class
+#   This class is included from maverick_network class and should not be included from elsewhere
+#
+# @param explicit_naming
+#   If false, turns on 'publish-addresses' avahi config setting. 
+#
 class maverick_network::avahi (
-    $explicit_naming = false,
+    Boolean $explicit_naming = false,
 ) {
     
     ensure_packages(["avahi-daemon", "avahi-utils"])

@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_network::Dnsmasq class
+#   This class installs/manages the dnsmasq software and configuration.
+#
+# @example Declaring the class
+#   This class is included from maverick_network class and should not be included from elsewhere
+#
 class maverick_network::dnsmasq (
 ) {
    

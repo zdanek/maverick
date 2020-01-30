@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_network::Timesync class
+#   This class installs/manages system time synchronization software/configuration.
+#
+# @example Declaring the class
+#   This class is included from maverick_network class and should not be included from elsewhere
+#
+# @param servers
+#   List of ntp servers to use for synchronization.
+# @param active
+#   Activate system time sync and enable at boot time.
+# @param type
+#   The type of timesync software to use.
+#
 class maverick_network::timesync (
-        $servers = ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org'],
-        $active = undef,
-        $type = undef,
+        Array[String] $servers = ['0.pool.ntp.org', '1.pool.ntp.org', '2.pool.ntp.org', '3.pool.ntp.org'],
+        Optional[Boolean] $active = undef,
+        Optional[Enum['ntp', 'timesyncd', 'chronyd']] $type = undef,
     ) {
 
     if $active == false {

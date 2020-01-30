@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_network::Wifibroadcast class
+#   This class installs/manages wifibroadcast software/configuration.
+#
+# @example Declaring the class
+#   This class is included from maverick_network class and should not be included from elsewhere
+#
+# @param type
+#   Determines if the befinitiv or svpcom software should be used.
+# @param tx_active
+#   If true, activate the wifibc_tx service and enable at boot time.
+# @param rx_active
+#   If true, activate the wifibc_rx service and enable at boot time.
+#
 class maverick_network::wifibroadcast (
-    $type = "svpcom",
-    $tx_active = false,
-    $rx_active = false,
+    Enum['svpcom', 'befinitiv'] $type = "svpcom",
+    Boolean $tx_active = false,
+    Boolean $rx_active = false,
 ) {
     
     if $type == "befinitiv" {

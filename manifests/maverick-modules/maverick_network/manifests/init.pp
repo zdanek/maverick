@@ -1,16 +1,50 @@
+# @summary
+#   Maverick_network class
+#   This class controls all other classes in maverick_network module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @note
+#   This class should only be included if it is intended to use Maverick to control network configuration and services.
+#   Network configuration is very complex and unless configured correctly can cut off the system from the network.
+#
+# @param netman
+#   If false, disable network management software - ie. connman or NetworkManager.
+# @param predictable
+#   If true, use 'predictable' network naming.  Although technically more consistent, the naming convention is more difficult to work with in an automated fashion.
+# @param dhcpcd
+#   If false, turn off dhcpcd and rely on dhclient/wpa_supplicant
+# @param avahi
+#   If true, include maverick_network::avahi class which manages avahi zeroconf networking.
+# @param dnsmasq
+#   If true, include maverick_network::dnsmasq class which manages the dnsmasq software/service.
+# @param dnsclient
+#   If true, include maverick_network::dnsclient class which manages the dnsclient configuration.
+# @param ipv6
+#   If set, enable/disable ipv6 through kernel sysctl configuration
+# @param wpasupplicant_template
+#   If true, use templates to manage /etc/wpa_supplicant/wpa_supplicant.conf
+# @param zerotier
+#   If true, include maverick_network::zerotier class which manages zerotier software and configuration.
+# @param timesync
+#   If true, include maverick_network::timesync class which manages the various timesync services.
+# @param wifibroadcast
+#   If true, include maverick_network::wifibc class which manages wifibroadcast software.
+#
 class maverick_network (
-    $ethernet = true,
-    $wireless = true,
-    $netman = false,
-    $predictable = false,
-    $dhcpcd = false,
-    $avahi = true,
-    $dnsmasq = false,
-    $dnsclient = false, 
-    $ipv6 = undef,
-    $wpasupplicant_template = true,
-    $zerotier = true,
-    $timesync = true,
+    Boolean $netman = false,
+    Boolean $predictable = false,
+    Boolean $dhcpcd = false,
+    Boolean $avahi = true,
+    Boolean $dnsmasq = false,
+    Boolean $dnsclient = false, 
+    Optional[Boolean] $ipv6 = undef,
+    Boolean $wpasupplicant_template = true,
+    Boolean $zerotier = true,
+    Boolean $timesync = true,
+    Boolean $wifibroadcast = true,
     ) {
 
     # Create status.d directory for maverick status`
@@ -37,7 +71,9 @@ class maverick_network (
     }
 
     # Install/setup wifibroadcast
-    class { "maverick_network::wifibroadcast": }
+    if $wifibroadcast == true {
+        class { "maverick_network::wifibroadcast": }
+    }
     
     # Ensure wpa_supplicant isn't running
     # Note NetworkManager seems to start this regardless of wpa_supplicant enabled state
