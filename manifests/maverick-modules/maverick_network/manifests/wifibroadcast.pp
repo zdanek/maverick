@@ -97,6 +97,10 @@ class maverick_network::wifibroadcast (
             command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/wfb_tx",
             unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/wfb_tx |/bin/grep cap_net_admin",
         }
+        exec { "setcaps-wifibc_rx":
+            command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/wfb_rx",
+            unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/wfb_rx |/bin/grep cap_net_admin",
+        }
         
         # Generate keys
         file { "/srv/maverick/data/network/wifibc":
@@ -150,6 +154,16 @@ class maverick_network::wifibroadcast (
             owner       => root,
             group       => root,
             notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        # status.d entry
+        file { "/srv/maverick/software/maverick/bin/status.d/122.network/111.wifibc_tx.status":
+            owner   => "mav",
+            content => "wifibc_tx,WifiBroadcast TX Service\n",
+        } ->
+        # status.d entry
+        file { "/srv/maverick/software/maverick/bin/status.d/122.network/112.wifibc_rx.status":
+            owner   => "mav",
+            content => "wifibc_rx,WifiBroadcast RX Service\n",
         }
 
         # Control tx service
