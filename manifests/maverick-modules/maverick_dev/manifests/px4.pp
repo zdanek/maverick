@@ -14,6 +14,8 @@
 #   Upstream Git repo.  Should usually not be changed.
 # @param px4_branch
 #   Git branch to use when compiling PX4.
+# @param rtps_branch
+#   Git branch to use when compiling FastRTPS.
 # @param sitl
 #   If true, setup the PX4 SITL environment
 #
@@ -22,6 +24,7 @@ class maverick_dev::px4 (
     Boolean $px4_setupstream = true,
     String $px4_upstream = "https://github.com/PX4/Firmware.git",
     String $px4_branch = "v1.10.0",
+    String $rtps_branch = "v1.8.2",
     Boolean $sitl = false,
     Boolean $sitl_active = true,
     Boolean $cross_compile = true,
@@ -75,28 +78,24 @@ class maverick_dev::px4 (
     # Install px4 python dependencies
     ensure_packages(["python-empy", "python-toml", "python-numpy"])
     install_python_module { 'pip-px4-pandas':
-        pip_provider => 'pip',
         pkgname     => 'pandas',
         ensure      => present,
-        env         => "global",
     } ->
     install_python_module { 'pip-px4-jinja2':
-        pip_provider => 'pip',
         pkgname     => 'jinja2',
         ensure      => present,
-        env         => "global",
     } ->
     install_python_module { 'pip-px4-pyserial':
-        pip_provider => 'pip',
         pkgname     => 'pyserial',
         ensure      => present,
-        env         => "global",
     } ->
     install_python_module { 'pip-px4-pyulog':
-        pip_provider => 'pip',
         pkgname     => 'pyulog',
         ensure      => present,
-        env         => "global",
+    } ->
+    install_python_module { 'pip-px4-empy':
+        pkgname     => 'empy',
+        ensure      => present,
     }
 
     # Install eProsima Fastrtps
@@ -104,6 +103,8 @@ class maverick_dev::px4 (
         oncevcsrepo { "git-px4-fastrtps":
             gitsource   => "https://github.com/eProsima/Fast-RTPS",
             dest        => "/srv/maverick/var/build/fastrtps",
+            revision	=> $rtps_branch,
+            submodules  => true,
         } ->
         file { "/srv/maverick/var/build/fastrtps/build":
             ensure      => directory,
@@ -175,12 +176,12 @@ class maverick_dev::px4 (
         } ->
         exec { "px4-make":
             command     => "/usr/bin/make -j2 posix >/srv/maverick/var/log/build/px4.make.log 2>&1",
-            environment => ["LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
+            environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
             creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
-            require     => Install_python_module['pip-px4-pandas'],
+            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
         }
     }
 
@@ -204,7 +205,7 @@ class maverick_dev::px4 (
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
             creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
-            require     => Install_python_module['pip-px4-pandas'],
+            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
         } ->
         file { "/srv/maverick/software/maverick/bin/px4sitl.sh":
             ensure      => link,
@@ -268,7 +269,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => "14550",
+                inputport   => 14550,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -312,7 +313,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => "14550",
+                inputport   => 14550,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -368,7 +369,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => "14550",
+                inputport   => 14550,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
