@@ -2,7 +2,7 @@
 
 # Set defaults, can be overriden in /srv/maverick/config/dev/px4sitl.conf
 # More info here: https://dev.px4.io/en/simulation/
-CONFIGURATION_TARGET=posix_sitl_default
+CONFIGURATION_TARGET=px4_sitl_default
 VIEWER_MODEL_DEBUGGER=gazebo
 SCREEN_NAME=px4sitl
 

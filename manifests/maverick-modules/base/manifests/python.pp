@@ -73,6 +73,11 @@ class base::python (
             content => 'NEWPATH="/srv/maverick/software/python/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
 
+        # Add a 'python' symlink to python3, to satisfy all those scripts that invoke python in their hashbang
+        file { "/srv/maverick/software/python/bin/python":
+            target  => "/srv/maverick/software/python/bin/python3",
+        }
+
         # Remove the pip binary from custom python, it interferes with system python2
         file { "/srv/maverick/software/python/bin/pip":
             ensure  => absent,

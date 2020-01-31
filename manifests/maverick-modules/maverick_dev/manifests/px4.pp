@@ -105,6 +105,7 @@ class maverick_dev::px4 (
             dest        => "/srv/maverick/var/build/fastrtps",
             revision	=> $rtps_branch,
             submodules  => true,
+            owner       => "mav",
         } ->
         file { "/srv/maverick/var/build/fastrtps/build":
             ensure      => directory,
@@ -166,6 +167,7 @@ class maverick_dev::px4 (
             dest        => "/srv/maverick/code/px4",
             revision	=> $px4_branch,
             submodules  => true,
+            owner       => "mav",
         } ->
         # If a custom px4 repo is specified, configure the upstream automagically
         exec { "px4_setupstream":
@@ -199,7 +201,7 @@ class maverick_dev::px4 (
             mode        => "755",
         } ->
         exec { "px4-sitl-make":
-            command     => "/usr/bin/make -j2 posix_sitl_default >/srv/maverick/var/log/build/px4.sitl.make.log 2>&1",
+            command     => "/usr/bin/make -j2 px4_sitl_default >/srv/maverick/var/log/build/px4.sitl.make.log 2>&1",
             environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "HEADLESS=1", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
