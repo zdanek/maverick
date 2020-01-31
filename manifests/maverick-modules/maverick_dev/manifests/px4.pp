@@ -23,7 +23,7 @@ class maverick_dev::px4 (
     String $px4_source = "https://github.com/PX4/Firmware.git",
     Boolean $px4_setupstream = true,
     String $px4_upstream = "https://github.com/PX4/Firmware.git",
-    String $px4_branch = "v1.10.0",
+    String $px4_branch = "v1.10.1",
     String $rtps_branch = "v1.8.2",
     Boolean $sitl = false,
     Boolean $sitl_active = true,
@@ -176,7 +176,7 @@ class maverick_dev::px4 (
         } ->
         exec { "px4-make":
             command     => "/usr/bin/make -j2 posix >/srv/maverick/var/log/build/px4.make.log 2>&1",
-            environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
+            environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
@@ -200,7 +200,7 @@ class maverick_dev::px4 (
         } ->
         exec { "px4-sitl-make":
             command     => "/usr/bin/make -j2 posix_sitl_default >/srv/maverick/var/log/build/px4.sitl.make.log 2>&1",
-            environment => ["HEADLESS=1", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
+            environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "HEADLESS=1", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/code/px4",
