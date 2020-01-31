@@ -1,4 +1,11 @@
-class maverick_vision::fpv::mjpg-streamer {
+# @summary
+#   Maverick_vision::mjpg_streamer class
+#   This class installs and manages the mjpg_streamer library.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+class maverick_vision::mjpg_streamer {
     
     ensure_packages(["cmake", "libjpeg-dev"])
     

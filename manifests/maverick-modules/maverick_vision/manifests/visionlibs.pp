@@ -1,8 +1,24 @@
+# @summary
+#   Maverick_vision::Visionlibs class
+#   This class installs and manages support libraries for other vision components.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param tbb
+#   If true, install Intel TBB multithreading library.
+# @param tbb_version
+#   Version of TBB to clone, compile and install.
+# @param openblas
+#   If true, install OpenBLAS library.
+# @param openblas_version
+#    Version of OpenBLAS to clone, compile and install.
+# 
 class maverick_vision::visionlibs (
-    $tbb = true,
-    $tbb_version = "v2020.0",
-    $openblas = true,
-    $openblas_version = "v0.3.7",
+    Boolean $tbb = true,
+    String $tbb_version = "v2020.0",
+    Boolean $openblas = true,
+    String $openblas_version = "v0.3.7",
 ) {
     
     if $openblas == true {

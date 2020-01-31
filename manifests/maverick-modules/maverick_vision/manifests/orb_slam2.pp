@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_vision::Orb_slam2 class
+#   This class installs and manages the Orb_slam2 software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param ros_build
+#   If true, add the orb_slam2 ROS components
+#
 class maverick_vision::orb_slam2 (
-    $ros_build = false,
+    Boolean $ros_build = false,
 ) {
     
     ensure_packages(["libeigen3-dev", "libglew-dev", "libopenni2-dev"])

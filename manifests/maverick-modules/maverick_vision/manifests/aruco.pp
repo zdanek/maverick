@@ -1,6 +1,18 @@
+# @summary
+#   Maverick_vision::Aruco class
+#   This class installs and manages the Aruco software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param aruco_gitsource
+#   Git repo to use to compile/install Aruco
+# @param aruco_gitbranch
+#   Which git branch to use to compile/install Aruco
+#
 class maverick_vision::aruco (
-    $aruco_gitsource = "https://github.com/fnoop/aruco.git",
-    $aruco_gitbranch = "master",
+    String $aruco_gitsource = "https://github.com/fnoop/aruco.git",
+    String $aruco_gitbranch = "master",
 ) {
 
     if ! ("install_flag_aruco" in $installflags) {

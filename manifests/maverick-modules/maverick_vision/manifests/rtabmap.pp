@@ -1,6 +1,18 @@
+# @summary
+#   Maverick_vision::Rtabmap class
+#   This class installs and manages the Rtabmap software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param source
+#   The git repo to use to compile and install the software.
+# @param revision
+#   Which git branch/revision to compile and install the software.
+# 
 class maverick_vision::rtabmap (
-    $source = "https://github.com/introlab/rtabmap.git",
-    $revision = "master",
+    String $source = "https://github.com/introlab/rtabmap.git",
+    String $revision = "master",
 ) {
     
     if $raspberry_present == "yes" {

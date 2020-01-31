@@ -1,7 +1,23 @@
+# @summary
+#   Maverick_vision::Vision_landing class
+#   This class installs and manages the GoodRobots Vision_Landing software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @see https://github.com/goodrobots/vision_landing
+# 
+# @param active
+#   If true, start the vision_landing service and enable at boot time.
+# @param vision_landing_source
+#   The git repo to use to compile and install the vision_landing software.
+# @param vision_landing_revision
+#   The git branch/revision to use to compile and install the software.
+# 
 class maverick_vision::vision_landing (
-    $active = false,
-    $vision_landing_source = "https://github.com/goodrobots/vision_landing.git",
-    $vision_landing_revision = "master",
+    Boolean $active = false,
+    String $vision_landing_source = "https://github.com/goodrobots/vision_landing.git",
+    String $vision_landing_revision = "master",
 ) {
 
     # Ensure gstreamer resources are applied before this class

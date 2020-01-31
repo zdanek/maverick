@@ -1,17 +1,47 @@
+# @summary
+#   Maverick_vision class
+#   This class controls all other classes in maverick_vision module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param visiond
+#   If true, include the maverick_vision::visiond class which manages the Maverick visiond service.
+# @param gstreamer
+#   If true, include the maverick_vision::gstreamer class which installs/configures gstreamer software.
+# @param opencv
+#   If true, include the maverick_vision::opencv class which installs/configures OpenCV software.
+# @param visionlibs
+#   If true, include the maverick_vision::visionlibs class which installs/configures various supporting vision libraries.
+# @param mjpg_streamer
+#   If true, include the maverick_vision::mjpg_streamer class which installs/configures mjpg_streamer software.
+# @param aruco
+#   If true, include the maverick_vision::aruco class which installs/configures aruco software.
+# @param orb_slam2
+#   If true, include the maverick_vision::orb_slam2 class which installs/configures the orb/slam2 software.
+# @param vision_landing
+#   If true, include the maverick_vision::vision_landing class which installs/configures the vision_landing software.
+# @param vision_seek
+#   If true, include the maverick_vision::vision_seek class which installs/configures software for the seek thermal camera.
+# @param camera_manager
+#   If true, include the maverick_vision::collision_avoidance class which installs/configures the collission avoidance software.
+# @param rtabmap
+#   If true, include the maverick_vision::rtabmap class which installs/configures the rtabmap software.
+#
 class maverick_vision (
-    $visiond = true,
-    $gstreamer = true,
-    $opencv = true,
-    $visionlibs = true,
-    $openvino = true,
-    $mjpg_streamer = false,
-    $aruco = true,
-    $orb_slam2 = false,
-    $vision_landing = true,
-    $vision_seek = true,
-    $camera_manager = true,
-    $collision_avoidance = false,
-    $rtabmap = false,
+    Boolean $visiond = true,
+    Boolean $gstreamer = true,
+    Boolean $opencv = true,
+    Boolean $visionlibs = true,
+    Boolean $mjpg_streamer = false,
+    Boolean $aruco = true,
+    Boolean $orb_slam2 = false,
+    Boolean $vision_landing = true,
+    Boolean $vision_seek = true,
+    Boolean $camera_manager = true,
+    Boolean $collision_avoidance = false,
+    Boolean $rtabmap = false,
 ) {
 
     file { ["/srv/maverick/config/vision", "/srv/maverick/data/vision", "/srv/maverick/var/log/vision"]:
@@ -46,7 +76,7 @@ class maverick_vision (
     }
 
     if $mjpg_streamer == true  {
-        class { "maverick_vision::mjpg-streamer": }
+        class { "maverick_vision::mjpg_streamer": }
     }
 
     if $opencv == true {

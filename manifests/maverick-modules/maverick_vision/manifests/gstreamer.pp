@@ -1,7 +1,25 @@
+# @summary
+#   Maverick_vision::Gstreamer class
+#   This class installs and manages the Gstreamer library.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @note
+#   The custom Maverick gstreamer install should always be used by using gstreamer_installtype='source' parameter.
+#   There are various other components and configuration that now depend on this custom install.
+#
+# @param gstreamer_installtype
+#   Whether to install gstreamer through source code or native packages.
+# @param gstreamer_version
+#   Which git version to use to clone and compile/install
+# @param libx264
+#   If 'installed' then will be installed and used by the gstreamer compile.
+#
 class maverick_vision::gstreamer (
-    $gstreamer_installtype = "source",
-    $gstreamer_version = "1.16.2",
-    $libx264 = "installed",
+    Enum['source', 'native'] $gstreamer_installtype = "source",
+    String $gstreamer_version = "1.16.2",
+    Enum['installed', 'absent'] $libx264 = "installed",
 ) {
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
     if $gstreamer_installtype == "native" or $raspberry_present == "yes" or $tegra_present == "yes" {

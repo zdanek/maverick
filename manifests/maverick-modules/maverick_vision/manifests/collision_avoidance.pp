@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_vision::Collision_avoidance class
+#   This class installs and manages the Intel Collision Avoidance library.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param active
+#   If true, start the service and enable at boot time.
+# @param source
+#   Which Git repo to use to compile/install the software.
+# @param revision
+#   The git branch to use to compile the software.
+#
 class maverick_vision::collision_avoidance (
-    $source = "https://github.com/intel/collision-avoidance-library.git",
-    $revision = "master",
-    $active = false,
+    Boolean $active = false,
+    String $source = "https://github.com/intel/collision-avoidance-library.git",
+    String $revision = "master",
 ) {
     
     # Ensure package dependencies are installed

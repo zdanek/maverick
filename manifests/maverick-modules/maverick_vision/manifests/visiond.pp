@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_vision::Visiond class
+#   This class installs and manages the Maverick visiond software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param active
+#   If true, start the visiond service and enable at boot time.
+# @param rtsp_port
+#   Port number to listen on for RTSP stream requests - 5600 is the 'default' RTSP port
+# @param webvision_active
+#   If true, start the webvision service and enable at boot time.
+#
 class maverick_vision::visiond (
-    $active = true,
-    $rtsp_port = 5600,
-    $webvision_active = true,
+    Boolean $active = true,
+    Integer $rtsp_port = 5600,
+    Boolean $webvision_active = true,
 ) {
 
     # Setup standard packages for all platforms

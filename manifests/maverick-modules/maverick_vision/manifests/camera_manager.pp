@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_vision::Camera_manager class
+#   This class installs and manages the Intel CameraManager software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param active
+#   If true, start the service and enable at boot time.
+# @param gitsource
+#   Which Git repo to use to compile/install the software.
+# @param rtsp_port
+#   The port number to listen on for RTSP.
+#
 class maverick_vision::camera_manager (
-    $camera_manager_source = "https://github.com/Dronecode/camera-manager.git",
-    $rtsp_port = 8554,
-    $active = false,
+    Boolean $active = false,
+    String $gitsource = "https://github.com/Dronecode/camera-manager.git",
+    Integer $rtsp_port = 8554,
 ) {
 
     # Ensure gstreamer resources are applied before this class
@@ -10,7 +24,7 @@ class maverick_vision::camera_manager (
     if ! ("install_flag_camera-manager" in $installflags) {
         ensure_packages(["libavahi-common-dev", "libavahi-core-dev", "libavahi-glib-dev", "libavahi-client-dev"])
         oncevcsrepo { "git-camera-manager":
-            gitsource   => $camera_manager_source,
+            gitsource   => $gitsource,
             dest        => "/srv/maverick/var/build/camera-manager",
             submodules  => true,
         } ->

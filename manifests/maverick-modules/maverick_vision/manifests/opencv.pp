@@ -1,11 +1,33 @@
+# @summary
+#   Maverick_vision::Opencv class
+#   This class installs and manages the OpenCV software.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @param contrib
+#   If true, compile and install the opencv-contrib software.
+# @param opencv_version
+#   The version of OpenCV to clone, compile and install.
+# @param release
+#   Type of build - Release or Debug.
+# @param precompile_headers
+#   If true, will take a massive amount of disk space to compile, so set to false unless needed.
+# @param armv7l_optimize
+#   Compile options to optimise armv7l (Raspberry Pi 3/4) build.
+# @param opencv_dldt_version
+#   Which version of OpenVino DLDT to clone/compile/install.
+# @param openvino
+#   If true, install the OpenVino modules.
+#
 class maverick_vision::opencv (
-    $contrib = true,
-    $opencv_version = "4.2.0",
-    $release = "Release", # Release or Debug, OpenCV build type
-    $precompile_headers = false,
-    $armv7l_optimize = false,
-    $opencv_dldt_version = "2019",
-    $openvino = false,
+    Boolean $contrib = true,
+    String $opencv_version = "4.2.0",
+    Enum['Release', 'Debug'] $release = "Release",
+    Boolean $precompile_headers = false,
+    Boolean $armv7l_optimize = false,
+    String $opencv_dldt_version = "2019",
+    Boolean $openvino = false,
 ) {
     
     # Ensure gstreamer, tbb and openblas resources are applied before this class

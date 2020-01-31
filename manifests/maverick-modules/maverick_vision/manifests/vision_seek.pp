@@ -1,8 +1,26 @@
+# @summary
+#   Maverick_vision::Vision_seek class
+#   This class installs and manages software to support the Seek Thermal imagers.
+#
+# @example Declaring the class
+#   This class is included from maverick_vision class and should not be included from elsewhere
+#
+# @see https://github.com/fnoop/libseek-thermal.git
+# 
+# @param active
+#   If true, start the vision_seek service and enable at boot time.
+# @param libseek_thermal
+#   If true, install the libseek library that supports the seek thermal hardware.  Should always be true.
+# @param libseek_thermal_source
+#   Git repo to use to clone/compile/install libseek software.
+# @param libseek_thermal_revision
+#   Git branch/revision to use to clone/compile/install libseek software.
+# 
 class maverick_vision::vision_seek (
-    $active = false,
-    $libseek_thermal = true,
-    $libseek_thermal_source = "https://github.com/fnoop/libseek-thermal.git",
-    $libseek_thermal_revision = "master",
+    Boolean $active = false,
+    Boolean $libseek_thermal = true,
+    String $libseek_thermal_source = "https://github.com/fnoop/libseek-thermal.git",
+    String $libseek_thermal_revision = "master",
 ) {
     
     # Install libseek-thermal
