@@ -15,7 +15,7 @@
 class maverick_vision::visiond (
     Boolean $active = true,
     Integer $rtsp_port = 5600,
-    Boolean $webvision_active = true,
+    Boolean $webvision_active = false,
 ) {
 
     # Setup standard packages for all platforms
