@@ -147,7 +147,7 @@ class maverick_vision::gstreamer (
                 $_gobject_package = "python-gobject-dev"
             }
             # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev"])
+            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev", "libnice-dev"])
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
@@ -254,10 +254,10 @@ class maverick_vision::gstreamer (
                     user        => "mav",
                     timeout     => 0,
                     environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --disable-openexr --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_plugins_bad.configure.log 2>&1 && /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1 && /usr/bin/make install >>/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
                     creates     => "/srv/maverick/software/gstreamer/lib/libgstbadbase-1.0.so",
-                    require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"] ]
+                    require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"], Package["libnice-dev"], ]
                 }
             }
             exec { "gstreamer_gst_plugins_ugly":
@@ -298,6 +298,7 @@ class maverick_vision::gstreamer (
             } ->
             file { "/srv/maverick/var/build/.install_flag_gstreamer":
                 ensure      => present,
+                require     => Exec["gstreamer_gst_plugins_bad"],
             }
     
             # Install vaapi for Intel platform
