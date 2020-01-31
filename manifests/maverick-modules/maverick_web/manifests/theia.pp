@@ -1,8 +1,24 @@
+# @summary
+#   Maverick_web::Theia class
+#   This class installs and manages the Theia IDE.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, start the Theia service and enable at boot time.
+# @param webport
+#   TCP port to listen on for connection.
+# @param basepath
+#   The base path for Theia to present in filesystem explorer.
+# @param password
+#   Password to use for web connections.
+#
 class maverick_web::theia (
-    $active = true,
-    $webport = "6789",
-    $basepath = "/srv/maverick",
-    $password = "wingman",
+    Boolean $active = true,
+    Integer $webport = 6789,
+    String $basepath = "/srv/maverick",
+    String $password = "wingman",
 ) {
 
     ensure_packages(["libx11-dev", "libxkbfile-dev"])

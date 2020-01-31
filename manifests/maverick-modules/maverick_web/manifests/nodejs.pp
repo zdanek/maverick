@@ -1,5 +1,11 @@
-class maverick_web::nodejs (
-) {
+# @summary
+#   Maverick_web::Nodejs class
+#   This class installs and manages the NodeJS software.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+class maverick_web::nodejs {
     
     # Workaround for ubilinux
     if $::lsbdistid == "ubilinux" and $::lsbdistcodename == "dolcetto" {

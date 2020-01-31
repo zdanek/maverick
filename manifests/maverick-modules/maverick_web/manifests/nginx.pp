@@ -1,12 +1,36 @@
+# @summary
+#   Maverick_web::Nginx class
+#   This class installs and manages the Nginx webserver.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, start nginx service and enable at boot time.
+# @param port
+#   Unencrypted webserver port to listen on.  Default for web browsers is port 80.
+# @param ssl_port
+#   Encrypted webserver port to listen on.  Default for web browsers is port 443.
+# @param server_hostname
+#   Server FQDN to use to create default vhost.
+# @param downloads
+#   If true, activate a downloads web content.  This is useful to present large downloads to users.
+# @param downloads_dir
+#   Filesystem path to use to serve downloads.
+# @param downloads_location
+#   Web path for downloads.
+# @param www_root
+#   Filesystem root to serve legacy web content.
+#   
 class maverick_web::nginx (
-    $active = true,
-    $port,
-    $ssl_port,
-    $server_hostname = $maverick_web::server_fqdn,
-    $downloads = false,
-    $downloads_dir = "/var/www/html/maverick/downloads",
-    $downloads_location = "/maverick/downloads",
-    $www_root = '/srv/maverick/software/maverick-fcs/public',
+    Boolean $active = true,
+    Integer $port = 80,
+    Integer $ssl_port = 443,
+    String $server_hostname = $maverick_web::server_fqdn,
+    Boolean $downloads = false,
+    String $downloads_dir = "/var/www/html/maverick/downloads",
+    String $downloads_location = "/maverick/downloads",
+    String $www_root = '/srv/maverick/software/maverick-fcs/public',
 ) {
     if $active == true {
         $service_ensure = running

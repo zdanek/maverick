@@ -1,18 +1,55 @@
+# @summary
+#   Maverick_web class
+#   This class controls all other classes in maverick_web module.
+#
+# @example Declaring the class
+#   This class is included from the environment manifests and is not usually included elsewhere.
+#   It could be included selectively from eg. minimal environment.
+#
+# @param cloud9
+#   If true, include the maverick_web::cloud9 class which installs and manages the Cloud9 IDE software.
+# @param codeserver
+#   If true, include the maverick_web::codeserver class which installs and manages the Codeserver/VsCode IDE software.
+# @param theia
+#   If true, include the maverick_web::theia class which installs and manages the Theia IDE software.
+# @param nodejs
+#   If true, install NodeJS software.  Lots of other Maverick components depend on NodeJS, this should be true.
+# @param webserver
+#   If true, install, start and manage a Maverick webserver.  Lots of other Maverick components depend on NodeJS, this should be true.
+# @param webserver_type
+#   Apache or Nginx can be specified, but only Nginx is currently supported.
+# @param webserver_port
+#   Unencrypted webserver port to listen on.  Default for web browsers is port 80.
+# @param webserver_sslport
+#   Encrypted webserver port to listen on.  Default for web browsers is port 443.
+# @param maverick_docs
+#   If true, install Maverick documentation.
+# @param ssl
+#   If true, include maverick_web::ssl class which manages the SSL environment for web services.
+# @param maverick_web
+#   If true, include maverick_web::maverick_web class which installs and manages the Maverick-web software.
+# @param maverick_api
+#   If true, include maverick_web::maverick_api class which installs and manages the Maverick-api software.
+# @param fcs
+#   If true, include maverick_web::fcs class which manages the legacy FCS content.  This will be replaced with -web and -api in the future.
+# @param server_fqdn
+#   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
+#
 class maverick_web (
-    $cloud9 = false,
-    $codeserver = false,
-    $theia = false,
-    $nodejs = true,
-    $webserver = true,
-    $webserver_type = "nginx",
-    $webserver_port = 80,
-    $webserver_sslport = 443,
-    $maverick_docs = true,
-    $ssl = true,
-    $maverick_web = true,
-    $maverick_api = true,
-    $server_fqdn = $::fqdn,
-    $fcs = true,
+    Boolean $cloud9 = false,
+    Boolean $codeserver = false,
+    Boolean $theia = false,
+    Boolean $nodejs = true,
+    Boolean $webserver = true,
+    Enum['nginx', 'apache'] $webserver_type = "nginx",
+    Integer $webserver_port = 80,
+    Integer $webserver_sslport = 443,
+    Boolean $maverick_docs = true,
+    Boolean $ssl = true,
+    Boolean $maverick_web = true,
+    Boolean $maverick_api = true,
+    Boolean $fcs = true,
+    String $server_fqdn = $::fqdn,
 ) {
     
     if $fcs == true {

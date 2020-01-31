@@ -1,12 +1,37 @@
+# @summary
+#   This function creates a maverick-api instance.  It is typically called by modules that also create mavlink proxy and rosmaster instances.
+#
+# @example
+#   @@maverick_web::api { $instance_name:
+#       ...
+#   }
+#
+# @param active
+#   If true, start the maverick-api@[xxx] service and enable at boot time.
+# @param instance
+#   Name of the -api instance.  This must be unique.
+# @param apiport
+#   TCP port for the api to listen on.
+# @param rosport
+#   ROS rosmaster port for -api instance to connect to.
+# @param server_hostname
+#   Webserver vhost to use for reverse proxy.
+# @param devmode
+#   If true, activate -api development mode.
+# @param debug
+#   If true, activet -api debug mode.
+# @param replaceconfig
+#   If true, fully manage the -api config and overwrite with values from parameters set here.
+#
 define maverick_web::api (
-    $instance = "fc",
-    $active = true,
-    $apiport = 6800,
-    $rosport = 11311,
-    $server_hostname = $maverick_web::server_fqdn,
-    $devmode = false,
-    $debug = false,
-    $replaceconfig = true,
+    Boolean $active = true,
+    String $instance = "fc",
+    Integer $apiport = 6800,
+    Integer $rosport = 11311,
+    String $server_hostname = $maverick_web::server_fqdn,
+    Boolean $devmode = false,
+    Boolean $debug = false,
+    Boolean $replaceconfig = true,
 ) {
     # This class creates an instance of maverick-api.
     # The actual installation of the maverick-api and dependencies happens in maverick_web::maverick_api

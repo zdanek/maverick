@@ -1,11 +1,36 @@
+# @summary
+#   Maverick_web::Maverick_web class
+#   This class installs and manages the Maverick-web software.
+#
+# @see
+#   https://github.com/goodrobots/maverick-web
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, start service and enable at boot time.
+# @param webport
+#   The port to listen for connections.
+# @param webpath_dev
+#   The web path to use for the dev -web content.
+# @param webpath_prod
+#   The web path to use for the production -web content.
+# @param server_hostname
+#   Specify the webserver vhost to use.
+# @param auth_message
+#   If set, specify the message to use in web auth popup.
+# @param auth_file
+#   If set, specify the webserver auth file to use to authenticate incoming users.
+#
 class maverick_web::maverick_web (
-    $webport = 6794,
-    $active = false,
-    $webpath_dev = '/dev/maverick',
-    $webpath_prod = '/web/maverick',
-    $server_hostname = $maverick_web::server_fqdn,
-    $auth_message = undef,
-    $auth_file = undef,
+    Boolean $active = false,
+    Integer $webport = 6794,
+    String $webpath_dev = '/dev/maverick',
+    String $webpath_prod = '/web/maverick',
+    String $server_hostname = $maverick_web::server_fqdn,
+    Optional[String] $auth_message = undef,
+    Optional[String] $auth_file = undef,
 ) {
     
     # Install node dependency globally, easier cross-platform

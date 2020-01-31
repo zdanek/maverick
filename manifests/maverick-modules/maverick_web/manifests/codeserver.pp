@@ -1,11 +1,33 @@
+# @summary
+#   Maverick_web::Codeserver class
+#   This class installs and manages the Codeserver IDE.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, start codeserver service and enable at boot time.
+# @param webport
+#   TCP port to listen on.
+# @param basepath
+#   The base path for Codeserver to present in filesystem explorer.
+# @param password
+#   Set the password to be used for connections.
+# @param replace_password
+#   If true, the password file will be fully managed and overwritten with the password parameter set here.
+# @param vscode_version
+#   Version of cdr/vscode to compile and install.
+# @param build_type
+#   Type of codeserver build to compile - production or debug.
+#
 class maverick_web::codeserver (
-    $active = true,
-    $webport = "6789",
-    $basepath = "/srv/maverick",
-    $password = "wingman",
-    $replace_password = false,
-    $vscode_version = "1.41.1",
-    $build_type = "production",
+    Boolean $active = true,
+    Integer$webport = 6789,
+    String $basepath = "/srv/maverick",
+    STring $password = "wingman",
+    Boolean $replace_password = false,
+    String $vscode_version = "1.41.1",
+    String $build_type = "production",
 ) {
 
     file { [ "/srv/maverick/data/web/codeserver", "/srv/maverick/data/web/codeserver/User", "/srv/maverick/.vscode", "/srv/maverick/software/codeserver", "/etc/systemd/system/maverick-codeserver.service.d"]:

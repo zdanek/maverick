@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_web::Ssl class
+#   This class installs and manages the web SSL configuration.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
 class maverick_web::ssl (
     $cert_country = "US",
     $cert_state = "State of Being",

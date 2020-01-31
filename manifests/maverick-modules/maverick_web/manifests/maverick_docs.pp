@@ -1,7 +1,21 @@
+# @summary
+#   Maverick_web::Maverick_docs class
+#   This class installs and manages the Maverick documentation.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param server_hostname
+#   Specifies which webserver vhost to use for the documentation.  Should not be set in normal circumstances.
+# @param arudpilot_docs
+#   If true, compile and install the Ardupilot reference documentation.
+# @param px4_docs
+#   If true, compile and install the PX4 reference documentation.
+#
 class maverick_web::maverick_docs (
-    $server_hostname = $maverick_web::server_fqdn,
-    $ardupilot_docs = true,
-    $px4_docs = true,
+    String $server_hostname = $maverick_web::server_fqdn,
+    Boolean $ardupilot_docs = true,
+    Boolean $px4_docs = true,
 ) {
 
     file { "/srv/maverick/software/maverick-docs":

@@ -1,14 +1,30 @@
+# @summary
+#   Maverick_web::Cloud9 class
+#   This class installs and manages the Cloud9 IDE.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, start cloud9 service and enable at boot time.
+# @param webport
+#   TCP port for Cloud9 to listen on.
+# @param basepath
+#   The base path for Cloud9 to present in filesystem explorer.
+# @param cloud9_password
+#   Password to use for web connections.
+#
 class maverick_web::cloud9 (
-    $cloud9_active = false,
-    $webport = "6789",
-    $basepath = "/srv/maverick",
-    $cloud9_password = "wingman",
+    Boolean $active = false,
+    Integer $webport = 6789,
+    String $basepath = "/srv/maverick",
+    String $cloud9_password = "wingman",
 ) {
     if $cloud9_installed == "no" {
         warning("Cloud9 will be compiled and can take a long time, please be patient..")
     }
     
-    if $cloud9_active == true {
+    if $active == true {
         $_ensure = running
         $_enable = true
     } else {

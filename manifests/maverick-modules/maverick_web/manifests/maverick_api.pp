@@ -1,5 +1,14 @@
-class maverick_web::maverick_api (
-) {
+# @summary
+#   Maverick_web::Maverick_api class
+#   This class installs and manages the Maverick-api software.
+#
+# @see
+#   https://github.com/goodrobots/maverick-api
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+class maverick_web::maverick_api {
 
     # Install python components
 
