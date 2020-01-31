@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_security::firewall class
+#   This class installs and manages the network firewall.
+#
+# @example Declaring the class
+#   This class is included from maverick_security class and should not be included from elsewhere
+#
+# @param $cronupdate
+#   If true, this sets up an hourly system cron job that updates the firewall.  This is useful if using dynamic dns, to refresh updated IP addresses.
+#
 class maverick_security::firewall (
-        $cronupdate = false,
+        Boolean $cronupdate = false,
     ) {
     
     ### Purge any existing iptables rules

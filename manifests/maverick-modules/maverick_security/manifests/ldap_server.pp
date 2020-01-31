@@ -1,15 +1,27 @@
+# @summary
+#   Maverick_security::ldap_server class
+#   This class installs and manages an LDAP server.
+#
+# @example Declaring the class
+#   This class is included from maverick_security class and should not be included from elsewhere
+#
+# @param $server_type
+#   Type of LDAP server software - currently only openldap is supported
+# @param base
+#   Base DN
+# @param roothash
+#   Root hashed password.  Create sha hashes here: http://www.mytecbits.com/tools/cryptography/sha2generator
+#   
 class maverick_security::ldap_server (
-    $server_type = "openldap",
-    $base = "dc=maverick,dc=one",
-    # Create sha hashes here: http://www.mytecbits.com/tools/cryptography/sha2generator
-    $roothash = "{SHA512}8dba3660197daf7642b9eaeaf77ef817ae9471f3b3d672bfb4fd94100dd5801cd9c990dd64938822e17643b8810cd31ee0ae87b9370884a7d880cfbc5307a573", # youcanbemywingman
-    $cert_country = "US",
-    $cert_state = "State of Being",
-    $cert_locality = "Moving frequently",
-    $cert_orgname = "Maverick",
-    $cert_orgunit = "Robots",
-    $cert_cname = "slapd",
-    $server_fqdn = $::fqdn,
+    String $server_type = "openldap",
+    String $base = "dc=maverick,dc=one",
+    String $roothash = "{SHA512}8dba3660197daf7642b9eaeaf77ef817ae9471f3b3d672bfb4fd94100dd5801cd9c990dd64938822e17643b8810cd31ee0ae87b9370884a7d880cfbc5307a573", # youcanbemywingman
+    String $cert_country = "US",
+    String $cert_state = "State of Being",
+    String $cert_locality = "Moving frequently",
+    String $cert_orgname = "Maverick",
+    String $cert_orgunit = "Robots",
+    String $cert_cname = "slapd",
 ) {
     
     # Retrieve CA passphrase for signing

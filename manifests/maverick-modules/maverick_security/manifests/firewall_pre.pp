@@ -1,3 +1,10 @@
+# @summary
+#   Maverick_security::firewall_pre class
+#   This class declares pre-firewall rules
+#
+# @example Declaring the class
+#   This class is included from maverick_security::firewall class and should not be included from elsewhere
+#
 class maverick_security::firewall_pre {
 
     Firewall {

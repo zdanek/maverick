@@ -1,6 +1,18 @@
+# @summary
+#   Maverick_security::scanners class
+#   This class installs and manages security scanners.
+#
+# @example Declaring the class
+#   This class is included from maverick_security class and should not be included from elsewhere
+#
+# @param rkhunter
+#   If true, setup and activate rkhunter, a rootkit hunter.  This monitors the filesystem and process table for changes and suspicious processes.
+# @param clamav
+#   If true, setup and run clamav.  Note that clamav can take a reasonable amount of resources.
+# 
 class maverick_security::scanners (
-    $rkhunter = false,
-    $clamav = false,
+    Boolean $rkhunter = false,
+    Boolean $clamav = false,
     ) {
 
     if $rkhunter == true {

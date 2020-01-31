@@ -1,5 +1,15 @@
+# @summary
+#   Maverick_security::ldap_client class
+#   This class configures an ldap client
+#
+# @example Declaring the class
+#   This class is included from maverick_security class and should not be included from elsewhere
+#
+# @param base
+#   Set the LDAP base DN
+#
 class maverick_security::ldap_client (
-    $base="dc=maverick,dc=one",
+    String $base="dc=maverick,dc=one",
 ) {
     
     class { 'openldap::client':

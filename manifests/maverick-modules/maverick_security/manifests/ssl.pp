@@ -1,12 +1,36 @@
+# @summary
+#   Maverick_security::Ssl class
+#   This class installs and manages the Maverick SSL environment.
+#
+# @example Declaring the class
+#   This class is included from maverick_security class and should not be included from elsewhere
+#
+# @param create_ca
+#   If true, create and configure a central Maverick Certificate Authority, which can sign other SSL certificates.
+# @param ca_passphrase
+#   Passphrase used to protect access to the CA.
+# @param ca_country
+#   Country field used when creating CA.
+# @param ca_state
+#   State field used when creating CA.
+# @param ca_locality
+#   Locality field used when creating CA.
+# @param ca_orgname
+#   Organisation Name field used when creating CA.
+# @param ca_orgunit
+#   Organisation Unit field used when creating CA.
+# @param ca_cname
+#   Canonical Name field used when creating CA.
+# 
 class maverick_security::ssl (
-    $create_ca = true,
-    $ca_passphrase = "iceman",
-    $ca_country = "US",
-    $ca_state = "State of Being",
-    $ca_locality = "Moving frequently",
-    $ca_orgname = "Maverick CA",
-    $ca_orgunit = "Security",
-    $ca_cname = "MaverickCA ${::hostname}",
+    Boolean $create_ca = true,
+    String $ca_passphrase = "iceman",
+    String $ca_country = "US",
+    String $ca_state = "State of Being",
+    String $ca_locality = "Moving frequently",
+    String $ca_orgname = "Maverick CA",
+    String $ca_orgunit = "Security",
+    String $ca_cname = "MaverickCA ${::hostname}",
 ) {
 
     class { "openssl": }
