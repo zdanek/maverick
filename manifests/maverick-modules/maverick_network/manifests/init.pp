@@ -32,7 +32,8 @@
 #   If true, include maverick_network::timesync class which manages the various timesync services.
 # @param wifibroadcast
 #   If true, include maverick_network::wifibc class which manages wifibroadcast software.
-#
+# @param interfaces
+#   Defines network interfaces
 class maverick_network (
     Boolean $netman = false,
     Boolean $predictable = false,
@@ -45,6 +46,7 @@ class maverick_network (
     Boolean $zerotier = true,
     Boolean $timesync = true,
     Boolean $wifibroadcast = true,
+    Hash    $interfaces = {},
     ) {
 
     # Create status.d directory for maverick status`
@@ -320,7 +322,6 @@ class maverick_network (
     }
     
     # Retrieve defined interfaces and process
-    $interfaces = lookup("maverick_network::interfaces", {merge => hash})
     if $interfaces {
         concat { "/etc/udev/rules.d/10-network-customnames.rules":
             ensure      => present,
