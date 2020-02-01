@@ -5,7 +5,7 @@
 # @example Declaring the class
 #   This class is included from maverick_security class and should not be included from elsewhere
 #
-# @param $server_type
+# @param server_type
 #   Type of LDAP server software - currently only openldap is supported
 # @param base
 #   Base DN
