@@ -24,7 +24,7 @@ class maverick_web::codeserver (
     Boolean $active = true,
     Integer$webport = 6789,
     String $basepath = "/srv/maverick",
-    STring $password = "wingman",
+    String $password = "wingman",
     Boolean $replace_password = false,
     String $vscode_version = "1.41.1",
     String $build_type = "production",
