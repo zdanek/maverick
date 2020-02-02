@@ -318,20 +318,20 @@ class ProcessLog(ProcessEvent):
                         link += "<td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
                         link += "<td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
                         link += "<td>"
-                        link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                        link += "<a href='/analysis/grafana/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
                         link += "&nbsp;"
-                        link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                        link += "<a href='/analysis/grafana/dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
                         link += "</td>"
                         if row[4] == 1:
-                            link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
                         else:
                             link += "<td></td>"
                         if row[5] == 1:
-                            link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
                         else:
                             link += "<td></td>"
                         if row[6] == 1:
-                            link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
                         else:
                             link += "<td></td>"
                         try:
@@ -398,13 +398,13 @@ class ProcessLog(ProcessEvent):
                     todt=str(int(error['time']) + 30000)
                     link = "<tr><td>"+error['text']+"</td><td>"+datetime.datetime.fromtimestamp(int(error['time'])/1000).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
                     link += "<td>"
-                    link += "<a href='dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                    link += "<a href='/analysis/grafana/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
                     link += "&nbsp;"
-                    link += "<a href='dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                    link += "<a href='/analysis/grafana/dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
                     link += "</td>"
-                    link += "<td><a href='dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
-                    link += "<td><a href='dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
-                    link += "<td><a href='dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
                     link += "</tr>"
                     error_entries.append(link)
                 # If dates are in old format, skip entry
