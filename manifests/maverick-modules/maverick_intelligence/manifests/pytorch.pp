@@ -15,15 +15,19 @@ class maverick_intelligence::pytorch (
     $source_version = "1.4",
 ) {
 
-    install_python_module { "pytorch-torch":
-        pkgname     => 'torch',
-        ensure      => present,
-        timeout     => 0,
-    } ->
-    install_python_module { "pytorch-torchvision":
-        pkgname     => 'torchvision',
-        ensure      => present,
-        timeout     => 0,
+    if $::architecture == "amd64" {
+        install_python_module { "pytorch-torch":
+            pkgname     => 'torch',
+            ensure      => present,
+            timeout     => 0,
+        } ->
+        install_python_module { "pytorch-torchvision":
+            pkgname     => 'torchvision',
+            ensure      => present,
+            timeout     => 0,
+        }
+    } else {
+        notice("Pytorch only supported on x86_64/amd64 platform for now.")
     }
 
 }
