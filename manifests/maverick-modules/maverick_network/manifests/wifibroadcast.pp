@@ -83,7 +83,7 @@ class maverick_network::wifibroadcast (
                 command     => "/bin/cp /srv/maverick/var/build/wifibc/wfb_[rt]x /srv/maverick/var/build/wifibc/wfb_keygen /srv/maverick/software/wifibc/bin",
                 creates     => "/srv/maverick/software/wifibc/bin/keygen",
                 user        => "mav",
-                before      => [ Exec["wifibc-genkeys"], Exec["setcaps-wifibc_tx"] ],
+                before      => [ Exec["wifibc-genkeys"], Exec["setcaps-wifibc_tx"], Exec["setcaps-wifibc_rx"], ],
             } ->
             file { "/srv/maverick/var/build/.install_flag_wifibc":
                 ensure      => present,
@@ -96,7 +96,7 @@ class maverick_network::wifibroadcast (
         exec { "setcaps-wifibc_tx":
             command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/wfb_tx",
             unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/wfb_tx |/bin/grep cap_net_admin",
-        }
+        } ->
         exec { "setcaps-wifibc_rx":
             command     => "/sbin/setcap cap_net_raw,cap_net_admin=eip /srv/maverick/software/wifibc/bin/wfb_rx",
             unless      => "/sbin/getcap /srv/maverick/software/wifibc/bin/wfb_rx |/bin/grep cap_net_admin",
