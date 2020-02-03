@@ -54,6 +54,7 @@ class base::python (
                 creates     => "/srv/maverick/software/python/bin/python3",
                 user        => "mav",
                 timeout     => 0,
+                before      => File["/srv/maverick/software/python/bin/python"],
             } ->
             exec { "python-pip-upgrade":
                 cwd         => "/srv/maverick/software/python",
@@ -78,10 +79,6 @@ class base::python (
             target  => "/srv/maverick/software/python/bin/python3",
         }
 
-        # Remove the pip binary from custom python, it interferes with system python2
-        file { "/srv/maverick/software/python/bin/pip":
-            ensure  => absent,
-        }
     }
 
     # Install python using python module
