@@ -23,11 +23,11 @@
 	// "maverick_fc::mavros_active": true, // Whether Mavros for fc is active or not - requires fc rosmaster to be active
 
 	// Dev SITL mavlink setup - note this requires dev environment to be active
-	// "maverick_dev::sitl::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
-	// "maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
-	// "maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
-	// "maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
-	// "maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	// "maverick_dev::apsitl_dev::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
+	// "maverick_dev::apsitl_dev::sitl_active": true, // Whether SITL is active or not
+	// "maverick_dev::apsitl_dev::mavlink_active": true, // Whether mavlink proxy is active or not
+	// "maverick_dev::apsitl_dev::rosmaster_active": true, // Whether ROS master for sitl is active or not
+	// "maverick_dev::apsitl_dev::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
 	// "maverick_intelligence::redtail": true,
 	// "maverick_mavlink::mavcesium_active": true,

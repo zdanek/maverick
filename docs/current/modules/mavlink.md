@@ -56,12 +56,12 @@ These parameters have to be set in the class/module creating the proxy instance,
 ```
 For Ardupilot SITL, the localconf parameters would be:
 ```puppet
-"maverick_dev::sitl::mavlink_proxy": "mavlink-router",
-"maverick_dev::sitl::mavlink_startingtcp": 5780,
-"maverick_dev::sitl::mavlink_tcpports": 3,
-"maverick_dev::sitl::mavlink_startingudp": 14580,
-"maverick_dev::sitl::mavlink_udpports": 3,
-"maverick_dev::sitl::mavlink_udpinports": 3,
+"maverick_dev::apsitl_dev::mavlink_proxy": "mavlink-router",
+"maverick_dev::apsitl_dev::mavlink_startingtcp": 5780,
+"maverick_dev::apsitl_dev::mavlink_tcpports": 3,
+"maverick_dev::apsitl_dev::mavlink_startingudp": 14580,
+"maverick_dev::apsitl_dev::mavlink_udpports": 3,
+"maverick_dev::apsitl_dev::mavlink_udpinports": 3,
 ```
 For PX4 SITL, the localconf parameters would be:
 ```puppet
