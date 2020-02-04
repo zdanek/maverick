@@ -1,11 +1,18 @@
 // These are defaults for the dev environment.
 {
 	// Turn SITL services on for dev mode
-	"maverick_dev::sitl::sitl_active": true, // Whether SITL is active or not
-	"maverick_dev::sitl::mavlink_active": true, // Whether mavlink proxy is active or not
-	"maverick_dev::sitl::rosmaster_active": true, // Whether ROS master for sitl is active or not
-	"maverick_dev::sitl::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	"maverick_dev::apsitl_dev::sitl_active": true, // Whether SITL is active or not
+	"maverick_dev::apsitl_dev::mavlink_active": true, // Whether mavlink proxy is active or not
+	"maverick_dev::apsitl_dev::rosmaster_active": true, // Whether ROS master for sitl is active or not
+	"maverick_dev::apsitl_dev::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	"maverick_dev::apsitl_dev::api_active": true,
 
+	// Turn FC services on for flight mode
+	"maverick_fc::mavlink_active": false,
+	"maverick_fc::rosmaster_active": false,
+	"maverick_fc::mavros_active": false,
+	"maverick_fc::api_active": false,
+	
 	"classes": [
 		"base",
 		"maverick_security",

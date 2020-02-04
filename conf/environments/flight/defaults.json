@@ -1,10 +1,22 @@
 // These are defaults for the flight environment.
 {
 	// Turn SITL services off for flight mode
-	"maverick_dev::sitl::sitl_active": false, // Whether SITL is active or not
-	"maverick_dev::sitl::mavlink_active": false, // Whether mavlink proxy is active or not
-	"maverick_dev::sitl::rosmaster_active": false, // Whether ROS master for sitl is active or not
-	"maverick_dev::sitl::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	"maverick_dev::apsitl_dev::sitl_active": false, // Whether SITL is active or not
+	"maverick_dev::apsitl_dev::mavlink_active": false, // Whether mavlink proxy is active or not
+	"maverick_dev::apsitl_dev::rosmaster_active": false, // Whether ROS master for sitl is active or not
+	"maverick_dev::apsitl_dev::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
+	"maverick_dev::apsitl_dev::api_active": false,
+
+	// Turn FC services on for flight mode
+	"maverick_fc::mavlink_active": true,
+	"maverick_fc::rosmaster_active": true,
+	"maverick_fc::mavros_active": true,
+	"maverick_fc::api_active": true,
+
+	// Turn off IDEs
+	"maverick_web::cloud9::active": false,
+	"maverick_web::codeserver::active": false,
+	"maverick_web::theia::active": false,
 
 	"classes": [
 		"base",
