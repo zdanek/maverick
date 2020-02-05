@@ -21,9 +21,14 @@ class maverick_vision::gstreamer (
     String $gstreamer_version = "1.16.2",
     Enum['installed', 'absent'] $libx264 = "installed",
 ) {
+    install_python_module { "pip-websockets":
+        pkgname     => "websockets",
+        ensure      => present,
+    }
+
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
     if $gstreamer_installtype == "native" or $raspberry_present == "yes" or $tegra_present == "yes" {
-        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "python-gi"])
+        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "gstreamer1.0-nice", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-gst-plugins-bad-1.0", "gir1.2-gst-plugins-good-1.0", "gir1.2-gst-plugins-ugly-1.0", "python-gi"])
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
             package { "gir1.2-clutter-gst-3.0":
                 ensure => present,
@@ -137,6 +142,13 @@ class maverick_vision::gstreamer (
         */
         $libpython_path = "/srv/maverick/software/python/lib"
 
+        ensure_packages(["libgirepository1.0-dev"])
+        install_python_module { "pip-pygobject":
+            pkgname     => "PyGObject",
+            ensure      => present,
+            require     => Package["libgirepository1.0-dev"],
+        }
+
         # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
         if ! ("install_flag_gstreamer" in $installflags) {
             
@@ -147,7 +159,7 @@ class maverick_vision::gstreamer (
                 $_gobject_package = "python-gobject-dev"
             }
             # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "libgirepository1.0-dev", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev", "libnice-dev"])
+            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev", "libnice-dev"])
             package { ["libx264-dev"]:
                 ensure      => $libx264,
             } ->
@@ -388,6 +400,12 @@ class maverick_vision::gstreamer (
             owner       => "root",
             group       => "root",
             content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/python3.7/site-packages"; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+        }
+        file { "/etc/profile.d/50-maverick-gstreamer-typelibpath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/girepository-1.0"; if [ -n "${GI_TYPELIB_PATH##*${NEWPATH}}" -a -n "${GI_TYPELIB_PATH##*${NEWPATH}:*}" ]; then export GI_TYPELIB_PATH=$NEWPATH:$GI_TYPELIB_PATH; fi',
         }
         file { "/etc/profile.d/50-maverick-gstreamer-ldlibrarypath.sh":
             ensure      => absent,
