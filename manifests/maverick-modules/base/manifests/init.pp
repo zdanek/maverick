@@ -46,11 +46,16 @@ class base {
     ### Setup base system users
     class { "base::users":
         stage	=> "bootstrap",
-        require		=> Class["base::defaults", "base::locale"],
+        require	=> Class["base::defaults", "base::locale"],
     }
     
     ### Setup base maverick environment
     class { "base::maverick":
+        stage   => "bootstrap",
+        require => Class["base::defaults", "base::locale"],
+    }
+
+    class { "base::sudoers":
         stage   => "bootstrap",
         require => Class["base::defaults", "base::locale"],
     }

@@ -79,4 +79,5 @@ class maverick_security (
 	if $disable_services == true {
 		class { "maverick_security::disable_services": }
 	}
+
 }
