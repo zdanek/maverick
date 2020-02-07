@@ -518,8 +518,8 @@ class App():
             self.pipeline = Gst.parse_launch(self.config['pipeline_override'])
             # Set pipeline to playing
             self.pipeline.set_state(Gst.State.PLAYING)
-        except:
-            raise ValueError('Error constructing manual pipeline specified')
+        except Exception as e:
+            raise ValueError('Error constructing manual pipeline specified: {}'.format(repr(e)))
         while True:
             time.sleep(5)
 
@@ -679,7 +679,7 @@ class App():
         if vd == None:
             vd = self.vd
         else:
-            vd = open(vd, 'rw')
+            vd = io.TextIOWrapper(open(vd, "r+b", buffering=0))
         input = v4l2.v4l2_input(index)
         try:
             ioctl(vd, v4l2.VIDIOC_ENUMINPUT, input)
@@ -698,6 +698,7 @@ class App():
         available = False
         try:
             while (ioctl(self.vd, v4l2.VIDIOC_ENUM_FMT, capture) >= 0):
+                logger.debug("Format: {} : {}".format(format, capture.description.decode()))
                 if format.lower() == "h264":
                     if re.search('H264', capture.description.decode().lower()) or re.search('H.264', capture.description.decode().lower()):
                         available = True
