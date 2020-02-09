@@ -9,13 +9,10 @@
 #   If true, start the visiond service and enable at boot time.
 # @param rtsp_port
 #   Port number to listen on for RTSP stream requests - 5600 is the 'default' RTSP port
-# @param webvision_active
-#   If true, start the webvision service and enable at boot time.
 #
 class maverick_vision::visiond (
     Boolean $active = true,
     Integer $rtsp_port = 5600,
-    Boolean $webvision_active = false,
 ) {
 
     # Setup standard packages for all platforms
@@ -29,12 +26,13 @@ class maverick_vision::visiond (
         timeout     => 0,
     }
 
-    # Link maverick-visiond into central bin directory
-    file { "/srv/maverick/software/maverick/bin/maverick-visiond":
-        ensure      => link,
-        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_vision/files/maverick-visiond",
-    }
-    file { "/srv/maverick/config/vision/maverick-visiond.conf":
+    # Pull visiond repo
+    oncevcsrepo { "git-visiond":
+        gitsource   => "https://github.com/goodrobots/visiond.git",
+        dest        => "/srv/maverick/software/visiond",
+    } ->
+    
+    file { "/srv/maverick/config/vision/visiond.conf":
         ensure      => present,
         owner       => "mav",
         group       => "mav",
@@ -96,45 +94,23 @@ class maverick_vision::visiond (
         }
     }
     
-    if defined(Class["::maverick_web"]) {
-        # Add a temporary service to run web vision
-        file { "/etc/systemd/system/maverick-webvision.service":
-            ensure          => present,
-            mode            => "644",
-            owner           => "mav",
-            group           => "mav",
-            source          => "puppet:///modules/maverick_vision/maverick-webvision.service",
-            notify          => Exec["maverick-systemctl-daemon-reload"],
-        } ->
-        nginx::resource::location { "web-webvision":
-            location    => "/vision/webvision/",
-            proxy       => 'http://localhost:6793/',
-            server      => getvar("maverick_web::server_fqdn"),
-            require     => [ Class["maverick_web::fcs"], Class["nginx"], ],
-        }
-
-        if $webvision_active == true {
-            service { "maverick-webvision":
-                ensure          => running,
-                enable          => true,
-                require         => Exec["maverick-systemctl-daemon-reload"],
-            }
-        } else {
-            service { "maverick-webvision":
-                ensure          => stopped,
-                enable          => false,
-                require         => Exec["maverick-systemctl-daemon-reload"],
-            }
-        }
-    }
-    
     # status.d entry
     file { "/srv/maverick/software/maverick/bin/status.d/123.vision/101.visiond.status":
         owner   => "mav",
         content => "visiond,Vision Service\n",
     }
+
+    # Remove legacy webvision service
+    service { "maverick-webvision":
+        ensure          => stopped,
+        enable          => false,
+        require         => Exec["maverick-systemctl-daemon-reload"],
+    } ->
+    file { "/etc/systemd/system/maverick-webvision.service":
+        ensure          => absent,
+    } ->
     file { "/srv/maverick/software/maverick/bin/status.d/123.vision/107.webvision.status":
-        owner   => "mav",
-        content => "webvision,Web Vision\n",
+        ensure          => absent,
     }
+
 }
