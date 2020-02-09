@@ -6,7 +6,7 @@ StartLimitBurst=3
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/srv/maverick/software/visiond/visiond -c /srv/maverick/config/vision/visiond.conf
+ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/visiond/visiond -c /srv/maverick/config/vision/visiond.conf
 User=mav
 Restart=on-failure
 RestartSec=30
