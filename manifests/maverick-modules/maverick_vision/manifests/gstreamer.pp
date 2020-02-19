@@ -369,43 +369,44 @@ class maverick_vision::gstreamer (
             }
     	}
 	
-        # Export local typelib for gobject introspection
-        file { "/etc/profile.d/50-maverick-gi-typelibs.sh":
-            ensure      => present,
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0"; if [ -n "${GI_TYPELIB_PATH##*${NEWPATH}}" -a -n "${GI_TYPELIB_PATH##*${NEWPATH}:*}" ]; then export GI_TYPELIB_PATH=$NEWPATH:$GI_TYPELIB_PATH; fi',
-        }
-
         # Set profile scripts for custom gstreamer location
         file { "/etc/profile.d/50-maverick-gstreamer-path.sh":
             mode        => "644",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/bin"; export PATH=${PATH:-${NEWPATH}}; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
         file { "/etc/profile.d/50-maverick-gstreamer-pkgconfig.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
         }
         file { "/etc/profile.d/50-maverick-gstreamer-plugins.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/gstreamer-1.0"; if [ -n "${GST_PLUGIN_PATH##*${NEWPATH}}" -a -n "${GST_PLUGIN_PATH##*${NEWPATH}:*}" ]; then export GST_PLUGIN_PATH=$NEWPATH:$GST_PLUGIN_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/gstreamer-1.0"; export GST_PLUGIN_PATH=${GST_PLUGIN_PATH:-${NEWPATH}}; if [ -n "${GST_PLUGIN_PATH##*${NEWPATH}}" -a -n "${GST_PLUGIN_PATH##*${NEWPATH}:*}" ]; then export GST_PLUGIN_PATH=$NEWPATH:$GST_PLUGIN_PATH; fi',
         }
         file { "/etc/profile.d/50-maverick-gstreamer-pythonpath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/python3.7/site-packages"; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/python3.7/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
         }
+        file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer"; export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-${NEWPATH}}; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
+        }
+        # Export local typelib for gobject introspection
         file { "/etc/profile.d/50-maverick-gstreamer-typelibpath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/girepository-1.0"; if [ -n "${GI_TYPELIB_PATH##*${NEWPATH}}" -a -n "${GI_TYPELIB_PATH##*${NEWPATH}:*}" ]; then export GI_TYPELIB_PATH=$NEWPATH:$GI_TYPELIB_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/girepository-1.0:/usr/lib/girepository-1.0"; export GI_TYPELIB_PATH=${GI_TYPELIB_PATH:-${NEWPATH}}; if [ -n "${GI_TYPELIB_PATH##*${NEWPATH}}" -a -n "${GI_TYPELIB_PATH##*${NEWPATH}:*}" ]; then export GI_TYPELIB_PATH=$NEWPATH:$GI_TYPELIB_PATH; fi',
+        }
+        file { "/etc/profile.d/50-maverick-gi-typelibs.sh":
+            ensure      => absent,
         }
         file { "/etc/profile.d/50-maverick-gstreamer-ldlibrarypath.sh":
             ensure      => absent,
@@ -416,16 +417,7 @@ class maverick_vision::gstreamer (
             group       => "root",
             content     => "/srv/maverick/software/gstreamer/lib",
             notify      => Exec["maverick-ldconfig"],
-        } ->
-        file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
         }
-
-        # Create a blank exec as a resource for other manifests to use as a dependency
-        # exec { "gstreamer-installed": }
     }
     
 }

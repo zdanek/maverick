@@ -92,7 +92,7 @@ class maverick_vision::vision_seek (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libseek-thermal/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/libseek-thermal/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
         }
     }
 

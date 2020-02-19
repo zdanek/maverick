@@ -71,7 +71,7 @@ class base::python (
             owner   => "root",
             group   => "root",
             mode    => "0644",
-            content => 'NEWPATH="/srv/maverick/software/python/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
+            content => 'NEWPATH="/srv/maverick/software/python/bin"; export PATH=${PATH:-${NEWPATH}}; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
 
         # Add a 'python' symlink to python3, to satisfy all those scripts that invoke python in their hashbang

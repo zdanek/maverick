@@ -88,31 +88,31 @@ class maverick_hardware::peripheral::realsense (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2"; export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-${NEWPATH}}; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
         }
         file { "/etc/profile.d/70-maverick-realsense-sdk2-path.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/bin"; export PATH=${PATH:-${NEWPATH}}; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
         }
         file { "/etc/profile.d/70-maverick-realsense-sdk2-pkgconfig.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
         }
         file { "/etc/profile.d/70-maverick-realsense-sdk2-ldlibrarypath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
         }
         file { "/etc/profile.d/70-maverick-realsense-sdk2-pythonpath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/realsense-sdk2/lib"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
         }
         file { "/etc/ld.so.conf.d/maverick-realsense-sdk2.conf":
             mode        => "644",

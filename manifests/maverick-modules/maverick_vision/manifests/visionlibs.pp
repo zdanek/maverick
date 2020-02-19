@@ -89,19 +89,19 @@ class maverick_vision::visionlibs (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/tbb/include"; if [ -n "${CPATH##*${NEWPATH}}" -a -n "${CPATH##*${NEWPATH}:*}" ]; then export CPATH=$NEWPATH:$CPATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/tbb/include"; export CPATH=${CPATH:-${NEWPATH}}; if [ -n "${CPATH##*${NEWPATH}}" -a -n "${CPATH##*${NEWPATH}:*}" ]; then export CPATH=$NEWPATH:$CPATH; fi',
         } ->
         file { "/etc/profile.d/50-maverick-tbb-librarypath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; if [ -n "${LIBRARY_PATH##*${NEWPATH}}" -a -n "${LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LIBRARY_PATH=$NEWPATH:$LIBRARY_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; export LIBRARY_PATH=${LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LIBRARY_PATH##*${NEWPATH}}" -a -n "${LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LIBRARY_PATH=$NEWPATH:$LIBRARY_PATH; fi',
         } ->
         file { "/etc/profile.d/50-maverick-tbb-ldlibrarypath.sh":
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/tbb/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
         }
         file { "/etc/profile.d/50-maverick-tbb-paths.sh":
             ensure      => absent,

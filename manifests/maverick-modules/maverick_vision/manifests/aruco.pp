@@ -67,13 +67,19 @@ class maverick_vision::aruco (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => 'NEWPATH="/srv/maverick/software/aruco/bin"; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
+        content     => 'NEWPATH="/srv/maverick/software/aruco/bin"; export PATH=${PATH:-${NEWPATH}}; if [ -n "${PATH##*${NEWPATH}}" -a -n "${PATH##*${NEWPATH}:*}" ]; then export PATH=$NEWPATH:$PATH; fi',
     } ->
     file { "/etc/profile.d/60-maverick-aruco-pkgconfig.sh":
         mode        => "644",
         owner       => "root",
         group       => "root",
-        content     => 'NEWPATH="/srv/maverick/software/aruco/lib/pkgconfig"; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+        content     => 'NEWPATH="/srv/maverick/software/aruco/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+    } ->
+    file { "/etc/profile.d/60-maverick-aruco-cmake.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/aruco"; export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-${NEWPATH}}; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-aruco-ldlibrarypath.sh":
         ensure      => absent,
@@ -84,12 +90,6 @@ class maverick_vision::aruco (
         group       => "root",
         content     => "/srv/maverick/software/aruco/lib",
         notify      => Exec["maverick-ldconfig"],
-    } ->
-    file { "/etc/profile.d/60-maverick-aruco-cmake.sh":
-        mode        => "644",
-        owner       => "root",
-        group       => "root",
-        content     => 'NEWPATH="/srv/maverick/software/aruco"; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
     }
 
 }
