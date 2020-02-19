@@ -40,6 +40,9 @@ class base::locale (
     }
 
     # Set the timezone using systemd
+    package { "tzdata":
+        ensure      => installed,
+    } ->
     exec { "tz-systemd":
         command     => "/usr/bin/timedatectl set-timezone ${timezone}",
         unless      => "/bin/grep '${timezone}' /etc/timezone",
