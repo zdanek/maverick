@@ -292,6 +292,10 @@ if [ "$SELFUPDATE" == "true" ]; then
         if [ $EUID -eq 0 ]; then
             echo -n "Updating maverick: "
             su mav -c "cd /srv/maverick/software/maverick; git pull origin"
+            if [ -d "/srv/maverick/software/visiond" ]; then
+                echo -n "Updating visiond: "
+                su mav -c "cd /srv/maverick/software/visiond; git pull origin"
+            fi
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 echo -n "Updating maverick-fcs: "
                 su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
@@ -311,6 +315,10 @@ if [ "$SELFUPDATE" == "true" ]; then
         elif [ $USER == "mav" ]; then
             echo -n "Updating maverick: "
             cd /srv/maverick/software/maverick; git pull origin;
+            if [ -d "/srv/maverick/software/visiond" ]; then
+                echo -n "Updating visiond: "
+                cd /srv/maverick/software/visiond; git pull origin;
+            fi
             if [ -d "/srv/maverick/software/maverick-fcs" ]; then
                 echo -n "Updating maverick-fcs: "
                 cd /srv/maverick/software/maverick-fcs; git pull origin;
