@@ -11,17 +11,12 @@
 	// "wifi_passphrase":	false, // unencrypted wifi passphrase, strongly recommended to use psk below instead
 	// "wifi_psk": 		"averylonggeneratedkey", // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
 
-	// Note a fallback generic eth0 and wlan0 config is always created in addition to these settings
-	/*
-	"maverick_network::interfaces": {
-        "wman0": {
-            "type": "wireless",
-            "macaddress": "00:c2:c6:e2:45:xx", // put your wifi mac address here, can be obtained from 'maverick netinfo'
-            "ssid": "",
-            "psk": "" // must be encrypted psk created using 'wpa_passphrase MySSID MyPassphrase'
+    "maverick_network::interfaces": {
+        "eth0": {},
+        "wlan0": {
+            "type": "wireless"
         }
-	},
-	*/
+    },
 	
 	"maverick_analysis::influx::active": false,
 	"maverick_analysis::collect::active": false,
