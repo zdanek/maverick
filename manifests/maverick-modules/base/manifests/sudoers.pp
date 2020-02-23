@@ -8,12 +8,16 @@
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere
 #
-class base::sudoers {
+# @param mav_sudopass
+#   If mav sudo should ask for password or not
+#
+class base::sudoers (
+  Boolean $mav_sudopass = false,
+) {
 
   class { '::sudo':
     purge               => false,
     config_file_replace => false,
-    #ldap_enable         => true,
   }
 
   sudo::conf { 'mav-services-start':
@@ -39,6 +43,25 @@ class base::sudoers {
   sudo::conf { 'mav-services-disable':
     priority => 10,
     content  => 'mav ALL=(root) NOPASSWD: /bin/systemctl disable maverick-*',
+  }
+
+  # If mav_sudopass is true, require a password for all sudo calls
+  if $mav_sudopass == false {
+      file { "/etc/sudoers.d/mav":
+          content 	=> "mav ALL=(ALL) NOPASSWD: ALL",
+          ensure		=> present,
+          owner		=> "root",
+          group		=> "root",
+          mode		=> "644",
+      }
+  } else {
+      file { "/etc/sudoers.d/mav":
+          content 	=> "mav ALL=(ALL) ALL",
+          ensure		=> present,
+          owner		=> "root",
+          group		=> "root",
+          mode		=> "644",
+      }
   }
 
 }
