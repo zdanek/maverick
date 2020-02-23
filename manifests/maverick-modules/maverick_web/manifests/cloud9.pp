@@ -15,7 +15,7 @@
 #   Password to use for web connections.
 #
 class maverick_web::cloud9 (
-    Boolean $active = false,
+    Boolean $active = true,
     Integer $webport = 6789,
     String $basepath = "/srv/maverick",
     String $cloud9_password = "wingman",
