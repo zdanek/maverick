@@ -30,7 +30,7 @@ class maverick_web::nginx (
     Boolean $downloads = false,
     String $downloads_dir = "/var/www/html/maverick/downloads",
     String $downloads_location = "/maverick/downloads",
-    String $www_root = '/srv/maverick/software/maverick-fcs/public',
+    String $www_root = '/srv/maverick/software/maverick-web-legacy/public',
 ) {
     if $active == true {
         $service_ensure = running
@@ -98,7 +98,7 @@ class maverick_web::nginx (
         ssl_cert    => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.crt",
         ssl_key     => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.key",
         www_root    => $www_root,
-        require     => [ Class["maverick_web::fcs"], ],
+        require     => [ Class["maverick_web::maverick_web_legacy"], ],
         notify      => Service["maverick-nginx"],
     }
     
@@ -109,7 +109,7 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => $server_hostname,
-        require         => [ Class["maverick_web::fcs"], Service["nginx"] ],
+        require         => [ Class["maverick_web::maverick_web_legacy"], Service["nginx"] ],
         notify          => Service["maverick-nginx"],
     }
 
@@ -122,7 +122,7 @@ class maverick_web::nginx (
             location_alias  => $downloads_dir,
             index_files     => [],
             server          => $server_hostname,
-            require         => [ Class["maverick_web::fcs"], Class["nginx"], Service["nginx"] ],
+            require         => [ Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["nginx"] ],
         }
     }
     

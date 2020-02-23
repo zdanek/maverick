@@ -30,8 +30,8 @@
 #   If true, include maverick_web::maverick_web class which installs and manages the Maverick-web software.
 # @param maverick_api
 #   If true, include maverick_web::maverick_api class which installs and manages the Maverick-api software.
-# @param fcs
-#   If true, include maverick_web::fcs class which manages the legacy FCS content.  This will be replaced with -web and -api in the future.
+# @param maverick_web_legacy
+#   If true, include maverick_web::maverick_web_legacy class which manages the legacy web content.  This will be replaced with -web and -api in the future.
 # @param server_fqdn
 #   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
 #
@@ -48,12 +48,12 @@ class maverick_web (
     Boolean $ssl = true,
     Boolean $maverick_web = true,
     Boolean $maverick_api = true,
-    Boolean $fcs = true,
+    Boolean $maverick_web_legacy = true,
     String $server_fqdn = $::fqdn,
 ) {
     
-    if $fcs == true {
-        class { "maverick_web::fcs": }
+    if $maverick_web_legacy == true {
+        class { "maverick_web::maverick_web_legacy": }
     }
 
     # Create status.d directory for maverick status`

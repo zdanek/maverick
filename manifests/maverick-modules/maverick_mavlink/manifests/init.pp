@@ -342,7 +342,7 @@ class maverick_mavlink (
                 location    => "/mavlink/mavcesium/",
                 proxy       => "http://127.0.0.1:${mavcesium_port}/mavlink/mavcesium/",
                 server      => getvar("maverick_web::server_fqdn"),
-                require     => [ Class["maverick_web::fcs"], Service["maverick-nginx"] ],
+                require     => [ Class["maverick_web::maverick_web_legacy"], Service["maverick-nginx"] ],
             }
         }
 
