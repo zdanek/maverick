@@ -296,9 +296,9 @@ if [ "$SELFUPDATE" == "true" ]; then
                 echo -n "Updating visiond: "
                 su mav -c "cd /srv/maverick/software/visiond; git pull origin"
             fi
-            if [ -d "/srv/maverick/software/maverick-fcs" ]; then
-                echo -n "Updating maverick-fcs: "
-                su mav -c "cd /srv/maverick/software/maverick-fcs; git pull origin"
+            if [ -d "/srv/maverick/software/maverick-web-legacy" ]; then
+                echo -n "Updating maverick-web-legacy: "
+                su mav -c "cd /srv/maverick/software/maverick-web-legacy; git pull origin"
             fi
             if [ -d "/srv/maverick/code/maverick-web" ]; then
                 echo -n "Updating maverick-webdev: "
@@ -319,9 +319,9 @@ if [ "$SELFUPDATE" == "true" ]; then
                 echo -n "Updating visiond: "
                 cd /srv/maverick/software/visiond; git pull origin;
             fi
-            if [ -d "/srv/maverick/software/maverick-fcs" ]; then
-                echo -n "Updating maverick-fcs: "
-                cd /srv/maverick/software/maverick-fcs; git pull origin;
+            if [ -d "/srv/maverick/software/maverick-web-legacy" ]; then
+                echo -n "Updating maverick-web-legacy: "
+                cd /srv/maverick/software/maverick-web-legacy; git pull origin;
             fi
             if [ -d "/srv/maverick/code/maverick-web" ]; then
                 echo -n "Updating maverick-webdev: "
