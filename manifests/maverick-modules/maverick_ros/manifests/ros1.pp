@@ -321,7 +321,7 @@ class maverick_ros::ros1 (
         
         if $module_mavros == true {
             if ! ("install_flag_ros_mavros" in $installflags) {
-                package { ["liburdfdom-dev", "liburdfdom-headers-dev", "libtf2-bullet-dev", "libbondcpp-dev"]:
+                package { ["liburdfdom-dev", "liburdfdom-headers-dev", "libtf2-bullet-dev", "libbondcpp-dev", "geographiclib-tools", "python-sip-dev"]:
                     ensure => installed,
                 } ->
                 file { ["/srv/maverick/var/build/catkin_ws_mavros", "/srv/maverick/var/build/catkin_ws_mavros/src"]:
@@ -345,14 +345,16 @@ class maverick_ros::ros1 (
                 exec { "ros-mavros-rosinstall_mavlink":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} mavlink >/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} mavlink tf tf2 actionlib >/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                 } ->
                 exec { "ros-mavros-rosinstall_mavros":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
                     #command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development mavros dynamic_reconfigure mavros_extras bullet tf tf2 angles uuid_msgs geographic_msgs mavros_msgs test_mavros sensor_msgs control_msgs control_toolbox realtime_tools python_orocos_kdl rosconsole_bridge urdf >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
-                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development --deps mavros mavros_extras mavros_msgs >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    #command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development mavlink control_toolbox urdf eigen_conversions diagnostic_updater diagnostic_msgs geometry_msgs nav_msgs sensor_msgs geographic_msgs visualization_msgs tf tf2_eigen >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    #command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream-development --deps mavros mavros_extras mavros_msgs >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} --upstream mavros >>/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                     unless      => "/bin/grep mavros mavros.rosinstall",
                 } ->
                 exec { "ros-mavros-wstool-merge":
@@ -369,16 +371,19 @@ class maverick_ros::ros1 (
                 } ->
                 # Install mavros geographiclib dependencies
                 exec { "mavros_geoinstall":
-                    command         => "/bin/bash /srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros/scripts/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
-                    creates         => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
+                    command     => "/bin/bash /srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros/scripts/install_geographiclib_datasets.sh >/srv/maverick/var/log/build/ros.mavros_geoinstall.out 2>&1",
+                    creates     => "/usr/share/GeographicLib/geoids/egm96-5.pgm",
+                    require     => Package["geographiclib-tools"],
                 } ->
-                package { "python-sip-dev": 
-                    ensure      => present,
+                exec { "ros-mavros-rosdep-install":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
+                    command     => "/usr/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y ${_osdistro} -r >/srv/maverick/var/log/build/mavros.rosdep.out 2>&1",
                 } ->
                 exec { "ros-mavros-catkin-build":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
+                    command     => "/usr/bin/catkin build --no-color -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release --mem-limit 50% -j2 -l2 >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros >/var/",
                     timeout     => 0,
                 } ->
