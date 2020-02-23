@@ -236,9 +236,11 @@ class maverick_network (
             enable      => false,
             require     => Class["maverick_network::wifibroadcast"],
         }
+        /*
         package { "network-manager":
             ensure      => absent, # remove but don't purge, so it can be restored later
         }
+        */
         # Reset resolv.conf to resolvconf
         file { "/etc/resolv.conf":
             ensure      => symlink,
