@@ -71,8 +71,9 @@
 	"maverick_vision::rtabmap": false,
 	
 	"maverick_web::nginx::active": false,
+
 	"maverick_web::cloud9": true,
-	"maverick_web::cloud9::cloud9_active": true,
+	"maverick_web::cloud9::active": false,
 	
 	// Add classes here
 	"classes":		[

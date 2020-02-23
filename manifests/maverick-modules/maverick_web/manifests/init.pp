@@ -36,7 +36,7 @@
 #   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
 #
 class maverick_web (
-    Boolean $cloud9 = false,
+    Boolean $cloud9 = true,
     Boolean $codeserver = false,
     Boolean $theia = false,
     Boolean $nodejs = true,
