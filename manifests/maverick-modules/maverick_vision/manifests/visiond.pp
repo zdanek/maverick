@@ -9,10 +9,13 @@
 #   If true, start the visiond service and enable at boot time.
 # @param rtsp_port
 #   Port number to listen on for RTSP stream requests - 5600 is the 'default' RTSP port
+# @param webrtc_port
+#   Port number to listen on for WebRTC Signalling and protocol negotiation
 #
 class maverick_vision::visiond (
     Boolean $active = true,
     Integer $rtsp_port = 5600,
+    Integer $webrtc_port = 8443,
 ) {
 
     # Setup standard packages for all platforms
@@ -75,13 +78,13 @@ class maverick_vision::visiond (
         }
         # Punch some holes in the firewall for rtsp
         if defined(Class["::maverick_security"]) {
-            maverick_security::firewall::firerule { "visiond-rtsp-udp":
-                ports       => [$rtsp_port],
+            maverick_security::firewall::firerule { "visiond-udp":
+                ports       => [$rtsp_port, $webrtc_port],
                 ips         => lookup("firewall_ips"),
                 proto       => "udp", # allow both tcp and udp for rtsp and rtp
             }
-            maverick_security::firewall::firerule { "visiond-rtsp-tcp":
-                ports       => [$rtsp_port],
+            maverick_security::firewall::firerule { "visiond-tcp":
+                ports       => [$rtsp_port, $webrtc_port],
                 ips         => lookup("firewall_ips"),
                 proto       => "tcp", # allow both tcp and udp for rtsp and rtp
             }
