@@ -27,8 +27,8 @@ class maverick_web::apache (
     } ->
     apache::vhost { $server_hostname:
         port        => $port,
-        docroot     => '/srv/maverick/software/maverick-fcs/public',
-        require     => Class["maverick_web::fcs"],
+        docroot     => '/srv/maverick/software/maverick-web-legacy/public',
+        require     => Class["maverick_web::maverick_web_legacy"],
     }
     
 }

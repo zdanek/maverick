@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/maverick-fcs/tornado/file_upload.py
+ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/maverick-web-legacy/tornado/file_upload.py
 User=mav
 TimeoutStartSec=20
 
