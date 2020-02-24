@@ -345,7 +345,7 @@ class maverick_ros::ros1 (
                 exec { "ros-mavros-rosinstall_mavlink":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} mavlink tf tf2 actionlib >/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} mavlink sensor_msgs tf2_ros tf urdf urdf_parser_plugin control_toolbox control_msgs dynamic_reconfigure realtime_tools >/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/mavros.rosinstall",
                 } ->
                 exec { "ros-mavros-rosinstall_mavros":
@@ -383,7 +383,8 @@ class maverick_ros::ros1 (
                 exec { "ros-mavros-catkin-build":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
-                    command     => "/usr/bin/catkin build --no-color -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release --mem-limit 50% -j2 -l2 >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
+                    environment => ["CMAKE_PREFIX_PATH=/opt/ros/current:/srv/maverick/software/realsense-sdk2:/srv/maverick/software/opencv"],
+                    command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -j2 -l2 >/srv/maverick/var/log/build/mavros-catkin-build.out 2>&1",
                     creates     => "/srv/maverick/var/build/catkin_ws_mavros/src/mavros/mavros >/var/",
                     timeout     => 0,
                 } ->
