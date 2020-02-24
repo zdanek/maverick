@@ -32,6 +32,8 @@ class maverick_web::nginx (
     String $downloads_location = "/maverick/downloads",
     String $www_root = '/srv/maverick/software/maverick-web-legacy/public',
 ) {
+    $ssl_location = getvar("maverick_web::ssl_location")
+
     if $active == true {
         $service_ensure = running
         $service_enable = true
@@ -95,8 +97,8 @@ class maverick_web::nginx (
         listen_port => $port,
         ssl         => true,
         ssl_port    => $ssl_port,
-        ssl_cert    => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.crt",
-        ssl_key     => "/srv/maverick/data/web/ssl/${server_hostname}-webssl.key",
+        ssl_cert    => "${ssl_location}/${server_hostname}-webssl.crt",
+        ssl_key     => "${ssl_location}/${server_hostname}-webssl.key",
         www_root    => $www_root,
         require     => [ Class["maverick_web::maverick_web_legacy"], ],
         notify      => Service["maverick-nginx"],
