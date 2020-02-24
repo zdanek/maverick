@@ -34,6 +34,8 @@
 #   If true, include maverick_web::maverick_web_legacy class which manages the legacy web content.  This will be replaced with -web and -api in the future.
 # @param server_fqdn
 #   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
+# @param ssl_location
+#   Location of SSL certificates for web services
 #
 class maverick_web (
     Boolean $cloud9 = true,
@@ -50,6 +52,7 @@ class maverick_web (
     Boolean $maverick_api = true,
     Boolean $maverick_web_legacy = true,
     String $server_fqdn = $::fqdn,
+    String $ssl_location = "/srv/maverick/data/security/ssl/web",
 ) {
     
     if $maverick_web_legacy == true {
