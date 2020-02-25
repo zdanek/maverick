@@ -69,6 +69,11 @@ class maverick_vision::visiond (
         mode        => "644",
         content     => "[Service]\nEnvironment=\"PATH=/srv/maverick/software/gstreamer/bin:/usr/sbin:/usr/bin:/sbin:/bin\""
     }
+    file { "/etc/systemd/system/maverick-visiond.service.d/openssl.conf":
+        ensure      => present,
+        mode        => "644",
+        content     => "[Service]\nEnvironment=\"OPENSSL_CONF=\"",
+    }
     
     if $active == true {
         service { "maverick-visiond":
