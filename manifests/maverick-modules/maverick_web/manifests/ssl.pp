@@ -58,6 +58,11 @@ class maverick_web::ssl (
         target      => "${ssl_location}/${cert_cname}-webssl.crt",
         owner       => "mav",
         group       => "mav",
+    } ->
+    # Reset all web ssl files to mav user - they are root because we need access to the CA cert to sign which is owned by root
+    exec { "web-ssl-ownerships":
+        command     => "/bin/chown -R mav:mav $ssl_location",
+        onlyif      => "/bin/ls -l $ssl_location |grep root",
     }
 
 }
