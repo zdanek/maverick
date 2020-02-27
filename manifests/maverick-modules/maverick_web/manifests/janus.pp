@@ -21,7 +21,7 @@ class maverick_web::janus (
     Integer $rtp_stream_port = 6797
 ) {
 
-    ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "libnice-dev", "libusrsctp-dev"])
+    ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "libnice-dev"])
 
     file { "/srv/maverick/config/web/janus":
         ensure      => directory,
