@@ -36,6 +36,8 @@
 #   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
 # @param ssl_location
 #   Location of SSL certificates for web services
+# @param janus
+#   If true, include maverick_web::janus class which installs and manages Janus WebRTC Gateway software
 #
 class maverick_web (
     Boolean $cloud9 = true,
@@ -53,6 +55,7 @@ class maverick_web (
     Boolean $maverick_web_legacy = true,
     String $server_fqdn = $::fqdn,
     String $ssl_location = "/srv/maverick/data/security/ssl/web",
+    Boolean $janus = true,
 ) {
     
     if $maverick_web_legacy == true {
@@ -140,5 +143,8 @@ class maverick_web (
     if $maverick_web == true {
         class { "maverick_web::maverick_web": }
     }
-    
+ 
+    if $janus == true {
+        class { "maverick_web::janus": }
+    }   
 }

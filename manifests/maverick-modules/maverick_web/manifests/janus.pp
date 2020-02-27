@@ -1,0 +1,139 @@
+# @summary
+#   Maverick_web::Janus class
+#   This class installs and manages the Janus WebRTC gateway.
+#
+# @example Declaring the class
+#   This class is included from maverick_web class and should not be included from elsewhere
+#
+# @param active
+#   If true, starts the maverick-webrtc service and enables at boot
+# @param http_port
+#   Port to listen on for http signalling requests
+# @param https_port
+#   Port to listen on for https signalling requests
+# @param rtp_stream_port
+#   UDP port to listen for rtp stream (from gstreamer)
+#
+class maverick_web::janus (
+    Boolean $active = true,
+    Integer $http_port = 6795,
+    Integer $https_port = 6796,
+    Integer $rtp_stream_port = 6797
+) {
+
+    ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "libnice-dev", "libusrsctp-dev"])
+
+    file { "/srv/maverick/config/web/janus":
+        ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0755",
+    }
+
+    if ! ("install_flag_janus" in $installflags) {
+        oncevcsrepo { "git-janus":
+            gitsource   => "https://github.com/meetecho/janus-gateway.git",
+            dest        => "/srv/maverick/var/build/janus-gateway",
+        } ->
+        exec { "janus-autogen":
+            command		=> "/srv/maverick/var/build/janus-gateway/autogen.sh >/srv/maverick/var/log/build/janus.autogen.log 2>&1",
+            cwd		    => "/srv/maverick/var/build/janus-gateway",
+            creates     => "/srv/maverick/var/build/janus-gateway/configure",
+            require     => [ Package['libsrtp2-dev'], Package["libnice-dev"], Package["libopus-dev"] ],
+            timeout		=> 0,
+            user        => "mav",
+        } ->
+        exec { "janus-configure":
+            command		=> "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway >/srv/maverick/var/log/build/janus.configure.log 2>&1",
+            cwd		    => "/srv/maverick/var/build/janus-gateway",
+            creates     => "/srv/maverick/var/build/janus-gateway/Makefile",
+            timeout		=> 0,
+            user        => "mav",
+        } ->
+        exec { "janus-build":
+            command		=> "/usr/bin/make >/srv/maverick/var/log/build/janus.build.log 2>&1",
+            cwd		    => "/srv/maverick/var/build/janus-gateway",
+            creates     => "/srv/maverick/var/build/janus-gateway/janus",
+            timeout		=> 0,
+            user        => "mav",
+        } ->
+        exec { "janus-install":
+            command		=> "/usr/bin/make install >/srv/maverick/var/log/build/janus.install.log 2>&1",
+            cwd		    => "/srv/maverick/var/build/janus-gateway",
+            creates     => "/srv/maverick/software/janus-gateway/bin/janus",
+            timeout		=> 0,
+            user        => "mav",
+        } ->
+        exec { "janus-install-config":
+            command		=> "/bin/bash -c 'for f in *.sample; do cp \$f /srv/maverick/config/web/janus/\${f%.*}; done;' >/srv/maverick/var/log/build/janus.install-config.log 2>&1",
+            cwd		    => "/srv/maverick/software/janus-gateway/etc/janus",
+            creates     => "/srv/maverick/software/janus-gateway/etc/janus/janus.jcfg",
+            timeout		=> 0,
+            user        => "mav",
+            require     => File["/srv/maverick/config/web/janus"],
+            before      => File["/srv/maverick/config/web/janus/janus.jcfg"],
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_janus":
+            ensure      => present,
+            owner       => "mav",
+            group       => "mav",
+        }
+    }
+    
+    file { "/srv/maverick/config/web/janus/janus.jcfg":
+        content     => template("maverick_web/janus.jcfg.erb"),
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0644",
+        notify      => Service["maverick-webrtc"],
+    } ->
+    file { "/srv/maverick/config/web/janus/janus.transport.http.jcfg":
+        content     => template("maverick_web/janus.transport.http.jcfg.erb"),
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0644",
+        notify      => Service["maverick-webrtc"],
+    } ->
+    file { "/srv/maverick/config/web/janus/janus.plugin.streaming.jcfg":
+        content     => template("maverick_web/janus.plugin.streaming.jcfg.erb"),
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0644",
+        notify      => Service["maverick-webrtc"],
+    }
+
+    # Control running service
+    if $active == true {
+        $_ensure = running
+        $_enable = true
+    } else {
+        $_ensure = stopped
+        $_enable = false
+    }
+    file { "/etc/systemd/system/maverick-webrtc.service":
+        content     => template("maverick_web/webrtc.service.erb"),
+        owner       => "root",
+        group       => "root",
+        mode        => "644",
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-webrtc"] ],
+    } ->
+    service { "maverick-webrtc":
+        ensure      => $_ensure,
+        enable      => $_enable,
+    }
+    
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "webrtc-http":
+            ports       => [$http_port, $https_port],
+            ips         => lookup("firewall_ips"),
+            proto       => "tcp"
+        }
+    }
+    
+    # status.d entry
+    file { "/srv/maverick/software/maverick/bin/status.d/120.web/111.webrtc.status":
+        owner   => "mav",
+        content => "webrtc,WebRTC Janus Gateway\n",
+    }
+
+}

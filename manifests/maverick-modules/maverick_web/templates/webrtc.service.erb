@@ -1,0 +1,13 @@
+[Unit]
+Description=WebRTC Janus Gateway
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/srv/maverick/software/janus-gateway/bin/janus --configs-folder=/srv/maverick/config/web/janus
+User=mav
+
+[Install]
+WantedBy=multi-user.target
+
