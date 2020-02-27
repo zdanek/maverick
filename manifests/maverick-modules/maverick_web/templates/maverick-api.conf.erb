@@ -7,6 +7,9 @@ app_secretkey = 'super_s3cret'
 # Base Directory, defaults to directory of maverick_api.py script if not set or None
 # basedir = None
 
+# Database backend - used to select the database backend [tinydb, mongo, sqlite]
+database_backend = "tinydb"
+
 # Data Directory
 datadir = '/srv/maverick/data/web/api/<%= @instance %>/'
 
@@ -24,3 +27,9 @@ server_interface = '0.0.0.0'
 
 # Port to listen on
 server_port = <%= @apiport %>
+
+# List of modules to allow loading. Takes precedence over deny list
+module_allow_list = []
+
+# List of modules to deny loading
+module_deny_list = ["mavros"]
