@@ -16,8 +16,10 @@
 #
 class maverick_web::janus (
     Boolean $active = true,
-    Integer $http_port = 6795,
-    Integer $https_port = 6796,
+    Boolean $http_transport = true,
+    Integer $https_port = 6795,
+    Boolean $websockets_transport = true,
+    Integer $websockets_port = 6796,
     Integer $rtp_stream_port = 6797
 ) {
 
@@ -94,6 +96,13 @@ class maverick_web::janus (
         mode        => "0644",
         notify      => Service["maverick-webrtc"],
     } ->
+    file { "/srv/maverick/config/web/janus/janus.transport.websockets.jcfg":
+        content     => template("maverick_web/janus.transport.websockets.jcfg.erb"),
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0644",
+        notify      => Service["maverick-webrtc"],
+    } ->
     file { "/srv/maverick/config/web/janus/janus.plugin.streaming.jcfg":
         content     => template("maverick_web/janus.plugin.streaming.jcfg.erb"),
         owner       => "mav",
@@ -124,7 +133,7 @@ class maverick_web::janus (
     
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "webrtc-http":
-            ports       => [$http_port, $https_port],
+            ports       => [$websockets_port, $https_port],
             ips         => lookup("firewall_ips"),
             proto       => "tcp"
         }
