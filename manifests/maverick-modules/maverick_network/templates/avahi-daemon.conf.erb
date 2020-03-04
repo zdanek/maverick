@@ -22,13 +22,13 @@
 host-name=<%= @hostname %>
 domain-name=local
 use-ipv4=yes
-use-ipv6=yes
+use-ipv6=no
 #allow-interfaces=eth0
-deny-interfaces=zt0,zt1
+deny-interfaces=zt0,zt1,lo
 #check-response-ttl=no
 #use-iff-running=no
 #enable-dbus=yes
-disallow-other-stacks=yes
+disallow-other-stacks=no
 #allow-point-to-point=no
 #cache-entries-max=4096
 #clients-max=4096
@@ -58,7 +58,7 @@ publish-addresses=yes
 publish-a-on-ipv6=yes
 
 [reflector]
-enable-reflector=yes
+enable-reflector=no
 #reflect-ipv=no
 
 [rlimits]
