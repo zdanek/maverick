@@ -13,6 +13,12 @@
 #   Port to listen on for https signalling requests
 # @param rtp_stream_port
 #   UDP port to listen for rtp stream (from gstreamer)
+# @param rtsp_stream_port
+#   RTSP port to connect to for stream (assumes localhost)
+# @param stream_type
+#   If set to "rtsp", this connects to an rtsp source (defined as rtsp://localhost:$rtsp_stream_port/video), for visiond in rtsp mode
+#   If set to "rtp", this 'listens' on a udp port for incoming rdp stream, for visiond in udp mode
+#   Recommended to set to "rtsp" mode, so other clients can share the connection
 #
 class maverick_web::janus (
     Boolean $active = true,
@@ -20,7 +26,9 @@ class maverick_web::janus (
     Integer $https_port = 6795,
     Boolean $websockets_transport = true,
     Integer $websockets_port = 6796,
-    Integer $rtp_stream_port = 6797
+    Integer $rtp_stream_port = 6797,
+    Integer $rtsp_stream_port = 5600,
+    String  $stream_type = "rtsp",
 ) {
 
     ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "libnice-dev"])

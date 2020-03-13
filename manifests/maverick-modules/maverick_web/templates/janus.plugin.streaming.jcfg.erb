@@ -1,3 +1,4 @@
+<% if @stream_type == "rtp" %>
 h264-stream: {
         type = "rtp"
         id = 1
@@ -11,6 +12,20 @@ h264-stream: {
         videobufferkf = true
         videofmtp = "profile-level-id=42e028;packetization-mode=1"
 }
+<% elsif  @stream_type == 'rtsp' %>
+rtsp-stream: {
+	type = "rtsp"
+	id = 1
+	description = "Maverick RTSP Source"
+	audio = false
+	video = true
+        videopt = 96
+        videortpmap = "H264/90000"
+        videobufferkf = true
+        videofmtp = "profile-level-id=42e028;packetization-mode=1"
+	url = "rtsp://127.0.0.1:<%= @rtsp_stream_port %>/video"
+}
+<% end %>
 
 # This is a sample configuration for an RTSP stream: you can specify
 # the url to connect to and whether or not authentication is needed
