@@ -33,9 +33,6 @@ class maverick_web::maverick_web (
     Optional[String] $auth_file = undef,
 ) {
     
-    # Install node dependency globally, easier cross-platform
-    ensure_packages(["phantomjs"])
-    
     # Install dev repo, register maverick-webdev service
     package { 'yarn':
         ensure   => latest,
@@ -57,9 +54,9 @@ class maverick_web::maverick_web (
         cwd         => "/srv/maverick/code/maverick-web",
         creates     => "/srv/maverick/code/maverick-web/node_modules/@vue",
         user        => "mav",
-        environment => ["QT_QPA_PLATFORM=offscreen"], # Fix to allow global phantomjs to run headless
+        #environment => ["QT_QPA_PLATFORM=offscreen"], # Fix to allow global phantomjs to run headless
         timeout     => 0,
-        require     => [ Package["phantomjs"], Class["maverick_web::nodejs"], Package["yarn"], ],
+        require     => [ Class["maverick_web::nodejs"], Package["yarn"], ],
     } ->
     file { "/etc/systemd/system/maverick-webdev.service":
         owner       => "root",
