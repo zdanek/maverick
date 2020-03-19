@@ -91,7 +91,7 @@ class maverick_web::maverick_web (
     
     # Install prod repo, register nginx location
     oncevcsrepo { "git-maverick-web-dist":
-        gitsource   => "https://github.com/goodrobots/maverick-web.git",
+        gitsource   => "https://github.com/goodrobots/maverick-web-dist.git",
         dest        => "/srv/maverick/software/maverick-web",
         revision    => "master",
         depth       => undef,
@@ -100,48 +100,13 @@ class maverick_web::maverick_web (
         location        => $webpath_prod,
         ensure          => present,
         ssl             => true,
-        location_alias  => "/srv/maverick/software/maverick-web/dist",
+        location_alias  => "/srv/maverick/software/maverick-web",
         index_files     => ["index.html"],
         server          => $server_hostname,
         auth_basic      => $auth_message,
         auth_basic_user_file => $auth_file,
         require         => [ Class["nginx"], Service["nginx"] ],
-    } ->
-    # Install -web dependencies
-    exec { 'maverick-web-install':
-        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
-        command     => "yarn install",
-        cwd         => "/srv/maverick/software/maverick-web",
-        creates     => "/srv/maverick/software/maverick-web/node_modules",
-        user        => "mav",
-        timeout     => 0,
-        require     => Package['yarn'],
-    } ->
-    # Build -web
-    exec { 'maverick-web-build':
-        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
-        command     => "yarn run build",
-        cwd         => "/srv/maverick/software/maverick-web",
-        creates     => "/srv/maverick/software/maverick-web/dist",
-        user        => "mav",
-        timeout     => 0,
     }
-    /*
-    nginx::resource::location { "maverick-web-prod-precache":
-        location    => "~ (index.html|service-worker.js)$",
-        raw_append  => [
-            "add_header Last-Modified \$date_gmt;",
-            "add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';",
-            "if_modified_since off;",
-            "expires off;",
-            "etag off;"
-        ],
-        index_files     => [],
-        server          => $server_hostname,
-        ssl             => true,
-        location_alias  => "/srv/maverick/software/maverick-web/",
-    }
-    */
 
     # Stop old web service if it exists
     service { 'maverick':
