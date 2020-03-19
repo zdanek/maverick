@@ -301,11 +301,11 @@ if [ "$SELFUPDATE" == "true" ]; then
                 su mav -c "cd /srv/maverick/software/maverick-web-legacy; git pull origin"
             fi
             if [ -d "/srv/maverick/code/maverick-web" ]; then
-                echo -n "Updating maverick-webdev: "
+                echo -n "Updating maverick-web: "
                 su mav -c "cd /srv/maverick/code/maverick-web; git pull origin"
             fi
             if [ -d "/srv/maverick/software/maverick-web" ]; then
-                echo -n "Updating maverick-web: "
+                echo -n "Updating maverick-web-dist: "
                 su mav -c "cd /srv/maverick/software/maverick-web; git pull origin"
             fi
             if [ -d "/srv/maverick/code/maverick-api" ]; then
@@ -324,11 +324,11 @@ if [ "$SELFUPDATE" == "true" ]; then
                 cd /srv/maverick/software/maverick-web-legacy; git pull origin;
             fi
             if [ -d "/srv/maverick/code/maverick-web" ]; then
-                echo -n "Updating maverick-webdev: "
+                echo -n "Updating maverick-web: "
                 cd /srv/maverick/code/maverick-web; git pull origin
             fi
             if [ -d "/srv/maverick/software/maverick-web" ]; then
-                echo -n "Updating maverick-web: "
+                echo -n "Updating maverick-web-dist: "
                 cd /srv/maverick/software/maverick-web; git pull origin
             fi
             if [ -d "/srv/maverick/code/maverick-api" ]; then
