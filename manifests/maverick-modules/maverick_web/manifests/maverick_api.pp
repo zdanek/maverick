@@ -18,18 +18,20 @@ class maverick_web::maverick_api {
         revision    => "master",
         depth       => undef,
     }
+    # Install psystemd pip dependency
+    ensure_packages(["libsystemd-dev"])
 
     # python::requirements isn't idempotent, so only run once on initial install
     if ! ("install_flag_apirequirements" in $installflags) {
         python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
             cwd             => "/srv/maverick/code/maverick-api",
             pip_provider    => "pip3",
-            environment     => ["PATH=/srv/maverick/software/python/bin:\$PATH"],
+            environment     => ["PATH=/srv/maverick/software/python/bin:/usr/bin:\$PATH"],
             timeout         => 0,
             forceupdate     => true,
             fix_requirements_owner => false,
             manage_requirements => false,
-            require         => Oncevcsrepo["git-maverick-api"],
+            require         => [ Oncevcsrepo["git-maverick-api"], Package["libsystemd-dev"] ],
             owner           => "mav",
             group           => "mav",
         } ->
