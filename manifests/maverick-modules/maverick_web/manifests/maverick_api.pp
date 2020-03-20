@@ -14,7 +14,7 @@ class maverick_web::maverick_api {
 
     oncevcsrepo { "git-maverick-api":
         gitsource   => "https://github.com/goodrobots/maverick-api.git",
-        dest        => "/srv/maverick/code/maverick-api",
+        dest        => "/srv/maverick/software/maverick-api",
         revision    => "master",
         depth       => undef,
     }
