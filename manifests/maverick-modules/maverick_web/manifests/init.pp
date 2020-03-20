@@ -30,6 +30,8 @@
 #   If true, include maverick_web::maverick_web class which installs and manages the Maverick-web software.
 # @param maverick_api
 #   If true, include maverick_web::maverick_api class which installs and manages the Maverick-api software.
+# @param maverick_discovery
+#   If true, include maverick_web::maverick_discovery class which installs and manages the Maverick-discovery software.
 # @param maverick_web_legacy
 #   If true, include maverick_web::maverick_web_legacy class which manages the legacy web content.  This will be replaced with -web and -api in the future.
 # @param server_fqdn
@@ -52,6 +54,7 @@ class maverick_web (
     Boolean $ssl = true,
     Boolean $maverick_web = true,
     Boolean $maverick_api = true,
+    Boolean $maverick_discovery = true,
     Boolean $maverick_web_legacy = true,
     String $server_fqdn = $::fqdn,
     String $ssl_location = "/srv/maverick/data/security/ssl/web",
@@ -134,6 +137,10 @@ class maverick_web (
     
     if $ssl == true {
         class { "maverick_web::ssl": }
+    }
+
+    if $maverick_discovery == true {
+        class { "maverick_web::maverick_discovery": }
     }
     
     if $maverick_api == true {
