@@ -308,9 +308,9 @@ if [ "$SELFUPDATE" == "true" ]; then
                 echo -n "Updating maverick-web-dist: "
                 su mav -c "cd /srv/maverick/software/maverick-web; git pull origin"
             fi
-            if [ -d "/srv/maverick/code/maverick-api" ]; then
+            if [ -d "/srv/maverick/software/maverick-api" ]; then
                 echo -n "Updating maverick-api: "
-                su mav -c "cd /srv/maverick/code/maverick-api; git pull origin"
+                su mav -c "cd /srv/maverick/software/maverick-api; git pull origin"
             fi
         elif [ $USER == "mav" ]; then
             echo -n "Updating maverick: "
@@ -331,9 +331,9 @@ if [ "$SELFUPDATE" == "true" ]; then
                 echo -n "Updating maverick-web-dist: "
                 cd /srv/maverick/software/maverick-web; git pull origin
             fi
-            if [ -d "/srv/maverick/code/maverick-api" ]; then
+            if [ -d "/srv/maverick/software/maverick-api" ]; then
                 echo -n "Updating maverick-api: "
-                cd /srv/maverick/code/maverick-api; git pull origin
+                cd /srv/maverick/software/maverick-api; git pull origin
             fi
         fi
         echo
