@@ -21,23 +21,40 @@ class maverick_web::maverick_api {
     # Install psystemd pip dependency
     ensure_packages(["libsystemd-dev"])
 
-    # python::requirements isn't idempotent, so only run once on initial install
-    if ! ("install_flag_apirequirements" in $installflags) {
-        python::requirements { "/srv/maverick/code/maverick-api/requirements.txt":
-            cwd             => "/srv/maverick/code/maverick-api",
-            pip_provider    => "pip3",
-            environment     => ["PATH=/srv/maverick/software/python/bin:/usr/bin:\$PATH"],
-            timeout         => 0,
-            forceupdate     => true,
-            fix_requirements_owner => false,
-            manage_requirements => false,
-            require         => [ Oncevcsrepo["git-maverick-api"], Package["libsystemd-dev"] ],
-            owner           => "mav",
-            group           => "mav",
-        } ->
-        file { "/srv/maverick/var/build/.install_flag_apirequirements":
-            ensure      => present,
-        }
+    install_python_module { "api-tornado":
+        pkgname     => "tornado",
+        ensure      => atleast,
+        version     => "6.0.3",
+    } ->
+    install_python_module { "api-graphql-core":
+        pkgname     => "graphql-core",
+        ensure      => atleast,
+        version     => "3.0.3",
+    } ->
+    install_python_module { "api-tinydb":
+        pkgname     => "tinydb",
+        ensure      => atleast,
+        version     => "3.15.2",
+    } ->
+    install_python_module { "api-jsoncomment":
+        pkgname     => "jsoncomment",
+        ensure      => atleast,
+        version     => "0.4.2",
+    } ->
+    install_python_module { "api-jsondiff":
+        pkgname     => "jsondiff",
+        ensure      => atleast,
+        version     => "1.2.0",
+    } ->
+    install_python_module { "api-psystemd":
+        pkgname     => "pystemd",
+        ensure      => atleast,
+        version     => "0.7.0",
+    } ->
+    install_python_module { "api-zeroconf":
+        pkgname     => "zeroconf",
+        ensure      => atleast,
+        version     => "0.24.5",
     }
 
     file { "/etc/systemd/system/maverick-api@.service":
