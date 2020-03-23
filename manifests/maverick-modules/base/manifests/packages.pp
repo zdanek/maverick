@@ -6,7 +6,27 @@
 # @example Declaring the class
 #   This class is included from base class and should not be included from elsewhere
 #
-class base::packages {
+# @param docker
+#   If false, disables and uninstalls docker, primarily to ensure it doesn't get in the way of network setup.  This will be improved in the future.
+#   If set to anything else (null, undefined, true), then no action will currently be taken.
+#
+class base::packages (
+    $docker = false,
+) {
+
+    if $docker == false {
+        service { "docker":
+            ensure      => stopped,
+            enable      => false,
+        } ->
+        package { "docker.io":
+            ensure      => absent,
+        } ->
+        exec { "docker-remove-interface":
+            command => "/sbin/ip link delete docker0",
+            onlyif  => "/sbin/ip a show dev docker0",
+        }
+    }
 
     # Remove some stuff that definitely doesn't belong in a robotics build
     package { ["kodi", "kodi-bin", "kodi-data", "libreoffice", "ubuntu-mate-libreoffice-draw-icons", "libreoffice-base-core", "libreoffice-common", "libreoffice-core"]:
