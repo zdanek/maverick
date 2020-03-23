@@ -40,8 +40,9 @@ class base::hostip (
     } else {
         $_host_aliases = [$_hostname]
     }
-    if ! empty(lookup("fqdn")) and lookup('fqdn') != $::fqdn {
+    if ! empty(lookup("fqdn")) {
         $_fqdn = lookup("fqdn")
+        $_use_fqdn = false
         $host_entries = {
             "${_fqdn}" => {
                 ip              => $_ipaddress,
@@ -50,6 +51,7 @@ class base::hostip (
         }
     } else {
         $_fqdn = $::fqdn
+        $_use_fqdn = true
         $host_entries = {}
     }
     # Merge in default ipv6 entries
@@ -64,7 +66,7 @@ class base::hostip (
     # Only update entry in /etc/hosts if we have all the data necessary
     if $_fqdn and $_ipaddress and $_hostname { 
         class { "::hosts":
-            use_fqdn            => true,
+            use_fqdn            => $_use_fqdn,
             purge_hosts         => true,
             localhost_aliases   => ["localhost"],
             localhost6_aliases  => ["localhost", "ip6-localhost", "ip6-loopback"],
