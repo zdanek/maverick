@@ -57,6 +57,14 @@ class maverick_web::maverick_discovery (
         }
     }
 
+    if defined(Class["::maverick_security"]) {
+        maverick_security::firewall::firerule { "maverick-discovery":
+            ports       => "1234",
+            ips         => lookup("firewall_ips"),
+            proto       => "tcp"
+        }
+    }
+
     # status.d entry
     file { "/srv/maverick/software/maverick/bin/status.d/120.web/110.discovery.status":
         owner   => "mav",
