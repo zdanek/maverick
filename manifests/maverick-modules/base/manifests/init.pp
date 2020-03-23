@@ -40,7 +40,7 @@ class base {
     ### Before we do anything, set our IP in /etc/hosts
     class { "base::hostip":
         stage   => "bootstrap",
-        require => Class["base::defaults", "base::locale", "base::puppet"],
+        require => Class["base::defaults", "base::locale", "base::puppet", "base::packages"],
     }
     
     ### Setup base system users
