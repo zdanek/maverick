@@ -54,7 +54,7 @@ class maverick_web::janus (
             user        => "mav",
         } ->
         exec { "janus-configure":
-            command		=> "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway >/srv/maverick/var/log/build/janus.configure.log 2>&1",
+            command		=> "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway --enable-websockets-event-handler >/srv/maverick/var/log/build/janus.configure.log 2>&1",
             cwd		    => "/srv/maverick/var/build/janus-gateway",
             creates     => "/srv/maverick/var/build/janus-gateway/Makefile",
             timeout		=> 0,
@@ -113,6 +113,13 @@ class maverick_web::janus (
     } ->
     file { "/srv/maverick/config/web/janus/janus.plugin.streaming.jcfg":
         content     => template("maverick_web/janus.plugin.streaming.jcfg.erb"),
+        owner       => "mav",
+        group       => "mav",
+        mode        => "0644",
+        notify      => Service["maverick-webrtc"],
+    } ->
+    file { "/srv/maverick/config/web/janus/janus.eventhandler.wsevh.jcfg":
+        content     => template("maverick_web/janus.eventhandler.wsevh.jcfg.erb"),
         owner       => "mav",
         group       => "mav",
         mode        => "0644",
