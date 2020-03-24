@@ -92,6 +92,7 @@ class maverick_web::maverick_api (
             devmode     => false,
             debug       => false,
             replaceconfig    => false,
+            config_template  => "maverick-api.system.conf.erb",
         }
         file { "/srv/maverick/software/maverick/bin/status.d/120.web/104.api.status":
             owner   => "mav",
