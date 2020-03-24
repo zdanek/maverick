@@ -8,7 +8,12 @@
 # @example Declaring the class
 #   This class is included from maverick_web class and should not be included from elsewhere
 #
-class maverick_web::maverick_api {
+# @param system_api
+#   If true (default), create the default maverick-only system -api instance.
+#
+class maverick_web::maverick_api (
+    $system_api = true,
+) {
 
     # Install python components
 
@@ -55,7 +60,7 @@ class maverick_web::maverick_api {
         pkgname     => "zeroconf",
         ensure      => atleast,
         version     => "0.24.5",
-    }
+    } ->
 
     file { "/etc/systemd/system/maverick-api@.service":
         owner       => "root",
@@ -69,13 +74,29 @@ class maverick_web::maverick_api {
     file { "/srv/maverick/software/maverick/bin/api.sh":
         ensure      => link,
         target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_web/files/api.sh",
-    }
-    
+    } ->
+
     file { "/srv/maverick/var/log/web/api":
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
         mode        => "755",
     }
-    
+
+    # Create an -api instance 
+    if $system_api == true {
+        maverick_web::api { "api-maverick":
+            instance    => "maverick",
+            active      => true,
+            apiport     => 6700,
+            devmode     => false,
+            debug       => false,
+            replaceconfig    => false,
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/120.web/104.api.status":
+            owner   => "mav",
+            content => "api@maverick,MavAPI (Maverick)\n",
+        }
+    }
+
 }
