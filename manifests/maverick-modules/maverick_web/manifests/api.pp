@@ -22,6 +22,8 @@
 #   If true, activet -api debug mode.
 # @param replaceconfig
 #   If true, fully manage the -api config and overwrite with values from parameters set here.
+# @param config_template
+#   Template file that is used to generate the -api config
 #
 define maverick_web::api (
     Boolean $active = true,
@@ -32,6 +34,7 @@ define maverick_web::api (
     Boolean $devmode = false,
     Boolean $debug = false,
     Boolean $replaceconfig = true,
+    String $config_template = "maverick-api.conf.erb",
 ) {
     # This class creates an instance of maverick-api.
     # The actual installation of the maverick-api and dependencies happens in maverick_web::maverick_api
@@ -56,7 +59,7 @@ define maverick_web::api (
         owner       => "mav",
         group       => "mav",
         mode        => "644",
-        content     => template("maverick_web/maverick-api.conf.erb"),
+        content     => template("maverick_web/${config_template}"),
         notify      => Service["maverick-api@${instance}"],
         replace     => $replaceconfig,
     } 
@@ -80,7 +83,7 @@ define maverick_web::api (
         location                => "/web/api/${instance}/",
         proxy                   => "http://localhost:${apiport}/",
         server                  => $server_hostname,
-        require                 => [ Class["maverick_web::maverick_api"], Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["nginx"] ],
+        require                 => [ File["/etc/systemd/system/maverick-api@.service"], Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["nginx"] ],
     	proxy_connect_timeout   => "7d",
     	proxy_read_timeout      => "7d",
         proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
