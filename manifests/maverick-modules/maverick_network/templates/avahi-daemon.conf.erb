@@ -19,12 +19,12 @@
 # file!
 
 [server]
-host-name=<%= @hostname %>
+host-name=<%= @_hostname %>
 domain-name=local
 use-ipv4=yes
 use-ipv6=no
 #allow-interfaces=eth0
-deny-interfaces=zt0,zt1,lo
+deny-interfaces=zt0,zt1,lo,docker0
 #check-response-ttl=no
 #use-iff-running=no
 #enable-dbus=yes
@@ -55,7 +55,8 @@ publish-addresses=yes
 #publish-dns-servers=192.168.50.1, 192.168.50.2
 #publish-resolv-conf-dns-servers=yes
 #publish-aaaa-on-ipv4=yes
-publish-a-on-ipv6=yes
+publish-a-on-ipv6=no
+publish-aaaa-on-ipv4=no
 
 [reflector]
 enable-reflector=no

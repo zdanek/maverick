@@ -11,7 +11,19 @@
 class maverick_network::avahi (
     Boolean $explicit_naming = false,
 ) {
-    
+
+    # Lookup/set hostname and ipaddress    
+    if ! empty(lookup("primaryip")) {
+        $_ipaddress = lookup("primaryip")
+    } else {
+        $_ipaddress = $::ipaddress
+    }
+    if ! empty(lookup("hostname")) {
+        $_hostname = lookup("hostname")
+    } else {
+        $_hostname = $::hostname
+    }
+
     ensure_packages(["avahi-daemon", "avahi-utils"])
     package { ["avahi-autoipd", "avahi-dnsconfd"]:
         ensure      => purged,
@@ -40,6 +52,12 @@ class maverick_network::avahi (
     concat::fragment { "avahi-hosts-main":
         target      => "/etc/avahi/hosts",
         content     => "# Avahi hosts is controlled by Maverick/Puppet, any modifications will be overridden on the next configure run",
+    }
+
+    # Add a static mapping for our hostname
+    concat::fragment { "avahi-hosts-ourip":
+        target      => "/etc/avahi/hosts",
+        content     => "${_ipaddress}   ${hostname}.local",
     }
 
     # Allow udp port 5353 for mdns requests
