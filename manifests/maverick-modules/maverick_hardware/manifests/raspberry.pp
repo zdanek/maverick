@@ -21,7 +21,7 @@
 #   Should be set to false to disable the console on the hardware serial port, so it can be used for flight controller link.
 # @param serialoverride
 #   If true, move the serial link back to the more reliable hardware pins.  This gives better high speed serial link.
-# @param camera
+# @param camera
 #   If true, install raspberry picam support.
 # @param xgl
 #   If true, Add X GL support.  Only needed if using 3D desktop functions.
@@ -158,10 +158,10 @@ class maverick_hardware::raspberry (
         value       => 1,
     }
     # If this is a RPi 3, disable the onboard bluetooth and reassign the GPIO UART to uart0 which is more reliable
-    if ($raspberry_model == "3 Model B+" or $raspberry_model == "3 Model B" or $raspberry_model == "Zero W") and $serialoverride == true {
+    if ($raspberry_model == "4 Model B" or $raspberry_model == "3 Model B+" or $raspberry_model == "3 Model B" or $raspberry_model == "Zero W") and $serialoverride == true {
         confline { "rpi3-uartoverlay":
             file        => "/boot/config.txt",
-            line        => "dtoverlay=pi3-disable-bt",
+            line        => "dtoverlay=disable-bt",
         }
         service { "hciuart":
             enable      => false,
