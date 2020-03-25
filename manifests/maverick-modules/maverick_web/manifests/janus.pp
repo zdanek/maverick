@@ -81,7 +81,7 @@ class maverick_web::janus (
             timeout		=> 0,
             user        => "mav",
             require     => File["/srv/maverick/config/web/janus"],
-            before      => File["/srv/maverick/config/web/janus/janus.jcfg"],
+            before      => [ File["/srv/maverick/config/web/janus/janus.jcfg"], File["/srv/maverick/config/web/janus/janus.eventhandler.sampleevh.jcfg"], ],
         } ->
         file { "/srv/maverick/var/build/.install_flag_janus":
             ensure      => present,
@@ -124,6 +124,11 @@ class maverick_web::janus (
         group       => "mav",
         mode        => "0644",
         notify      => Service["maverick-webrtc"],
+    } ->
+
+    # Remove unwanted config
+    file { ["/srv/maverick/config/web/janus/janus.eventhandler.sampleevh.jcfg", "/srv/maverick/config/web/janus/janus.plugin.audiobridge.jcfg", "/srv/maverick/config/web/janus/janus.plugin.echotest.jcfg", "/srv/maverick/config/web/janus/janus.plugin.recordplay.jcfg", "/srv/maverick/config/web/janus/janus.plugin.textroom.jcfg", "/srv/maverick/config/web/janus/janus.plugin.videocall.jcfg", "/srv/maverick/config/web/janus/janus.plugin.videoroom.jcfg", "/srv/maverick/config/web/janus/janus.plugin.voicemail.jcfg", "/srv/maverick/config/web/janus/janus.transport.pfunix.jcfg"]:
+        ensure      => absent,
     }
 
     # Control running service
