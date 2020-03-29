@@ -283,7 +283,7 @@ class maverick_fc (
         }
         file { "/srv/maverick/software/maverick/bin/status.d/150.fc/103.mavros.status":
             owner   => "mav",
-            content => "rosmaster@fc,Rosmaster (FC)\n",
+            content => "mavros@fc,MAVROS (FC)\n",
         }
     }
     
