@@ -82,6 +82,11 @@ class maverick_hardware::raspberry (
         enable  => false,
     }
 
+    file { "/boot/wpa_supplicant.conf.sample":
+        ensure      => present,
+        content     => template("maverick_hardware/wpa_supplicant.conf.sample.erb")
+    }
+
     # Remove large packages to save space
     if $remove_extrapackages == true {
         package { ["wolfram-engine", "wolfram-script", "freepats", "realvnc-vnc-server", "scratch", "nuscratch", "sonic-pi", "bluej", "nodered", "minecraft-pi", "claws-mail", "greenfoot", "chromium-browser"]:
