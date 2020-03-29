@@ -70,6 +70,8 @@
 #   This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.
 # @param api_instance
 #   If true, create a separate maverick-api instance
+# @param api_name
+#   Descriptive name of api instance (keep short)
 # @param api_active
 #   If true, this maverick-api instance will be activated and enabled at boot time
 # @param api_port
@@ -111,6 +113,7 @@ define maverick_dev::apsitl (
     Boolean $mavros_active = true,
     Integer $mavros_startup_delay = 10,
     Boolean $api_instance = true,
+    String $api_name = "",
     Boolean $api_active = true,
     Integer $api_port = 7000,
     Boolean $api_debug = false,
@@ -428,6 +431,7 @@ define maverick_dev::apsitl (
         # Create an API instance
         maverick_web::api { "api-${instance_name}":
             instance    => "${instance_name}",
+            api_name    => $api_name,
             active      => $api_active,
             apiport     => $actual_api_port,
             rosport     => $actual_rosmaster_port,
