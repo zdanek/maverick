@@ -30,7 +30,7 @@ class maverick_web::nginx (
     Boolean $downloads = false,
     String $downloads_dir = "/var/www/html/maverick/downloads",
     String $downloads_location = "/maverick/downloads",
-    String $www_root = '/srv/maverick/software/maverick-web-legacy/public',
+    String $www_root = '/srv/maverick/software/maverick-web',
 ) {
     $ssl_location = getvar("maverick_web::ssl_location")
 
