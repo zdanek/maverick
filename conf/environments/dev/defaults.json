@@ -5,7 +5,7 @@
 	"maverick_dev::apsitl_dev::mavlink_active": true, // Whether mavlink proxy is active or not
 	"maverick_dev::apsitl_dev::rosmaster_active": true, // Whether ROS master for sitl is active or not
 	"maverick_dev::apsitl_dev::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
-	"maverick_dev::apsitl_dev::api_active": true,
+	"maverick_dev::apsitl_dev::api_active": false,
 
 	// Turn FC services on for flight mode
 	"maverick_fc::mavlink_active": false,
