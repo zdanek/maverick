@@ -11,7 +11,7 @@
 	"maverick_fc::mavlink_active": true,
 	"maverick_fc::rosmaster_active": true,
 	"maverick_fc::mavros_active": true,
-	"maverick_fc::api_active": true,
+	"maverick_fc::api_active": false,
 
 	// Turn off IDEs
 	"maverick_web::cloud9::active": false,
