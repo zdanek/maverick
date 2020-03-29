@@ -70,7 +70,7 @@
 	"maverick_vision::orb_slam2": false,
 	"maverick_vision::rtabmap": false,
 	
-	"maverick_web::nginx::active": false,
+	"maverick_web::nginx::active": true,
 
 	"maverick_web::cloud9": true,
 	"maverick_web::cloud9::active": false,
