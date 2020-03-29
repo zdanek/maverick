@@ -53,7 +53,7 @@ class maverick_dev::apsitl_dev (
     $mavros_active = true,
     $mavros_startup_delay = 10,
     $api_instance = true,
-    $api_active = true,
+    $api_active = false,
     $api_devmode = false,
     $api_debug = false,
 ) {
@@ -112,6 +112,7 @@ class maverick_dev::apsitl_dev (
         status_priority     => "154",
         status_entries      => true,
         api_instance        => $api_instance,
+        api_name            => "Dev",
         api_port            => 7000,
         api_active          => $api_active,
         api_devmode         => $api_devmode,

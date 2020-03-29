@@ -85,8 +85,8 @@ class maverick_web::maverick_api (
 
     # Create an -api instance 
     if $system_api == true {
-        maverick_web::api { "api-maverick":
-            instance    => "maverick",
+        maverick_web::api { "api-system":
+            instance    => "system",
             active      => true,
             apiport     => 6700,
             devmode     => false,
@@ -96,7 +96,7 @@ class maverick_web::maverick_api (
         }
         file { "/srv/maverick/software/maverick/bin/status.d/120.web/104.api.status":
             owner   => "mav",
-            content => "api@maverick,MavAPI (Maverick)\n",
+            content => "api@system,MavAPI (System)\n",
         }
     }
 

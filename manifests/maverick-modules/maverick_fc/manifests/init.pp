@@ -48,6 +48,8 @@
 #   This delay causes Mavros to wait before starting, to give ROS and SITL time to boot fully first.  Should be increased on slower boards/environments.
 # @param api_instance
 #   If true, create a separate maverick-api instance
+# @param api_name
+#   Descriptive name of this -api instance
 # @param api_active
 #   If true, this maverick-api instance will be activated and enabled at boot time
 #
@@ -74,6 +76,7 @@ class maverick_fc (
     Boolean $mavros_active = true,
     Integer $mavros_startup_delay = 10,
     Boolean $api_instance = true,
+    String $api_name = "Flight Controller",
     Boolean $api_active = false,
 ) {
 
@@ -288,6 +291,7 @@ class maverick_fc (
         # Create an API instance
         maverick_web::api { "api-fc":
             instance    => "fc",
+            api_name    => $api_name,
             active      => $api_active,
             apiport     => 6800,
             rosport     => $rosmaster_port,

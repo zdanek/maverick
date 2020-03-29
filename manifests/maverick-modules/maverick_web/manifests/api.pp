@@ -10,6 +10,8 @@
 #   If true, start the maverick-api@[xxx] service and enable at boot time.
 # @param instance
 #   Name of the -api instance.  This must be unique.
+# @param api_name
+#   Descriptive name of api instance (keep short)
 # @param apiport
 #   TCP port for the api to listen on.
 # @param rosport
@@ -28,6 +30,7 @@
 define maverick_web::api (
     Boolean $active = true,
     String $instance = "fc",
+    String $api_name = "",
     Integer $apiport = 6800,
     Integer $rosport = 11311,
     String $server_hostname = $maverick_web::server_fqdn,
@@ -38,6 +41,13 @@ define maverick_web::api (
 ) {
     # This class creates an instance of maverick-api.
     # The actual installation of the maverick-api and dependencies happens in maverick_web::maverick_api
+
+    # If the descriptive api_name is set use it, otherwise set it to the instance name
+    if $api_name {
+        $real_api_name = $api_name
+    } else {
+        $real_api_name = $instance
+    }
 
     file { "/srv/maverick/var/log/web/api/${instance}":
         ensure      => directory,
