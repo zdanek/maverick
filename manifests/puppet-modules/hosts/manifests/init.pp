@@ -153,15 +153,21 @@ class hosts (
         ip           => $fqdn_ip,
       }
     }
+
+    if $host_entries != undef {
+      $host_entries_real = delete($host_entries,$::fqdn)
+      validate_hash($host_entries_real)
+      create_resources(host,$host_entries_real)
+    }
+  } else {
+    if $host_entries != undef {
+      validate_hash($host_entries)
+      create_resources(host,$host_entries)
+    }
   }
 
   resources { 'host':
     purge => $purge_hosts,
   }
 
-  if $host_entries != undef {
-    $host_entries_real = delete($host_entries,$::fqdn)
-    validate_hash($host_entries_real)
-    create_resources(host,$host_entries_real)
-  }
 }
