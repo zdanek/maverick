@@ -1,7 +1,7 @@
 [Unit]
 Description=WebRTC Janus Gateway
 After=network-online.target
-Requires=network-online.target
+Requires=network-online.target maverick-visiond.service
 
 [Service]
 TimeoutStartSec=0

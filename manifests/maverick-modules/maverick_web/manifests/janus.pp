@@ -140,7 +140,7 @@ class maverick_web::janus (
         $_enable = false
     }
     file { "/etc/systemd/system/maverick-webrtc.service":
-        content     => template("maverick_web/webrtc.service.erb"),
+        source      => "puppet:///modules/maverick_web/webrtc.service",
         owner       => "root",
         group       => "root",
         mode        => "644",
