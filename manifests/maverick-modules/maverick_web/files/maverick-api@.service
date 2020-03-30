@@ -1,6 +1,6 @@
 [Unit]
 Description=Maverick API Service - %I
-After=maverick-mavros@fc.service maverick-mavros@sitl.service maverick-mavros@px4sitl.service
+After=network.target maverick-mavros@fc.service maverick-mavros@sitl.service maverick-mavros@px4sitl.service
 
 [Service]
 TimeoutStartSec=0
