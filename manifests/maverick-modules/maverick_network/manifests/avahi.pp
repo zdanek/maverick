@@ -55,10 +55,13 @@ class maverick_network::avahi (
     }
 
     # Add a static mapping for our hostname
+    # Update: back this out, othewrise avahi doesn't respond to dynamic changes in IP 
+    /*
     concat::fragment { "avahi-hosts-ourip":
         target      => "/etc/avahi/hosts",
         content     => "${_ipaddress}   ${hostname}.local",
     }
+    */
 
     # Allow udp port 5353 for mdns requests
     if defined(Class["::maverick_security"]) {
