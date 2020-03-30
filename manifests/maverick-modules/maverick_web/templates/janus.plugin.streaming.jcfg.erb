@@ -23,7 +23,8 @@ rtsp-stream: {
         videortpmap = "H264/90000"
         videobufferkf = true
         videofmtp = "profile-level-id=42e028;packetization-mode=1"
-	url = "rtsp://127.0.0.1:<%= @rtsp_stream_port %>/video"
+        url = "rtsp://127.0.0.1:<%= @rtsp_stream_port %>/video"
+        rtsp_failcheck = false
 }
 <% end %>
 
