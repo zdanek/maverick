@@ -59,7 +59,7 @@ class maverick_web::maverick_discovery (
 
     if defined(Class["::maverick_security"]) {
         maverick_security::firewall::firerule { "maverick-discovery":
-            ports       => "1234",
+            ports       => ["6001", "6002"],
             ips         => lookup("firewall_ips"),
             proto       => "tcp"
         }
