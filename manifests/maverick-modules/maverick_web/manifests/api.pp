@@ -13,7 +13,9 @@
 # @param api_name
 #   Descriptive name of api instance (keep short)
 # @param apiport
-#   TCP port for the api to listen on.
+#   Non-encrypted TCP port for the api to listen on.
+# @param apiport_ssl
+#   Encrypted TCP port for the api to listen on.
 # @param rosport
 #   ROS rosmaster port for -api instance to connect to.
 # @param server_hostname
@@ -31,7 +33,8 @@ define maverick_web::api (
     Boolean $active = true,
     String $instance = "fc",
     String $api_name = "",
-    Integer $apiport = 6800,
+    Integer $apiport = 6003,
+    Integer $apiport_ssl = 0,
     Integer $rosport = 11311,
     String $server_hostname = $maverick_web::server_fqdn,
     Boolean $devmode = false,
@@ -101,10 +104,18 @@ define maverick_web::api (
     }
     
     if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "maverick-api@${instance}":
-            ports       => $apiport,
-            ips         => lookup("firewall_ips"),
-            proto       => "tcp"
+        if $apiport_ssl != 0 {
+            maverick_security::firewall::firerule { "maverick-api@${instance}":
+                ports       => [$apiport, $apiport_ssl],
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp"
+            }
+        } else {
+            maverick_security::firewall::firerule { "maverick-api@${instance}":
+                ports       => $apiport,
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp"
+            }
         }
     }
     
