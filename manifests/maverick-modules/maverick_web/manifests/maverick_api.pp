@@ -88,7 +88,8 @@ class maverick_web::maverick_api (
         maverick_web::api { "api-system":
             instance    => "system",
             active      => true,
-            apiport     => 6700,
+            apiport     => 6003,
+            apiport_ssl => 6004,
             devmode     => false,
             debug       => false,
             replaceconfig    => false,
