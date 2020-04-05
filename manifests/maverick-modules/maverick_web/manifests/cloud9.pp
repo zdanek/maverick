@@ -16,7 +16,7 @@
 #
 class maverick_web::cloud9 (
     Boolean $active = true,
-    Integer $webport = 6789,
+    Integer $webport = 6101,
     String $basepath = "/srv/maverick",
     String $cloud9_password = "wingman",
 ) {
