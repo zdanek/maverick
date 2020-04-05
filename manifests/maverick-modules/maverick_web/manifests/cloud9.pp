@@ -95,7 +95,7 @@ class maverick_web::cloud9 (
         owner       => "root",
         group       => "root",
         mode        => "644",
-        notify      => Exec["maverick-systemctl-daemon-reload"],
+        notify      => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-cloud9"] ],
     } ->
     service { "maverick-cloud9":
         ensure      => $_ensure,
