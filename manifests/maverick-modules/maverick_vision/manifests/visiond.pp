@@ -14,8 +14,8 @@
 #
 class maverick_vision::visiond (
     Boolean $active = true,
-    Integer $rtsp_port = 5600,
-    Integer $webrtc_port = 8443,
+    Integer $rtsp_port = 6010,
+    Integer $webrtc_port = 6011,
 ) {
 
     # Setup standard packages for all platforms
@@ -47,7 +47,7 @@ class maverick_vision::visiond (
         owner       => "mav",
         group       => "mav",
         replace     => false, # initialize but don't overwrite in the future
-        source      => "puppet:///modules/maverick_vision/maverick-visiond.conf",
+        content     => template("maverick_vision/visiond.conf.erb"),
     }
     
     # Add visiond as a service

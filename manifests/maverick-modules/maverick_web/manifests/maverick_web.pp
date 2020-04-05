@@ -25,7 +25,7 @@
 #
 class maverick_web::maverick_web (
     Boolean $active = false,
-    Integer $webport = 6794,
+    Integer $webport = 6100,
     String $webpath_dev = '/dev/maverick',
     String $webpath_prod = '/web/maverick',
     String $server_hostname = $maverick_web::server_fqdn,
