@@ -23,11 +23,11 @@
 class maverick_web::janus (
     Boolean $active = true,
     Boolean $http_transport = true,
-    Integer $https_port = 6795,
+    Integer $https_port = 6012,
     Boolean $websockets_transport = true,
-    Integer $websockets_port = 6796,
-    Integer $rtp_stream_port = 6797,
-    Integer $rtsp_stream_port = 5600,
+    Integer $websockets_port = 6011,
+    Integer $rtp_stream_port = 6013,
+    Integer $rtsp_stream_port = 6010,
     String  $stream_type = "rtsp",
 ) {
 
