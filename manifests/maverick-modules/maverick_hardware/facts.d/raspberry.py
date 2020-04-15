@@ -40,6 +40,7 @@ class Raspberry(object):
             '920093': ['Q4 2016?', 'Zero', '1.3', 512, '(Mfg by Embest)'],
             '1900093': ['Q4 2016?', 'Zero', '1.3', 512, '(Mfg by Embest)'],
             '9000c1': ['Q1 2017', 'Zero W', '1.1', 512, '(Mfg by Sony)'],
+            '19000c1': ['Q1 2017', 'Zero W', '1.1', 512, '(Mfg by Sony)'],
             'a02082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Sony)'],
             'a020a0': ['Q1 2017', 'Compute Module 3 (and CM3 Lite)', '1.0', 1024, '(Mfg by Sony)'],
             'a22082': ['Q1 2016', '3 Model B', '1.2', 1024, '(Mfg by Embest)'],
