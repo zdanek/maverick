@@ -10,6 +10,7 @@ ExecStart=/srv/maverick/software/python/bin/python3 /srv/maverick/software/visio
 User=mav
 Restart=on-failure
 RestartSec=30
+Type=notify
 
 [Install]
 WantedBy=multi-user.target

@@ -36,6 +36,13 @@ class maverick_vision::visiond (
         timeout     => 0,
     }
     
+    # Add sdnotify python module
+    install_python_module { "pip-visiond-sdnotify":
+        pkgname     => "sdnotify",
+        ensure      => present,
+        timeout     => 0,
+    }
+
     # Pull visiond repo
     oncevcsrepo { "git-visiond":
         gitsource   => "https://github.com/goodrobots/visiond.git",
