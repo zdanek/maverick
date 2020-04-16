@@ -68,6 +68,8 @@ rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
+rm -rf /srv/maverick/.node-gyp /srv/maverick/.npm .python_history
+rm -rf /srv/maverick/.vscode-server
 rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
 
@@ -93,6 +95,7 @@ find /srv/maverick/data/vision -type f -delete
 find /srv/maverick/data/analysis -type f -delete
 find /srv/maverick/data/network -type f -delete
 rm -rf /srv/maverick/var/lib/influxdb
+rm -rf /srv/maverick/.ssh
 
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
