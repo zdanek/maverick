@@ -19,7 +19,7 @@
 class maverick_vision::vision_seek (
     Boolean $active = false,
     Boolean $libseek_thermal = true,
-    String $libseek_thermal_source = "https://github.com/CopterExpress/libseek-thermal",
+    String $libseek_thermal_source = "https://github.com/fnoop/libseek-thermal.git",
     String $libseek_thermal_revision = "master",
 ) {
     
