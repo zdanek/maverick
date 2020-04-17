@@ -27,14 +27,14 @@ class maverick_vision::visiond (
         url         => "git+https://github.com/fnoop/python-v4l2.git",
         ensure      => present,
         timeout     => 0,
-    }
+    } ->
 
     # Add zeroconf python module
     install_python_module { "pip-visiond-zeroconf":
         pkgname     => "zeroconf",
         ensure      => present,
         timeout     => 0,
-    }
+    } ->
     
     # Add sdnotify python module
     install_python_module { "pip-visiond-sdnotify":
@@ -93,7 +93,7 @@ class maverick_vision::visiond (
         service { "maverick-visiond":
             ensure      => running,
             enable      => true,
-            require     => Class["maverick_vision::gstreamer"],
+            require     => [ Class["maverick_vision::gstreamer"], Install_python_module["pip-visiond-sdnotify"] ],
         }
         # Punch some holes in the firewall for rtsp
         if defined(Class["::maverick_security"]) {
@@ -112,7 +112,7 @@ class maverick_vision::visiond (
         service { "maverick-visiond":
             ensure      => stopped,
             enable      => false,
-            require     => Class["maverick_vision::gstreamer"],
+            require     => [ Class["maverick_vision::gstreamer"], Install_python_module["pip-visiond-sdnotify"] ],
         }
     }
     

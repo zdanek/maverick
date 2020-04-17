@@ -96,6 +96,16 @@ class maverick_vision::vision_seek (
         }
     }
 
+    # Install and activate udev rules
+    file { "/etc/udev/rules.d/99-libseek-thermal.rules":
+        source      => "puppet:///modules/maverick_vision/libseek-thermal.rules",
+        notify      => Exec["libseek-udev-control"],
+    } ->
+    exec { "libseek-udev-control":
+        command         => "/sbin/udevadm control --reload-rules && /sbin/udevadm trigger",
+        refreshonly     => true
+    }
+
     # Temp location/copy of files
     file { "/srv/maverick/software/vision_seek":
         ensure  => directory,
