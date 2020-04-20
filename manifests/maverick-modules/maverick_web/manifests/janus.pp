@@ -54,7 +54,7 @@ class maverick_web::janus (
             user        => "mav",
         } ->
         exec { "janus-configure":
-            command		=> "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway --enable-websockets-event-handler >/srv/maverick/var/log/build/janus.configure.log 2>&1",
+            command		=> "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway --enable-websockets-event-handler --disable-aes-gcm >/srv/maverick/var/log/build/janus.configure.log 2>&1",
             cwd		    => "/srv/maverick/var/build/janus-gateway",
             creates     => "/srv/maverick/var/build/janus-gateway/Makefile",
             timeout		=> 0,
