@@ -10,31 +10,34 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All Models) - 1.1.6 - {d3a7ae7fdf59272adaf91671e0118504070fea1c172d92c3aa362a3e203398be}](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberry.img.xz)
-- [Raspberry Pi Lite (Pi Zero/W) - 1.1.6 - {c2d7c5e096d6d3210301d4d4774046d1e2503f70e754ff079c8dcbd6a333e890}](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberrylite.img.xz)
+- [Raspberry Pi (All Models) - 1.2.0b3 - {c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0}](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz)
+- [Raspberry Pi Lite (Pi Zero/W) - 1.2.0b3 - {82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd}](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz)
+- [Desktop VM (Virtualbox/OVA) - 1.2.0b3 - Coming soon]
+- [Nvidia Jetson Nano - 1.2.0b3 - Coming soon]
+
+Legacy Downloads (These platforms are still supported but we no longer have the harware to build updated images)
 - [Aaeon Up Boards (All Models) - 1.1.5 - {d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
-- [Ubuntu VM (OVA) - 1.1.5 - {183548a95db55433ce55718fe8517f979000dfe9433f09031c98318b6a27c6be}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-ubuntuvm.ova)
 - [Nvidia Tegra TX1 - 1.1.5 - {6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
 - [Nvidia Tegra TX2 - 1.1.5 - {388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
 
 sha256 hashes are given for each file within the {} brackets.
 
-These images require a 16Gb or larger SD card, except for the Raspberry Lite image which requires 8Gb SD card.
+These images require a 16Gb or larger SD card.
 
 The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
 #### Raspberry/Raspberry Lite Instructions
 Getting Maverick working on the Raspberry is straight forward.  There are two images - Rasspberry Pi and Raspberry Pi Lite.  The 'Lite' version is targeted mainly at the single-core Raspberrys like the Zero/Zero W/Model A.  
 
-   | Raspberry | Raspberry Lite
---- | :---: | :---:
-OpenCV | Pi2/3 only | All CPUs
-Tensorflow | Pi2/3 only | All CPUs
-Gstreamer | x | x
-Analysis | x | x
-Cloud9 IDE | x | x
-Desktop | x |
-ROS | x |
+| | Raspberry | Raspberry Lite |
+| --- | :---: | :---: |
+| OpenCV | Pi2/3 only | All CPUs |
+| Tensorflow | Pi2/3 only | All CPUs |
+| Gstreamer | x | x |
+| Analysis | x | x |
+| Cloud9 IDE | x | x |
+| Desktop | x | |
+| ROS | x | |
 
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
 - (Optionally) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
