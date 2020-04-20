@@ -8,6 +8,8 @@ There are two ways to get started with Maverick:
 
 ### OS Images
 
+*Note*: There are new betas available here: [1.2 Betas](../next/#/?id=os-images)
+
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
 - [Raspberry Pi (All Models) - 1.1.6 - {d3a7ae7fdf59272adaf91671e0118504070fea1c172d92c3aa362a3e203398be}](http://www.maverick.one/maverick/downloads/maverick-1.1.6-raspberry.img.xz)
