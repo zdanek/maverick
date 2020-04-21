@@ -4,11 +4,13 @@ TcpServerPort=<%= @startingtcp %>
 ReportStats=false
 #Which mavlink dialect is being used. Can be `common`[default] or `ardupilotmega`
 MavlinkDialect=auto
-# error, warning, info or debug
-DebugLogLevel=info
 <% if @logging == true -%>
 # Log - Path to directory where to store flightstack log.
 Log=/srv/maverick/data/mavlink/<%= @name %>/logs
+LogMode=while-armed
+MinFreeSpace=100000000
+# error, warning, info or debug
+DebugLogLevel=info
 <% end -%>
 
 <% if @inputtype == "tcp" -%>
