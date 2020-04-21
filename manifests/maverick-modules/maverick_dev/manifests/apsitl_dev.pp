@@ -44,7 +44,7 @@ class maverick_dev::apsitl_dev (
     $vehicle_type = "copter",
     $mavlink_proxy = "mavlink-router",
     $mavlink_active = true,
-    $mavlink_logging = false,
+    $mavlink_logging = true,
     $mavlink_serialout = undef,
     $mavlink_outbaud = 115200,
     $mavlink_outflow = false,
