@@ -10,48 +10,60 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-- [Raspberry Pi (All Models) - 1.2.0b3 - {c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0}](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz)
-- [Raspberry Pi Lite (Pi Zero/W) - 1.2.0b3 - {82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd}](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz)
-- [Desktop VM (Virtualbox/OVA) - 1.2.0b3 - Coming soon]
-- [Nvidia Jetson Nano - 1.2.0b3 - Coming soon]
+| Vendor | Model | Download | Hash |
+| --- | --- | --- | --- |
+| Raspberry Pi | All Models | [1.2.0b3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 |
+| Raspberry Pi | Lite (Pi Zero/W) | [1.2.0b3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz) | 82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd |
+| Nvidia | Jetson Nano | [1.2.0b3 Image - Coming Soon] | |
+| PC | Desktop VM | [1.2.0b3 Image - Coming Soon] | |
 
 Legacy Downloads (These platforms are still supported but we no longer have the harware to build updated images)
-- [Aaeon Up Boards (All Models) - 1.1.5 - {d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso)
-- [Nvidia Tegra TX1 - 1.1.5 - {6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz)
-- [Nvidia Tegra TX2 - 1.1.5 - {388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7}](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz)
 
-sha256 hashes are given for each file within the {} brackets.
+| Vendor | Model | Download | Hash |
+| --- | --- | --- | --- |
+| Aaeon Up | All Models | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso) | d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324 |
+| Nvidia | Tegra TX1 | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz) | 6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5 |
+| Nvidia | Tegra TX2 | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz) | 388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7 |
 
-These images require a 16Gb or larger SD card.
+?> sha256 hashes are given for each file within the {} brackets.  These can be re-calculated and compared to downloaded files by running `sha256sum http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso`
 
-The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
+ - These images require a 16Gb or larger SD card.
+ - The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
-#### Raspberry/Raspberry Lite Instructions
-Getting Maverick working on the Raspberry is straight forward.  There are two images - Rasspberry Pi and Raspberry Pi Lite.  The 'Lite' version is targeted mainly at the single-core Raspberrys like the Zero/Zero W/Model A.  
+### Raspberry/Raspberry Lite Instructions
+Getting Maverick working on the Raspberry is straight forward.  There are two images - Rasspberry Pi and Raspberry Pi Lite.
+ - The 'Lite' version is targeted mainly at the single-core Raspberrys like the Model 1/2/3/Zero/Zero W/Model A.
+ - The full version is optimised to use all cores and features of the more advanced quad-core CPU available in the Model A/B 3+/4.
+ - The 'Lite' version is stripped down to only run essential services at boot, and none of the Analysis services run by default.
+
+!> Note: The Full version will NOT work properly on the single core boards - in particular OpenCV and any related software will not run at all.
 
 | | Raspberry | Raspberry Lite |
 | --- | :---: | :---: |
-| OpenCV | Pi2/3 only | All CPUs |
-| Tensorflow | Pi2/3 only | All CPUs |
+| OpenCV | All CPUs | Single Core only |
+| Tensorflow | All CPUs | Single Core only |
 | Gstreamer | x | x |
 | Analysis | x | x |
 | Cloud9 IDE | x | x |
 | Desktop | x | |
-| ROS | x | |
+| ROS | x | x |
 
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
-- (Optionally) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
+- (Optionally, if you don't have Ethernet networking available) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
 - Boot from the SD card
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
-#### Aaeon Up Boards
+### Jetson Nano Instructions
+Coming soon...
+
+### Ubuntu VM Instructions
+Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.
+
+### Aaeon Up Boards (Legacy version only)
 A single image is provided for the Up board, Up^2 (Up Squared) and Up Core boards.  These boards run the OS from onboard eMMC, so the image is a 'flash' system - on boot it runs a utility (Clonezilla) that flashes the image to the boards eMMC storage.  The boards do not always boot from removeable storage by default, so it may be necessary to reconfigure the BIOS to boot from USB/SD card.
 
-#### Ubuntu VM Instructions
-Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.  A Parallels VM image is also included for running under Parallels on a Mac.
-
-#### Nvidia Tegra TX1/TX2 Instructions
+### Nvidia Tegra TX1/TX2 Instructions (Legacy version only)
 Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images include everything needed to flash the TX1 or TX2 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
  - Unpack image: 
    ```
@@ -73,7 +85,7 @@ Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images
 
 If you have a TX2, replace references in the above instructions from 'tx1' to 'tx2'.
 
-#### Get Started
+### Get Started
 If the installation and network setup was successful, you should now be able to connect over ssh (if you're using an OS that talks zeroconf like MacOS or Linux):  
 Raspberry: `ssh maverick-raspberry.local`  
 Raspberry Lite: `ssh maverick-raspberrylite.local`  
