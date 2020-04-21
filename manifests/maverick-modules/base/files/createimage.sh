@@ -89,6 +89,7 @@ echo "parted /dev/$srcdisk unit s resizepart $srcpart $newendsector yes"
 echo
 echo "Creating image file ${dstfile}.xz from resized disk ${srcdisk}"
 # dd if=/dev/${srcdisk} of=${dstfile} bs=${sectorsize} count=${newendsector} conv=noerror,sync status=progress
+echo "dd if=/dev/${srcdisk} bs=${sectorsize} iflag=fullblock count=\"${newendsector}\" | nice -n 10 xz -6 --verbose --threads=0 > ${dstfile}.xz"
 dd if=/dev/${srcdisk} bs=${sectorsize} iflag=fullblock count="${newendsector}" | nice -n 10 xz -6 --verbose --threads=0 > ${dstfile}.xz
 echo
 echo "Syncing kernel buffers"
