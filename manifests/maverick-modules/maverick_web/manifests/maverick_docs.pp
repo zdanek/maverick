@@ -11,11 +11,15 @@
 #   If true, compile and install the Ardupilot reference documentation.
 # @param px4_docs
 #   If true, compile and install the PX4 reference documentation.
+# @param devframe_docs
+#   If true, compile and install the Goodrobots Devframe documentation.
 #
 class maverick_web::maverick_docs (
     String $server_hostname = $maverick_web::server_fqdn,
     Boolean $ardupilot_docs = true,
     Boolean $px4_docs = true,
+    Boolean $devframe_docs = true,
+    String $devframe_docs_gitpath = "https://github.com/goodrobots/devframe.git",
 ) {
 
     file { "/srv/maverick/software/maverick-docs":
@@ -31,6 +35,43 @@ class maverick_web::maverick_docs (
         index_files     => ["index.html"],
         server          => $server_hostname,
         require         => [ Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["nginx"] ],
+    }
+
+    if $devframe_docs == true {
+        package { "bundler":
+            ensure      => "2.1.2",
+            provider    => "gem",
+        } ->
+        package { "bundle":
+            ensure      => present,
+            provider    => "gem",
+        } ->
+        oncevcsrepo { "git-devframe_docs":
+            gitsource   => $devframe_docs_gitpath,
+            dest        => "/srv/maverick/software/devframe",
+        } ->
+        exec { "devframe_docs-bundle-install":
+            command     => "/usr/local/bin/bundle install --deployment",
+            cwd         => "/srv/maverick/software/devframe/docs",
+            creates     => "/srv/maverick/software/devframe/docs/vendor/bundle",
+            user        => "mav",
+        } ->
+        exec { "devframe_docs-docs":
+            environment => ["HOME=/srv/maverick"],
+            command     => "/usr/local/bin/bundle exec jekyll build --verbose --trace",
+            cwd         => "/srv/maverick/software/devframe/docs",
+            creates     => "/srv/maverick/software/devframe/docs/_site/builds",
+            user        => "mav",
+        } ->
+        nginx::resource::location { "web-devframe-docs":
+            ensure          => present,
+            ssl             => true,
+            location        => "/web/docs/devframe",
+            location_alias  => "/srv/maverick/software/devframe/docs/_site",
+            index_files     => ["index.html"],
+            server          => $server_hostname,
+            require         => [ Class["nginx"], Service["nginx"] ],
+        }
     }
 
     if $ardupilot_docs == true {
