@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.0.0
+
+- Add array remove functionality (#36)
+- Make uncomment work with array_append (fix #13)
+
+## 3.1.0
+
+- Add support for Puppet 6
+- Deprecate support for Puppet < 5
+- Update supported OSes in metadata.json
+
+## 3.0.0
+
+- Fix support for 'puppet generate types'
+
 ## 2.2.4
 
 - Revert the 'puppet generate types' fix due to a discovery that it does not
