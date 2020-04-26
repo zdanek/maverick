@@ -182,34 +182,8 @@ describe provider_class do
         :provider => "augeas"
       ))
 
-      if unset_seq?
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "#comment" = "SYNC_HWCLOCK=no" }
-          { "SYNC_HWCLOCK" = "yes" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" { "1" = "EXAMPLE_U" } }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
-      else
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "#comment" = "SYNC_HWCLOCK=no" }
-          { "SYNC_HWCLOCK" = "yes" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" = "EXAMPLE_U" }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
+      aug_open(target, "Shellvars.lns") do |aug|
+        aug.get("SYNC_HWCLOCK[preceding-sibling::#comment[.='SYNC_HWCLOCK=no']]").should == "yes"
       end
     end
 
@@ -222,32 +196,8 @@ describe provider_class do
         :provider  => "augeas"
       ))
 
-      if unset_seq?
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "SYNC_HWCLOCK" = "yes" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" { "1" = "EXAMPLE_U" } }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
-      else
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "SYNC_HWCLOCK" = "yes" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" = "EXAMPLE_U" }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
+      aug_open(target, "Shellvars.lns") do |aug|
+        aug.get("SYNC_HWCLOCK").should == "yes"
       end
     end
 
@@ -260,32 +210,8 @@ describe provider_class do
         :provider  => "augeas"
       ))
 
-      if unset_seq?
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "SYNC_HWCLOCK" = "no" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" { "1" = "EXAMPLE_U" } }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
-      else
-        augparse_filter(target, "Shellvars.lns", '*[preceding-sibling::#comment[.=~regexp(".*sync hw clock.*")]]', '
-          { "SYNC_HWCLOCK" = "no" }
-          { "EXAMPLE" = "foo" }
-          { "@unset" = "EXAMPLE_U" }
-          { "EXAMPLE_E" = "baz" { "export" } }
-          { "STR_LIST" = "\"foo bar baz\"" }
-          { "LST_LIST"
-            { "1" = "foo" }
-            { "2" = "\"bar baz\"" }
-            { "3" = "123" }
-          }
-        ')
+      aug_open(target, "Shellvars.lns") do |aug|
+        aug.get("SYNC_HWCLOCK").should == "no"
       end
     end
 
@@ -319,6 +245,36 @@ describe provider_class do
           aug.match("@unset[.='EXAMPLE_U']").should == []
         end
       end
+    end
+
+	it "should uncomment value and append" do
+      apply!(Puppet::Type.type(:shellvar).new(
+        :name         => "LS_JAVA_OPTS",
+        :value        => ["option2", "option3"],
+        :array_append => true,
+        :uncomment    => true,
+        :target       => target,
+        :provider     => "augeas"
+      ))
+
+      augparse_filter(target, "Shellvars.lns", "LS_JAVA_OPTS", '
+        { "LS_JAVA_OPTS" = "\"option1 option2 option3\"" }
+      ')
+    end
+
+	it "should uncomment values and append" do
+      apply!(Puppet::Type.type(:shellvar).new(
+        :name         => "LS_JAVA_OPTS_MULT",
+        :value        => ["option2", "option3"],
+        :array_append => true,
+        :uncomment    => true,
+        :target       => target,
+        :provider     => "augeas"
+      ))
+
+      augparse_filter(target, "Shellvars.lns", "LS_JAVA_OPTS_MULT", '
+        { "LS_JAVA_OPTS_MULT" = "\"option1 option2 option3\"" }
+      ')
     end
 
     describe "when updating value" do
@@ -520,6 +476,23 @@ describe provider_class do
           aug.get("STR_LIST").should == '"foo bar baz qux"'
           aug.match("STR_LIST/export").should_not == []
         end
+      end
+    end
+
+    describe "when using array_append with ensure absent" do
+      it "should only remove specified values" do
+        apply!(Puppet::Type.type(:shellvar).new(
+          :name         => "STR_LIST",
+          :value        => ["fooz", "bar"],
+          :ensure       => "absent",
+          :array_append => true,
+          :target       => target,
+          :provider     => "augeas"
+        ))
+
+        augparse_filter(target, "Shellvars.lns", "STR_LIST", '
+          { "STR_LIST" = "\"foo baz\"" }
+        ')
       end
     end
 
@@ -729,6 +702,32 @@ baz fooz\"" }
             # No support for clean multiline replacements without store/retrieve
             augparse_filter(target, "Shellvars.lns", "ML_LIST", '
               { "ML_LIST" = "\"foo bar baz fooz\"" }
+            ')
+          end
+        end
+      end
+
+      describe "when using array_append with ensure absent" do
+        it "should only remove specified values in multiline entry" do
+          apply!(Puppet::Type.type(:shellvar).new(
+            :name         => "ML_LIST",
+            :value        => ["fooz", "bar"],
+            :ensure       => "absent",
+            :array_append => true,
+            :target       => target,
+            :provider     => "augeas"
+          ))
+
+          if provider_class.aug_handler.respond_to? :text_store \
+           and provider_class.parsed_as?("FOO=\"bar\nbaz\"\n", '/FOO/value', 'Shellvars_list.lns')
+            augparse_filter(target, "Shellvars.lns", "ML_LIST", '
+              { "ML_LIST" = "\"foo
+  baz\"" }
+            ')
+          else
+            # No support for clean multiline replacements without store/retrieve
+            augparse_filter(target, "Shellvars.lns", "ML_LIST", '
+              { "ML_LIST" = "\"foo baz\"" }
             ')
           end
         end
