@@ -16,8 +16,6 @@
 #   If true, install NodeJS software.  Lots of other Maverick components depend on NodeJS, this should be true.
 # @param webserver
 #   If true, install, start and manage a Maverick webserver.  Lots of other Maverick components depend on NodeJS, this should be true.
-# @param webserver_type
-#   Apache or Nginx can be specified, but only Nginx is currently supported.
 # @param webserver_port
 #   Unencrypted webserver port to listen on.  Default for web browsers is port 80.
 # @param webserver_sslport
@@ -45,7 +43,6 @@ class maverick_web (
     Boolean $theia = false,
     Boolean $nodejs = true,
     Boolean $webserver = true,
-    Enum['nginx', 'apache'] $webserver_type = "nginx",
     Integer $webserver_port = 80,
     Integer $webserver_sslport = 443,
     Boolean $maverick_docs = true,
@@ -107,16 +104,9 @@ class maverick_web (
     }
     
     if $webserver == true {
-        if $webserver_type == "nginx" {
-            class { "maverick_web::nginx": 
-                port    => $webserver_port,
-                ssl_port => $webserver_sslport,
-            }
-        } elsif $webserver_type == "apache" {
-            class { "maverick_web::apache":
-                port    => $webserver_port,
-                ssl_port => $webserver_sslport,
-            }
+        class { "maverick_web::nginx": 
+            port    => $webserver_port,
+            ssl_port => $webserver_sslport,
         }
         
         # Create hole in firewall for webserver
