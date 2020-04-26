@@ -20,7 +20,7 @@
 # @param downloads_location
 #   Web path for downloads.
 # @param www_root
-#   Filesystem root to serve legacy web content.
+#   Filesystem root to serve web content.
 #   
 class maverick_web::nginx (
     Boolean $active = true,
@@ -100,7 +100,7 @@ class maverick_web::nginx (
         ssl_cert    => "${ssl_location}/${server_hostname}-webssl.crt",
         ssl_key     => "${ssl_location}/${server_hostname}-webssl.key",
         www_root    => $www_root,
-        require     => [ Class["maverick_web::maverick_web_legacy"], ],
+        require     => Class["maverick_web::maverick_web"],
         notify      => Service["maverick-nginx"],
     }
     
@@ -111,7 +111,7 @@ class maverick_web::nginx (
         location_alias  => "/srv/maverick/data/security/ssl/ca/mavCA.pem",
         index_files     => [],
         server          => $server_hostname,
-        require         => [ Class["maverick_web::maverick_web_legacy"], Service["nginx"] ],
+        require         => [ Class["maverick_security::ssl"] ],
         notify          => Service["maverick-nginx"],
     }
 
@@ -124,7 +124,6 @@ class maverick_web::nginx (
             location_alias  => $downloads_dir,
             index_files     => [],
             server          => $server_hostname,
-            require         => [ Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["nginx"] ],
         }
     }
     
@@ -141,7 +140,6 @@ class maverick_web::nginx (
         location_cfg_append => $local_config,
         server              => $server_hostname,
         notify              => Service["maverick-nginx"],
-        require             => [ Service["nginx"] ],
     }
     
     if defined(Class["maverick_analysis::collect"]) {
