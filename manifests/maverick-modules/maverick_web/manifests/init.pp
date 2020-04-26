@@ -32,8 +32,6 @@
 #   If true, include maverick_web::maverick_api class which installs and manages the Maverick-api software.
 # @param maverick_discovery
 #   If true, include maverick_web::maverick_discovery class which installs and manages the Maverick-discovery software.
-# @param maverick_web_legacy
-#   If true, include maverick_web::maverick_web_legacy class which manages the legacy web content.  This will be replaced with -web and -api in the future.
 # @param server_fqdn
 #   This is set to the system fqdn by default, but can be specified here.  It is used by a lot of other maverick_web classes.
 # @param ssl_location
@@ -55,14 +53,15 @@ class maverick_web (
     Boolean $maverick_web = true,
     Boolean $maverick_api = true,
     Boolean $maverick_discovery = true,
-    Boolean $maverick_web_legacy = true,
     String $server_fqdn = $::fqdn,
     String $ssl_location = "/srv/maverick/data/security/ssl/web",
     Boolean $janus = true,
 ) {
     
-    if $maverick_web_legacy == true {
-        class { "maverick_web::maverick_web_legacy": }
+    # Remove deprecated maverick-web-legacy repo
+    file { "/srv/maverick/software/maverick-web-legacy":
+        ensure  => absent,
+        force   => true,
     }
 
     # Create status.d directory for maverick status`

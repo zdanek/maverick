@@ -87,14 +87,14 @@ class maverick_analysis::mavlogd (
 
     if defined(Class["::maverick_web"]) {
         # Add a temporary service to run mavlog uploader
-        # Note the paths and webport are hardcoded into /srv/maverick/software/maverick-web-legacy/file_upload.py
+        # Note the paths and webport are hardcoded into maverick_analysis/files/file_upload.py
         file { "/etc/systemd/system/maverick-uploader.service":
             ensure          => present,
             mode            => "644",
             owner           => "mav",
             group           => "mav",
             source          => "puppet:///modules/maverick_analysis/maverick-uploader.service",
-            notify          => Exec["maverick-systemctl-daemon-reload"],
+            notify          => [ Exec["maverick-systemctl-daemon-reload"], Service["maverick-uploader"] ],
         }
         
         if $active == true {
@@ -107,7 +107,7 @@ class maverick_analysis::mavlogd (
                 location    => "/analysis/uploader/",
                 proxy       => 'http://localhost:6792/',
                 server      => getvar("maverick_web::server_fqdn"),
-                require     => [ Class["maverick_web::maverick_web_legacy"], Class["nginx"], Service["maverick-uploader"], ],
+                require     => [ Class["nginx"], Service["maverick-uploader"], ],
             }
         } else {
             service { "maverick-uploader":
