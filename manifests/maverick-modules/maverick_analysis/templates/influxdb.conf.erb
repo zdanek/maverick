@@ -50,7 +50,7 @@ reporting-disabled = true
 
 [http]
   # enabled = true
-  # bind-address = ":8086"
+  bind-address = "0.0.0.0:<%= @http_port -%>"
   # auth-enabled = false
   # realm = "InfluxDB"
   log-enabled = false
@@ -75,7 +75,7 @@ reporting-disabled = true
 
 [[collectd]]
   enabled = true
-  bind-address = ":25826"
+  bind-address = "0.0.0.0:<%= @collectd_listener_port -%>"
   database = "maverick"
   retention-policy = "systemdata"
   typesdb = "/srv/maverick/software/collectd/share/collectd/types.db"

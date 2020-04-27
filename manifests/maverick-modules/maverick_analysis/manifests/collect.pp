@@ -18,10 +18,11 @@ class maverick_analysis::collect (
     Boolean $active = true,
     Enum['source', 'binary'] $install_type = "source",
     String $git_source = "https://github.com/collectd/collectd.git",
-    String $git_revision = "5.10.0",
+    String $git_revision = "collectd-5.11.0",
 ) {
     # Install from source
     if $install_type == "source" {
+        $influx_port = getvar("maverick_analysis::influx::http_port")
         $manage_package = false
         $manage_repo = false
         # Ensure build dependencies are installed
@@ -74,7 +75,7 @@ class maverick_analysis::collect (
             owner           => "root",
             group           => "root",
             mode            => "644",
-            source          => "puppet:///modules/maverick_analysis/maverick-collectd-source.service",
+            content         => template("maverick_analysis/maverick-collectd-source.service.erb"),
             notify          => Exec["maverick-systemctl-daemon-reload"],
             before          => Class["collectd"],
         }
@@ -126,7 +127,7 @@ class maverick_analysis::collect (
         purge           => true,
         recurse         => true,
         purge_config    => true,
-        minimum_version => '5.7',
+        minimum_version => '5.11',
         manage_package  => $manage_package,
         manage_repo     => $manage_repo,
         manage_service  => true,

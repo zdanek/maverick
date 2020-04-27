@@ -7,9 +7,15 @@
 #
 # @param active
 #   If true, set the maverick-influxd service to running and enabled (at boot).
+# @param http_port
+#   Port for influx to listen on for http endpoint
+# @param collectd_listener_port
+#   Port to listen on for collectd to deliver metrics
 #
 class maverick_analysis::influx (
     Boolean $active = true,
+    Integer $http_port = 6020,
+    Integer $collectd_listener_port = 6021,
 ) {
     
     # Install Go
@@ -37,7 +43,6 @@ class maverick_analysis::influx (
     # Install influx repo key
     exec { "influx-key":
         command         => "/usr/bin/curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -",
-        #unless          => "/usr/bin/apt-key list |/bin/egrep '2582\s?E0C5'",
         creates         => "/etc/apt/sources.list.d/influxdb.list",
     } ->
     exec { "influx-repo":
@@ -93,15 +98,6 @@ class maverick_analysis::influx (
         }
     }
     
-    # Ensure maverick metrics db exists
-    # Note: Disabling the exec below that creates influx database.  Instead, we rely on mavlogd to do this.
-    #exec { "influx-maverickdb":
-    #    command         => "/bin/sleep 10; /usr/bin/influx -execute 'create database maverick'",
-    #    unless          => "/usr/bin/influx -execute 'show databases' |grep maverick",
-    #    user            => "mav",
-    #    require         => Service["maverick-influxd"],
-    #}
-    
     # Install python library
     install_python_module { "pip-influxdb":
         ensure          => atleast,
@@ -111,7 +107,7 @@ class maverick_analysis::influx (
 
     # Configure collect to send metrics to influxdb
     collectd::plugin::network::server{'localhost':
-        port            => 25826,
+        port            => $collectd_listener_port,
         securitylevel   => "None",
         require         => Service["maverick-influxd"],
     }

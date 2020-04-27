@@ -8,7 +8,7 @@
 #
 # @param active
 #   If true, set the maverick-grafana service to running and enabled (at boot).
-# @param webport
+# @param port
 #   TCP port number to run the grafana service.  Note this is normally reverse-proxied to the end user so does not need to be open.
 # @param host
 #   Hostname/IP to run the grafana service under.  When reverse-proxied this can be set to localhost.
@@ -35,7 +35,7 @@
 #
 class maverick_analysis::grafana (
     Boolean $active = true,
-    String $webport = "6790",
+    Integer $port = 6790,
     String $host = "127.0.0.1",
     String $rootpath = "/analysis/grafana/",
     String $grafana_version = "installed",
@@ -126,7 +126,7 @@ class maverick_analysis::grafana (
                 
                 },
                 server   => {
-                  http_port     => $webport,
+                  http_port     => $port,
                   root_url      => "%(protocol)s://%(domain)s:${rootpath}",
                 },
                 users    => {
@@ -157,7 +157,7 @@ class maverick_analysis::grafana (
         } ->
         http_conn_validator { 'grafana-postdelay' :
             host    => $host,
-            port    => $webport,
+            port    => $port,
             use_ssl => false,
             verify_peer => false,
             test_url => '/public/img/grafana_icon.svg',
@@ -262,12 +262,12 @@ class maverick_analysis::grafana (
             cwd             => "/usr/share/grafana",
         } ->
         grafana_organization { 'maverick':
-            grafana_url      => "http://${host}:${webport}",
+            grafana_url      => "http://${host}:${port}",
             grafana_user     => $admin_user,
             grafana_password => $admin_password,
         } ->
         grafana_user { 'mav':
-            grafana_url      => "http://${host}:${webport}",
+            grafana_url      => "http://${host}:${port}",
             grafana_user      => $admin_user,
             grafana_password  => $admin_password,
             full_name         => 'Maverick User',
@@ -278,7 +278,7 @@ class maverick_analysis::grafana (
         if defined(Class["::maverick_web"]) {
             nginx::resource::location { "web-analysis-graphs":
                 location    => "/analysis/grafana/",
-                proxy       => "http://localhost:${webport}/",
+                proxy       => "http://localhost:${port}/",
                 server      => getvar("maverick_web::server_fqdn"),
                 require     => [ Class["nginx"] ],
             }
@@ -287,7 +287,7 @@ class maverick_analysis::grafana (
         if $grafana_firewall_rules == true {
             if defined(Class["::maverick_security"]) {
                 maverick_security::firewall::firerule { "grafana":
-                    ports       => $webport,
+                    ports       => $port,
                     ips         => lookup("firewall_ips"),
                     proto       => "tcp"
                 }
