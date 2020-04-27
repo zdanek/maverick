@@ -35,7 +35,7 @@
 #
 class maverick_analysis::grafana (
     Boolean $active = true,
-    Integer $port = 6790,
+    Integer $port = 6022,
     String $host = "127.0.0.1",
     String $rootpath = "/analysis/grafana/",
     String $grafana_version = "installed",

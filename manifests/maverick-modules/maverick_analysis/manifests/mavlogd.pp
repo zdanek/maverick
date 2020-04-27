@@ -105,7 +105,7 @@ class maverick_analysis::mavlogd (
             } ->
             nginx::resource::location { "web-analysis-uploader":
                 location    => "/analysis/uploader/",
-                proxy       => 'http://localhost:6792/',
+                proxy       => 'http://localhost:6023/',
                 server      => getvar("maverick_web::server_fqdn"),
                 require     => [ Class["nginx"], Service["maverick-uploader"], ],
             }
