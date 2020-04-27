@@ -30,6 +30,8 @@ network={
 
 This is particularly useful for the Pi Zero which has no ethernet port and is more difficult to attach keyboard and screen to.
 
+?> A sample file is placed in the /boot partition for you to use as a template, eg: `sudo cp wpa_supplicant.conf.sample wpa_supplicant.conf; sudo nano wpa_supplicant.conf`
+
 ### PSKs - Pre Shared Keys
 In the documentation below about how to setup network interfaces, wifi passphrases are represented by 'psk'.  A PSK (Pre Shared Key) is an encrypted form of the wifi passphrase, and the unencrypted passphrase form is not used anywhere for better security.  A PSK is generated from a combination of the SSID and the passphrase and can be easily generated from Maverick:  
 `wpa_passphrase <SSID> <passphrase>`  
