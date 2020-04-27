@@ -1,6 +1,6 @@
 # Distribution Images
 
-Althoug Maverick can be used by bootstrapping without any need for distribution images, as the project gets larger and the build times get longer, it is much more convenient to create and provide distribution images.  These images can be downloaded and flashed for immediate use.  This is particularly useful for slower platforms such as Raspberry Pi, which can take upwards of a day to complete a full developer build.
+Although Maverick can be used by bootstrapping without any need for distribution images, as the project gets larger and the build times get longer, it is much more convenient to create and provide distribution images.  These images can be downloaded and flashed for immediate use.  This is particularly useful for slower platforms such as Raspberry Pi, which can take upwards of a day to complete a full developer build.
 
 Creating distribution images takes place in two stages:
  - _Prepare_ the donor OS, that is a running instance of Maverick that will be the base for the distribution image.
