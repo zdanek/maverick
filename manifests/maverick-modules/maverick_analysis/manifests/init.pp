@@ -41,11 +41,6 @@ class maverick_analysis (
         ensure      => directory,
     }
 
-    if $collectd == true {
-        # Note class named collect instead of collectd to not conflict with other classes
-        class { "maverick_analysis::collect": }
-    }
-    
     if $influxdb == true {
         # Note class named influx instead of influxdb to not conflict with other classes
         if defined(Class["maverick_analysis::collect"]) {
@@ -55,6 +50,11 @@ class maverick_analysis (
                 require     => Class["maverick_analysis::collect"],
             }
         }
+    }
+    
+    if $collectd == true {
+        # Note class named collect instead of collectd to not conflict with other classes
+        class { "maverick_analysis::collect": }
     }
     
     if $grafana == true {

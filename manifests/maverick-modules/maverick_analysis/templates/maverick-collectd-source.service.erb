@@ -11,7 +11,7 @@ Documentation=https://collectd.org
 Type=forking
 EnvironmentFile=-/etc/default/collectd
 ExecStartPre=/srv/maverick/software/collectd/sbin/collectd -t -C /srv/maverick/config/analysis/collectd/collectd.conf
-ExecStartPre=/bin/sh -c 'while ! /usr/bin/influx -execute "show databases" </dev/null >/dev/null 2>&1; do sleep 0.2; done'
+ExecStartPre=/bin/sh -c 'while ! /usr/bin/influx -port <%= @influx_port -%> -execute "show databases" </dev/null >/dev/null 2>&1; do sleep 0.2; done'
 ExecStart=/srv/maverick/software/collectd/sbin/collectd -C /srv/maverick/config/analysis/collectd/collectd.conf
 Restart=on-failure
 RestartSec=10

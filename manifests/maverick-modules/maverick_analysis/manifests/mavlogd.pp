@@ -16,7 +16,8 @@
 #
 class maverick_analysis::mavlogd (
     Boolean $active = true,
-    String $grafana_port = $maverick_analysis::grafana::webport,
+    Integer $influx_port = $maverick_analysis::influx::http_port,
+    Integer $grafana_port = $maverick_analysis::grafana::port,
     String $grafana_host = $maverick_analysis::grafana::host,
     String $grafana_adminpass = $maverick_analysis::grafana::admin_password,
 ) {
@@ -56,7 +57,6 @@ class maverick_analysis::mavlogd (
         owner           => "mav",
         group           => "mav",
         #replace         => false,
-        #source          => "puppet:///modules/maverick_analysis/maverick-mavlogd.conf",
         content         => template("maverick_analysis/maverick-mavlogd.conf.erb"),
         notify          => Service["maverick-mavlogd"],
     } ->
