@@ -1,4 +1,4 @@
-- [Quick Start](/)
+- [Get Started](/)
 - [About](/about)
 
 - Modules
@@ -20,6 +20,7 @@
   - [Web](/modules/web)
 
 - Developers
-  - [Overview](/devdocs/intro)
-  - [Distribution Images](/devdocs/distimages)
+  - [Overview](/dev/intro)
+  - [Compiling](/dev/compiling)
+  - [Distribution Images](/dev/distimages)
 
