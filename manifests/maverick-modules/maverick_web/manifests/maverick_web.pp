@@ -35,11 +35,11 @@ class maverick_web::maverick_web (
     
     # Install dev repo, register maverick-webdev service
     package { 'yarn':
-        ensure   => latest,
+        ensure   => present,
         provider => 'npm',
     } ->
     package { '@vue/cli':
-        ensure   => 'latest',
+        ensure   => 'present',
         provider => 'npm',
     } ->
     oncevcsrepo { "git-maverick-web":
