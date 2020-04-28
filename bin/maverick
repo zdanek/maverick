@@ -873,6 +873,13 @@ else
     exit 1
 fi
 
+# Set permissions of last run yaml so it can be read by mav user
+if [ $EUID -eq 0 ]; then
+    chown mav /var/lib/puppet/state/*
+else
+    sudo chown mav /var/lib/puppet/state/*
+fi
+
 # If maverick not running from expected home assume we want to migrate local-node files
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ x"$DIR" != x"/srv/maverick/software/maverick/bin" ]; then

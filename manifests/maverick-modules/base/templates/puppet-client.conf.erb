@@ -3,6 +3,7 @@ confdir = /srv/maverick/software/maverick/conf
 vardir = /var/lib/puppet
 logdir = /var/log/puppet
 rundir = /var/run/puppet
+statedir = $vardir/state
 ssldir = $vardir/ssl
 strict_variables = true
 environmentpath = /srv/maverick/software/maverick/conf/environments
@@ -13,3 +14,4 @@ environment = <%= @environment %>
 [agent]
 classfile = $vardir/classes.txt
 localconfig = $vardir/localconfig
+lastrunreport = $statedir/last_run_report.yaml

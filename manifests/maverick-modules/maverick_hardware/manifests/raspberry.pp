@@ -122,7 +122,7 @@ class maverick_hardware::raspberry (
         if str2bool($::rootpart_expanded) == false or str2bool($::rootfs_expanded) == false {
             exec { "raspberry-expandroot":
                 command     => "/usr/bin/raspi-config nonint do_expand_rootfs; echo 'done' > /etc/raspi-expandroot",
-                # unless      => "/bin/grep 'done' /etc/raspi-expandroot",
+                unless      => "/bin/grep 'done' /etc/raspi-expandroot",
                 require	    => Package["raspi-config"],
             }
             warning("Root filesystem/partition needs expanding, *please reboot* when configure is finished.")

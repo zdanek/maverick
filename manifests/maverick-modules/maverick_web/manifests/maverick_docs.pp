@@ -55,6 +55,7 @@ class maverick_web::maverick_docs (
             cwd         => "/srv/maverick/software/devframe/docs",
             creates     => "/srv/maverick/software/devframe/docs/vendor/bundle",
             user        => "mav",
+            timeout     => 0,
         } ->
         exec { "devframe_docs-docs":
             environment => ["HOME=/srv/maverick"],
@@ -134,7 +135,7 @@ class maverick_web::maverick_docs (
             dest        => "/srv/maverick/software/px4_user_guide",
         } ->
         package { 'gitbook-cli':
-            ensure   => 'latest',
+            ensure   => present,
             provider => 'npm',
         } ->
         exec { 'gitbook-px4-install':
