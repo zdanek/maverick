@@ -7,8 +7,6 @@ All environments start with the base module:
 
 Depending on the environment and what other classes are included by configuration, these other modules are available:
   - [Analysis](/modules/analysis)
-  - [Cloud9](/modules/cloud9)
-  - [Desktop](/modules/desktop)
   - [Development](/modules/dev)
   - [Flight Controller](/modules/fc)
   - [Hardware](/modules/hardware)
