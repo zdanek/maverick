@@ -34,12 +34,27 @@ class maverick_web::maverick_api (
     install_python_module { "api-graphql-core":
         pkgname     => "graphql-core",
         ensure      => atleast,
-        version     => "3.0.3",
+        version     => "3.1.0",
     } ->
-    install_python_module { "api-tinydb":
-        pkgname     => "tinydb",
+    install_python_module { "api-pyjwt":
+        pkgname     => "PyJWT",
         ensure      => atleast,
-        version     => "3.15.2",
+        version     => "1.7.1",
+    } ->
+    install_python_module { "api-bcrypt":
+        pkgname     => "bcrypt",
+        ensure      => atleast,
+        version     => "3.1.7",
+    } ->
+    install_python_module { "api-cryptography":
+        pkgname     => "cryptography",
+        ensure      => atleast,
+        version     => "2.9.2",
+    } ->
+    install_python_module { "api-aiosqlite":
+        pkgname     => "aiosqlite",
+        ensure      => atleast,
+        version     => "0.12.0",
     } ->
     install_python_module { "api-jsoncomment":
         pkgname     => "jsoncomment",
