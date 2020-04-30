@@ -18,6 +18,8 @@
 #   If true, include the maverick_vision::mjpg_streamer class which installs/configures mjpg_streamer software.
 # @param aruco
 #   If true, include the maverick_vision::aruco class which installs/configures aruco software.
+# @param apriltag
+#   If true, include the maverick_vision::apriltag class which installs/configures apriltag software.
 # @param orb_slam2
 #   If true, include the maverick_vision::orb_slam2 class which installs/configures the orb/slam2 software.
 # @param vision_landing
@@ -36,6 +38,7 @@ class maverick_vision (
     Boolean $visionlibs = true,
     Boolean $mjpg_streamer = false,
     Boolean $aruco = true,
+    Boolean $apriltag = true,
     Boolean $orb_slam2 = false,
     Boolean $vision_landing = true,
     Boolean $vision_seek = true,
@@ -85,6 +88,10 @@ class maverick_vision (
 
     if $aruco == true {
         class { "maverick_vision::aruco": }
+    }
+
+    if $apriltag == true {
+        class { "maverick_vision::apriltag": }
     }
 
     if $orb_slam2 == true {
