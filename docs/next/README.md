@@ -90,7 +90,7 @@ If you have a TX2, replace references in the above instructions from 'tx1' to 't
 If the installation and network setup was successful, you should now be able to connect over ssh (if you're using an OS that talks zeroconf like MacOS or Linux):  
 Raspberry: `ssh maverick-raspberry.local`  
 Raspberry Lite: `ssh maverick-raspberrylite.local`  
-Ubuntu VM: `ssh maverick-ubuntuvm.local`  
+Ubuntu VM: `ssh maverick-desktopvm.local`  
 Joule: `ssh maverick-joule.local`  
 Odroid: `ssh maverick-odroidxu4.local`  
 
@@ -99,7 +99,7 @@ Odroid: `ssh maverick-odroidxu4.local`
 You can also connect to the Web interface from any web browser:  
 Raspberry: http://maverick-raspberry.local/  
 Raspberry Lite: http://maverick-raspberrylite.local/  
-Ubuntu VM: http://maverick-ubuntuvm.local/  
+Ubuntu VM: http://maverick-desktopvm.local/  
 Joule: http://maverick-joule.local/  
 Odroid: http://maverick-odroidxu4.local/  
 

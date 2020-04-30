@@ -123,7 +123,7 @@ This fits in nicely with the Maverick Configuration Management model, so `maveri
 ### Create a SITL Swarm
 Another simple example of building a custom module is to create a small swarm of virtual UAVs using SITL (Software In The Loop) Simulators.  A single SITL simulator is automatically provided with Maverick and is activated by default in the 'dev' environment:  
 ```bash
-[dev] [mav@maverick-ubuntuvm ~]$ maverick status
+[dev] [mav@maverick-desktopvm ~]$ maverick status
 ...
 APSITL (dev)
 apsitl@dev           AP SITL (dev)             Running | Enabled

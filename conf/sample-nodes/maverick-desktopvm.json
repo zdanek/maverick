@@ -1,5 +1,5 @@
-// Sample/default config file for running Maverick in an Ubuntu VM
-// Activated by changing hostname to 'maverick-ubuntuvm' and running 'maverick configure'
+// Sample/default config file for running Maverick in a Desktop VM
+// Activated by changing hostname to 'maverick-desktopvm' and running 'maverick configure'
 {
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
@@ -27,6 +27,7 @@
 	// "maverick_dev::apsitl_dev::mavros_active": true, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 
 	"maverick_vision::visiond::active": false,
+	"maverick_web::maverick_web::janus::active": false,
 
 	// Add classes here
 	"classes":		[
