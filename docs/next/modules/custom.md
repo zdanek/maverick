@@ -55,7 +55,7 @@ class custom_apriltag (
     } ->
     exec { "apriltag-cmake":
         user        => "mav",
-        command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/custom_apriltag . >/srv/maverick/var/log/build/custom_apriltag.cmake.out 2>&1",
+        command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/custom_apriltag -DCMAKE_INSTALL_RPATH=/srv/maverick/software/custom_apriltag/lib . >/srv/maverick/var/log/build/custom_apriltag.cmake.out 2>&1",
         cwd         => "/srv/maverick/var/build/custom_apriltag",
         creates     => "/srv/maverick/var/build/custom_apriltag/CMakeFiles",
     } ->
