@@ -4,6 +4,7 @@ Vision is an important (and fun) part of UAVs.  Maverick provides preinstalled a
 - [**Gstreamer**](/modules/vision#gstreamer): Industry standard software for capturing, transcoding and transmitting video
 - [**OpenCV**](/modules/vision#opencv): Industry standard software for Computer Vision
 - **Aruco**: Fiducial Tag library, for recognising tags/markers in video
+- **AprilTag**: Fiducial Tag library, for recognising tags/markers in video
 - [**Visiond**](/modules/vision#visiond): A dynamic service that detects camera and encoding hardware, and automatically generates a gstreamer pipeline to transmit the video over the network - eg. wifi.  Very useful for FPV, it will in the future be useful for transmitting CV and other video
 - [**Vision_seek**](/modules/vision#vision_seek): Similar to visiond, a daemon for streaming/saving video stream from a Seek Thermal imaging device.
 - [**Flir One**](/modules/vision#flirone): Support for Flir One thermal imaging camera
