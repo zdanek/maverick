@@ -31,6 +31,7 @@ class maverick_ros::ros1 (
     Boolean $module_mavros = true,
     Boolean $module_realsense = false,
     Boolean $module_opencv = false,
+    Boolean $module_apriltag = true,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
@@ -245,6 +246,12 @@ class maverick_ros::ros1 (
             command     => "/bin/false",
             refreshonly => true,
         }
+        if $module_apriltag == true {
+            package { "ros-${_distribution}-apriltag-ros":
+                ensure  => present,
+                require     => Exec["ros_apt_update"],
+            }
+        }
 
     # Build from source
     } elsif $_installtype == "source" {
@@ -440,6 +447,39 @@ class maverick_ros::ros1 (
                     timeout     => 0,
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_ros_opencv":
+                    ensure      => present,
+                }
+            }
+        }
+
+        if $module_apriltag == true {
+            if ! ("install_flag_ros_apriltag" in $installflags) {
+                file { ["/srv/maverick/var/build/catkin_ws_apriltag", "/srv/maverick/var/build/catkin_ws_apriltag/src"]:
+                    ensure  => directory,
+                    owner   => "mav",
+                } ->
+                oncevcsrepo { "git-ros-apriltag":
+                    gitsource   => "https://github.com/AprilRobotics/apriltag.git",
+                    dest        => "/srv/maverick/var/build/catkin_ws_apriltag/src/apriltag",
+                } ->
+                oncevcsrepo { "git-ros-apriltag_ros":
+                    gitsource   => "https://github.com/AprilRobotics/apriltag_ros.git",
+                    dest        => "/srv/maverick/var/build/catkin_ws_apriltag/src/apriltag_ros",
+                } ->
+                exec { "ros-apriltag-rosdep-install":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    command     => "/usr/bin/rosdep install --from-paths src --ignore-src -r -y >/srv/maverick/var/log/build/apriltag.rosdep.out 2>&1",
+                } ->
+                exec { "ros-apriltag-catkin-build":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    environment => ["CMAKE_PREFIX_PATH=/opt/ros/current:/srv/maverick/software/opencv"],
+                    command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -j2 -l2 >/srv/maverick/var/log/build/apriltag-catkin-build.out 2>&1",
+                    #creates     => "/srv/maverick/var/build/catkin_ws_apriltag/src/mavros/mavros >/var/",
+                    timeout     => 0,
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_ros_mavros":
                     ensure      => present,
                 }
             }
