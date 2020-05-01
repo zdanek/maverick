@@ -21,7 +21,7 @@
 class maverick_dev (
     Boolean $apsitl_dev = true,
     Boolean $ardupilot = true,
-    Boolean $px4 = false,
+    Boolean $px4 = true,
     Boolean $px4sitl_dev = true,
     Integer $file_watchers = 8192,
 ) {
