@@ -103,6 +103,19 @@ By default it is installed using 'pip' and installs the latest release available
 The github source repo for the source install can be changed by setting localconf parameter:  
 `"maverick_mavlink::mavproxy_source": "http://github.com/myfork/mavproxy.git"`  
 
+## Mavlink Access
+So Mavlink is installed and running, either directly from a Flight Controller or through a SITL simulator, access is available to multiple clients through a mavlink proxy.  What now?  
+
+### GCS
+
+### MAVROS
+
+### MavSDK
+MavSDK is the official Droncode SDK used to access autopilots through Mavlink.  It is a C++ based SDK, but has a GRPC server that other language bindings/wrappers use to communicate.  Maverick installs the main C++ SDK into ~/software/mavsdk, and also installs the Python bindings through pip.
+For more info on MavSDK, [please visit their homepage](https://mavsdk.mavlink.io/develop/en/).
+
+### Dronekit
+
 ## Mavlink Applications
 ### MAVCesium
 MAVCesium is a great realtime HUD/map display system for autopilots, based on Cesium.  It used to be based on MAVProxy but has recently been separated so it can run on its own.  It is installed by default, and points to the flight controller mavlink proxy.  MAVCesium runs it's own webserver (tornado) but like other Maverick components is reverse proxied to the standard web port under the URL /mavlink/mavcesium/websocket/.  
