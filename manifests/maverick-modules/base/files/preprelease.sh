@@ -66,17 +66,28 @@ rm -rf /var/lib/dhcpcd5/*
 rm -f /srv/maverick/.bash_history
 rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp
-rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local 
+rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local /srv/maverick/.mozilla /srv/maverick/.gnome
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
 rm -rf /srv/maverick/.node-gyp /srv/maverick/.npm .python_history
-rm -rf /srv/maverick/.vscode-server
+rm -rf /srv/maverick/.vscode-server /srv/maverick/.vscode-server-insiders
 rm -rf /srv/maverick/.[Xx]*
 rm -rf /srv/maverick/.ros/log/*
+rm -rf /srv/maverick/.ssh
+rm -rf /srv/maverick/.pki
+rm -rf /srv/maverick/.gitbook /srv/maverick/.bundle /srv/maverick/.gem
+rm -f /srv/maverick/.wget-hsts /srv/maverick/.zeroTierOneAuthToken /srv/maverick/.python_history /srv/maverick/.lesshst /srv/maverick/.ICEauthority
+rm -f /srv/maverick/README.txt
 
 # Remove maverick config
 find /srv/maverick/config -path /srv/maverick/config/maverick -prune -o -type f -exec rm -f {} \;
 rm -f /srv/maverick/config/maverick/localconf.json
 rm -f /srv/maverick/config/maverick/local-nodes/*.json
+
+# Clear out root homedirectory
+rm -rf /root/.config /root/.gem /root/.npm /root/.subversion
+rm -f /root/.bash_history /root/.wget-hsts
+
+
 
 # Create generic EFI boot
 if [ -e /boot/efi ]; then
@@ -95,7 +106,6 @@ find /srv/maverick/data/vision -type f -delete
 find /srv/maverick/data/analysis -type f -delete
 find /srv/maverick/data/network -type f -delete
 rm -rf /srv/maverick/var/lib/influxdb
-rm -rf /srv/maverick/.ssh
 
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
