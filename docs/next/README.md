@@ -14,7 +14,7 @@ OS images are available for the following platforms.  Volunteers to produce imag
 | --- | --- | --- | --- |
 | Raspberry Pi | All Models | [1.2.0b3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 |
 | Raspberry Pi | Lite (Pi Zero/W) | [1.2.0b3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz) | 82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd |
-| Nvidia | Jetson Nano | [1.2.0b3 Image - Coming Soon] | |
+| Nvidia | Jetson Nano | [1.2.0b3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-nvnano.img.bz2)  | f15bd0a202389a7aecd37f39d5ed8dbf368e740495ea3c053a3130e404da3118 |
 | PC | Desktop VM | [1.2.0b3 Image - Coming Soon] | |
 
 Legacy Downloads (These platforms are still supported but we no longer have the harware to build updated images)
@@ -56,7 +56,13 @@ Getting Maverick working on the Raspberry is straight forward.  There are two im
 - [Get Started](#get-Started)
 
 ### Jetson Nano Instructions
-Coming soon...
+Jetson Nano support is in early stages.  The first initial download is very large and based on Jetpack 4.3, and requires a 32Gb SD card.  Subsequent images will be based on new Jetpack 4.4 and will be much smaller.  To get started:
+- Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
+- Boot from the SD card
+- If the ethernet is plugged in, login over the network: `ssh mav@maverick-nano.local` (default password: *wingman*).  Otherwise attach a screen and keyboard.
+- Temporary: run `/usr/lib/nvidia/resizefs/nvresizefs.sh` to expand the root filesystem to fill the SD card.
+- (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
+- [Get Started](#get-Started)
 
 ### Ubuntu VM Instructions
 Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.
