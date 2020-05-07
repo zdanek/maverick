@@ -68,14 +68,15 @@ rm /srv/maverick/.c9/state.settings
 rm -rf /srv/maverick/.c9/metadata/workspace/* /srv/maverick/.c9/metadata/tab* /srv/maverick/.c9/tmp
 rm -rf /srv/maverick/.cache /srv/maverick/.config /srv/maverick/.gconf /srv/maverick/.gnupg /srv/maverick/.ICEauthority /srv/maverick/.local /srv/maverick/.mozilla /srv/maverick/.gnome
 rm -rf /srv/maverick/.gitconfig /srv/maverick/.git-credential-cache /srv/maverick/.subversion
+rm -rf /srv/maverick/.gazebo /srv/maverick/.ignition /srv/maverick/.nv 
 rm -rf /srv/maverick/.node-gyp /srv/maverick/.npm .python_history
 rm -rf /srv/maverick/.vscode-server /srv/maverick/.vscode-server-insiders
 rm -rf /srv/maverick/.[Xx]*
-rm -rf /srv/maverick/.ros/log/*
+rm -rf /srv/maverick/.ros/log/* /srv/maverick/.ros/rospack_cache* /srv/maverick/.ros/roscore*.pid
 rm -rf /srv/maverick/.ssh
 rm -rf /srv/maverick/.pki
 rm -rf /srv/maverick/.gitbook /srv/maverick/.bundle /srv/maverick/.gem
-rm -f /srv/maverick/.wget-hsts /srv/maverick/.zeroTierOneAuthToken /srv/maverick/.python_history /srv/maverick/.lesshst /srv/maverick/.ICEauthority
+rm -f /srv/maverick/.wget-hsts /srv/maverick/.zeroTierOneAuthToken /srv/maverick/.python_history /srv/maverick/.lesshst /srv/maverick/.ICEauthority /srv/maverick/.viminfo
 rm -f /srv/maverick/README.txt
 
 # Remove maverick config
