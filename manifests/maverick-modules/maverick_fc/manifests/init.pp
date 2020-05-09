@@ -52,6 +52,8 @@
 #   Descriptive name of this -api instance
 # @param api_active
 #   If true, this maverick-api instance will be activated and enabled at boot time
+# @param virtualenv
+#   If true, this will create a python virtual environment for FC/production
 #
 class maverick_fc (
     String $mavlink_proxy = "mavlink-router",
@@ -78,36 +80,39 @@ class maverick_fc (
     Boolean $api_instance = true,
     String $api_name = "Flight Controller",
     Boolean $api_active = false,
+    Boolean $virtualenv = false,
 ) {
 
-    # Install a virtual environment for dronekit fc
-    file { "/srv/maverick/code/fc":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    } ->
-    python::virtualenv { '/srv/maverick/code/fc':
-        ensure       => present,
-        version      => 'system',
-        systempkgs   => false,
-        distribute   => true,
-        venv_dir     => '/srv/maverick/.virtualenvs/fc',
-        owner        => 'mav',
-        group        => 'mav',
-        cwd          => '/srv/maverick/code/fc',
-        timeout      => 0,
-    } ->
-    file { "/srv/maverick/.virtualenvs/fc/lib/python2.7/no-global-site-packages.txt":
-        ensure  => absent
+    if $virtualenv == true {
+        # Install a virtual environment for dronekit fc
+        file { "/srv/maverick/code/fc":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        } ->
+        python::virtualenv { '/srv/maverick/code/fc':
+            ensure       => present,
+            version      => 'system',
+            systempkgs   => false,
+            distribute   => true,
+            venv_dir     => '/srv/maverick/.virtualenvs/fc',
+            owner        => 'mav',
+            group        => 'mav',
+            cwd          => '/srv/maverick/code/fc',
+            timeout      => 0,
+        } ->
+        file { "/srv/maverick/.virtualenvs/fc/lib/python2.7/no-global-site-packages.txt":
+            ensure  => absent
+        }
+        file { "/srv/maverick/var/log/mavlink-fc":
+            ensure      => directory,
+            owner       => "mav",
+            group       => "mav",
+            mode        => "755",
+        }
     }
-    file { "/srv/maverick/var/log/mavlink-fc":
-        ensure      => directory,
-        owner       => "mav",
-        group       => "mav",
-        mode        => "755",
-    }
-    
+
     # Install default params config
     file { "/srv/maverick/config/mavlink/mavlink_params-fc.json":
         ensure      => absent,
