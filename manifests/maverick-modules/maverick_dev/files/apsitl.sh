@@ -7,7 +7,7 @@ fi
 
 # Set defaults, can be overriden in /srv/maverick/config/mavlink/sitl.conf
 FRAME=quad # Vehicle frame type - quad, heli, plane, quadplane, rover etc
-LOCATION=CMAC # ~/code/ardupilot/Tools/autotest/locations.txt
+LOCATION=CMAC # ~/software/ardupilot/Tools/autotest/locations.txt
 CUSTOM_LOCATION= # Set to override LOCATION with a custom location
 SPEEDUP=1 # Set simulation speedup (1 for wall clock time)
 WIPE_EEPROM=false # Set to true to wipe eepom when SITL starts
@@ -67,4 +67,4 @@ else
     _DEFAULT_PARAMS=""
 fi
 
-/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/software/python/bin/python3 /srv/maverick/code/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/dev/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION $_DEFAULT_PARAMS  
+/usr/bin/screen -c /srv/maverick/config/dev/apsitl_$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/software/python/bin/python3 /srv/maverick/software/ardupilot/Tools/autotest/sim_vehicle.py -A "--base-port=$SITL_PORT --rc-in-port=$RCIN_PORT" -I $INSTANCE --no-rebuild --no-mavproxy --vehicle=$VEHICLE_TYPE --use-dir=/srv/maverick/data/dev/mavlink/apsitl_$1 --frame=$FRAME --speedup=$SPEEDUP $_LOCATION $_WIPE_EEPROM $_GIMBAL $_TRACKER $_TRACKER_LOCATION $_DEFAULT_PARAMS  

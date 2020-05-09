@@ -165,7 +165,7 @@ class maverick_dev::px4 (
     if ! ("install_flag_px4" in $installflags) {
         oncevcsrepo { "git-px4-px4":
             gitsource   => "https://github.com/PX4/Firmware.git",
-            dest        => "/srv/maverick/code/px4",
+            dest        => "/srv/maverick/software/px4",
             revision	=> $px4_branch,
             submodules  => true,
             owner       => "mav",
@@ -174,7 +174,7 @@ class maverick_dev::px4 (
         exec { "px4_setupstream":
             command     => "/usr/bin/git remote add upstream ${px4_upstream}",
             unless      => "/usr/bin/git remote -v | /bin/grep ${px4_upstream}",
-            cwd         => "/srv/maverick/code/px4",
+            cwd         => "/srv/maverick/software/px4",
             require     => Install_python_module['pip-px4-jinja2'],
         } ->
         exec { "px4-make":
@@ -182,8 +182,8 @@ class maverick_dev::px4 (
             environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
-            cwd         => "/srv/maverick/code/px4",
-            creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
+            cwd         => "/srv/maverick/software/px4",
+            creates     => "/srv/maverick/software/px4/build/px4_sitl_default/bin/px4",
             require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
         }
     }
@@ -206,8 +206,8 @@ class maverick_dev::px4 (
             environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "HEADLESS=1", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
-            cwd         => "/srv/maverick/code/px4",
-            creates     => "/srv/maverick/code/px4/build/px4_sitl_default/bin/px4",
+            cwd         => "/srv/maverick/software/px4",
+            creates     => "/srv/maverick/software/px4/build/px4_sitl_default/bin/px4",
             require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
         } ->
         file { "/srv/maverick/software/maverick/bin/px4sitl.sh":
