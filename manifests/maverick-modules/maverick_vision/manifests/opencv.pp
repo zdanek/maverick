@@ -15,18 +15,18 @@
 #   If true, will take a massive amount of disk space to compile, so set to false unless needed.
 # @param armv7l_optimize
 #   Compile options to optimise armv7l (Raspberry Pi 3/4) build.
-# @param opencv_dldt_version
-#   Which version of OpenVino DLDT to clone/compile/install.
+# @param openvino_version
+#   Which version of OpenVino to clone/compile/install.
 # @param openvino
 #   If true, install the OpenVino modules.
 #
 class maverick_vision::opencv (
     Boolean $contrib = true,
-    String $opencv_version = "4.2.0",
+    String $opencv_version = "4.3.0",
     Enum['Release', 'Debug'] $release = "Release",
     Boolean $precompile_headers = false,
     Boolean $armv7l_optimize = false,
-    String $opencv_dldt_version = "2019",
+    String $openvino_version = "2020.2",
     Boolean $openvino = false,
 ) {
     
@@ -96,15 +96,8 @@ class maverick_vision::opencv (
             $_tbbopts = "-DWITH_TBB=OFF -DBUILD_TBB=OFF"
         }
 
+        /*
         if $tegra_present == "yes" {
-            if $tegra_model == "TX1" {
-                $_tegra_arch = "-D CUDA_ARCH_BIN=5.3"
-            } elsif $tegra_model == "TX2" {
-                $_tegra_arch = "-D CUDA_ARCH_BIN=6.2"
-            } else {
-                $_tegra_arch = ""
-            }
-
             # Patch OpenGL headers
             file { "/var/tmp/OpenGLHeader.patch":
                 source      => "puppet:///modules/maverick_vision/OpenGLHeader.patch",
@@ -117,11 +110,12 @@ class maverick_vision::opencv (
                 unless  => "/bin/grep '//#ifndef GL_VERSION' /usr/local/cuda/include/cuda_gl_interop.h",
             }
         }
+        */
 
         if $::hardwaremodel == "x86_64" {
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } elsif $tegra_present == "yes" {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=ON -DWITH_OPENNI2=ON -DWITH_CUDA=ON -DCUDA_FAST_MATH=ON -DWITH_CUBLAS=ON ${_tbbopts} ${_tegra_arch} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=ON -DWITH_OPENNI2=ON -DWITH_CUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCUDA_FAST_MATH=ON -DWITH_CUBLAS=ON -D ENABLE_NEON=ON -D CUDA_ARCH_PTX= -D CUDA_ARCH_BIN=5.3,6.2,7.2 -D WITH_CUDNN=ON -D OPENCV_DNN_CUDA=ON -D CUDNN_VERSION='8.0' -D CUDNN_INCLUDE_DIR='/usr/include/' ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
@@ -144,6 +138,7 @@ class maverick_vision::opencv (
                 "TBBROOT=/srv/maverick/software/tbb",
                 "CPATH=/srv/maverick/software/tbb/include",
                 "OpenBLAS_HOME=/srv/maverick/software/openblas",
+                "CUDA_BIN_PATH=/usr/local/cuda-10.2",
             ],
             command     => $_command,
             cwd         => "/srv/maverick/var/build/opencv/build",
@@ -225,12 +220,12 @@ class maverick_vision::opencv (
         # If ~/var/build/.install_flag_opencv_dldt exists, skip pulling source and compiling
         if ! ("install_flag_opencv_dldt" in $installflags) {
             oncevcsrepo { "git-opencv_dldt":
-                gitsource   => "https://github.com/opencv/dldt.git",
-                dest        => "/srv/maverick/var/build/opencv_dldt",
-                revision    => $opencv_dldt_version,
+                gitsource   => "https://github.com/openvinotoolkit/openvino",
+                dest        => "/srv/maverick/var/build/openvino",
+                revision    => $openvino_version,
             } ->
             # Create build directory
-            file { "/srv/maverick/var/build/opencv_dldt/inference-engine/build":
+            file { "/srv/maverick/var/build/openvino/inference-engine/build":
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
@@ -238,40 +233,40 @@ class maverick_vision::opencv (
             } ->
             exec { "opencv_submodules-init":
                 command     => "/usr/bin/git submodule init",
-                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine",
-                creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/thirdparty/ade",
+                cwd         => "/srv/maverick/var/build/openvino/inference-engine",
+                creates     => "/srv/maverick/var/build/openvino/inference-engine/thirdparty/ade",
                 user        => "mav",
             } ->
             exec { "opencv_submodules-update":
                 command     => "/usr/bin/git submodule update --recursive",
-                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine",
-                creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/thirdparty/ade/CMakeLists.txt",
+                cwd         => "/srv/maverick/var/build/openvino/inference-engine",
+                creates     => "/srv/maverick/var/build/openvino/inference-engine/thirdparty/ade/CMakeLists.txt",
                 user        => "mav",
             } ->
-            exec { "opencv_dldt-prepbuild":
+            exec { "openvino-prepbuild":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv_dldt -DCMAKE_BUILD_TYPE=Release .. >/srv/maverick/var/log/build/opencv_dldt.prepbuild.out 2>&1",
-                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine/build",
-                creates     => "/srv/maverick/var/build/opencv_dldt/inference-engine/build/Makefile",
+                command     => "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/openvino -DCMAKE_BUILD_TYPE=Release .. >/srv/maverick/var/log/build/openvino.prepbuild.out 2>&1",
+                cwd         => "/srv/maverick/var/build/openvino/inference-engine/build",
+                creates     => "/srv/maverick/var/build/openvino/inference-engine/build/Makefile",
                 require     => Exec["opencv-prepbuild"],
             } ->
-            exec { "opencv_dldt-build":
+            exec { "openvino-build":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/usr/bin/make >/srv/maverick/var/log/build/opencv_dldt.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine/build",
+                command     => "/usr/bin/make >/srv/maverick/var/log/build/openvino.build.out 2>&1",
+                cwd         => "/srv/maverick/var/build/openvino/inference-engine/build",
                 #creates     => ,
                 #require     => Exec["opencv-prepbuild"],
             } ->
-            exec { "opencv_dldt-install":
+            exec { "openvino-install":
                 user        => "mav",
                 timeout     => 0,
-                command     => "/usr/bin/make install >/srv/maverick/var/log/build/opencv_dldt.install.out 2>&1",
-                cwd         => "/srv/maverick/var/build/opencv_dldt/inference-engine/build",
+                command     => "/usr/bin/make install >/srv/maverick/var/log/build/openvino.install.out 2>&1",
+                cwd         => "/srv/maverick/var/build/openvino/inference-engine/build",
                 #creates     => $_install_creates,
             } ->
-            file { "/srv/maverick/var/build/.install_flag_opencv_dldt":
+            file { "/srv/maverick/var/build/.install_flag_openvino":
                 ensure      => present,
             }
         }
