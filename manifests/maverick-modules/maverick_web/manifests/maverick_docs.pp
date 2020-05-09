@@ -27,11 +27,31 @@ class maverick_web::maverick_docs (
         force       => true,
     }
 
+    # Maverick Docs
     nginx::resource::location { "web-maverick-docs":
         ensure          => present,
         ssl             => true,
         location        => "/web/docs/maverick",
         location_alias  => "/srv/maverick/software/maverick/docs",
+        index_files     => ["index.html"],
+        server          => $server_hostname,
+        require         => [ Class["nginx"], Service["nginx"] ],
+    }
+
+    # Create Maverick parameter docs from puppet strings
+    file { "/srv/maverick/var/lib/web/maverick-parameters":
+        ensure      => directory,
+    } ->
+    exec { "maverick-puppetstrings":
+        cwd         => "/srv/maverick/var/lib/web/maverick-parameters",
+        command     => "/usr/local/bin/puppet strings generate /srv/maverick/software/maverick/manifests/maverick-modules/**/manifests/*.pp",
+        creates     => "/srv/maverick/var/lib/web/maverick-parameters/doc",
+    } ->
+    nginx::resource::location { "web-maverick-parameters-docs":
+        ensure          => present,
+        ssl             => true,
+        location        => "/web/docs/maverick-parameters",
+        location_alias  => "/srv/maverick/var/lib/web/maverick-parameters/doc",
         index_files     => ["index.html"],
         server          => $server_hostname,
         require         => [ Class["nginx"], Service["nginx"] ],
