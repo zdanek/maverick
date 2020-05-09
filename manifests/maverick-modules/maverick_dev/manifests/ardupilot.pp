@@ -7,7 +7,7 @@
 #   It could be included selectively from eg. minimal environment.
 #
 # @param ardupilot_source
-#   Git repo to clone, that is used to compile ardupilot (in ~/code/ardupilot).  Change this if you want to use a forked repo.
+#   Git repo to clone, that is used to compile ardupilot (in ~/software/ardupilot).  Change this if you want to use a forked repo.
 # @param ardupilot_setupstream
 #   If true, set the upstream repo.  Useful if using a forked repo for upstream updates and PRs.
 # @param ardupilot_upstream
@@ -46,7 +46,7 @@ class maverick_dev::ardupilot (
     # Install ardupilot from git
     oncevcsrepo { "git-ardupilot":
         gitsource   => $ardupilot_source,
-        dest        => "/srv/maverick/code/ardupilot",
+        dest        => "/srv/maverick/software/ardupilot",
         revision	=> $ardupilot_branch,
         submodules  => true,
     }
@@ -63,7 +63,7 @@ class maverick_dev::ardupilot (
     exec { "ardupilot_setupstream":
         command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
         unless      => "/usr/bin/git remote -v | /bin/grep -i ${ardupilot_upstream}",
-        cwd         => "/srv/maverick/code/ardupilot",
+        cwd         => "/srv/maverick/software/ardupilot",
         require     => Oncevcsrepo["git-ardupilot"],
     }
     

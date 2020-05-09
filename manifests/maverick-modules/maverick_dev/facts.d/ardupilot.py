@@ -5,22 +5,22 @@
 import os,re
 
 print("ardupilotfw_test=yes")
-if os.path.isfile("/srv/maverick/code/ardupilot/ArduCopter/ArduCopter.elf"):
+if os.path.isfile("/srv/maverick/software/ardupilot/ArduCopter/ArduCopter.elf"):
     print("ardupilotfw_arducopter=yes")
 else:
     print("ardupilotfw_arducopter=no")
 
-if os.path.isfile("/srv/maverick/code/ardupilot/ArduPlane/ArduPlane.elf"):
+if os.path.isfile("/srv/maverick/software/ardupilot/ArduPlane/ArduPlane.elf"):
     print("ardupilotfw_arduplane=yes")
 else:
     print("ardupilotfw_arduplane=no")
 
-if os.path.isfile("/srv/maverick/code/ardupilot/APMrover2/APMrover2.elf"):
+if os.path.isfile("/srv/maverick/software/ardupilot/APMrover2/APMrover2.elf"):
     print("ardupilotfw_apmrover2=yes")
 else:
     print("ardupilotfw_apmrover2=no")
 
-if os.path.isfile("/srv/maverick/code/ardupilot/AntennaTracker/AntennaTracker.elf"):
+if os.path.isfile("/srv/maverick/software/ardupilot/AntennaTracker/AntennaTracker.elf"):
     print("ardupilotfw_antennatracker=yes")
 else:
     print("ardupilotfw_antennatracker=no")
@@ -28,7 +28,7 @@ else:
 
 # Define main data container
 waffiles = []
-for root, dirs, files in os.walk("/srv/maverick/code/ardupilot/build"):
+for root, dirs, files in os.walk("/srv/maverick/software/ardupilot/build"):
     for file in files:
         dirs = root.split("/")
         trpath = "/".join(dirs[-2::])

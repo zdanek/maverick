@@ -28,9 +28,9 @@ define maverick_dev::fwbuildwaf (
         exec { "ardupilotfw_${board}_${vehicle}":
             user        => "mav",
             timeout     => 0,
-            command     => "/srv/maverick/code/ardupilot/waf configure --board ${board} && /srv/maverick/code/ardupilot/waf ${vehicle} >/srv/maverick/var/log/build/ardupilot-fw-${vehicle}.build.log 2>&1",
-            cwd         => "/srv/maverick/code/ardupilot",
-            creates     => "/srv/maverick/code/ardupilot/build/${board}/bin/${buildfile}",
+            command     => "/srv/maverick/software/ardupilot/waf configure --board ${board} && /srv/maverick/software/ardupilot/waf ${vehicle} >/srv/maverick/var/log/build/ardupilot-fw-${vehicle}.build.log 2>&1",
+            cwd         => "/srv/maverick/software/ardupilot",
+            creates     => "/srv/maverick/software/ardupilot/build/${board}/bin/${buildfile}",
             require     => Install_python_module['pip-future']
         }
     }

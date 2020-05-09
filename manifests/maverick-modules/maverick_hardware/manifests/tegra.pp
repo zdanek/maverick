@@ -1,6 +1,7 @@
 # @summary
 #   Maverick_hardware::Tegra class
 #   This class installs/manages the Nvidia Tegra hardware environment, including support for TX1/TX2 and Jetson Nano.
+#   NB: This manifest is specifically configured for JetPack 4.4.  The setup and versions of Nvidia software is quite specific to the version of JetPack.
 #
 # @example Declaring the class
 #   This class is included from maverick_hardware class and should not be included from elsewhere
@@ -10,7 +11,42 @@
 #
 class maverick_hardware::tegra (
     Boolean $jtx1inst = false,
+    Boolean $remove_large_packages = false,
 ) {
+
+    ### Online Jetpack install
+    ### As per https://docs.nvidia.com/jetson/jetpack/install-jetpack/index.html#upgrade-jetpack
+    # First uninstall the local/old stuff
+    /*
+    ensure_packages(
+        ["nvidia-container-csv-cuda", "libopencv-python", "libvisionworks-sfm-dev", "libvisionworks-dev", "libvisionworks-samples", "libnvparsers6", "libnvinfer-bin", "nvidia-container-csv-cudnn", "libvisionworks-tracking-dev", "vpi-samples", "tensorrt", "libopencv", "libnvinfer-doc", "libnvparsers-dev", "libcudnn8", "libnvidia-container0", "cuda-toolkit-10*local*", "nvidia-container-csv-visionworks", "graphsurgeon-tf", "libopencv-samples", "python-libnvinfer-dev", "libnvinfer-plugin-dev", "libnvinfer-plugin6", "nvidia-container-toolkit", "libvisionworks", "libopencv-dev", "nvidia-l4t-jetson-multimedia-api", "vpi-dev", "vpi", "python3-libnvinfer", "python3-libnvinfer-dev", "opencv-licenses", "nvidia-container-csv-tensorrt", "libnvinfer6", "libnvonnxparsers-dev", "libnvonnxparsers6", "uff-converter-tf", "nvidia-docker2", "libvisionworks-sfm", "libnvidia-container-tools", "nvidia-container-runtime", "python-libnvinfer", "libvisionworks-tracking"], 
+        {'ensure'=>'purged', 'before' => 'Package["nvidia-jetpack"]'},
+    )
+    ensure_packages(
+        ["cuda-repo-l4t-10-2-local", "libvisionworks-repo", "libvisionworks-sfm-repo", "libvisionworks-tracking-repo"], 
+        {'ensure'=>'purged', 'before' => 'Package["nvidia-jetpack"]'},
+    )
+    */
+    #package { ["nvidia-container-csv-cuda", "libopencv-python", "libvisionworks-sfm-dev", "libvisionworks-dev", "libvisionworks-samples", "libnvparsers6", "libnvinfer-bin", "nvidia-container-csv-cudnn", "libvisionworks-tracking-dev", "vpi-samples", "tensorrt", "libopencv", "libnvinfer-doc", "libnvparsers-dev", "libcudnn8", "libnvidia-container0", "cuda-toolkit-10*local*", "nvidia-container-csv-visionworks", "graphsurgeon-tf", "libopencv-samples", "python-libnvinfer-dev", "libnvinfer-plugin-dev", "libnvinfer-plugin6", "nvidia-container-toolkit", "libvisionworks", "libopencv-dev", "nvidia-l4t-jetson-multimedia-api", "vpi-dev", "vpi", "python3-libnvinfer", "python3-libnvinfer-dev", "opencv-licenses", "nvidia-container-csv-tensorrt", "libnvinfer6", "libnvonnxparsers-dev", "libnvonnxparsers6", "uff-converter-tf", "nvidia-docker2", "libvisionworks-sfm", "libnvidia-container-tools", "nvidia-container-runtime", "python-libnvinfer", "libvisionworks-tracking", "cuda-repo-l4t-10-2-local", "libvisionworks-repo", "libvisionworks-sfm-repo", "libvisionworks-tracking-repo"]:
+    #    ensure => purged,
+    #} ->
+    exec { "tegra-remove-localrepos":
+        command     => "/usr/bin/apt purge libvisionworks* cuda-*local* cuda-*local",
+        onlyif      => "/bin/ls -l /var/lib/cuda*local*",
+    }
+    # Then install everything using online packages, using the uber meta package
+    exec { "tegra-install-jetpack":
+        command     => "/usr/bin/apt install nvidia-jetpack",
+        onlyif      => "/bin/ls -l /var/lib/cuda*local*",
+    }
+
+    if $remove_large_packages == true {
+        # Remove some of the very large 'extra' packages to save space
+        package { ["libcudnn8-doc", "libcudnn8-dev", "cuda-cufft-dev-10-2", "cuda-documentation-10-2", "cuda-samples-10-2", "cuda-npp-dev-10-2", "cuda-nvgraph-dev-10-2", "cuda-cusparse-dev-10-2", "cuda-cusolver-dev-10-2", "libnvinfer-samples", "libnvinfer-dev"]:
+            ensure  => purged,
+            require => Package["nvidia-jetpack"],
+        }
+    }
 
     ### Disable nvidia report_ip_to_host
     exec { "tegra-disable-report":
