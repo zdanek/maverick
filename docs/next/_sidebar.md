@@ -21,4 +21,6 @@
   - [Overview](/dev/intro)
   - [Compiling](/dev/compiling)
   - [Distribution Images](/dev/distimages)
+  - Contributing
+    - [Documentation](/dev/contrib-docs)
 
