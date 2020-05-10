@@ -11,41 +11,39 @@
 #
 class maverick_hardware::tegra (
     Boolean $jtx1inst = false,
-    Boolean $remove_large_packages = false,
+    Boolean $remove_large_packages = true,
 ) {
 
     ### Online Jetpack install
     ### As per https://docs.nvidia.com/jetson/jetpack/install-jetpack/index.html#upgrade-jetpack
     # First uninstall the local/old stuff
-    /*
-    ensure_packages(
-        ["nvidia-container-csv-cuda", "libopencv-python", "libvisionworks-sfm-dev", "libvisionworks-dev", "libvisionworks-samples", "libnvparsers6", "libnvinfer-bin", "nvidia-container-csv-cudnn", "libvisionworks-tracking-dev", "vpi-samples", "tensorrt", "libopencv", "libnvinfer-doc", "libnvparsers-dev", "libcudnn8", "libnvidia-container0", "cuda-toolkit-10*local*", "nvidia-container-csv-visionworks", "graphsurgeon-tf", "libopencv-samples", "python-libnvinfer-dev", "libnvinfer-plugin-dev", "libnvinfer-plugin6", "nvidia-container-toolkit", "libvisionworks", "libopencv-dev", "nvidia-l4t-jetson-multimedia-api", "vpi-dev", "vpi", "python3-libnvinfer", "python3-libnvinfer-dev", "opencv-licenses", "nvidia-container-csv-tensorrt", "libnvinfer6", "libnvonnxparsers-dev", "libnvonnxparsers6", "uff-converter-tf", "nvidia-docker2", "libvisionworks-sfm", "libnvidia-container-tools", "nvidia-container-runtime", "python-libnvinfer", "libvisionworks-tracking"], 
-        {'ensure'=>'purged', 'before' => 'Package["nvidia-jetpack"]'},
-    )
-    ensure_packages(
-        ["cuda-repo-l4t-10-2-local", "libvisionworks-repo", "libvisionworks-sfm-repo", "libvisionworks-tracking-repo"], 
-        {'ensure'=>'purged', 'before' => 'Package["nvidia-jetpack"]'},
-    )
-    */
-    #package { ["nvidia-container-csv-cuda", "libopencv-python", "libvisionworks-sfm-dev", "libvisionworks-dev", "libvisionworks-samples", "libnvparsers6", "libnvinfer-bin", "nvidia-container-csv-cudnn", "libvisionworks-tracking-dev", "vpi-samples", "tensorrt", "libopencv", "libnvinfer-doc", "libnvparsers-dev", "libcudnn8", "libnvidia-container0", "cuda-toolkit-10*local*", "nvidia-container-csv-visionworks", "graphsurgeon-tf", "libopencv-samples", "python-libnvinfer-dev", "libnvinfer-plugin-dev", "libnvinfer-plugin6", "nvidia-container-toolkit", "libvisionworks", "libopencv-dev", "nvidia-l4t-jetson-multimedia-api", "vpi-dev", "vpi", "python3-libnvinfer", "python3-libnvinfer-dev", "opencv-licenses", "nvidia-container-csv-tensorrt", "libnvinfer6", "libnvonnxparsers-dev", "libnvonnxparsers6", "uff-converter-tf", "nvidia-docker2", "libvisionworks-sfm", "libnvidia-container-tools", "nvidia-container-runtime", "python-libnvinfer", "libvisionworks-tracking", "cuda-repo-l4t-10-2-local", "libvisionworks-repo", "libvisionworks-sfm-repo", "libvisionworks-tracking-repo"]:
-    #    ensure => purged,
-    #} ->
     exec { "tegra-remove-localrepos":
         command     => "/usr/bin/apt purge libvisionworks* cuda-*local* cuda-*local",
         onlyif      => "/bin/ls -l /var/lib/cuda*local*",
-    }
+    } ->
     # Then install everything using online packages, using the uber meta package
+    # Note we do this inside an exec so it only happens once, because we then selectively remove large packages to reduce disk space consumed.
     exec { "tegra-install-jetpack":
         command     => "/usr/bin/apt install nvidia-jetpack",
         onlyif      => "/bin/ls -l /var/lib/cuda*local*",
+    } ->
+    # Ensure important packages are always installed
+    package {["cuda-libraries-10-2"]:
+        ensure      => installed,
     }
 
     if $remove_large_packages == true {
         # Remove some of the very large 'extra' packages to save space
-        package { ["libcudnn8-doc", "libcudnn8-dev", "cuda-cufft-dev-10-2", "cuda-documentation-10-2", "cuda-samples-10-2", "cuda-npp-dev-10-2", "cuda-nvgraph-dev-10-2", "cuda-cusparse-dev-10-2", "cuda-cusolver-dev-10-2", "libnvinfer-samples", "libnvinfer-dev"]:
+        package { ["libcudnn8-doc", "cuda-cufft-dev-10-2", "cuda-documentation-10-2", "cuda-samples-10-2", "cuda-npp-dev-10-2", "cuda-nvgraph-dev-10-2", "cuda-cusparse-dev-10-2", "cuda-cusolver-dev-10-2", "libnvinfer-samples", "libnvinfer-dev"]:
             ensure  => purged,
-            require => Package["nvidia-jetpack"],
+            require => Exec["tegra-install-jetpack"],
         }
+    }
+
+    install_python_module { "jetson-stats":
+        owner   => "root",
+        pkgname => "jetson-stats",
+        ensure  => present,
     }
 
     ### Disable nvidia report_ip_to_host
