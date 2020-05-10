@@ -6,6 +6,7 @@
 #   This class is included from maverick_mavlink class and should not be included from elsewhere
 #
 class maverick_mavlink::mavsdk (
+    $revision = "v0.24.0",
 ) {
 
     # Install px4 dev/build dependencies
@@ -21,6 +22,7 @@ class maverick_mavlink::mavsdk (
         oncevcsrepo { "git-mavsdk":
             gitsource   => "https://github.com/mavlink/MAVSDK.git",
             dest        => "/srv/maverick/var/build/mavsdk",
+            revision    => $revision,
             submodules  => true,
         } ->
         file { ["/srv/maverick/var/build/mavsdk/build", "/srv/maverick/var/build/mavsdk/build/default"]:
