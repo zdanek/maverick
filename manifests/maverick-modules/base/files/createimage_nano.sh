@@ -6,6 +6,7 @@
 ### IF YOU DO NOT UNDERSTAND WHAT THIS DOES, YOU ARE ALMOST GUARANTEED TO LOSE DATA BY RUNNING IT.
 #
 ### This script attempts to prepare and compress partitions in preparation for imaging.
+### NB: This script is specific to JetPack 4.4 for the Jetson Nano
 #
 ### Bits of logic liberally lifted from create-img.sh script by Badr BADRI © pythops
 
@@ -29,10 +30,12 @@ fi
 srcdisk=$1
 dstdir=$2
 
-mkdir -p $dstdir
+if [ ! -d $dstdir ]; then
+    mkdir -p $dstdir
+fi
 
 # Download L4T
-BSP=https://developer.nvidia.com/embedded/r32-2-3_Release_v1.0/t210ref_release_aarch64/Tegra210_Linux_R32.2.3_aarch64.tbz2
+BSP=https://developer.nvidia.com/embedded/L4T/r32_Release_v4.2/t210ref_release_aarch64/Tegra210_Linux_R32.4.2_aarch64.tbz2
 if [ ! "$(ls -A $dstdir)" ]; then
         printf "\e[32mDownload L4T...       "
         wget -qO- $BSP | tar -jxpf - -C $dstdir
@@ -40,16 +43,26 @@ if [ ! "$(ls -A $dstdir)" ]; then
         printf "[OK]\n"
 fi
 
-mkdir /var/tmp/nano.srcdisk
+if [ ! -d /var/tmp/nano.srcdisk ]; then
+    mkdir /var/tmp/nano.srcdisk
+fi
+
 mount /dev/${srcdisk}1 /var/tmp/nano.srcdisk
 
 rsync -avz /var/tmp/nano.srcdisk/* $dstdir/Linux_for_Tegra/rootfs
-
+cd $dstdir/Linux_for_Tegra
 printf "Create image... "
 rootfs_size=$(du -hsBM $dstdir/Linux_for_Tegra/rootfs | awk '{print $1}')
 rootfs_size=$(echo $((${rootfs_size%?} + 512))"M")
-./create-jetson-nano-sd-card-image.sh -o maverick-nano.img -s $rootfs_size -r 200
+#tools/jetson-disk-image-creator.sh -o $dstdir/maverick-nano.img -s $rootfs_size -r 200
+tools/jetson-disk-image-creator.sh -o $dstdir/maverick-nano.img -b jetson-nano -r 200
+umount /var/tmp/nano.srcdisk
 printf "OK\n"
 
-printf "\e[32mImage created successfully\n"
-printf "Image location: $stdir/Linux_for_Tegra/maverick-nano.img\n"
+if [ -f $dstdir/maverick-nano.img ]; then
+    bzip2 $dstdir/maverick-nano.img
+    printf "\e[32mImage created successfully\n"
+    printf "Image location: $dstdir/maverick-nano.img.bz2\n"
+else
+    printf "Error creating image\n"
+fi
