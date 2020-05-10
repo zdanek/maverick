@@ -27,7 +27,7 @@ class maverick_dev::px4 (
     String $rtps_branch = "v1.8.2",
     Boolean $sitl = false,
     Boolean $sitl_active = false,
-    Boolean $cross_compile = true,
+    Boolean $cross_compile = false,
     String $mavlink_proxy = "mavlink-router",
     Boolean $mavlink_logging = false,
     Boolean $mavlink_active = false,
