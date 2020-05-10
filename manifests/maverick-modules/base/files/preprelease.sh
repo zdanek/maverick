@@ -88,8 +88,6 @@ rm -f /srv/maverick/config/maverick/local-nodes/*.json
 rm -rf /root/.config /root/.gem /root/.npm /root/.subversion
 rm -f /root/.bash_history /root/.wget-hsts
 
-
-
 # Create generic EFI boot
 if [ -e /boot/efi ]; then
     mkdir /boot/efi/EFI/BOOT
@@ -107,6 +105,11 @@ find /srv/maverick/data/vision -type f -delete
 find /srv/maverick/data/analysis -type f -delete
 find /srv/maverick/data/network -type f -delete
 rm -rf /srv/maverick/var/lib/influxdb
+
+# Remove large tegra packages, outside of manifests.  This is so users can uninstall/reinstall at will
+if [ -f /etc/nv_tegra_release ]; then
+    apt purge -y libcudnn8-dev thunderbird
+fi
 
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
