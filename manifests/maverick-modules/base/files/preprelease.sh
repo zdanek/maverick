@@ -112,6 +112,7 @@ rm -rf /srv/maverick/var/lib/influxdb
 if [ -f /etc/nv_tegra_release ]; then
     apt purge -y libcudnn8-dev thunderbird
 fi
+rm -f /README.txt
 
 # Remove ubuntu old snaps crap - seriously..
 /srv/maverick/software/maverick/manifests/maverick-modules/base/files/remove-old-snaps.sh
