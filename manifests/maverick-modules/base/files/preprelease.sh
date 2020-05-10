@@ -22,12 +22,14 @@ echo "Removing logs, config and data"
 # Clean as much of /var/log as possible
 rm -f /var/log/*.log*
 rm -f /var/log/apt/*
-rm -f -rf /var/log/installer
+rm -rf /var/log/installer
 rm -f /var/log/faillog /var/log/lastlog
 rm -f /var/log/lightdm/*
 rm -f /var/log/syslog* /var/log/dmesg /var/log/debug* /var/log/messages*
 rm -f /var/log/unattended-upgrades/*
 rm -f /var/log/btmp* /var/log/wtmp*
+rm -rf /var/log/journal/*
+rm -rf /var/log/nginx/*
 
 # Remove tmp user used to initially install OS
 rm -rf /home/tmp
@@ -51,7 +53,7 @@ rm -rf /root/.cache /root/.gnupg
 rm -rf /srv/maverick/var/build/*
 
 # Remove tmp data
-rm -rf /var/tmp/* /var/crash/* /var/backup/* 
+rm -rf /var/tmp/* /var/crash/* /var/backups/* 
 rm -rf /tmp/*
 
 # Delete puppet client data
@@ -111,6 +113,10 @@ if [ -f /etc/nv_tegra_release ]; then
     apt purge -y libcudnn8-dev thunderbird
 fi
 
+# Remove ubuntu old snaps crap - seriously..
+/srv/maverick/software/maverick/manifests/maverick-modules/base/files/remove-old-snaps.sh
+rm -rf /var/lib/snapd/cache/*
+
 echo "Recreating gstreamer cache"
 su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
 
@@ -130,6 +136,10 @@ rm -f /srv/maverick/var/run/*
 find /srv/maverick/var/log -type f -delete
 find /run/log/journal -type f -delete
 systemctl restart systemd-journald
+
+# Re-seed dhclient
+$(ip a |grep eth0 >/dev/null 2>&1) && dhclient eth0
+$(ip a |grep wlan0 >/dev/null 2>&1) && dhclient wlan0
 
 echo "Maverick preparation complete"
 #read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
