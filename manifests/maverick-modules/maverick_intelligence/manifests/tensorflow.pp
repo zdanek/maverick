@@ -43,6 +43,10 @@ class maverick_intelligence::tensorflow (
         pkgname     => "numpy",
         ensure      => present,
     }
+    install_python_module { "tensorflow-cython":
+        pkgname     => "cython",
+        ensure      => present,
+    }    
 
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
@@ -80,6 +84,7 @@ class maverick_intelligence::tensorflow (
                 url         => $tensorflow_url,
                 ensure      => present,
                 timeout     => 0,
+                require     => Install_python_module["tensorflow-cython"],
             }
         }
 
