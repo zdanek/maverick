@@ -1,4 +1,4 @@
-* [Next (2.0.0-dev)](/)
+* [Next (1.2.0-dev)](/)
   * <a href='../current' target=_self>Current Version (1.1.6)</a>
 * [Get Started](/?id=installation)
 * [About](/about)

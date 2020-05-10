@@ -4,3 +4,4 @@ This section is for developer documentation, that is developers or 'power users'
 
  - [How to compile code using Maverick software components](/dev/compiling)  
  - [How to create Distribution Images of Maverick](/dev/distimages)  
+ - [Contributing to Documentation](/dev/contrib-docs)
