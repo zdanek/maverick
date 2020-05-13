@@ -17,8 +17,8 @@ class maverick_mavlink::mavsdk (
         if $raspberry_present == "yes" {
             $atomic_environment = ["CXXFLAGS=-latomic"]
         } else {
-	    $atomic_environment = undef
-	}
+	        $atomic_environment = undef
+	    }
         oncevcsrepo { "git-mavsdk":
             gitsource   => "https://github.com/mavlink/MAVSDK.git",
             dest        => "/srv/maverick/var/build/mavsdk",
