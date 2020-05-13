@@ -31,7 +31,7 @@ class maverick_ros::ros1 (
     Boolean $module_mavros = true,
     Boolean $module_realsense = false,
     Boolean $module_opencv = false,
-    Boolean $module_apriltag = true,
+    Boolean $module_apriltag = false,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
