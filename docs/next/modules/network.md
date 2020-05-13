@@ -4,6 +4,28 @@ Networking is a complex subject and the setup and configuration of networking is
 
 Maverick, by default, disables these Managers and uses the very simple but reliable Debian/Ubuntu networking model of configuring a single file - */etc/network/interfaces*.  This has proved to be simpler and more reliable to manage, particularly from the automated manifests that Maverick uses.
 
+## Network Ports
+Maverick contains lots of services that listen on network ports for connections.  Most of the services are configured to listen on ports within a standard defined range.  Here are the currently defined services:  
+
+| Service | Proto | Port | Note |
+|--- | :---: | :---: | ---|
+|maverick-discovery | TCP | 6001 | Non-SSL|
+|maverick-discovery | TCP | 6002 | SSL|
+|maverick-api | TCP | 6003 | Non-SSL|
+|maverick-api | TCP | 6004 | SSL|
+|visiond | TCP | 6010 | RTSP Server|
+|webrtc | TCP | 6011 | SSL Websocket|
+|webrtc | TCP | 6012 | SSL REST API|
+|webrtc | TCP | 6013 | RTP/UDP Stream|
+|InfluxDB | TCP | 6020 ||
+|InfluxDB | TCP | 6021 | Collectd Listener|
+|Grafana | TCP | 6022 ||
+|Mavlogd Upload Server | TCP | 6023 ||
+|WebDev Server | TCP | 6100 ||
+|Cloud9 IDE | TCP | 6101 ||
+
+In addition, there are a wide range of ports assigned for Mavlink.  These are listed separate on the [Mavlink module page](/modules/mavlink).
+
 ### Quick Start Wifi
 For very quick initial setup of Wifi, Maverick provides a utility to help: `wifi-setup`.  This utility is mostly useful when Maverick is first installed or image first booted as it only provides a very simple network configuration.  However, it's a fast and easy way to setup wifi especially on those boards without ethernet (eg. Joule, Pi Zero W).  Simply type: `wifi-setup`, enter your router SSID and passphrase:  
 ```
