@@ -41,11 +41,15 @@ class maverick_web::maverick_docs (
     # Create Maverick parameter docs from puppet strings
     file { "/srv/maverick/var/lib/web/maverick-parameters":
         ensure      => directory,
+        owner       => "mav",
+        group       => "mav",
     } ->
     exec { "maverick-puppetstrings":
         cwd         => "/srv/maverick/var/lib/web/maverick-parameters",
         command     => "/usr/local/bin/puppet strings generate /srv/maverick/software/maverick/manifests/maverick-modules/**/manifests/*.pp",
         creates     => "/srv/maverick/var/lib/web/maverick-parameters/doc",
+        user        => "mav",
+        environment => ['HOME=/srv/maverick'],
     } ->
     nginx::resource::location { "web-maverick-parameters-docs":
         ensure          => present,
