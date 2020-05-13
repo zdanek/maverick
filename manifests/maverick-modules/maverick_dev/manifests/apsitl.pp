@@ -90,17 +90,17 @@ define maverick_dev::apsitl (
     String $instance_name = "apsitl",
     Integer $instance_number = 0,
     Boolean $sitl_active = true,
-    Integer $sitl_port = 5000,
-    Integer $rcin_port = 5500,
+    Integer $sitl_port = 6500,
+    Integer $rcin_port = 6501,
     String $vehicle_type = "copter",
     Optional[String] $vehicle_frame = undef,
     Optional[String] $vehicle_paramfile = undef,
     String $mavlink_proxy = "mavlink-router",
     Boolean $mavlink_active = true,
     Boolean $mavlink_logging = false,
-    Integer $mavlink_startingtcp = 6000,
+    Integer $mavlink_startingtcp = 6504,
     Integer $mavlink_tcpports = 3,
-    Integer $mavlink_startingudp = 14000,
+    Integer $mavlink_startingudp = 6507,
     Integer $mavlink_udpports = 3,
     Integer $mavlink_udpinports = 3,
     Optional[String] $mavlink_serialout = undef,
@@ -109,13 +109,13 @@ define maverick_dev::apsitl (
     Boolean $mavlink_replaceconfig = true,
     Boolean $ros_instance = true,
     Boolean $rosmaster_active = true,
-    Integer $rosmaster_port = 11000,
+    Integer $rosmaster_port = 6502,
     Boolean $mavros_active = true,
     Integer $mavros_startup_delay = 10,
     Boolean $api_instance = true,
     String $api_name = "",
     Boolean $api_active = true,
-    Integer $api_port = 7000,
+    Integer $api_port = 6503,
     Boolean $api_debug = false,
     Boolean $api_devmode = false,
     Boolean $api_replaceconfig = true,
@@ -197,38 +197,38 @@ define maverick_dev::apsitl (
     }
     
     # Calculate actual SITL ports from instance multiplier, unless the ports have been specifically set
-    if $sitl_port == 5000 {
-        $actual_sitl_port = $sitl_port + ($instance_number * 10)
+    if $sitl_port == 6500 {
+        $actual_sitl_port = $sitl_port + ($instance_number * 20)
     } else {
         $actual_sitl_port = $sitl_port
     }    
 
-    if $rcin_port == 5500 {
-        $actual_rcin_port = $rcin_port + ($instance_number * 10)
+    if $rcin_port == 6501 {
+        $actual_rcin_port = $rcin_port + ($instance_number * 20)
     } else {
         $actual_rcin_port = $rcin_port
     }
 
-    if $mavlink_startingtcp == 6000 {
-        $actual_mavlink_startingtcp = $mavlink_startingtcp + ($instance_number * 10)
+    if $mavlink_startingtcp == 6504 {
+        $actual_mavlink_startingtcp = $mavlink_startingtcp + ($instance_number * 20)
     } else {
-        $mavlink_startingtcp = $mavlink_startingtcp
+        $actual_mavlink_startingtcp = $mavlink_startingtcp
     }
     
-    if $mavlink_startingudp == 14000 {
-        $actual_mavlink_startingudp = $mavlink_startingudp + ($instance_number * 10)
+    if $mavlink_startingudp == 6507 {
+        $actual_mavlink_startingudp = $mavlink_startingudp + ($instance_number * 20)
     } else {
         $actual_mavlink_startingudp = $mavlink_startingudp
     }
 
-    if $rosmaster_port == 11000 {
-        $actual_rosmaster_port = $rosmaster_port + ($instance_number * 10)
+    if $rosmaster_port == 6502 {
+        $actual_rosmaster_port = $rosmaster_port + ($instance_number * 20)
     } else {
         $actual_rosmaster_port = $rosmaster_port
     }
 
-    if $api_port == 7000 {
-        $actual_api_port = $api_port + ($instance_number * 10)
+    if $api_port == 6503 {
+        $actual_api_port = $api_port + ($instance_number * 20)
     } else {
         $actual_api_port = $api_port
     }

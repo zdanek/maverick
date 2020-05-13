@@ -52,6 +52,8 @@
 #   Descriptive name of this -api instance
 # @param api_active
 #   If true, this maverick-api instance will be activated and enabled at boot time
+# @param api_port
+#   Port number for api instance to listen on
 # @param virtualenv
 #   If true, this will create a python virtual environment for FC/production
 #
@@ -63,9 +65,9 @@ class maverick_fc (
     Integer $mavlink_inbaud = 115200,
     Boolean $mavlink_inflow = false,
     Boolean $mavlink_flow = false,
-    Integer $mavlink_startingtcp = 5770,
+    Integer $mavlink_startingtcp = 6053,
     Integer $mavlink_tcpports = 3,
-    Integer $mavlink_startingudp = 14570,
+    Integer $mavlink_startingudp = 6056,
     Integer $mavlink_udpports = 3,
     Integer $mavlink_udpinports = 3,
     Optional[String] $mavlink_serialout = undef,
@@ -74,12 +76,13 @@ class maverick_fc (
     Boolean $mavlink_replaceconfig = true,
     Boolean $ros_instance = true,
     Boolean $rosmaster_active = true,
-    Integer $rosmaster_port = 11311,
+    Integer $rosmaster_port = 6051,
     Boolean $mavros_active = true,
     Integer $mavros_startup_delay = 10,
     Boolean $api_instance = true,
     String $api_name = "Flight Controller",
     Boolean $api_active = false,
+    Integer $api_port = 6052,
     Boolean $virtualenv = false,
 ) {
 
@@ -298,7 +301,7 @@ class maverick_fc (
             instance    => "fc",
             api_name    => $api_name,
             active      => $api_active,
-            apiport     => 6800,
+            apiport     => $api_port,
             rosport     => $rosmaster_port,
         }
         file { "/srv/maverick/software/maverick/bin/status.d/150.fc/104.api.status":
