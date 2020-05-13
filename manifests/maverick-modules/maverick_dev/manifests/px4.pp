@@ -56,7 +56,7 @@ class maverick_dev::px4 (
 ) {
 
     # Install px4 dev/build dependencies
-    ensure_packages(["zip", "qtcreator", "cmake", "build-essential", "genromfs", "ninja-build", "openjdk-8-jdk", "gradle", "protobuf-compiler"])
+    ensure_packages(["zip", "qtcreator", "cmake", "build-essential", "genromfs", "ninja-build", "gradle", "protobuf-compiler"])
 
     # Install Gazebo
     case $::operatingsystem {
@@ -70,13 +70,16 @@ class maverick_dev::px4 (
                 }
             }
         }
-        default: {
-            ensure_packages(["gazebo7", "libgazebo7-dev"])
-        }
     }
-    
+
+    # If raspberry, add atomic flag for compiling
+    if $raspberry_present == "yes" {
+        $atomic_environment = "CXXFLAGS=-latomic"
+    } else {
+        $atomic_environment = undef
+    }
+
     # Install px4 python dependencies
-    ensure_packages(["python-empy", "python-toml", "python-numpy"])
     install_python_module { 'pip-px4-pandas':
         pkgname     => 'pandas',
         ensure      => present,
@@ -96,6 +99,14 @@ class maverick_dev::px4 (
     } ->
     install_python_module { 'pip-px4-empy':
         pkgname     => 'empy',
+        ensure      => present,
+    } ->
+    install_python_module { 'pip-px4-toml':
+        pkgname     => 'toml',
+        ensure      => present,
+    } ->
+    install_python_module { 'pip-px4-numpy':
+        pkgname     => 'numpy',
         ensure      => present,
     }
 
@@ -179,7 +190,7 @@ class maverick_dev::px4 (
         } ->
         exec { "px4-make":
             command     => "/usr/bin/make -j2 posix >/srv/maverick/var/log/build/px4.make.log 2>&1",
-            environment => ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
+            environment => ["$atomic_environment", "PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/software/px4",
