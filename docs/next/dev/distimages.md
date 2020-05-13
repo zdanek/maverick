@@ -1,6 +1,6 @@
 # Distribution Images
 
-Although Maverick can be used by bootstrapping without any need for distribution images, as the project gets larger and the build times get longer, it is much more convenient to create and provide distribution images.  These images can be downloaded and flashed for immediate use.  This is particularly useful for slower platforms such as Raspberry Pi, which can take upwards of a day to complete a full developer build.
+Although Maverick can be used by bootstrapping without any need for distribution images, as the project gets larger and the build times get longer, it is much more convenient to create and provide distribution images.  These images can be downloaded and flashed for immediate use.  This is particularly useful for slower platforms such as Raspberry Pi, which can take upwards of a day to complete a full developer build.  It is expected that the large majority of users will download and use pre-built images for common supported platforms.
 
 Creating distribution images takes place in two stages:
  - _Prepare_ the donor OS, that is a running instance of Maverick that will be the base for the distribution image.
@@ -42,32 +42,7 @@ Notice: /Stage[bootstrap]/Base::Maverick/File[/srv/maverick/.config/user-dirs.co
 Notice: /Stage[main]/Maverick_vision::Visiond/File[/srv/maverick/config/vision/maverick-visiond.conf]/ensure: defined content as '{md5}23c0fb15f6047dcdf236ff9dffd540d7'
 Notice: /Stage[main]/Maverick_vision::Vision_landing/File[/srv/maverick/config/vision/vision_landing.conf]/ensure: defined content as '{md5}c765fa05498030ccfe4958604b978ae4'
 Notice: /Stage[main]/Maverick_vision::Vision_seek/File[/srv/maverick/config/vision/vision_seek.conf]/ensure: defined content as '{md5}72f815c7c95d355625b3e080641013d8'
-Notice: /Stage[main]/Maverick_fc/File[/srv/maverick/config/mavlink/dataflash_logger.conf]/ensure: defined content as '{md5}8bcbe58eeb7730e92395c657d3a1d2fa'
-Notice: /Stage[main]/Maverick_dev::Sitl/File[/srv/maverick/config/mavlink/sitl.conf]/ensure: defined content as '{md5}7b1993eb2a10f778b83307801b39f857'
-Notice: /Stage[main]/Maverick_dev::Sitl/File[/srv/maverick/config/mavlink/sitl-vehicle.conf]/ensure: defined content as '{md5}ea5ca6929dbf0afaf69ec458d18dd626'
-Notice: /Stage[main]/Maverick_cloud9/File[/srv/maverick/.c9/state.settings]/ensure: defined content as '{md5}65edbbaf008cb8b30f8af4b9072957dd'
-Notice: /Stage[main]/Maverick_vision::Visiond/Service_wrapper[maverick-visiond]/Service[maverick-visiond]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Cmavnode[fc]/File[/srv/maverick/config/mavlink/cmavnode-fc.conf]/ensure: defined content as '{md5}61eb843ee2188c772469c8174537b176'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Cmavnode[fc]/File[/srv/maverick/config/mavlink/cmavnode-fc.service.conf]/ensure: defined content as '{md5}577b2fb196e0ee9944556be2d129a4eb'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Cmavnode[fc]/File[/srv/maverick/config/mavlink/cmavnode-fc.screen.conf]/ensure: defined content as '{md5}6f5480e09b82b742e4a5ea84ef9f9b17'
-Notice: /Stage[main]/Maverick_fc/Maverick_ros::Rosmaster[fc]/File[/srv/maverick/config/ros/rosmaster-fc.conf]/ensure: defined content as '{md5}20f459a5cafbe2bc3b3aff2fc3744097'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Cmavnode[sitl]/File[/srv/maverick/config/mavlink/cmavnode-sitl.conf]/ensure: defined content as '{md5}7fe54416cfcf84329ee74977c8fa55d1'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Cmavnode[sitl]/File[/srv/maverick/config/mavlink/cmavnode-sitl.service.conf]/ensure: defined content as '{md5}47ca322baccf933b7f2d0227c57c21e1'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Cmavnode[sitl]/File[/srv/maverick/config/mavlink/cmavnode-sitl.screen.conf]/ensure: defined content as '{md5}43841748d045899b1f16de2f2eb422f8'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_ros::Rosmaster[sitl]/File[/srv/maverick/config/ros/rosmaster-sitl.conf]/ensure: defined content as '{md5}c487dcf82d2009deab58676dcd66e546'
-Notice: /Stage[main]/Maverick_cloud9/Service_wrapper[maverick-cloud9]/Service[maverick-cloud9]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Base::Console/Service_start[maverick-motd]/Service[maverick-motd]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Mavproxy[fc]/File[/srv/maverick/config/mavlink/mavproxy-fc.service.conf]/ensure: defined content as '{md5}ce17a98bf3d62ecf674be9b65be40910'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Mavproxy[fc]/File[/srv/maverick/config/mavlink/mavproxy-fc.screen.conf]/ensure: defined content as '{md5}6f5480e09b82b742e4a5ea84ef9f9b17'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Mavlink_router[fc]/File[/srv/maverick/config/mavlink/mavlink-router-fc.conf]/ensure: defined content as '{md5}3d746fe1a7159bf8c514b70b56bb04e5'
-Notice: /Stage[main]/Maverick_fc/Maverick_mavlink::Mavlink_router[fc]/Service_wrapper[maverick-mavlink-router@fc]/Service[maverick-mavlink-router@fc]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Maverick_fc/Maverick_ros::Rosmaster[fc]/Service_wrapper[maverick-rosmaster@fc]/Service[maverick-rosmaster@fc]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Maverick_fc/Maverick_ros::Mavros[fc]/File[/srv/maverick/config/ros/mavros-fc.conf]/ensure: defined content as '{md5}54b94dcb48ba73d2c0c94cf9cf1b90ca'
-Notice: /Stage[main]/Maverick_fc/Maverick_ros::Mavros[fc]/Service_wrapper[maverick-mavros@fc]/Service[maverick-mavros@fc]/ensure: ensure changed 'stopped' to 'running'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Mavproxy[sitl]/File[/srv/maverick/config/mavlink/mavproxy-sitl.service.conf]/ensure: defined content as '{md5}1d5e9f4fedaa894c9a29d9eca0b628c3'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Mavproxy[sitl]/File[/srv/maverick/config/mavlink/mavproxy-sitl.screen.conf]/ensure: defined content as '{md5}43841748d045899b1f16de2f2eb422f8'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Mavlink_router[sitl]/File[/srv/maverick/config/mavlink/mavlink-router-sitl.conf]/ensure: defined content as '{md5}550badea4c3bf7c8ea4ea00cf937ad56'
-Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_mavlink::Mavlink_router[sitl]/Service_wrapper[maverick-mavlink-router@sitl]/Service[maverick-mavlink-router@sitl]/ensure: ensure changed 'stopped' to 'running'
+...
 Notice: /Stage[main]/Maverick_dev::Sitl/Service_wrapper[maverick-sitl]/Service[maverick-sitl]/ensure: ensure changed 'stopped' to 'running'
 Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_ros::Rosmaster[sitl]/Service_wrapper[maverick-rosmaster@sitl]/Service[maverick-rosmaster@sitl]/ensure: ensure changed 'stopped' to 'running'
 Notice: /Stage[main]/Maverick_dev::Sitl/Maverick_ros::Mavros[sitl]/File[/srv/maverick/config/ros/mavros-sitl.conf]/ensure: defined content as '{md5}a8bf1f1c62d8cec64befd563a51a6b35'
@@ -77,26 +52,26 @@ Notice: Applied catalog in 54.16 seconds
 Maverick finished, happy flying :)
 
 Maverick preparation complete, shutting down cleanly
-Connection to maverick-raspberry.local closed by remote host.
-Connection to maverick-raspberry.local closed.
 ```
 
-Once the preparation script has been run to completion and the system shut down, the next stage of Image Creation can proceed.  
+Once the preparation script has been run to completion, proceed to shut the system down and the next stage of Image Creation can proceed:  
+`sudo shutdown -h now` 
 
 ## Image Creation
-This stage is easier when the donor system runs on an SD card, such as Raspberry Pi or Odroid.  In this case, the SD card can be removed from the donor system and placed in another system, and the entire SD card is then truncated, compressed and imaged.
+This stage is easier when the donor system runs on an SD card, such as Raspberry Pi or Jetson Nano.  In this case, the SD card can be removed from the donor system and placed in another system, and the entire SD card is then truncated, compressed and imaged.  Any desktop or laptop Linux system is a good choice.  
 The imaging system does not have to be bootstrapped or running Maverick, but like the preparation script the imaging script lives in the Maverick tree so it at least has to be cloned onto the imaging system:  
 `git clone https://github.com/goodrobots/maverick.git --depth 1`  
 
+### Creating a Raspberry Pi Image
 Run the imaging script:  
-`sudo maverick/manifests/maverick-modules/base/files/createimage.sh` (from the clone above)  
+`sudo maverick/manifests/maverick-modules/base/files/createimage_raspberry.sh` (from the clone above)  
  or  
-`sudo ~/software/maverick/manifests/maverick-modules/base/files/createimage.sh` (from a running Maverick system)  
+`sudo ~/software/maverick/manifests/maverick-modules/base/files/createimage_raspberry.sh` (from a running Maverick system)  
 
 When run without any arguments it will print usage and a display of block devices.  From this list, the donor system must be identified.  It is _VERY IMPORTANT_ to identify the correct block device at this point, otherwise the imaging system may be inadvertently wiped!  For this reason it is highly recommended to use a VM or other system that can be easily rebuilt or reset, to minimize against disaster.  
 
 ```
-[dev] [mav@maverick-joule ~]$ sudo ~/software/maverick/manifests/maverick-modules/base/files/createimage.sh
+[dev] [mav@maverick-joule ~]$ sudo ~/software/maverick/manifests/maverick-modules/base/files/createimage_raspberry.sh
 Missing required arguments:
  - Source Disk Device (eg. mmcblk0)
  - Destination filepath (eg. /var/tmp/raspberry-os.img)
