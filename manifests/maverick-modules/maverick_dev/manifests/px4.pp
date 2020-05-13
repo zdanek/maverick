@@ -27,13 +27,14 @@ class maverick_dev::px4 (
     String $rtps_branch = "v1.8.2",
     Boolean $sitl = false,
     Boolean $sitl_active = false,
+    Integer $sitl_outport = 14550,
     Boolean $cross_compile = false,
     String $mavlink_proxy = "mavlink-router",
     Boolean $mavlink_logging = false,
     Boolean $mavlink_active = false,
-    Integer $mavlink_startingtcp = 5790,
+    Integer $mavlink_startingtcp = 6133,
     Integer $mavlink_tcpports = 3,
-    Integer $mavlink_startingudp = 14590,
+    Integer $mavlink_startingudp = 6136,
     Integer $mavlink_udpports = 3,
     Integer $mavlink_udpinports = 3,
     Optional[String] $mavlink_serialout = undef,
@@ -42,12 +43,13 @@ class maverick_dev::px4 (
     Boolean $mavlink_replaceconfig = true,
     Boolean $ros_instance = true,
     Boolean $rosmaster_active = false,
-    Integer $rosmaster_port = 11315,
+    Integer $rosmaster_port = 6131,
     Boolean $mavros_active = false,
     Integer $mavros_startup_delay = 10,
-    Integer $mavlink_port = 5790,
+    Integer $mavlink_port = 6133,
     Boolean $api_instance = true,
     Boolean $api_active = false,
+    Integer $api_port = 6132,
     Boolean $api_devmode = false,
     Boolean $api_debug = false,
     Boolean $api_replaceconfig = true,
@@ -268,7 +270,7 @@ class maverick_dev::px4 (
         }
         if $mavlink_proxy == "mavproxy" {
             maverick_mavlink::cmavnode { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550",
+                inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -283,7 +285,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => 14550,
+                inputport   => $sitl_outport,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -296,7 +298,7 @@ class maverick_dev::px4 (
                 replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550",
+                inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -312,7 +314,7 @@ class maverick_dev::px4 (
             }
         } elsif $mavlink_proxy == "cmavnode" {
             maverick_mavlink::mavproxy { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550",
+                inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -327,7 +329,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => 14550,
+                inputport   => $sitl_outport,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -340,7 +342,7 @@ class maverick_dev::px4 (
                 replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::cmavnode { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550", # Note cmavnode doesn't support sitl/tcp yet
+                inputaddress => "udp:0.0.0.0:${sitl_outport}", # Note cmavnode doesn't support sitl/tcp yet
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -355,7 +357,7 @@ class maverick_dev::px4 (
             }
         } elsif $mavlink_proxy == "mavlink-router" {
             maverick_mavlink::cmavnode { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550", # Note cmavnode doesn't support sitl/tcp yet
+                inputaddress => "udp:0.0.0.0:${sitl_outport}", # Note cmavnode doesn't support sitl/tcp yet
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -368,7 +370,7 @@ class maverick_dev::px4 (
                 replaceconfig => $mavlink_replaceconfig,
             } ->
             maverick_mavlink::mavproxy { "px4sitl":
-                inputaddress => "udp:0.0.0.0:14550",
+                inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -383,7 +385,7 @@ class maverick_dev::px4 (
             maverick_mavlink::mavlink_router { "px4sitl":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
-                inputport   => 14550,
+                inputport   => $sitl_outport,
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
                 udpinports  => $mavlink_udpinports,
@@ -435,7 +437,7 @@ class maverick_dev::px4 (
         maverick_web::api { "api-px4sitl":
             instance    => "px4sitl",
             active      => $api_active,
-            apiport     => 6802,
+            apiport     => $api_port,
             rosport     => $rosmaster_port,
             devmode     => $api_devmode,
             debug       => $api_debug,

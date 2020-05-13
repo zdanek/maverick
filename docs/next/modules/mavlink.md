@@ -9,67 +9,67 @@ Maverick sets two proxy environments out of the box - one for FC (Flight Control
 
 |  | Env | Port | Status|
 |--- | :---: | :---: | ---|
-|TCP | FC | 5770 | TCP allows multiple connections to a port|
-|TCP | FC | 5771 | <font color='gray'>available</font>|
-|TCP | FC | 5772 | <font color='gray'>available</font>|
-|UDP | FC | 14570 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
-|UDP | FC | 14571 | Web Interface (Reserved)|
-|UDP | FC | 14572 | <font color='gray'>available</font>|
-|UDPin | FC | 14573 | <font color='gray'>available</font>|
-|UDPin | FC | 14574 | <font color='gray'>available</font>|
-|UDPin | FC | 14575 | <font color='gray'>available</font>|
+|TCP | FC | 6053 | TCP allows multiple connections to a port|
+|TCP | FC | 6054 | <font color='gray'>available</font>|
+|TCP | FC | 6055 | <font color='gray'>available</font>|
+|UDP | FC | 6056 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
+|UDP | FC | 6057 | Web Interface (Reserved)|
+|UDP | FC | 6058 | <font color='gray'>available</font>|
+|UDPin | FC | 6059 | <font color='gray'>available</font>|
+|UDPin | FC | 6060 | <font color='gray'>available</font>|
+|UDPin | FC | 6061 | <font color='gray'>available</font>|
 |--- | --- | --- | ---|
-|TCP | SITL | 5780 | TCP allows multiple connections to a port|
-|TCP | SITL | 5781 | <font color='gray'>available</font>|
-|TCP | SITL | 5782 | <font color='gray'>available</font>|
-|UDP | SITL | 14580 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
-|UDP | SITL | 14581 | Web Interface (Reserved)|
-|UDP | SITL | 14582 | <font color='gray'>available</font>|
-|UDPin | SITL | 14583 | <font color='gray'>available</font>|
-|UDPin | SITL | 14584 | <font color='gray'>available</font>|
-|UDPin | SITL | 14585 | <font color='gray'>available</font>|
+|TCP | SITL | 6113 | TCP allows multiple connections to a port|
+|TCP | SITL | 6114 | <font color='gray'>available</font>|
+|TCP | SITL | 6115 | <font color='gray'>available</font>|
+|UDP | SITL | 6116 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
+|UDP | SITL | 6117 | Web Interface (Reserved)|
+|UDP | SITL | 6118 | <font color='gray'>available</font>|
+|UDPin | SITL | 6119 | <font color='gray'>available</font>|
+|UDPin | SITL | 6120 | <font color='gray'>available</font>|
+|UDPin | SITL | 6121 | <font color='gray'>available</font>|
 |--- | --- | --- | ---|
-|TCP | PX4 SITL | 5790 | TCP allows multiple connections to a port|
-|TCP | PX4 SITL | 5791 | <font color='gray'>available</font>|
-|TCP | PX4 SITL | 5792 | <font color='gray'>available</font>|
-|UDP | PX4 SITL | 14590 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
-|UDP | PX4 SITL | 14591 | Web Interface (Reserved)|
-|UDP | PX4 SITL | 14592 | <font color='gray'>available</font>|
-|UDPin | PX4 SITL | 14593 | <font color='gray'>available</font>|
-|UDPin | PX4 SITL | 14594 | <font color='gray'>available</font>|
-|UDPin | PX4 SITL | 14595 | <font color='gray'>available</font>|
+|TCP | PX4 SITL | 6133 | TCP allows multiple connections to a port|
+|TCP | PX4 SITL | 6134 | <font color='gray'>available</font>|
+|TCP | PX4 SITL | 6135 | <font color='gray'>available</font>|
+|UDP | PX4 SITL | 6136 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
+|UDP | PX4 SITL | 6137 | Web Interface (Reserved)|
+|UDP | PX4 SITL | 6138 | <font color='gray'>available</font>|
+|UDPin | PX4 SITL | 6139 | <font color='gray'>available</font>|
+|UDPin | PX4 SITL | 6140 | <font color='gray'>available</font>|
+|UDPin | PX4 SITL | 6141 | <font color='gray'>available</font>|
 
 The number of ports for each endpoint type can be set for each proxy type and instance.  Each proxy type has an 'instance generator' which is used by other modules to create a proxy instance.  So for example the maverick_fc module creates an instance of maverick_mavlink::mavproxy, or maverick_mavlink::mavlink_router or maverick_mavlink::cmavnode depending on which proxy type is selected.  Each proxy type takes parameters:  
-- *startingtcp*: The starting tcp port - maverick_fc starts at 5770 by default, maverick_sitl starts at 5780.
-- *tcpports*: The number of tcpports, default is 3.  So maverick_fc would create tcp endpoints for 5770,5771,5772.  Note that not all proxy types support multiple tcp endpoints so this may be silently ignored - MAVProxy is currently the only proxy that supports multiple tcp endpoints.  As tcp endpoints can support multiple connections this does not restrict usage.
-- *startingudp*: The starting udp port - maverick_fc starts at 14570 by default, maverick_sitl starts at 14580.
-- *udpports*:  The number of udp ports, default is 3.  So maverick_fc would create udp endpoints for 14570,14571,14572.
-- *udpinports*:  The number of udpin ports, default is 3.  Note that udpinports start sequentially after udpports, so if there are 3 udpports, the udpinports for maverick_fc would start at 14573 and also create 14574,14575 by default.
+- *startingtcp*: The starting tcp port - maverick_fc starts at 6053 by default, maverick_sitl starts at 6113.
+- *tcpports*: The number of tcpports, default is 3.  So maverick_fc would create tcp endpoints for 6053,6054,6055.  Note that not all proxy types support multiple tcp endpoints so this may be silently ignored - MAVProxy is currently the only proxy that supports multiple tcp endpoints.  As tcp endpoints can support multiple connections this does not restrict usage.
+- *startingudp*: The starting udp port - maverick_fc starts at 6056 by default, maverick_sitl starts at 6116.
+- *udpports*:  The number of udp ports, default is 3.  So maverick_fc would create udp endpoints for 6056,6057,6058.
+- *udpinports*:  The number of udpin ports, default is 3.  Note that udpinports start sequentially after udpports, so if there are 3 udpports, the udpinports for maverick_fc would start at 6059 and also create 6060,6061 by default.
 
 These parameters have to be set in the class/module creating the proxy instance, so for the Flight Controller proxy, the localconf parameters would be:  
 ```puppet
 "maverick_fc::mavlink_proxy": "mavproxy",
-"maverick_fc::mavlink_startingtcp": 5770,
+"maverick_fc::mavlink_startingtcp": 6053,
 "maverick_fc::mavlink_tcpports": 3,
-"maverick_fc::mavlink_startingudp": 14570,
+"maverick_fc::mavlink_startingudp": 6056,
 "maverick_fc::mavlink_udpports": 3,
 "maverick_fc::mavlink_udpinports": 3,
 ```
 For Ardupilot SITL, the localconf parameters would be:
 ```puppet
 "maverick_dev::apsitl_dev::mavlink_proxy": "mavlink-router",
-"maverick_dev::apsitl_dev::mavlink_startingtcp": 5780,
+"maverick_dev::apsitl_dev::mavlink_startingtcp": 6113,
 "maverick_dev::apsitl_dev::mavlink_tcpports": 3,
-"maverick_dev::apsitl_dev::mavlink_startingudp": 14580,
+"maverick_dev::apsitl_dev::mavlink_startingudp": 6116,
 "maverick_dev::apsitl_dev::mavlink_udpports": 3,
 "maverick_dev::apsitl_dev::mavlink_udpinports": 3,
 ```
 For PX4 SITL, the localconf parameters would be:
 ```puppet
 "maverick_dev::px4::mavlink_proxy": "mavlink-router",
-"maverick_dev::px4::mavlink_startingtcp": 5790,
+"maverick_dev::px4::mavlink_startingtcp": 6133,
 "maverick_dev::px4::mavlink_tcpports": 3,
-"maverick_dev::px4::mavlink_startingudp": 14590,
+"maverick_dev::px4::mavlink_startingudp": 6136,
 "maverick_dev::px4::mavlink_udpports": 3,
 "maverick_dev::px4::mavlink_udpinports": 3,
 ```
