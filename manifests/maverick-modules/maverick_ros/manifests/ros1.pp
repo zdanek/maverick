@@ -20,7 +20,7 @@
 # @param module_realsense
 #   If true, install realsense support
 # @param module_opencv
-#   If true, install opencv ros module
+#   If true, install opencv related ros modules
 #
 class maverick_ros::ros1 (
     Enum['native', 'source', 'auto'] $installtype = "auto",
@@ -30,7 +30,7 @@ class maverick_ros::ros1 (
     String $installdir = "/srv/maverick/software/ros",
     Boolean $module_mavros = true,
     Boolean $module_realsense = false,
-    Boolean $module_opencv = false,
+    Boolean $module_opencv = true,
     Boolean $module_apriltag = false,
 ) {
     # If installtype is set then use it and skip autodetection
@@ -401,7 +401,8 @@ class maverick_ros::ros1 (
             }
         }
 
-        if $module_opencv == true {
+        # This is for the deprecated full opencv module
+        if $module_opencv == "blah" {
             if ! ("install_flag_ros_opencv" in $installflags) {
                 file { ["/srv/maverick/var/build/catkin_ws_opencv", "/srv/maverick/var/build/catkin_ws_opencv/src"]:
                     ensure  => directory,
@@ -487,6 +488,50 @@ class maverick_ros::ros1 (
 
     }
   
+    # Install vision_opencv and cv_bridge, linked to custom opencv
+    if $module_opencv == true {
+        if ! ("install_flag_ros_opencv" in $installflags) {
+            file { ["/srv/maverick/var/build/catkin_ws_opencv", "/srv/maverick/var/build/catkin_ws_opencv/src"]:
+                ensure  => directory,
+                owner   => "mav",
+            } ->    
+            # Install vision_opencv from a forked branch, fixed for opencv4 - see https://github.com/ros-perception/vision_opencv/issues/320
+            oncevcsrepo { "git-ros-vision_opencv":
+                gitsource   => "https://github.com/fnoop/vision_opencv",
+                revision    => "melodic",
+                dest        => "/srv/maverick/var/build/catkin_ws_opencv/src/vision_opencv",
+                depth       => undef,
+            } ->
+            exec { "ros-opencv-init-workspace":
+                user        => "mav",
+                cwd         => "/srv/maverick/var/build/catkin_ws_opencv/src",
+                command     => "/opt/ros/current/bin/catkin_init_workspace",
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages"],
+                creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/CMakeLists.txt",
+                require     => [ Package["python-catkin-tools"], Exec["ros-install-marker"], ],
+            } ->
+            exec { "ros-opencv-catkin-make":
+                user        => "mav",
+                cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                command     => "/opt/ros/current/bin/catkin_make clean; /opt/ros/current/bin/catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
+                timeout     => 0,
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
+                #creates     => "/srv/maverick/var/build/catkin_ws_opencv/build/",
+                require     => Class["maverick_vision::opencv"],
+            } ->
+            exec { "ros-opencv-catkin-install":
+                cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
+                command     => "/opt/ros/current/bin/catkin_make install -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
+                timeout     => 0,
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
+                #creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_ros_opencv":
+                ensure      => present,
+            }
+        }
+    }
+
     if $module_realsense == true {
         if ! ("install_flag_ros_realsense" in $installflags) {
             if "install_flag_ros" in $installflags {
