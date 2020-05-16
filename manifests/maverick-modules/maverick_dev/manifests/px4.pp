@@ -76,9 +76,9 @@ class maverick_dev::px4 (
 
     # If raspberry, add atomic flag for compiling
     if $raspberry_present == "yes" {
-        $atomic_environment = "CXXFLAGS=-latomic"
+        $px4_env = ["CXXFLAGS=-latomic", "PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"]
     } else {
-        $atomic_environment = undef
+        $px4_env = ["PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"]
     }
 
     # Install px4 python dependencies
@@ -192,7 +192,7 @@ class maverick_dev::px4 (
         } ->
         exec { "px4-make":
             command     => "/usr/bin/make -j2 posix >/srv/maverick/var/log/build/px4.make.log 2>&1",
-            environment => ["$atomic_environment", "PYTHONPATH=/opt/ros/melodic/lib/python2.7/dist-packages", "PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "LD_LIBRARY_PATH=/srv/maverick/software/fastrtps/lib", "PATH=/srv/maverick/software/fastrtps/bin:/srv/maverick/software/python/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/fastrtps", "CMAKE_INSTALL_RPATH=/srv/maverick/software/fastrtps/lib"],
+            environment => $px4_env,
             user        => "mav",
             timeout     => 0,
             cwd         => "/srv/maverick/software/px4",
