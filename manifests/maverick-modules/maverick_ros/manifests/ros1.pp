@@ -513,15 +513,15 @@ class maverick_ros::ros1 (
             exec { "ros-opencv-catkin-make":
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
-                command     => "/opt/ros/current/bin/catkin_make clean; /opt/ros/current/bin/catkin_make -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
+                command     => "/opt/ros/current/bin/catkin_make clean; /opt/ros/current/bin/catkin_make -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
                 timeout     => 0,
-                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
+                environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
                 #creates     => "/srv/maverick/var/build/catkin_ws_opencv/build/",
                 require     => Class["maverick_vision::opencv"],
             } ->
             exec { "ros-opencv-catkin-install":
                 cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
-                command     => "/opt/ros/current/bin/catkin_make install -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
+                command     => "/opt/ros/current/bin/catkin_make install -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
                 timeout     => 0,
                 environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/opencv"],
                 #creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
