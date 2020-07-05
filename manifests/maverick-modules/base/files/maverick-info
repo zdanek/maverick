@@ -53,6 +53,13 @@ from baseos import Baseos
 baseos = Baseos()
 baseos.runall()
 
+with open("/srv/maverick/software/maverick/VERSION", "r") as f:
+    mavVer = f.readline().strip()
+with open("/srv/maverick/config/maverick/maverick-environment.conf", "r") as f:
+    mavEnv = f.readline().strip()
+with open("/srv/maverick/config/maverick/maverick-branch.conf", "r") as f:
+    mavBranch = f.readline().replace("MAVERICK_BRANCH=", "").strip()
+
 def twocols(col1, col2):
     return ctrls['fg_grey']+ col1+':' +ctrls['reset']+ctrls['bold']+ col2 +ctrls['reset']
 
@@ -114,6 +121,9 @@ else:
 
 print(" ---------------------------------- ")
 
+print(twocols('Maverick Version', '\t' + mavVer))
+print(twocols('Maverick Environment', '\t' + mavEnv))
+print(twocols('Maverick Branch', '\t' + mavBranch))
 print(twocols('OS', '\t\t\t' +baseos.data['osname']))
 print(twocols('OS Version', '\t\t' +baseos.data['osrelease']))
 print(twocols('Architecture', '\t\t' +baseos.data['arch']))
