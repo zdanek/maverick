@@ -114,6 +114,20 @@ class maverick_web::maverick_api (
             owner   => "mav",
             content => "api@system,MavAPI (System)\n",
         }
+    } else {
+        maverick_web::api { "api-system":
+            instance    => "system",
+            active      => false,
+            apiport     => 6003,
+            apiport_ssl => 6004,
+            devmode     => false,
+            debug       => false,
+            replaceconfig    => false,
+            config_template  => "maverick-api.system.conf.erb",
+        }
+        file { "/srv/maverick/software/maverick/bin/status.d/120.web/104.api.status":
+            ensure => absent,
+        }
     }
 
 }
