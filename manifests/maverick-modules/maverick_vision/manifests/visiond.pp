@@ -55,6 +55,7 @@ class maverick_vision::visiond (
         group       => "mav",
         replace     => false, # initialize but don't overwrite in the future
         content     => template("maverick_vision/visiond.conf.erb"),
+        notify      => Service["maverick-visiond"],
     }
     
     # Add visiond as a service
