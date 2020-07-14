@@ -117,6 +117,13 @@ class maverick_hardware::raspberry (
         ensure      => present,
     }
     
+    # Put raspberry firstboot script in place
+    file { "/srv/maverick/software/maverick/bin/maverick-firstboot.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_hardware/files/raspberry-firstboot.sh",
+        force       => true,
+    }
+
     if ($expand_root) {
         # $rootpart_expanded and $rootfs_expanded are facts provided by facts.d/filesystems.py
         if str2bool($::rootpart_expanded) == false or str2bool($::rootfs_expanded) == false {
