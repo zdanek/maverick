@@ -5,8 +5,8 @@ Description=Maverick First Boot actions
 Type=oneshot
 RemainAfterExit=True
 TimeoutStartSec=0
-ExecStart=/bin/sh -c 'if [ -e /srv/maverick/software/maverick/bin/firstboot.sh ]; then /srv/maverick/software/maverick/bin/firstboot.sh; fi'
-User=mav
+ExecStart=/bin/sh -c 'if [ -e /srv/maverick/software/maverick/bin/maverick-firstboot.sh ]; then /srv/maverick/software/maverick/bin/maverick-firstboot.sh; fi'
+User=root
 
 [Install]
 WantedBy=multi-user.target

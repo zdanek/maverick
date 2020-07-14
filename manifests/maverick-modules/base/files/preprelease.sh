@@ -142,6 +142,9 @@ systemctl restart systemd-journald
 $(ip a |grep eth0 >/dev/null 2>&1) && dhclient eth0
 $(ip a |grep wlan0 >/dev/null 2>&1) && dhclient wlan0
 
+# Remove raspberry fs expansion marker
+rm -f /etc/raspi-expandroot
+
 echo "Maverick preparation complete"
 #read -t10 -n1 -r -p 'Press any key in the next ten seconds to cancel shutdown...' key
 #echo "Shutting down cleanly"
