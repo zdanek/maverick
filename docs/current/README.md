@@ -8,7 +8,7 @@ There are two ways to get started with Maverick:
 
 ### OS Images
 
-*Note*: There are new betas available here: [1.2 Betas](../next/#/?id=os-images)
+*Note*: There are new betas available here: [1.2 Betas](../next/#/?id=os-images).  The 'current' 1.1.x versions are quite old and may not be a good experience as there are many large updates to be applied.
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
