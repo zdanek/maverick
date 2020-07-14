@@ -49,6 +49,15 @@ stopservice() {
     fi
 }
 
+disableservice() {
+    srvresult=$(sudo systemctl disable "$1" 2>&1)
+    if [ $? -eq 0 ]; then
+        echo " Disable: ${green}Success${reset}"
+    else
+        echo " Disable: ${red}Failure${reset}: $srvresult"
+    fi
+}
+
 getservices() {
     services=$(systemctl list-units -a -q --plain --no-pager |grep -e 'maverick-.*.service' |awk {'print $1'})
     echo $services
@@ -68,7 +77,7 @@ usage () {
     echo " stop         [service | all]            Stop Maverick service"
     echo " restart      [service]                  Restart Maverick service"
     echo " enable       [service]                  Enable Maverick service at boot"
-    echo " disable      [service]                  Disable Maverick service at boot"
+    echo " disable      [service | all]            Disable Maverick service at boot"
     echo " log          [service]                  Display realtime log for Maverick service"
     echo " unshallow                               Unshallow a git repo"
     echo
@@ -527,7 +536,7 @@ if [ "$STOP" == "true" ]; then
                 echo -n "Stopping service $service: "
                 stopservice "$service"
             else
-                echo "$service is disabled, not starting"
+                echo "$service is disabled, not stopping"
             fi
         done
     else
@@ -540,29 +549,41 @@ fi
 
 # If restart requested, action stop then start
 if [ "$RESTART" == "true" ]; then
-    echo "Restarting service: ${SERVICE}"
-    stopservice "maverick-${SERVICE}"
-    startservice "maverick-${SERVICE}"
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name or 'all' not specified"
+    else
+        echo "Restarting service: ${SERVICE}"
+        stopservice "maverick-${SERVICE}"
+        startservice "maverick-${SERVICE}"
+    fi
     echo
     exit 0
 fi
 
 # If log requested, action and then exit
 if [ "$LOG" == "true" ]; then
-    echo "Displaying service log: ${SERVICE}"
-    sudo journalctl -u maverick-${SERVICE} -f
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name or 'all' not specified"
+    else
+        echo "Displaying service log: ${SERVICE}"
+        sudo journalctl -u maverick-${SERVICE} -f
+    fi
     echo
     exit 0
 fi
 
 # If enable requested, action and then exit
 if [ "$ENABLE" == "true" ]; then
-    echo "Enabling service: ${SERVICE}"
-    srvresult=$(sudo systemctl enable "maverick-${SERVICE}" 2>&1)
-    if [ $? -eq 0 ]; then
-        echo " Enable: ${green}Success${reset}"
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name not specified"
     else
-        echo " Enable: ${red}Failure${reset}: $srvresult"
+        echo "Enabling service: ${SERVICE}"
+        srvresult=$(sudo systemctl enable "maverick-${SERVICE}" 2>&1)
+        if [ $? -eq 0 ]; then
+            echo " Enable: ${green}Success${reset}"
+        else
+            echo " Enable: ${red}Failure${reset}: $srvresult"
+        fi
     fi
     echo
     exit 0
@@ -570,12 +591,24 @@ fi
 
 # If disable requested, action and then exit
 if [ "$DISABLE" == "true" ]; then
-    echo "Disabling service: ${SERVICE}"
-    srvresult=$(sudo systemctl disable "maverick-${SERVICE}" 2>&1)
-    if [ $? -eq 0 ]; then
-        echo " Disable: ${green}Success${reset}"
+    if [ -z "${SERVICE}" ]; then
+        echo "Error: service name or 'all' not specified"
+    elif [ "${SERVICE}" == "all" ]; then
+        echo "Disabling all services"
+        services=$(getservices)
+        for service in $services; do
+            if [ $(systemctl is-enabled $service) == "enabled" ]; then
+                echo "Stopping and Disabling service $service: "
+                stopservice "$service"
+                disableservice "$service"
+            else
+                echo "$service is already disabled"
+            fi
+        done
     else
-        echo " Disable: ${red}Failure${reset}: $srvresult"
+        echo "Stopping and Disabling service: ${SERVICE}"
+        stopservice "maverick-${SERVICE}"
+        disableservice "maverick-${SERVICE}"
     fi
     echo
     exit 0
