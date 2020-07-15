@@ -1,4 +1,4 @@
-ROS_PORT=<%= @port %>
-ROS_MASTER_URI=http://localhost:<%= @port %>
-ROS_LOG_DIR=/srv/maverick/var/log/ros/<%= @name %>
-ROS_HOME=/srv/maverick/var/log/ros/<%= @name %>
+export ROS_PORT=<%= @port %>
+export ROS_MASTER_URI=http://localhost:<%= @port %>
+export ROS_LOG_DIR=/srv/maverick/var/log/ros/<%= @name %>
+export ROS_HOME=/srv/maverick/var/log/ros/<%= @name %>
