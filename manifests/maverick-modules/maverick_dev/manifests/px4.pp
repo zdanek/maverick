@@ -202,6 +202,15 @@ class maverick_dev::px4 (
     }
 
     if $sitl == true {
+        # Remove old px4sitl config/services
+        file { "/srv/maverick/software/maverick/bin/status.d/152.px4sitl":
+            ensure      => absent,
+            force       => true,
+            recurse     => true,
+        } ->
+        file { ["/srv/maverick/config/dev/px4sitl.conf", "/srv/maverick/config/dev/px4sitl.screen.conf"]:
+            ensure      => absent,
+        } ->
         file { "/srv/maverick/var/log/px4sitl":
             ensure      => directory,
             owner       => "mav",
@@ -227,7 +236,7 @@ class maverick_dev::px4 (
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_dev/files/px4sitl.sh",
         } ->
-        file { "/srv/maverick/config/dev/px4sitl.conf":
+        file { "/srv/maverick/config/dev/px4sitl_px4dev.conf":
             source      => "puppet:///modules/maverick_dev/px4sitl.conf",
             owner       => "mav",
             group       => "mav",
@@ -235,7 +244,7 @@ class maverick_dev::px4 (
             replace     => false,
             notify      => Service["maverick-px4sitl"],
         } ->
-        file { "/srv/maverick/config/dev/px4sitl.screen.conf":
+        file { "/srv/maverick/config/dev/px4sitl_px4dev.screen.conf":
             ensure      => present,
             owner       => "mav",
             group       => "mav",
@@ -264,12 +273,12 @@ class maverick_dev::px4 (
         }
         
         if $ros_instance == true {
-            $notifyResources = [ Service["maverick-px4sitl"], Service["maverick-rosmaster@px4sitl"] ]
+            $notifyResources = [ Service["maverick-px4sitl"], Service["maverick-rosmaster@px4dev"] ]
         } else {
             $notifyResources = Service["maverick-px4sitl"]
         }
         if $mavlink_proxy == "mavproxy" {
-            maverick_mavlink::cmavnode { "px4sitl":
+            maverick_mavlink::cmavnode { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -282,7 +291,7 @@ class maverick_dev::px4 (
                 notify      => $notifyResources,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::mavlink_router { "px4sitl":
+            maverick_mavlink::mavlink_router { "px4dev":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
                 inputport   => $sitl_outport,
@@ -297,7 +306,7 @@ class maverick_dev::px4 (
                 logging     => $mavlink_logging,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::mavproxy { "px4sitl":
+            maverick_mavlink::mavproxy { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
@@ -313,7 +322,7 @@ class maverick_dev::px4 (
                 replaceconfig => $mavlink_replaceconfig,
             }
         } elsif $mavlink_proxy == "cmavnode" {
-            maverick_mavlink::mavproxy { "px4sitl":
+            maverick_mavlink::mavproxy { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
@@ -326,7 +335,7 @@ class maverick_dev::px4 (
                 outflow     => $mavlink_outflow,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::mavlink_router { "px4sitl":
+            maverick_mavlink::mavlink_router { "px4dev":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
                 inputport   => $sitl_outport,
@@ -341,7 +350,7 @@ class maverick_dev::px4 (
                 logging     => $mavlink_logging,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::cmavnode { "px4sitl":
+            maverick_mavlink::cmavnode { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}", # Note cmavnode doesn't support sitl/tcp yet
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -356,7 +365,7 @@ class maverick_dev::px4 (
                 replaceconfig => $mavlink_replaceconfig,
             }
         } elsif $mavlink_proxy == "mavlink-router" {
-            maverick_mavlink::cmavnode { "px4sitl":
+            maverick_mavlink::cmavnode { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}", # Note cmavnode doesn't support sitl/tcp yet
                 startingudp => $mavlink_startingudp,
                 udpports    => $mavlink_udpports,
@@ -369,7 +378,7 @@ class maverick_dev::px4 (
                 notify      => $notifyResources,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::mavproxy { "px4sitl":
+            maverick_mavlink::mavproxy { "px4dev":
                 inputaddress => "udp:0.0.0.0:${sitl_outport}",
                 instance    => 1,
                 startingudp => $mavlink_startingudp,
@@ -382,7 +391,7 @@ class maverick_dev::px4 (
                 outflow     => $mavlink_outflow,
                 replaceconfig => $mavlink_replaceconfig,
             } ->
-            maverick_mavlink::mavlink_router { "px4sitl":
+            maverick_mavlink::mavlink_router { "px4dev":
                 inputtype   => "udp",
                 inputaddress => "0.0.0.0",
                 inputport   => $sitl_outport,
@@ -404,24 +413,24 @@ class maverick_dev::px4 (
         # maverick_dev::apsitl_dev::ros_instance allows ros to be completely optional
         if $ros_instance == true {
             # Add a ROS master for SITL
-            maverick_ros::rosmaster { "px4sitl":
+            maverick_ros::rosmaster { "px4dev":
                 active  => $rosmaster_active,
                 port    => $rosmaster_port,
             } ->
-            maverick_ros::mavros { "px4sitl":
+            maverick_ros::mavros { "px4dev":
                 active              => $mavros_active,
                 rosmaster_port      => $rosmaster_port,
                 mavlink_port        => $mavlink_port,
                 mavros_startup_delay => $mavros_startup_delay,
                 mavros_launcher     => "px4.launch"
             }
-            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/102.rosmaster.status":
+            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/102.rosmaster.status":
                 owner   => "mav",
-                content => "rosmaster@px4sitl,ROS (PX4 SITL)\n",
+                content => "rosmaster@px4dev,ROS (PX4 SITL)\n",
             }
-            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/103.mavros.status":
+            file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/103.mavros.status":
                 owner   => "mav",
-                content => "mavros@px4sitl,MavROS (PX4 SITL)\n",
+                content => "mavros@px4dev,MavROS (PX4 SITL)\n",
             }
         }
     
@@ -434,8 +443,8 @@ class maverick_dev::px4 (
 
     if $api_instance == true {
         # Create an API instance
-        maverick_web::api { "api-px4sitl":
-            instance    => "px4sitl",
+        maverick_web::api { "api-px4dev":
+            instance    => "px4dev",
             active      => $api_active,
             apiport     => $api_port,
             rosport     => $rosmaster_port,
@@ -443,30 +452,30 @@ class maverick_dev::px4 (
             debug       => $api_debug,
             replaceconfig    => $api_replaceconfig,
         }
-        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/104.api.status":
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/104.api.status":
             owner   => "mav",
-            content => "api@px4sitl,MavAPI (PX4 SITL)\n",
+            content => "api@px4dev,MavAPI (PX4 SITL)\n",
         }
     }
 
     if $status_entries == true {
         # status.d entry for collectd
-        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/":
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/":
             ensure  => directory,
             owner   => "mav",
             mode    => "755",
         }
-        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/__init__":
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/__init__":
             owner   => "mav",
-            content => "PX4 SITL\n",
+            content => "PX4 SITL (px4dev)\n",
         }
-        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/100.px4sitl.status":
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/100.px4dev.status":
             owner   => "mav",
-            content => "px4sitl,PX4 SITL\n",
+            content => "px4dev,PX4 SITL\n",
         }
-        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4sitl/101.px4sitl.status":
+        file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/101.px4dev.status":
             owner   => "mav",
-            content => "mavlink@px4sitl,Mavlink (PX4 SITL)\n",
+            content => "mavlink@px4dev,Mavlink (PX4 SITL)\n",
         }        
     }
 }
