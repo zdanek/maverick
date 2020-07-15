@@ -237,6 +237,13 @@ class maverick_ros::ros1 (
             group       => "root",
             content     => "source /opt/ros/${_distribution}/setup.bash",
         } ->
+        file { "/etc/profile.d/30-ros1env.sh":
+            ensure      => present,
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "ros1env() { if [ -f /srv/maverick/config/ros/rosmaster-\$1.conf ]; then . /srv/maverick/config/ros/rosmaster-\$1.conf; else echo \"Error: ROS1 config for \$1 instance does not exist\"; fi }",
+        } ->
         # Install python3 packages
         package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
             ensure      => present,
