@@ -230,19 +230,22 @@ class maverick_ros::ros1 (
             command         => "/usr/bin/rosdep update",
             creates         => "/srv/maverick/.ros/rosdep/sources.cache",
         } ->
-        file { "/etc/profile.d/30-ros-env.sh":
-            ensure      => present,
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => "source /opt/ros/${_distribution}/setup.bash",
-        } ->
         file { "/etc/profile.d/30-ros1env.sh":
             ensure      => present,
             mode        => "644",
             owner       => "root",
             group       => "root",
             content     => "ros1env() { if [ -f /srv/maverick/config/ros/rosmaster-\$1.conf ]; then . /srv/maverick/config/ros/rosmaster-\$1.conf; else echo \"Error: ROS1 config for \$1 instance does not exist\"; fi }",
+        } ->
+        file { "/etc/profile.d/30-ros-env.sh":
+            ensure      => absent,
+        } ->
+        file { "/etc/profile.d/31-ros-env.sh":
+            ensure      => present,
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
         } ->
         # Install python3 packages
         package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
