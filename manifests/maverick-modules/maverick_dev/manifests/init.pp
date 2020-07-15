@@ -9,7 +9,7 @@
 #
 # @param ardupilot
 #   If set to true, include the maverick_dev::ardupilot class which clones and compiles the Ardupilot firmware, both for local development and uploading to flight controllers.
-# @param apsitl_dev
+# @param apsitl_apdev
 #   If set to true, set up the default Ardupilot SITL instance.
 # @param px4
 #   If set to true, include the maverick_dev::px4 class which clones and compiles the PX4Pro firmware.
@@ -19,10 +19,10 @@
 #   The max number of OS inotify file watchers that are allowed.  This allows IDEs to track more files, at the expense of kernel/system memory.
 #
 class maverick_dev (
-    Boolean $apsitl_dev = true,
+    Boolean $apsitl_apdev = true,
     Boolean $ardupilot = true,
     Boolean $px4 = true,
-    Boolean $px4sitl_dev = true,
+    Boolean $px4sitl_px4dev = true,
     Integer $file_watchers = 8192,
 ) {
    
@@ -50,19 +50,19 @@ class maverick_dev (
     # Install/compile ardupilot and SITL
     if $ardupilot == true {
         class { "maverick_dev::ardupilot": 
-            sitl    => $apsitl_dev,
+            sitl    => $apsitl_apdev,
         }
     }
 
     # Create default dev apsitl instance
-    if $apsitl_dev == true {
-        class { "maverick_dev::apsitl_dev": }
+    if $apsitl_apdev == true {
+        class { "maverick_dev::apsitl_apdev": }
     }
 
     # Install/compile px4 and SITL    
     if $px4 == true {
         class { "maverick_dev::px4":
-            sitl    => $px4sitl_dev,
+            sitl    => $px4sitl_px4dev,
         }
     }
 

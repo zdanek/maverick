@@ -1,5 +1,5 @@
 # @summary
-#   Maverick_dev::apsitl_dev class
+#   Maverick_dev::apsitl class
 #   This class declares the default Ardupilot SITL instance.  It then calls maverick_dev::apsitl that creates the actual SITL instance
 #
 # @example Declaring the class
@@ -39,7 +39,7 @@
 # @param api_devmode
 #   If true, turn on the -api dev mode
 #
-class maverick_dev::apsitl_dev (
+class maverick_dev::apsitl_apdev (
     $sitl_active = true,
     $vehicle_type = "copter",
     $mavlink_proxy = "mavlink-router",
@@ -70,25 +70,23 @@ class maverick_dev::apsitl_dev (
     file { "/srv/maverick/software/maverick/bin/sitl.sh":
         ensure => absent,
     } ->
-    # Rename old sitl setup config
-    exec { "migrate-sitl-vehicle.conf":
-        command => "/bin/mv /srv/maverick/config/dev/sitl-vehicle.conf /srv/maverick/config/dev/apsitl_dev-vehicle.conf",
-        creates => "/srv/maverick/config/dev/apsitl_dev-vehicle.conf",
-        onlyif  => "/bin/ls /srv/maverick/config/dev/sitl-vehicle.conf",
-    } ->
-    exec { "migrate-sitl.conf":
-        command => "/bin/mv /srv/maverick/config/dev/sitl.conf /srv/maverick/config/dev/apsitl_dev.conf",
-        creates => "/srv/maverick/config/dev/apsitl_dev.conf",
-        onlyif  => "/bin/ls /srv/maverick/config/dev/sitl.conf",
-    } ->
-    exec { "migrate-sitl.screen.conf":
-        command => "/bin/mv /srv/maverick/config/dev/sitl.screen.conf /srv/maverick/config/dev/apsitl_dev.screen.conf",
-        creates => "/srv/maverick/config/dev/apsitl_dev.screen.conf",
-        onlyif  => "/bin/ls /srv/maverick/config/dev/sitl.screen.conf",
+    # Remove old sitl setup config
+    file { ["/srv/maverick/config/dev/apsitl_dev-vehicle.conf", "/srv/maverick/config/dev/apsitl_dev.conf", "/srv/maverick/config/dev/apsitl_dev.screen.conf"]:
+        ensure => absent,
     }
 
-    maverick_dev::apsitl { "dev":
-        instance_name       => "dev",
+    # Remove old dev instance
+    service { ["maverick-apsitl@dev", "maverick-mavlink@dev", "maverick-rosmaster@dev", "maverick-mavros@dev", "maverick-api@dev"]:
+        ensure      => stopped,
+        enable      => false,
+    } ->
+    file { "/srv/maverick/software/maverick/bin/status.d/154.dev":
+        ensure      => absent,
+        force       => true,
+        recurse     => true,
+    } ->
+    maverick_dev::apsitl { "apdev":
+        instance_name       => "apdev",
         instance_number     => 0,
         sitl_active         => $sitl_active,
         sitl_port           => 6110,
@@ -112,7 +110,7 @@ class maverick_dev::apsitl_dev (
         status_priority     => "154",
         status_entries      => true,
         api_instance        => $api_instance,
-        api_name            => "Dev",
+        api_name            => "APDev",
         api_port            => 6112,
         api_active          => $api_active,
         api_devmode         => $api_devmode,

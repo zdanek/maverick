@@ -404,7 +404,7 @@ define maverick_dev::apsitl (
         }
     }
 
-    # maverick_dev::apsitl_dev::ros_instance allows ros to be completely optional
+    # maverick_dev::apsitl_apdev::ros_instance allows ros to be completely optional
     if $ros_instance == true {
         # Add a ROS master for SITL
         maverick_ros::rosmaster { "${instance_name}":
