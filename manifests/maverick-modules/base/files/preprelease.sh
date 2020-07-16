@@ -123,7 +123,7 @@ su - -c gst-inspect-1.0 mav >/dev/null 2>&1 # restore gstreamer .cache
 
 echo
 echo "Running maverick to regenerate any removed files or config"
-maverick configure
+maverick configure --env=flight
 systemctl stop maverick-* >/dev/null 2>&1
 
 # Final clean up of var data
