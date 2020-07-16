@@ -469,6 +469,26 @@ class maverick_ros::ros1 (
                     ensure  => directory,
                     owner   => "mav",
                 } ->
+                exec { "ros-apriltag-catkin-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    command     => "/usr/bin/catkin config --init --extend /opt/ros/current --install -i /opt/ros/current",
+                    environment => ["PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages", "CMAKE_PREFIX_PATH=/opt/ros/melodic:/srv/maverick/software/apriltag"],
+                    creates     => "/srv/maverick/var/build/catkin_ws_apriltag/.catkin_tools/profiles/default/config.yaml",
+                    require     => [ Package["python-catkin-tools"], Package["python-rosinstall-generator"], Exec["ros-install-marker"], ],
+                } ->
+                exec { "ros-apriltag-wstool-init":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    command     => "/usr/bin/wstool init src",
+                    creates     => "/srv/maverick/var/build/catkin_ws_apriltag/src/.rosinstall",
+                } ->
+                exec { "ros-opencv-rosinstall_apriltag":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    command     => "/usr/bin/rosinstall_generator --rosdistro ${_distribution} image_transport nodelet bond bondcpp smclib >/srv/maverick/var/build/catkin_ws_apriltag/apriltag.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_apriltag/apriltag.rosinstall",
+                } ->
                 oncevcsrepo { "git-ros-apriltag":
                     gitsource   => "https://github.com/AprilRobotics/apriltag.git",
                     dest        => "/srv/maverick/var/build/catkin_ws_apriltag/src/apriltag",
@@ -477,20 +497,27 @@ class maverick_ros::ros1 (
                     gitsource   => "https://github.com/AprilRobotics/apriltag_ros.git",
                     dest        => "/srv/maverick/var/build/catkin_ws_apriltag/src/apriltag_ros",
                 } ->
-                exec { "ros-apriltag-rosdep-install":
+                exec { "ros-apriltag-wstool-merge":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
-                    command     => "/usr/bin/rosdep install --from-paths src --ignore-src -r -y >/srv/maverick/var/log/build/apriltag.rosdep.out 2>&1",
+                    command     => "/usr/bin/wstool merge -t src apriltag.rosinstall",
+                    creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/.rosinstall.bak",
+                } ->
+                exec { "ros-apriltag-wstool-update":
+                    user        => "mav",
+                    cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
+                    command     => "/usr/bin/wstool update -t src -j4",
+                    creates     => "/srv/maverick/var/build/catkin_ws_apriltag/src/image_transport",
                 } ->
                 exec { "ros-apriltag-catkin-build":
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
-                    environment => ["CMAKE_PREFIX_PATH=/opt/ros/current:/srv/maverick/software/opencv"],
+                    environment => ["CMAKE_PREFIX_PATH=/opt/ros/current:/srv/maverick/software/opencv:/srv/maverick/software/apriltag"],
                     command     => "/usr/bin/catkin build -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -j2 -l2 >/srv/maverick/var/log/build/apriltag-catkin-build.out 2>&1",
-                    #creates     => "/srv/maverick/var/build/catkin_ws_apriltag/src/mavros/mavros >/var/",
+                    creates     => "/opt/ros/current/share/apriltag_ros",
                     timeout     => 0,
                 } ->
-                file { "/srv/maverick/var/build/.install_flag_ros_mavros":
+                file { "/srv/maverick/var/build/.install_flag_ros_apriltag":
                     ensure      => present,
                 }
             }
