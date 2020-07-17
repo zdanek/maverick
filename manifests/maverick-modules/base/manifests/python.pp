@@ -14,7 +14,7 @@
 #
 class base::python (
     Boolean $maverick_python = true,
-    String $python_version = "v3.7.6",
+    String $python_version = "v3.7.8",
 ) {
 
     # Install custom python 3.7
