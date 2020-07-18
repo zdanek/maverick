@@ -17,7 +17,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
   if $python_modules {
     case $ensure {
       'present': {
-        unless $pkgname in $python_modules[$env] {
+        unless $name in $python_modules[$env] {
             #notice("Installing pip: ${pkgname}")
             python::pip { $title:
                 pkgname => "${pkgname}",
