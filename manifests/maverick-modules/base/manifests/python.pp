@@ -98,6 +98,10 @@ class base::python (
 
     # Install basic useful python modules
     # These all install into python3
+    install_python_module { 'setuptools':
+        ensure      => atleast,
+        version     => "49.2.0",
+    } ->
     install_python_module { 'pip-numpy':
         pkgname     => 'numpy',
         ensure      => present,
