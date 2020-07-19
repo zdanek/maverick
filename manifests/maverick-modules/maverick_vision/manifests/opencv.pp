@@ -22,11 +22,11 @@
 #
 class maverick_vision::opencv (
     Boolean $contrib = true,
-    String $opencv_version = "4.3.0",
+    String $opencv_version = "4.4.0",
     Enum['Release', 'Debug'] $release = "Release",
     Boolean $precompile_headers = false,
     Boolean $armv7l_optimize = false,
-    String $openvino_version = "2020.2",
+    String $openvino_version = "2020.4",
     Boolean $openvino = false,
 ) {
     

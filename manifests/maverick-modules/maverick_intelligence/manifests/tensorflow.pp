@@ -20,8 +20,8 @@
 #
 class maverick_intelligence::tensorflow (
     String $source = "https://github.com/tensorflow/tensorflow.git",
-    String $source_version = "v2.1.0",
-    String $bazel_version = "0.13.0",
+    String $source_version = "v2.2.0",
+    String $bazel_version = "3.4.1",
     String $version = "2", # 1 or 2
     Optional[Enum['armv6l', 'armv7l']] $arch = undef,
     Optional[Enum['pip', 'source']] $install_type = undef,
