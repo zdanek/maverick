@@ -13,7 +13,7 @@
 
 class maverick_vision::apriltag (
   $github_repo = "https://github.com/AprilRobotics/apriltag",
-  $github_branch = "3.1.1",
+  $github_branch = "3.1.2",
 ) {
     if ! ("install_flag_apriltag" in $installflags) {
         oncevcsrepo { "apriltag-gitclone":

@@ -12,7 +12,7 @@
 #
 class maverick_intelligence::pytorch (
     $source = "https://github.com/pytorch/pytorch.git",
-    $source_version = "1.4",
+    $source_version = "1.5.1",
 ) {
 
     if $::architecture == "amd64" {

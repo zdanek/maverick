@@ -16,9 +16,9 @@
 # 
 class maverick_vision::visionlibs (
     Boolean $tbb = true,
-    String $tbb_version = "v2020.0",
+    String $tbb_version = "v2020.3",
     Boolean $openblas = true,
-    String $openblas_version = "v0.3.7",
+    String $openblas_version = "v0.3.10",
 ) {
     
     if $openblas == true {
