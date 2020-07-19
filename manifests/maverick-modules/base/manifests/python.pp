@@ -83,6 +83,7 @@ class base::python (
 
     # Install python using python module
     # This installs python 2.7
+    /*
     class { "python":
         version    => 'system',
         dev        => 'present',
@@ -95,12 +96,19 @@ class base::python (
         group       => "mav",
         mode        => "0755",
     }
+    */
 
     # Install basic useful python modules
     # These all install into python3
-    install_python_module { 'setuptools':
+    install_python_module { 'pip-setuptools':
+        pkgname     => "setuptools",
         ensure      => atleast,
-        version     => "49.2.0",
+        version     => '49.1.3',
+    } ->
+    install_python_module { 'pip-isort':
+        pkgname     => "isort",
+        ensure      => atleast,
+        version     => '5.1.2',
     } ->
     install_python_module { 'pip-numpy':
         pkgname     => 'numpy',
@@ -160,8 +168,8 @@ class base::python (
         ensure      => present,
     }
     
-    # Install future into python2
-    package { "python-future":
-        ensure      => present,
+    # Remove python packages that we don't want (and might conflict)
+    package { ["python3-empy", "python-empy"]:
+        ensure      => absent,
     }
 }
