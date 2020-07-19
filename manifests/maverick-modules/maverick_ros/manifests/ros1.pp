@@ -557,7 +557,7 @@ class maverick_ros::ros1 (
                 command     => "/opt/ros/current/bin/catkin_init_workspace",
                 environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/src/CMakeLists.txt",
-                require     => [ Install_python_module["catkin-tools"], Exec["ros-install-marker"], ],
+                require     => [ Install_python_module["catkin-tools"], Exec["ros-install-marker"], Class["maverick_hardware::peripheral::realsense"]],
             } ->
             exec { "ros-rosinstall_realsense":
                 user        => "mav",
