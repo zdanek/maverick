@@ -4,7 +4,6 @@
 
 	// NOTE: Network configuration is defined in localconf.json, to keep settings private
     "maverick_network::interfaces": {
-		"eth0": {}
     },
 
 	"base::desktop::enable": true, // Desktop is enabled by default
@@ -31,7 +30,7 @@
 
 	// Add classes here
 	"classes":		[
-	    "maverick_network"
+	    // "maverick_network"
 	]
 	
 }
