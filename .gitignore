@@ -10,6 +10,7 @@ bin/maverick-netinfo
 bin/maverick-visiond
 bin/maverick-logd
 bin/maverick-mavlogd
+bin/maverick-firstboot.sh
 bin/mavproxy-fc.sh
 bin/mavproxy-sitl.sh
 bin/apsitl.sh
