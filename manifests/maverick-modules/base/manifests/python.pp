@@ -167,9 +167,4 @@ class base::python (
         pkgname     => 'future',
         ensure      => present,
     }
-    
-    # Remove python packages that we don't want (and might conflict)
-    package { ["python3-empy", "python-empy"]:
-        ensure      => absent,
-    }
 }
