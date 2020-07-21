@@ -114,6 +114,7 @@ class maverick_dev::px4 (
 
     # Install eProsima Fastrtps
     if ! ("install_flag_fastrtps" in $installflags) {
+        ensure_packages(["openjdk-8-jdk"])
         oncevcsrepo { "git-px4-fastrtps":
             gitsource   => "https://github.com/eProsima/Fast-RTPS",
             dest        => "/srv/maverick/var/build/fastrtps",
