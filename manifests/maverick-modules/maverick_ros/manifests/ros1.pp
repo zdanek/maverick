@@ -508,24 +508,24 @@ class maverick_ros::ros1 (
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/catkin_ws_opencv/src",
                 command     => "/opt/ros/current/bin/catkin_init_workspace",
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
                 creates     => "/srv/maverick/var/build/catkin_ws_opencv/src/CMakeLists.txt",
                 require     => [ Install_python_module["catkin-tools"], Exec["ros-install-marker"], ],
             } ->
             exec { "ros-opencv-catkin-make":
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
-                command     => "/opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so clean; /opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
+                command     => "/opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_INCLUDE_DIR=/srv/maverick/software/python/include/python3.7m -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so clean; /opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_make.out 2>&1",
                 timeout     => 0,
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
                 require     => Class["maverick_vision::opencv"],
             } ->
             exec { "ros-opencv-catkin-install":
-                user        => "mav",
+                user        => "root",
                 cwd         => "/srv/maverick/var/build/catkin_ws_opencv",
-                command     => "/opt/ros/current/bin/catkin_make install -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
+                command     => "/opt/ros/current/bin/catkin_make install -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_INCLUDE_DIR=/srv/maverick/software/python/include/python3.7m -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
                 timeout     => 0,
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv", "CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2"],
                 creates     => "/srv/maverick/software/ros/current/share/cv_bridge",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros_opencv":
@@ -555,7 +555,7 @@ class maverick_ros::ros1 (
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense/src",
                 command     => "/opt/ros/current/bin/catkin_init_workspace",
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/src/CMakeLists.txt",
                 require     => [ Install_python_module["catkin-tools"], Exec["ros-install-marker"], Class["maverick_hardware::peripheral::realsense"]],
             } ->
@@ -563,7 +563,7 @@ class maverick_ros::ros1 (
                 user        => "mav",
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
                 path        => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 command     => "rosinstall_generator --rosdistro ${_distribution} ddynamic_reconfigure >/srv/maverick/var/build/catkin_ws_realsense/realsense.rosinstall",
                 creates     => "/srv/maverick/var/build/catkin_ws_realsense/realsense.rosinstall",
             } ->
@@ -579,7 +579,7 @@ class maverick_ros::ros1 (
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
                 command     => "/opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so clean; /opt/ros/current/bin/catkin_make -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCATKIN_ENABLE_TESTING=False -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.realsense.catkin_make.out 2>&1",
                 timeout     => 0,
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 #creates     => "/srv/maverick/var/build/catkin_ws_realsense/build/realsense-ros/realsense2_camera/catkin_generated/installspace/realsense2_camera.pc",
             } ->
             exec { "ros-realsense-catkin-install":
@@ -587,7 +587,7 @@ class maverick_ros::ros1 (
                 cwd         => "/srv/maverick/var/build/catkin_ws_realsense",
                 command     => "/opt/ros/current/bin/catkin_make install -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.realsense.catkin_install.out 2>&1",
                 timeout     => 0,
-                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
+                environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 #creates     => "/srv/maverick/software/ros/current/lib/librealsense2_camera.so",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros_realsense":
