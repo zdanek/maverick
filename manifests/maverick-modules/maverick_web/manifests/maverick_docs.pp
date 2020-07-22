@@ -77,7 +77,7 @@ class maverick_web::maverick_docs (
         exec { "devframe_docs-bundle-install":
             command     => "/usr/local/bin/bundle install --deployment",
             cwd         => "/srv/maverick/software/devframe/docs",
-            creates     => "/srv/maverick/software/devframe/docs/vendor/bundle",
+            unless      => "/bin/ls -l /srv/maverick/software/devframe/docs/vendor/bundle/ruby/**/gems/html-pipeline-**",
             user        => "mav",
             timeout     => 0,
         } ->
