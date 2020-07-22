@@ -29,7 +29,7 @@
 	"maverick_fc::mavros_startup_delay": 20,
 	
 	"maverick_hardware::camera_picam_install": true,
-	"maverick_hardware::flirone_install": true,
+	"maverick_hardware::flirone_install": false,
 	"maverick_hardware::raspberry::manage_pi_password": true,
 
 	"maverick_intelligence::tensorflow": true,
