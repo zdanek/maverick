@@ -18,7 +18,7 @@
 #
 class maverick_vision::gstreamer (
     Enum['source', 'native'] $gstreamer_installtype = "source",
-    String $gstreamer_version = "1.17.2",
+    String $gstreamer_version = "1.16.2",
     Enum['installed', 'absent'] $libx264 = "installed",
 ) {
     install_python_module { "pip-websockets":
