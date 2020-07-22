@@ -36,7 +36,7 @@ class maverick_hardware (
     Boolean $camera_ocam_install = false,
     Boolean $camera_picam_install = false,
     Boolean $realsense_install = true,
-    Boolean $flirone_install = true,
+    Boolean $flirone_install = false,
 ) {
 	
 	# Create status.d directory for maverick status`
