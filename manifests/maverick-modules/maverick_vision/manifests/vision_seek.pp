@@ -43,7 +43,7 @@ class maverick_vision::vision_seek (
                 user        => "mav",
                 timeout     => 0,
                 environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv", "CMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib", "PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig"],
-                command     => "/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/libseek-thermal -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib .. >/srv/maverick/var/log/build/libseek-thermal.cmake.out 2>&1",
+                command     => "/usr/bin/cmake -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/libseek-thermal -DCMAKE_INSTALL_RPATH=/srv/maverick/software/opencv/lib .. >/srv/maverick/var/log/build/libseek-thermal.cmake.out 2>&1",
                 cwd         => "/srv/maverick/var/build/libseek-thermal/build",
                 creates     => "/srv/maverick/var/build/libseek-thermal/build/Makefile",
                 require     => [ Class["maverick_vision::gstreamer"], Class["maverick_vision::opencv"], File["/srv/maverick/var/build/.install_flag_opencv"] ], # ensure we have all the dependencies satisfied
@@ -63,25 +63,6 @@ class maverick_vision::vision_seek (
                 cwd         => "/srv/maverick/var/build/libseek-thermal/build",
                 creates     => "/srv/maverick/software/libseek-thermal/bin/asdf",
             } ->
-                    /*
-            exec { "libseek-thermal-compile":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["CXXFLAGS=-I/srv/maverick/software/opencv/include/opencv4", "LDFLAGS=-L/srv/maverick/software/opencv/lib -Wl,-rpath=/srv/maverick/software/opencv/lib", "PKG_CONFIG_PATH=/srv/maverick/software/opencv/lib/pkgconfig"],
-                command     => "/usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/libseek-thermal.build.log 2>&1",
-                cwd         => "/srv/maverick/var/build/libseek-thermal/build",
-                creates     => "/srv/maverick/var/build/libseek-thermal/lib/libseek.so",
-                require     => [ Package["libusb-1.0-0-dev"], Class["maverick_vision::opencv"] ],
-            } ->
-            
-            exec { "libseek-thermal-install":
-                user        => "mav",
-                command     => "/usr/bin/make install PREFIX=/srv/maverick/software/libseek-thermal",
-                cwd         => "/srv/maverick/var/build/libseek-thermal",
-                creates     => "/srv/maverick/software/libseek-thermal/lib/libseek.so",
-                before      => Service["maverick-vision_seek"],
-            } ->
-            */
             file { "/srv/maverick/var/build/.install_flag_libseek-thermal":
                 ensure      => present,
                 owner       => mav,

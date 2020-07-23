@@ -30,6 +30,12 @@ class maverick_hardware::tegra (
     # Ensure important packages are always installed
     package {["cuda-libraries-10-2"]:
         ensure      => installed,
+    } ->
+    file { "/etc/profile.d/20-tegra-cudadir.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/usr/local/cuda-10.2"; export CUDA_TOOLKIT_ROOT_DIR=${CUDA_TOOLKIT_ROOT_DIR:-${NEWPATH}}; if [ -n "${CUDA_TOOLKIT_ROOT_DIR##*${NEWPATH}}" -a -n "${CUDA_TOOLKIT_ROOT_DIR##*${NEWPATH}:*}" ]; then export CUDA_TOOLKIT_ROOT_DIR=$NEWPATH:$CUDA_TOOLKIT_ROOT_DIR; fi',
     }
 
     if $remove_large_packages == true {
@@ -51,7 +57,7 @@ class maverick_hardware::tegra (
         command         => "/bin/mv -f /etc/rc.local /etc/rc.local.report",
         onlyif          => "/bin/grep report_ip_to_host /etc/rc.local",
     }
-    
+
     if ! ("install_flag_jtx1inst" in $installflags) and $jtx1inst == true {
         # Pull jtx1inst fix from git mirror
         oncevcsrepo { "git-jtx1inst":
