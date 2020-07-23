@@ -519,6 +519,7 @@ class maverick_ros::ros1 (
                 timeout     => 0,
                 environment => ["PYTHON=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/bin:/bin", "PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
                 require     => Class["maverick_vision::opencv"],
+                before      => Exec["ros-realsense-catkin-make"],
             } ->
             exec { "ros-opencv-catkin-install":
                 user        => "root",
