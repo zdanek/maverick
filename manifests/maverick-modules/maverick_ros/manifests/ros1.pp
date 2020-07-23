@@ -259,13 +259,6 @@ class maverick_ros::ros1 (
             group       => "root",
             content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
         } ->
-        /*
-        # Install python3 packages
-        package { ["python3-rospkg-modules", "python3-catkin-pkg-modules"]:
-            ensure      => present,
-            require     => Exec["ros_apt_update"],
-        } ->
-        */
         exec { "ros-install-marker":
             command     => "/bin/false",
             refreshonly => true,
@@ -287,14 +280,6 @@ class maverick_ros::ros1 (
             $_osdistro = ""
         }
 
-        ensure_packages(["build-essential"])
-        # Install ros install packages
-        /*
-        package {["python3-rosinstall", "python3-rosinstall-generator", "python3-vcstool"]:
-            require         => Exec["ros-repo"]
-        }
-        */
-
         if ! ("install_flag_ros" in $installflags) {
             file { ["${builddir}", "${builddir}/src"]:
                 ensure      => directory,
@@ -312,7 +297,7 @@ class maverick_ros::ros1 (
             } ->
             exec { "rosdep-update":
                 user            => "mav",
-                command         => "/usr/bin/rosdep update",
+                command         => "/srv/maverick/software/python/bin/rosdep update",
                 creates         => "/srv/maverick/.ros/rosdep/sources.cache",
             } ->
             exec { "catkin_rosinstall":
@@ -334,6 +319,7 @@ class maverick_ros::ros1 (
                 command         => "rosdep install --from-paths src --ignore-packages-from-source --rosdistro ${_distribution} -y >/srv/maverick/var/log/build/ros.rosdep.out 2>&1",
                 cwd             => "${builddir}",
                 user            => "mav",
+                timeout         => 0,
             } ->
             exec { "catkin_make":
                 command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_BUILD_TYPE=Release -j${buildparallel} >/srv/maverick/var/log/build/ros.catkin_make.out 2>&1",
@@ -366,7 +352,7 @@ class maverick_ros::ros1 (
         
         if $module_mavros == true {
             if ! ("install_flag_ros_mavros" in $installflags) {
-                package { ["liburdfdom-dev", "liburdfdom-headers-dev", "libtf2-bullet-dev", "libbondcpp-dev", "geographiclib-tools"]:
+                package { ["liburdfdom-dev", "liburdfdom-headers-dev", "libtf2-bullet-dev", "libbondcpp-dev", "geographiclib-tools", "libgeographic-dev"]:
                     ensure => installed,
                 } ->
                 file { ["/srv/maverick/var/build/catkin_ws_mavros", "/srv/maverick/var/build/catkin_ws_mavros/src"]:
@@ -412,7 +398,7 @@ class maverick_ros::ros1 (
                 /*
                 exec { "ros-mavros-rosdep-install":
                     user        => "mav",
-                    #environment => ["CMAKE_PREFIX_PATH=/opt/ros/current", "PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages"],
+                    environment => ["CMAKE_PREFIX_PATH=/opt/ros/current", "PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages"],
                     cwd         => "/srv/maverick/var/build/catkin_ws_mavros",
                     path        => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
                     command     => "rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} -y ${_osdistro} -r >/srv/maverick/var/log/build/mavros.rosdep.out 2>&1",
