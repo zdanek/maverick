@@ -36,7 +36,7 @@ class maverick_vision::aruco (
             timeout     => 0,
             environment => ["LD_LIBRARY_PATH=/srv/maverick/software/opencv/lib", "PATH=/srv/maverick/software/opencv/bin:/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/sbin", "CMAKE_PREFIX_PATH=/srv/maverick/software/opencv", "CMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib"],
             # command     => "/usr/bin/cmake -DBUILD_UTILS=ON -DBUILD_TESTS=ON -DUSE_TIMERS=ON -DENABLE_OPENMP=ON -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib ..",
-            command     => "/usr/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib .. >/srv/maverick/var/log/build/aruco.cmake.out 2>&1",
+            command     => "/usr/bin/cmake -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/aruco -DCMAKE_INSTALL_RPATH=/srv/maverick/software/aruco/lib:/srv/maverick/software/opencv/lib .. >/srv/maverick/var/log/build/aruco.cmake.out 2>&1",
             cwd         => "/srv/maverick/var/build/aruco/build",
             creates     => "/srv/maverick/var/build/aruco/build/Makefile",
             require     => [ Class["maverick_vision::gstreamer"], Class["maverick_vision::opencv"], File["/srv/maverick/var/build/aruco/build"], File["/srv/maverick/var/build/.install_flag_opencv"] ], # ensure we have all the dependencies satisfied
