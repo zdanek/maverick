@@ -18,14 +18,14 @@ class maverick_hardware::tegra (
     ### As per https://docs.nvidia.com/jetson/jetpack/install-jetpack/index.html#upgrade-jetpack
     # First uninstall the local/old stuff
     exec { "tegra-remove-localrepos":
-        command     => "/usr/bin/apt purge libvisionworks* cuda-*local* cuda-*local",
-        onlyif      => "/bin/ls -l /var/lib/cuda*local*",
+        command     => "/usr/bin/apt purge -y libvisionworks* cuda-*local*",
+        onlyif      => "/bin/ls -ld /var/lib/cuda*local* || /bin/ls -ld /var/cuda*local*",
     } ->
     # Then install everything using online packages, using the uber meta package
     # Note we do this inside an exec so it only happens once, because we then selectively remove large packages to reduce disk space consumed.
     exec { "tegra-install-jetpack":
-        command     => "/usr/bin/apt install nvidia-jetpack",
-        onlyif      => "/bin/ls -l /var/lib/cuda*local*",
+        command     => "/usr/bin/apt -y install nvidia-jetpack",
+        onlyif      => "/bin/ls -ld /var/lib/cuda*local* || /bin/ls -ld /var/cuda*local*",
     } ->
     # Ensure important packages are always installed
     package {["cuda-libraries-10-2"]:
@@ -34,7 +34,7 @@ class maverick_hardware::tegra (
 
     if $remove_large_packages == true {
         # Remove some of the very large 'extra' packages to save space
-        package { ["libcudnn8-doc", "cuda-cufft-dev-10-2", "cuda-documentation-10-2", "cuda-samples-10-2", "cuda-npp-dev-10-2", "cuda-nvgraph-dev-10-2", "cuda-cusparse-dev-10-2", "cuda-cusolver-dev-10-2", "libnvinfer-samples", "libnvinfer-dev"]:
+        package { ["libcudnn8-doc", "cuda-documentation-10-2", "cuda-samples-10-2", "cuda-nvgraph-dev-10-2", "cuda-cusparse-dev-10-2", "cuda-cusolver-dev-10-2", "libnvinfer-samples", "libnvinfer-dev"]:
             ensure  => purged,
             require => Exec["tegra-install-jetpack"],
         }
