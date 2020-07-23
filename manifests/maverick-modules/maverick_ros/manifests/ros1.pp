@@ -513,7 +513,6 @@ class maverick_ros::ros1 (
                 command     => "/opt/ros/current/bin/catkin_make install -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_INCLUDE_DIR=/srv/maverick/software/python/include/python3.7m -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.so -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_INSTALL_PREFIX=${installdir}/${_distribution} >/srv/maverick/var/log/build/ros.opencv.catkin_install.out 2>&1",
                 timeout     => 0,
                 environment => ["PYTHON=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/bin:/bin", "PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.7/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/ros/${_distribution}/lib/python2.7/dist-packages:/srv/maverick/software/python/lib/python3.7/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/realsense-sdk2"],
-                creates     => "/srv/maverick/software/ros/current/share/cv_bridge",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros_opencv":
                 ensure      => present,
