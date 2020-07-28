@@ -1,7 +1,7 @@
-* [Current (1.1.6)](/)
-  * <a href='../next/' target=_self>Next Version (1.2.0-dev)</a>
-* [Installation](/?id=installation)
+* [Current Version (1.2 Beta)](/)
+  * <a href='../1.1.5' target=_self>Previous Version (1.1.5)</a>
+* [Get Started](/?id=installation)
 * [About](/about)
 * [Modules](/modules/intro)
-* [Developers](/devdocs/intro)
+* [Developers](/dev/intro)
 * [Gitter](https://gitter.im/goodrobots/maverick)

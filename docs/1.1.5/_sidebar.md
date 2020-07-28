@@ -1,11 +1,12 @@
-- [Get Started](/)
+- [Quick Start](/)
 - [About](/about)
 
 - Modules
   - [Overview](/modules/intro)
   - [Analysis](/modules/analysis)
   - [Base](/modules/base)
-  - [Custom](/modules/custom)
+  - [Cloud9](/modules/cloud9)
+  - [Desktop](/modules/desktop)
   - [Development](/modules/dev)
   - [Flight Controller](/modules/fc)
   - [Hardware](/modules/hardware)
@@ -18,9 +19,5 @@
   - [Web](/modules/web)
 
 - Developers
-  - [Overview](/dev/intro)
-  - [Compiling](/dev/compiling)
-  - [Distribution Images](/dev/distimages)
-  - Contributing
-    - [Documentation](/dev/contrib-docs)
-
+  - [Overview](/devdocs/intro)
+  - [Distribution Images](/devdocs/distimages)

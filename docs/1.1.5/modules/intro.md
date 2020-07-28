@@ -7,6 +7,8 @@ All environments start with the base module:
 
 Depending on the environment and what other classes are included by configuration, these other modules are available:
   - [Analysis](/modules/analysis)
+  - [Cloud9](/modules/cloud9)
+  - [Desktop](/modules/desktop)
   - [Development](/modules/dev)
   - [Flight Controller](/modules/fc)
   - [Hardware](/modules/hardware)
@@ -17,7 +19,5 @@ Depending on the environment and what other classes are included by configuratio
   - [Security](/modules/security)
   - [Vision](/modules/vision)
   - [Web](/modules/web)
-
-    In Addition, locations for custom modules have been included.  More information and examples can be found in the [Custom Module](/modules/custom) entry.
 
 !> Note:  Throughout the module documentation, it refers to 'localconf parameters'.  This generally refers to the file ~/config/maverick/localconf.json, although there are other ways to set localconf such as local-nodes and sample-nodes.  More information can be [obtained here](/about#local-configuration).
