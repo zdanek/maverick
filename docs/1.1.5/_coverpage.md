@@ -1,17 +1,19 @@
-![alt text](media/logos/maverick-logo-dark.svg)  
+![alt text](media/maverick-logo.svg)  
 > Companion Computer System
 
 - Automate installing, configuring, and maintaining Companion Computers
 - Create repeatable, consistent, reliable, secure systems
 - Hardware and OS agnostic
-- Ready-to-go images (Raspberry, Jetson Nano, Desktop VM)
+- Ready-to-fly images for popular SBCs (Raspberry, Odroid, Joule)
 - Open Source - Completely Permissive MIT License
 - Rich functionality of the the box
 - Mavlink Proxies, ROS, MAVROS, Simulators (SITL, Gazebo)
 - Web IDE, Development Environment, Cross-Compile Firmware
 - Computer Vision, Video Streaming, Vision Landing
 
-[Get Started](/#installation)
-[About](/about)
+[What is Maverick?](/about)
 [Modules](/modules/intro)
-[Developers](/dev)
+[Quick Start](/#installation)
+
+<!-- background image
+![](_media/bg.png) -->

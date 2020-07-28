@@ -1,7 +1,7 @@
 ## What is Maverick?
 Maverick is a system for creating, maintaining and controlling UAV Companion Computers.  The name Maverick reflects the initial main goal of interfacing Companion Computers to Flight Controllers through the Mavlink protocol, specifically ArduPilot.
 
-![Maverick Snapshots](media/maverick-snapshots.jpg)
+<img src="media/maverick-snapshots.jpg" width="100%">
 
 ### Why Maverick?
 UAVs, as flight vehicles that share a busy airspace and are autonomous to varying degrees, are becoming more regulated and licensed globally and as such require better and more thorough engineering.  Companion Computers are often used in conjunction with dedicated Flight Controllers to influence partially or entirely the characteristics of flight, and should be subject to the same rigours of engineering and development as any complex system in a critical environment.
@@ -25,7 +25,7 @@ Lots!  And lots more planned!
 - Compiles/installs Gstreamer and OpenCV software, Aruco fiducial marker software, FPV intelligent vision daemon, ROS, Cloud9 IDE
 - Dev environment installs and configures browser IDE (Cloud9), Ardupilot SITL, proxy, dronekit environment
 
-![Maverick Architecture](media/maverick-architecture.svg)
+<img src="media/maverick-architecture.svg" width="100%">
 
 Even though Maverick enables a rich set of functionality out of the box, the main goal of the project is actually to provide a framework for automated system configuration, rather than the features themselves.  The actual functionality of the platform is just beginning, and is at a very early stage.
 
@@ -70,21 +70,21 @@ Maverick can place the system in one of several modes, or environments.
 - *Development:* adds useful software and services for development, including a separate python/dronekit virtualenv, browser based IDE (Cloud9) with edit access to all Maverick code and software, complete Ardupilot SITL build, separate mavlink proxy and ROS instances.
 
 
-| | Bootstrap | Flight | Development |
-|--- | :---: | :---: | :---: |
-|Hardware | x | x | x |
-|OS | x | x | x |
-|Network |  | x | x |
-|Mavlink Proxy |  | x | x |
-|Dronekit |  | x | x |
-|Vision |  | x | x |
-|ROS |  | x | x |
-|MAVROS |  | x | x |
-|SITL |  |  | x |
-|SITL Mavlink Proxy |  |  | x |
-|SITL ROS |  |  |  x |
-|SITL MAVROS |  |  |  x |
-|Web IDE |  | x |  x |
+   | Bootstrap | Flight | Development
+--- | :---: | :---: | :---:
+Hardware | x | x | x
+OS | x | x | x
+Network |  | x | x
+Mavlink Proxy |  | x | x
+Dronekit |  | x | x
+Vision |  | x | x
+ROS |  | x | x
+MAVROS |  | x | x
+SITL |  |  | x
+SITL Mavlink Proxy |  |  | x
+SITL ROS |  |  |  x
+SITL MAVROS |  |  |  x
+Web IDE |  | x |  x
 
 ______
 
