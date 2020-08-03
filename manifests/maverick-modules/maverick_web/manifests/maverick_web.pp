@@ -22,6 +22,8 @@
 #   If set, specify the message to use in web auth popup.
 # @param auth_file
 #   If set, specify the webserver auth file to use to authenticate incoming users.
+# @param webdev
+#   If true, install and configure 
 #
 class maverick_web::maverick_web (
     Boolean $active = false,
@@ -31,60 +33,101 @@ class maverick_web::maverick_web (
     String $server_hostname = $maverick_web::server_fqdn,
     Optional[String] $auth_message = undef,
     Optional[String] $auth_file = undef,
+    Boolean $webdev = false,
 ) {
     
-    # Install dev repo, register maverick-webdev service
-    package { 'yarn':
-        ensure   => present,
-        provider => 'npm',
-    } ->
-    package { '@vue/cli':
-        ensure   => 'present',
-        provider => 'npm',
-    } ->
-    oncevcsrepo { "git-maverick-web":
-        gitsource   => "https://github.com/goodrobots/maverick-web.git",
-        dest        => "/srv/maverick/code/maverick-web",
-        revision    => "master",
-        depth       => undef,
-    } ->
-    exec { "yarn-maverick-web":
-        path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
-        command     => "yarn install",
-        cwd         => "/srv/maverick/code/maverick-web",
-        creates     => "/srv/maverick/code/maverick-web/node_modules/@vue",
-        user        => "mav",
-        #environment => ["QT_QPA_PLATFORM=offscreen"], # Fix to allow global phantomjs to run headless
-        timeout     => 0,
-        require     => [ Class["maverick_web::nodejs"], Package["yarn"], ],
-    } ->
-    file { "/etc/systemd/system/maverick-webdev.service":
-        owner       => "root",
-        group       => "root",
-        mode        => "644",
-        source      => "puppet:///modules/maverick_web/maverick-webdev.service",
-        notify      => Exec["maverick-systemctl-daemon-reload"],
-    } -> 
-    # Define nginx location for webdev proxy websocket endpoint
-    nginx::resource::location { "maverick-webdev-ws":
-        ssl                     => true,
-        location                => "${webpath_dev}/sockjs-node",
-        proxy                   => "http://localhost:${webport}/dev/maverick/sockjs-node",
-        server                  => $server_hostname,
-    	proxy_connect_timeout   => "7d",
-    	proxy_read_timeout      => "7d",
-        proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
-    	proxy_http_version      => "1.1",
-    } ->
-    # Define nginx location for webdev proxy
-    nginx::resource::location { "maverick-webdev":
-        location    => $webpath_dev,
-        ensure      => present,
-        ssl         => true,
-        proxy       => "http://localhost:${webport}/dev/maverick/",
-        server      => $server_hostname,
-        auth_basic  => $auth_message,
-        auth_basic_user_file => $auth_file,
+    if $webdev == true {
+        # Install dev repo, register maverick-webdev service
+        package { 'yarn':
+            ensure   => present,
+            provider => 'npm',
+        } ->
+        package { '@vue/cli':
+            ensure   => 'present',
+            provider => 'npm',
+        } ->
+        oncevcsrepo { "git-maverick-web":
+            gitsource   => "https://github.com/goodrobots/maverick-web.git",
+            dest        => "/srv/maverick/code/maverick-web",
+            revision    => "master",
+            depth       => undef,
+        } ->
+        exec { "yarn-maverick-web":
+            path        => ["/bin", "/usr/bin", "/opt/nodejs/bin"],
+            command     => "yarn install",
+            cwd         => "/srv/maverick/code/maverick-web",
+            creates     => "/srv/maverick/code/maverick-web/node_modules/@vue",
+            user        => "mav",
+            #environment => ["QT_QPA_PLATFORM=offscreen"], # Fix to allow global phantomjs to run headless
+            timeout     => 0,
+            require     => [ Class["maverick_web::nodejs"], Package["yarn"], ],
+        } ->
+        file { "/etc/systemd/system/maverick-webdev.service":
+            owner       => "root",
+            group       => "root",
+            mode        => "644",
+            source      => "puppet:///modules/maverick_web/maverick-webdev.service",
+            notify      => Exec["maverick-systemctl-daemon-reload"],
+        } ->
+        # Define nginx location for webdev proxy websocket endpoint
+        nginx::resource::location { "maverick-webdev-ws":
+            ssl                     => true,
+            location                => "${webpath_dev}/sockjs-node",
+            proxy                   => "http://localhost:${webport}/dev/maverick/sockjs-node",
+            server                  => $server_hostname,
+            proxy_connect_timeout   => "7d",
+            proxy_read_timeout      => "7d",
+            proxy_set_header        => ['Upgrade $http_upgrade', 'Connection "upgrade"', 'Host $host', 'X-Real-IP $remote_addr', 'X-Forwarded-For $proxy_add_x_forwarded_for', 'Proxy ""'],
+            proxy_http_version      => "1.1",
+        } ->
+        # Define nginx location for webdev proxy
+        nginx::resource::location { "maverick-webdev":
+            location    => $webpath_dev,
+            ensure      => present,
+            ssl         => true,
+            proxy       => "http://localhost:${webport}/dev/maverick/",
+            server      => $server_hostname,
+            auth_basic  => $auth_message,
+            auth_basic_user_file => $auth_file,
+        }
+        # Bring webdev service to desired state
+        if $active == true {
+            service { "maverick-webdev":
+                ensure      => running,
+                enable      => true,
+                require     => Exec["maverick-systemctl-daemon-reload"],
+            }
+        } else {
+            service { "maverick-webdev":
+                ensure      => stopped,
+                enable      => false,
+                require     => Exec["maverick-systemctl-daemon-reload"],
+            }
+        }
+        
+        if defined(Class["::maverick_security"]) {
+            maverick_security::firewall::firerule { "maverick-web":
+                ports       => $webport,
+                ips         => lookup("firewall_ips"),
+                proto       => "tcp"
+            }
+        }
+
+        # status.d entry
+        file { "/srv/maverick/software/maverick/bin/status.d/120.web/100.webdev.status":
+            owner   => "mav",
+            content => "webdev,Web Devserver\n",
+        }
+    } else {
+        service { "maverick-webdev":
+            ensure      => stopped,
+            enable      => false,
+            require     => Exec["maverick-systemctl-daemon-reload"],
+        }
+        # status.d entry
+        file { "/srv/maverick/software/maverick/bin/status.d/120.web/100.webdev.status":
+            ensure  => absent,
+        }
     }
     
     # Install prod repo, register nginx location
@@ -110,33 +153,5 @@ class maverick_web::maverick_web (
         ensure  => stopped,
         enable  => false,
     }
-    
-    # Bring webdev service to desired state
-    if $active == true {
-        service { "maverick-webdev":
-            ensure      => running,
-            enable      => true,
-            require     => Exec["maverick-systemctl-daemon-reload"],
-        }
-    } else {
-        service { "maverick-webdev":
-            ensure      => stopped,
-            enable      => false,
-            require     => Exec["maverick-systemctl-daemon-reload"],
-        }
-    }
-    
-    if defined(Class["::maverick_security"]) {
-        maverick_security::firewall::firerule { "maverick-web":
-            ports       => $webport,
-            ips         => lookup("firewall_ips"),
-            proto       => "tcp"
-        }
-    }
 
-    # status.d entry
-    file { "/srv/maverick/software/maverick/bin/status.d/120.web/100.webdev.status":
-        owner   => "mav",
-        content => "webdev,Web Devserver\n",
-    }
 }
