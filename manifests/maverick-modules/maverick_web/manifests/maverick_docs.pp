@@ -9,6 +9,10 @@
 #   Specifies which webserver vhost to use for the documentation.  Should not be set in normal circumstances.
 # @param arudpilot_docs
 #   If true, compile and install the Ardupilot reference documentation.
+# @param ardupilot_builddir
+#   Path to clone github repo and build docs
+# @param ardupilot_installdir
+#   Path to install compiled docs to
 # @param px4_docs
 #   If true, compile and install the PX4 reference documentation.
 # @param devframe_docs
