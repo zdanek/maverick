@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# Set python module paths
-export PYTHONPATH=/opt/ros/current/lib/python2.7/dist-packages
-
 # Source ROS environment
 source /srv/maverick/software/ros/current/setup.bash
+. /etc/profile.d/31-maverick-ros-pythonpath.sh
 
 # Source api config for this instance
 [ ! -r /srv/maverick/config/web/api-env.$1.conf ] || . /srv/maverick/config/web/api-env.$1.conf
