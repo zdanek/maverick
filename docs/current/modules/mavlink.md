@@ -19,15 +19,15 @@ Maverick sets two proxy environments out of the box - one for FC (Flight Control
 |UDPin | FC | 6060 | <font color='gray'>available</font>|
 |UDPin | FC | 6061 | <font color='gray'>available</font>|
 |--- | --- | --- | ---|
-|TCP | SITL | 6113 | TCP allows multiple connections to a port|
-|TCP | SITL | 6114 | <font color='gray'>available</font>|
-|TCP | SITL | 6115 | <font color='gray'>available</font>|
-|UDP | SITL | 6116 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
-|UDP | SITL | 6117 | Web Interface (Reserved)|
-|UDP | SITL | 6118 | <font color='gray'>available</font>|
-|UDPin | SITL | 6119 | <font color='gray'>available</font>|
-|UDPin | SITL | 6120 | <font color='gray'>available</font>|
-|UDPin | SITL | 6121 | <font color='gray'>available</font>|
+|TCP | SITL | 6116 | TCP allows multiple connections to a port|
+|TCP | SITL | 6117 | <font color='gray'>available</font>|
+|TCP | SITL | 6118 | <font color='gray'>available</font>|
+|UDP | SITL | 6119 | Vision Landing<br><font color='gray'>(available if not using vision_landing)</font>|
+|UDP | SITL | 6120 | Web Interface (Reserved)|
+|UDP | SITL | 6121 | <font color='gray'>available</font>|
+|UDPin | SITL | 6122 | <font color='gray'>available</font>|
+|UDPin | SITL | 6123 | <font color='gray'>available</font>|
+|UDPin | SITL | 6124 | <font color='gray'>available</font>|
 |--- | --- | --- | ---|
 |TCP | PX4 SITL | 6133 | TCP allows multiple connections to a port|
 |TCP | PX4 SITL | 6134 | <font color='gray'>available</font>|

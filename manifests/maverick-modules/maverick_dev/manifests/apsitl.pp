@@ -122,7 +122,7 @@ define maverick_dev::apsitl (
     String $status_priority = "151",
     Boolean $status_entries = true,
 ) {
-    file { [ "/srv/maverick/var/log/dev/${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
+    file { [ "/srv/maverick/var/log/dev/apsitl_${instance_name}", "/srv/maverick/data/dev/mavlink/apsitl_${instance_name}" ]:
         ensure      => directory,
         owner       => "mav",
         group       => "mav",
