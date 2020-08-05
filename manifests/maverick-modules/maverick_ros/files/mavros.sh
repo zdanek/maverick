@@ -2,7 +2,7 @@
 
 source /srv/maverick/software/ros/current/setup.bash
 [ ! -r /srv/maverick/config/ros/mavros-$1.conf ] || . /srv/maverick/config/ros/mavros-$1.conf
-export ROS_LOG_DIR
+. /etc/profile.d/31-maverick-ros-pythonpath.sh
 
 echo "Waiting for rosmaster to launch"
 while ! nc -z localhost $ROS_PORT </dev/null; do sleep 5; done

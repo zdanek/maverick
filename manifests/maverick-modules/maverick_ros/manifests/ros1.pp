@@ -334,7 +334,7 @@ class maverick_ros::ros1 (
                 mode        => "644",
                 owner       => "root",
                 group       => "root",
-                content     => "source /opt/ros/${_distribution}/setup.bash",
+                content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
@@ -626,6 +626,12 @@ class maverick_ros::ros1 (
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/mavros.sh",
         }
+        file { "/etc/profile.d/31-maverick-ros-pythonpath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/ros/current/lib/python2.7/dist-packages:/srv/maverick/software/ros/current/lib/python3/dist-packages:/srv/maverick/software/ros/current/lib/python3.7/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+        }
         # Install a fixed apm_config.yaml
         # https://github.com/mavlink/mavros/issues/1210
         #file { "/opt/ros/${_distribution}/share/mavros/launch/apm_config.yaml":
@@ -636,10 +642,6 @@ class maverick_ros::ros1 (
     # Install python deps
     install_python_module { "pip-defusedxml":
         pkgname     => "defusedxml",
-        ensure      => present,
-    }
-    install_python_module { "pip-rospkg":
-        pkgname     => "rospkg",
         ensure      => present,
     }
 }
