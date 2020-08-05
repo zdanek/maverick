@@ -7,7 +7,7 @@
 - Ready-to-go images (Raspberry, Jetson Nano, Desktop VM)
 - Open Source - Completely Permissive MIT License
 - Rich functionality of the the box
-- Mavlink Proxies, ROS, MAVROS, Simulators (SITL, Gazebo)
+- Mavlink Proxies, ROS, MAVROS, Simulators (SITL)
 - Web IDE, Development Environment, Cross-Compile Firmware
 - Computer Vision, Video Streaming, Vision Landing
 

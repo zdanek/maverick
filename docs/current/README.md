@@ -10,20 +10,20 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-| Vendor | Model | Download | Hash |
-| --- | --- | --- | --- |
-| Raspberry Pi | All Models | [1.2.0beta3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 |
-| Raspberry Pi | Lite (Pi Zero/W) | [1.2.0beta3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz) | 82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd |
-| Nvidia | Jetson Nano | [1.2.0beta3 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-nvnano.img.bz2) | f15bd0a202389a7aecd37f39d5ed8dbf368e740495ea3c053a3130e404da3118 |
-| PC | Desktop VM (VirtualBox) | [1.2.0beta4 Image](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.bz2) | d6aae3591337af9538826bba1b558f335f6c93314157756253563fd535de16bc |
+| Vendor | Model | Download | Hash | SD Card |
+| --- | --- | --- | --- | --- |
+| Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 | 16Gb |
+| Raspberry Pi | [Lite (Pi Zero/W)](#raspberryraspberry-lite-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz) | 82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd | 16Gb |
+| Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-nvnano.img.bz2) | f15bd0a202389a7aecd37f39d5ed8dbf368e740495ea3c053a3130e404da3118 | 32Gb |
+| PC | [Desktop VM (VirtualBox)](#desktop-vm-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.bz2) | d6aae3591337af9538826bba1b558f335f6c93314157756253563fd535de16bc | 16Gb |
 
-Legacy Downloads (These platforms are still supported but we no longer have the harware to build updated images)
+Legacy Downloads (These platforms are still somewhat supported but we no longer have the harware to build updated images)
 
-| Vendor | Model | Download | Hash |
-| --- | --- | --- | --- |
-| Aaeon Up | All Models | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso) | d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324 |
-| Nvidia | Tegra TX1 | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz) | 6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5 |
-| Nvidia | Tegra TX2 | [1.1.5 Image](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz) | 388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7 |
+| Vendor | Model | Download | Hash | SD Card |
+| --- | --- | --- | --- | --- |
+| Aaeon Up | [All Models](#aaeon-up-boards-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso) | d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324 | 16Gb |
+| Nvidia | [Tegra TX1](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz) | 6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5 | 16Gb |
+| Nvidia | [Tegra TX2](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz) | 388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7 | 16Gb
 
 ?> sha256 hashes can be calculated for downloaded files by running `sha256sum <downloaded-file>`, and the output compared to the hashes above to ensure integrity.
 
@@ -31,9 +31,10 @@ Legacy Downloads (These platforms are still supported but we no longer have the 
  - The easiest way to write the images to SD card is using the excellent [Etcher](https://etcher.io/)
 
 ### Raspberry/Raspberry Lite Instructions
-Getting Maverick working on the Raspberry is straight forward.  There are two images - Rasspberry Pi and Raspberry Pi Lite.
- - The 'Lite' version is targeted mainly at the single-core Raspberrys like the Model 1/2/3/Zero/Zero W/Model A.
+The Raspberry Pi platform is a 'first class' supported platform in Maverick - ie. we aim to provide an optimal experience on this platform.
+Getting Maverick working on the Raspberry is straight forward.  There are two images - Raspberry Pi and Raspberry Pi Lite.
  - The full version is optimised to use all cores and features of the more advanced quad-core CPU available in the Model A/B 3+/4.
+ - The 'Lite' version is targeted mainly at the single-core Raspberry boards like the Model 1/2/3/Zero/Zero W/Model A.
  - The 'Lite' version is stripped down to only run essential services at boot, and none of the Analysis services run by default.
 
 !> Note: The Full version will NOT work properly on the single core boards - in particular OpenCV and any related software will not run at all.
@@ -41,8 +42,8 @@ Getting Maverick working on the Raspberry is straight forward.  There are two im
 | | Raspberry | Raspberry Lite |
 | --- | :---: | :---: |
 | Base Image | Rasbian Buster with desktop | Raspbian Buster Lite |
-| OpenCV | All CPUs | Single Core only |
-| Tensorflow | All CPUs | Single Core only |
+| OpenCV | Quad Core only | All CPUs, unoptimized |
+| Tensorflow | Quad Core only | All CPUs, unoptimized |
 | Gstreamer | x | x |
 | Analysis | x | x |
 | Cloud9 IDE | x | x |
@@ -56,7 +57,8 @@ Getting Maverick working on the Raspberry is straight forward.  There are two im
 - [Get Started](#get-Started)
 
 ### Jetson Nano Instructions
-Jetson Nano support is in early stages.  The first initial download is very large and based on Jetpack 4.3, and requires a 32Gb SD card.  Subsequent images will be based on new Jetpack 4.4 and will be much smaller.  To get started:
+The Jetson Nano platform is a 'first class' supported platform in Maverick - ie. we aim to provide an optimal experience on this platform.  Having said that, 
+Jetson Nano support is in early stages.  The first initial download is quite large and based on Jetpack 4.4, and requires a 32Gb SD card.  To get started:
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
 - Boot from the SD card
 - If the ethernet is plugged in, login over the network: `ssh mav@maverick-nano.local` (default password: *wingman*).  Otherwise attach a screen and keyboard.
@@ -64,13 +66,17 @@ Jetson Nano support is in early stages.  The first initial download is very larg
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
-### Ubuntu VM Instructions
-Ubuntu VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.
+### Desktop VM Instructions
+Desktop VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.
 
 ### Aaeon Up Boards (Legacy version only)
+Note: The Up boards are fantastic little computers and the Core and Core+ are ideally suited for UAVs - small and powerful.  Community builds are welcome.
+
 A single image is provided for the Up board, Up^2 (Up Squared) and Up Core boards.  These boards run the OS from onboard eMMC, so the image is a 'flash' system - on boot it runs a utility (Clonezilla) that flashes the image to the boards eMMC storage.  The boards do not always boot from removeable storage by default, so it may be necessary to reconfigure the BIOS to boot from USB/SD card.
 
 ### Nvidia Tegra TX1/TX2 Instructions (Legacy version only)
+Note: The TX2 was never tested, other than mixed results from the community.  Support for these should remain reasonably good as it is essentially the same JetPack platform that the Jetson Nano and Xavier NX use.  The Jetson Nano is a 'first class' supported platform in Maverick, as will be the Xavier NX.
+
 Experimental images are provided for the Nvidia Tegra TX1 and TX2.  These images include everything needed to flash the TX1 or TX2 module from Ubuntu (14.04 or later), does not need any installed Jetpack or other Nvidia components, and does not need to match any existing installed Jetpack or L4T versions.  To install, unpack the image, put the module in recovery mode (either on the development board or on carrier board) and run the flasher:
  - Unpack image: 
    ```
@@ -96,22 +102,23 @@ If you have a TX2, replace references in the above instructions from 'tx1' to 't
 If the installation and network setup was successful, you should now be able to connect over ssh (if you're using an OS that talks zeroconf like MacOS or Linux):  
 Raspberry: `ssh maverick-raspberry.local`  
 Raspberry Lite: `ssh maverick-raspberrylite.local`  
-Ubuntu VM: `ssh maverick-desktopvm.local`  
-Joule: `ssh maverick-joule.local`  
-Odroid: `ssh maverick-odroidxu4.local`  
+Jetson Nano: `ssh maverick-nano.locl`  
+Desktop VM: `ssh maverick-desktopvm.local`  
+Up: `ssh maverick-up.local`  
+Tegra TX1/TX2: `ssh maverick-tegra.local`  
 
 ?> To get Zeroconf working in Windows, install Apple Bonjour: https://support.apple.com/kb/DL999
 
 You can also connect to the Web interface from any web browser:  
 Raspberry: http://maverick-raspberry.local/  
 Raspberry Lite: http://maverick-raspberrylite.local/  
-Ubuntu VM: http://maverick-desktopvm.local/  
-Joule: http://maverick-joule.local/  
-Odroid: http://maverick-odroidxu4.local/  
+Desktop VM: http://maverick-desktopvm.local/  
+Jetson Nano: http://maverick-nano.local/  
+etc..
 
 ?> **Note: The username is 'mav' and the default password is 'wingman' for both ssh and web access.**
 
-After logging in, it's strongly recommended to firstly update and configure Maverick, in particular this will expand the root filesystem to fill the SD card you are using:
+After logging in, it's strongly recommended to firstly update and configure Maverick, this will bring it up to the latest codebase and in particular this will expand the root filesystem to fill the SD card you are using, if that has not already been done automatically:
 ```bash
 maverick self-update
 maverick configure
