@@ -27,7 +27,7 @@ class maverick_dev (
 ) {
    
     # Create various dev directories
-    file { ["/srv/maverick/data/dev", "/srv/maverick/data/dev/mavlink", "/srv/maverick/config/dev", "/srv/maverick/var/log/dev", "/srv/maverick/var/log/dev/mavlink"]:
+    file { ["/srv/maverick/data/dev", "/srv/maverick/data/dev/mavlink", "/srv/maverick/config/dev", "/srv/maverick/var/log/dev"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",
