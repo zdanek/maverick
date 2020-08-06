@@ -29,7 +29,7 @@ class maverick_web::maverick_api (
     install_python_module { "api-tornado":
         pkgname     => "tornado",
         ensure      => atleast,
-        version     => "6.0.3",
+        version     => "6.0.4",
     } ->
     install_python_module { "api-graphql-core":
         pkgname     => "graphql-core",
@@ -74,7 +74,7 @@ class maverick_web::maverick_api (
     install_python_module { "api-zeroconf":
         pkgname     => "zeroconf",
         ensure      => atleast,
-        version     => "0.24.5",
+        version     => "0.26.1",
     } ->
 
     file { "/etc/systemd/system/maverick-api@.service":
