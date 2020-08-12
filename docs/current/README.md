@@ -10,6 +10,8 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
+!> These downloads are temporarily unavailable while we prepare new images
+
 | Vendor | Model | Download | Hash | SD Card |
 | --- | --- | --- | --- | --- |
 | Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 | 16Gb |
