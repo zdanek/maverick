@@ -137,6 +137,8 @@ rm -f /srv/maverick/var/run/*
 find /srv/maverick/var/log -type f -delete
 find /run/log/journal -type f -delete
 systemctl restart systemd-journald
+journalctl --rotate
+journalctl --vacuum-time=1s
 
 # Re-seed dhclient
 $(ip a |grep eth0 >/dev/null 2>&1) && dhclient eth0
