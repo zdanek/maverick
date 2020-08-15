@@ -213,6 +213,23 @@ class maverick_ros::ros1 (
         install_python_module { "catkin-tools":
             pkgname     => "git+https://github.com/catkin/catkin_tools.git#egg=catkin_tools",
             ensure      => present,
+        } ->
+        file { "/etc/profile.d/30-ros1env.sh":
+            ensure      => present,
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "ros1env() { if [ -f /srv/maverick/config/ros/rosmaster-\$1.conf ]; then . /srv/maverick/config/ros/rosmaster-\$1.conf; else echo \"Error: ROS1 config for \$1 instance does not exist\"; fi }",
+        } ->
+        file { "/etc/profile.d/30-ros-env.sh":
+            ensure      => absent,
+        } ->
+        file { "/etc/profile.d/31-ros-env.sh":
+            ensure      => present,
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
         }
     }
 
@@ -241,23 +258,6 @@ class maverick_ros::ros1 (
             user            => "mav",
             command         => "/srv/maverick/software/python/bin/rosdep update",
             creates         => "/srv/maverick/.ros/rosdep/sources.cache",
-        } ->
-        file { "/etc/profile.d/30-ros1env.sh":
-            ensure      => present,
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => "ros1env() { if [ -f /srv/maverick/config/ros/rosmaster-\$1.conf ]; then . /srv/maverick/config/ros/rosmaster-\$1.conf; else echo \"Error: ROS1 config for \$1 instance does not exist\"; fi }",
-        } ->
-        file { "/etc/profile.d/30-ros-env.sh":
-            ensure      => absent,
-        } ->
-        file { "/etc/profile.d/31-ros-env.sh":
-            ensure      => present,
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
         } ->
         exec { "ros-install-marker":
             command     => "/bin/false",
@@ -328,13 +328,6 @@ class maverick_ros::ros1 (
                 creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
                 timeout         => 0,
                 require         => File["${installdir}/${_distribution}"],
-            } ->
-            file { "/etc/profile.d/30-ros-env.sh":
-                ensure      => present,
-                mode        => "644",
-                owner       => "root",
-                group       => "root",
-                content     => "source /opt/ros/${_distribution}/setup.bash\nros1env fc",
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros":
                 ensure      => present,
