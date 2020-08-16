@@ -14,7 +14,7 @@ OS images are available for the following platforms.  Volunteers to produce imag
 | --- | --- | --- | --- | --- |
 | Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberry.img.xz) | 88c1e9fec8f51b92e1384d720e9130dcf4ae65fcf759395e2648d01068ab8215 | 16Gb |
 | Raspberry Pi | [Lite (Pi Zero/W)](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberrylite.img.xz) | 05e1503296251f8ff433de1f66e6d560080b8ee11635619dee985962af6a669c | 16Gb |
-| Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta4 - in progress]() |  | 32Gb |
+| Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta4 - in progress](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-nano.img.xz) | b0d2bcf7254831600c39a9529578e000c2732d8def99900e4e5d1a3342ac258f | 32Gb |
 | PC | [Desktop VM (VirtualBox)](#desktop-vm-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.zip) | 3fe27a04b2fc6fbfe84e6e88e5910173b9e7d7417533ed07212e54b2cedfbc44 | 16Gb |
 
 Legacy Downloads (These platforms are still somewhat supported but we no longer have the harware to build updated images)
