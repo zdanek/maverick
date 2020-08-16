@@ -34,8 +34,11 @@ if [ ! -d $dstdir ]; then
     mkdir -p $dstdir
 fi
 
-# Download L4T
-BSP=https://developer.nvidia.com/embedded/L4T/r32_Release_v4.2/t210ref_release_aarch64/Tegra210_Linux_R32.4.2_aarch64.tbz2
+## Download L4T
+# BSP for Jetpack 4.2/4.3
+# BSP=https://developer.nvidia.com/embedded/L4T/r32_Release_v4.2/t210ref_release_aarch64/Tegra210_Linux_R32.4.2_aarch64.tbz2
+# BSP for Jetpack 4.4
+BSP=https://developer.nvidia.com/embedded/L4T/r32_Release_v4.3/t210ref_release_aarch64/Tegra210_Linux_R32.4.3_aarch64.tbz2
 if [ ! "$(ls -A $dstdir)" ]; then
         printf "\e[32mDownload L4T...       "
         wget -qO- $BSP | tar -jxpf - -C $dstdir
@@ -55,7 +58,7 @@ printf "Create image... "
 rootfs_size=$(du -hsBM $dstdir/Linux_for_Tegra/rootfs | awk '{print $1}')
 rootfs_size=$(echo $((${rootfs_size%?} + 512))"M")
 #tools/jetson-disk-image-creator.sh -o $dstdir/maverick-nano.img -s $rootfs_size -r 200
-tools/jetson-disk-image-creator.sh -o $dstdir/maverick-nano.img -b jetson-nano -r 200
+tools/jetson-disk-image-creator.sh -o $dstdir/maverick-nano.img -b jetson-nano -r 300
 umount /var/tmp/nano.srcdisk
 printf "OK\n"
 
