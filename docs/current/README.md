@@ -10,14 +10,12 @@ There are two ways to get started with Maverick:
 
 OS images are available for the following platforms.  Volunteers to produce images for other platforms welcome :)
 
-!> These downloads are temporarily unavailable while we prepare new images
-
 | Vendor | Model | Download | Hash | SD Card |
 | --- | --- | --- | --- | --- |
-| Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberry.img.xz) | c45e52949b4525a45c74b25477330a479efb4fa31eda55194191cc9c2faf28f0 | 16Gb |
-| Raspberry Pi | [Lite (Pi Zero/W)](#raspberryraspberry-lite-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-raspberrylite.img.xz) | 82cd7c40037fc34bbdcf8cd59a4114b3de32809882d141b6a9b7678791b060dd | 16Gb |
-| Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta3](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta3-nvnano.img.bz2) | f15bd0a202389a7aecd37f39d5ed8dbf368e740495ea3c053a3130e404da3118 | 32Gb |
-| PC | [Desktop VM (VirtualBox)](#desktop-vm-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.bz2) | d6aae3591337af9538826bba1b558f335f6c93314157756253563fd535de16bc | 16Gb |
+| Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberry.img.xz) | 88c1e9fec8f51b92e1384d720e9130dcf4ae65fcf759395e2648d01068ab8215 | 16Gb |
+| Raspberry Pi | [Lite (Pi Zero/W)](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberrylite.img.xz) | 05e1503296251f8ff433de1f66e6d560080b8ee11635619dee985962af6a669c | 16Gb |
+| Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta4 - in progress]() |  | 32Gb |
+| PC | [Desktop VM (VirtualBox)](#desktop-vm-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.zip) | 3fe27a04b2fc6fbfe84e6e88e5910173b9e7d7417533ed07212e54b2cedfbc44 | 16Gb |
 
 Legacy Downloads (These platforms are still somewhat supported but we no longer have the harware to build updated images)
 
