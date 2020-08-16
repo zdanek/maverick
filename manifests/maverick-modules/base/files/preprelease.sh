@@ -49,6 +49,8 @@ rm -rf /srv/maverick/var/build/*
 # Remove tmp data
 rm -rf /var/tmp/* /var/crash/* /var/backups/* /var/cache/*
 rm -rf /tmp/*
+# Recreate debconf cache
+debconf-show --listdbs
 
 # Delete puppet client data
 rm -rf /var/lib/puppet
