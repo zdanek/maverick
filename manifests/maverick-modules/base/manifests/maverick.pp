@@ -57,6 +57,10 @@ class base::maverick (
         gitsource   => "https://github.com/goodrobots/maverick.git",
         dest        => "/srv/maverick/software/maverick",
 	    revision    => $_gitbranch,
+    } ->
+    file { "/srv/maverick/software/maverick/conf/devices":
+        ensure  => directory,
+        group   => "mav",        
     }
     file { "/srv/maverick/config/maverick/localconf.json":
         source      => "puppet:///modules/base/maverick-localconf.json",
