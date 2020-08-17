@@ -67,7 +67,7 @@ Jetson Nano support is in early stages.  The first initial download is quite lar
 - [Get Started](#get-Started)
 
 ### Desktop VM Instructions
-Desktop VM download image is provided as an 'ova' - Open Virtualisation Archive.  This can be imported to either VirtualBox or VMware.
+The Desktop VM platform is a 'first class' supported platform in Maverick - ie. we aim to provide an optimal experience on this platform.  The Desktop VM download image is provided as a VirtualBox VM zip.  VirtualBox is a (mostly) free and opensource Virtual Machine software from Oracle (https://www.virtualbox.org/) which runs on most major platforms.  After installing VirtualBox, simply download the PC/Desktop VM image above, unzip and double click on the 'Maverick DesktopVM.vbox' file.  This should automatically create a new VM within your VirtualBox install.  You can then customize the VM settings, for example to add or remove virtual memory and CPUs, and then start the VM.  This VM image was created with VirtualBox 6.1.
 
 ### Aaeon Up Boards (Legacy version only)
 Note: The Up boards are fantastic little computers and the Core and Core+ are ideally suited for UAVs - small and powerful.  Community builds are welcome.
