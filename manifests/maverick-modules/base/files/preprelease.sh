@@ -20,16 +20,10 @@ chown mav:mav /srv/maverick/config/maverick/maverick-branch.conf
 
 echo "Removing logs, config and data"
 # Clean as much of /var/log as possible
-rm -f /var/log/*.log*
-rm -f /var/log/apt/*
-rm -rf /var/log/installer
-rm -f /var/log/faillog /var/log/lastlog
-rm -f /var/log/lightdm/*
-rm -f /var/log/syslog* /var/log/dmesg /var/log/debug* /var/log/messages*
-rm -f /var/log/unattended-upgrades/*
-rm -f /var/log/btmp* /var/log/wtmp*
-rm -rf /var/log/journal/*
-rm -rf /var/log/nginx/*
+systemctl restart rsyslog
+find /var/log -type f -delete
+systemctl restart rsyslog
+find /var/log -type f -delete
 
 # Remove tmp user used to initially install OS
 rm -rf /home/tmp
