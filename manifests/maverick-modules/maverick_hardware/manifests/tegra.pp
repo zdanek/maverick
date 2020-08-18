@@ -6,10 +6,15 @@
 # @example Declaring the class
 #   This class is included from maverick_hardware class and should not be included from elsewhere
 #
+# @param expand_root
+#   If true, expand the root filesystem to the full size of the SD card
 # @param jtx1inst
 #   If true, install software that can be used to monitor the TX1 power use.
+# @param remove_large_packages
+#   If true, remove large tegra packages that are probably not needed
 #
 class maverick_hardware::tegra (
+    Boolean $expand_root = true,
     Boolean $jtx1inst = false,
     Boolean $remove_large_packages = true,
 ) {
@@ -56,6 +61,23 @@ class maverick_hardware::tegra (
     exec { "tegra-disable-report":
         command         => "/bin/mv -f /etc/rc.local /etc/rc.local.report",
         onlyif          => "/bin/grep report_ip_to_host /etc/rc.local",
+    }
+
+    # Put tegra firstboot script in place
+    file { "/srv/maverick/software/maverick/bin/maverick-firstboot.sh":
+        ensure      => link,
+        target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_hardware/files/tegra-firstboot.sh",
+        force       => true,
+    }
+
+    if ($expand_root) {
+        # $rootpart_expanded and $rootfs_expanded are facts provided by facts.d/filesystems.py
+        if str2bool($::rootpart_expanded) == false or str2bool($::rootfs_expanded) == false {
+            file { "/etc/tegra-expandroot":
+                ensure      => absent,
+            }
+            warning("Root filesystem/partition needs expanding, *please reboot* when configure is finished.")
+        }
     }
 
     if ! ("install_flag_jtx1inst" in $installflags) and $jtx1inst == true {
