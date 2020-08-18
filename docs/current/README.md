@@ -58,11 +58,10 @@ Getting Maverick working on the Raspberry is straight forward.  There are two im
 
 ### Jetson Nano Instructions
 The Jetson Nano platform is a 'first class' supported platform in Maverick - ie. we aim to provide an optimal experience on this platform.  Having said that, 
-Jetson Nano support is in early stages.  The first initial download is quite large and based on Jetpack 4.4, and requires a 32Gb SD card.  To get started:
+Jetson Nano support is in early stages so please reach out on gitter or github if you find problems or would like to suggest improvements.  The current image is based on Jetpack 4.4, and requires a 32Gb SD card.  To get started:
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
-- Boot from the SD card
+- Boot from the SD card (it should automatically expand the root partition/filesystem)
 - If the ethernet is plugged in, login over the network: `ssh mav@maverick-nano.local` (default password: *wingman*).  Otherwise attach a screen and keyboard.
-- Temporary: run `/usr/lib/nvidia/resizefs/nvresizefs.sh` to expand the root filesystem to fill the SD card.
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
