@@ -52,7 +52,7 @@ Getting Maverick working on the Raspberry is straight forward.  There are two im
 
 - Write the image files to SD card (no need to uncompress if you use [Etcher](https://etcher.io/))
 - (Optionally, if you don't have Ethernet networking available) [Add wifi configuration to SD card partition](/modules/network#raspberry-quick-start-wifi)
-- Boot from the SD card
+- Boot from the SD card (it should automatically expand the root partition/filesystem)
 - (Optionally) [Run 'wifi-setup' to setup wireless networking](/modules/network#quick-start-wifi)
 - [Get Started](#get-Started)
 
