@@ -14,7 +14,7 @@
 #
 class base::python (
     Boolean $maverick_python = true,
-    String $python_version = "v3.7.8",
+    String $python_version = "v3.7.9",
 ) {
 
     # Install custom python 3.7
@@ -80,6 +80,13 @@ class base::python (
         }
 
     }
+
+    # Temporarily, we still need python-pip for some python2 pips (vision_landing)
+    #  https://github.com/goodrobots/maverick/issues/995
+    package { "python-pip":
+        ensure      => present,
+    }
+
 
     # Install python using python module
     # This installs python 2.7

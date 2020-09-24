@@ -64,6 +64,16 @@ class maverick_vision::vision_landing (
         ensure      => directory,
     }
 
+    # Install dronekit globally in python2 pip environment, as vision_landing is still python2
+    install_python_module { "pip-dronekit-python2":
+        pkgname         => "dronekit",
+        ensure          => atleast,
+        version         => "2.9.2",
+        timeout         => 0,
+        pip_provider    => "pip2",
+        env             => "global2",
+    }
+
     # Activate or inactivate service
     if $active == true {
         service { "maverick-vision_landing":

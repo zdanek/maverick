@@ -63,6 +63,9 @@ output_port = <%= @rtsp_port -%>
 # Retry timeout - number of seconds visiond will wait before trying to recreate pipeline after error
 # retry = 10
 
+# Rotate image by <n> degrees, where 0 = no rotation, 90 = rotate clockwise, 180 = flip horizontally, 270 = rotate counter clockwise
+# rotate = 90
+
 # Set the path to SSL certs for webrtc signalling server.
 ssl_keyfile = /srv/maverick/data/security/ssl/web/mavweb.key
 ssl_certfile = /srv/maverick/data/security/ssl/web/mavweb.crt
