@@ -1,0 +1,757 @@
+#!/usr/bin/env python3
+#
+# Script to import ArduPilot log data over mavlink in realtime into influxdb for analysis/display
+# https://github.com/goodrobots/maverick
+
+import sys, os, shutil, signal, datetime, calendar, time, logging, errno, re
+import configparser as ConfigParser
+import traceback, subprocess, glob, math
+import lockfile, signal, grp
+import asyncore
+import sqlite3
+import json
+from dateutil import parser
+from grafana_api_client import GrafanaClient
+from grafanalib.core import *
+from influxdb import InfluxDBClient, SeriesHelper
+from pymavlink import mavutil
+
+class ProcessLog(ProcessEvent):
+    def __init__(self, app):
+        logger.debug("Starting ProcessLog.__init__")
+        logger.debug("App influx_database:" + app.influx_database)
+        self.app = app
+        # Run dashboard methods once at init to create blank index dashboards
+        self.dashboard_links()
+        self.dashboard_errors()
+        # Set favourite dashboards for the mav user
+        # self.star_dashboards()
+        
+    def process_IN_CLOSE_WRITE(self, event):
+        logger.debug("Received IN_CLOSE_WRITE event")
+        filename = self.sanitise_file(event.pathname)
+        try:
+            self.process(filename)
+        except Exception as e:
+            logger.critical("Error processing log: "+repr(e))
+            self.meta_entry(filename, None, None, None, "Error processing")
+            self.dashboard_links()
+            
+    def process_IN_MOVED_TO(self, event):
+        logger.debug("Received IN_MOVED_TO event")
+        filename = self.sanitise_file(event.pathname)
+        try:
+            self.process(filename)
+        except Exception as e:
+            logger.critical("Error processing log: "+repr(e))
+            self.meta_entry(filename, None, None, None, "Error processing")
+            self.dashboard_links()
+
+    def sanitise_file(self, filename):
+        # Rename file if it contains spaces, replace spaces with underscores
+        os.rename(filename, filename.replace(" ", "_"))
+        filename = filename.replace(" ", "_")
+        return filename
+        
+    def process(self, filename):
+        # Clear out any previously failed processing entries from meta database
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM logfiles WHERE state LIKE 'processing%'")
+        conn.close()
+        # Start processing data
+        logger.info("Processing data from "+filename)
+        anonymise = False
+        [latOffset,lngOffset] = [0,0]
+        try:
+            logger.debug("anonymous directory:"+str(self.app.config['anonymous_directory']))
+            if self.app.config['anonymous_directory'] and self.app.config['anonymous_directory'] in filename:
+                anonymise = True
+                logger.info("Anonymising Log Data")
+        except:
+            pass
+        if os.path.isfile(filename) and os.path.getsize(filename) == 0:
+            logger.info("Zero filesize, ignoring")
+            return False
+
+        # Detect logfile format by trying text and binary readers, trying to read 10 entries
+        #  and see if data is successfully counted.
+        if "LASTLOG.TXT" not in filename:
+            self.logtype = None
+            try:
+                log = DFReader_text(filename, False)
+                counter = 0
+                for i in range(10):
+                    entry = log.recv_msg()
+                    if entry:
+                        counter += 1
+                if counter >= 5:
+                    self.logtype = "text"
+                log._rewind()
+            except Exception as e:
+                logger.debug("DFReader_text exception:"+repr(e))
+            if not self.logtype:
+                try:
+                    log = DFReader_binary(filename, False)
+                    counter = 0
+                    for i in range(10):
+                        entry = log.recv_msg()
+                        if entry:
+                            counter += 1
+                    if counter >= 5:
+                        self.logtype = "binary"
+                    log._rewind()
+                except Exception as e:
+                    logger.debug("DFReader_binary exception:"+repr(e))
+            if not self.logtype:
+                logger.info("Log file format not recognised")
+                return False
+            else:
+                logger.info("Log file format detected as: "+str(self.logtype))
+
+        # If we get here, logfile format has been detected so setup containers and attributes and carry on
+        parameters = {}
+        formats = {}
+        json_points = []
+        ekf_data = {'ekf2_imu1': False, 'ekf2_imu2': False, 'ekf3_imu1': False, 'ekf3_imu2': False}
+        counter = 0
+        first_timestamp = None
+        first_epoch = None
+        last_timestamp = None
+        last_epoch = None
+        
+        # Log an initial meta entry to indicate logfile is processing
+        try:
+            self.meta_entry(filename, 0, 0, ekf_data, "processing in progress")
+            self.dashboard_links()
+        except Exception as e:
+            logger.critical("Error processing log entry: "+ str(repr(e)))
+            return False
+        
+        # Iterate through logfile, process data and import into influxdb    
+        while True:
+            entry = log.recv_msg()
+            if entry is None:
+                logger.debug("No more log entries, break from processing loop")
+                break
+            msgtype = entry.fmt.name
+            if msgtype == "PARM":
+                parameters[entry.Name] = entry.Value
+            elif msgtype == "FMT":
+                formats[entry.Name] = {'format': list(entry.Format), 'columns': entry.Columns.split(",")}
+            else:
+                if msgtype in formats:
+                    #_fields = { column:getattr(entry, column) for column in formats[msgtype]['columns'] }
+                    _fields = {}
+                    for column in formats[msgtype]['columns']:
+                        # Skip NaNs, otherwise add data to _fields
+                        if isinstance(getattr(entry, column), float):
+                            if not math.isnan(getattr(entry, column)):
+                                _fields[column] = getattr(entry,column)
+                        else:
+                            _fields[column] = getattr(entry,column)
+                    last_timestamp = datetime.datetime.fromtimestamp(entry._timestamp).strftime('%Y-%m-%d %H:%M:%S.%fZ')
+                    last_epoch = int(float(entry._timestamp)*1000000000)
+                    if not first_timestamp:
+                        first_timestamp = last_timestamp
+                        first_epoch = last_epoch
+                    if msgtype in ["CMD", "ERR", "EV", "MODE", "MSG"]:
+                        #if msgtype == "CMD":
+                        #    _fields = {"title": "Command", "tags": "command", "text": str(entry)}
+                        if msgtype == "ERR":
+                            [subsystxt, ecodetxt] = self.error_text(getattr(entry, "Subsys"), getattr(entry, "ECode"))
+                            if ecodetxt:
+                                _fields = {"title": "Error", "tags": "error", "text": subsystxt+"<br>"+ecodetxt}
+                            else:
+                                _fields = {"title": "Error", "tags": "error", "text": subsystxt}
+                        elif msgtype == "EV":
+                            _fields = {"title": "Event", "tags": "event", "text": self.event_text(getattr(entry, "Id"))}
+                        elif msgtype == "MODE":
+                            _fields = {"title": "Mode Change", "tags": "mode", "text": "Mode: "+self.mode_text(getattr(entry, "Mode"))+"<br>Reason: "+self.modereason_text(getattr(entry, "Rsn"))}
+                        elif msgtype == "MSG":
+                            _fields = {"title": "Message", "tags": "message", "text": getattr(entry, "Message").rstrip()}
+                        json_body = {
+                            "database": self.app.influx_database,
+                            "time_precision": "ns",
+                            "measurement": "events",
+                            "tags": {
+                                "filename": filename,
+                                "event_type": msgtype.lower()
+                            },
+                            "time": last_epoch,
+                            "fields": _fields
+                        }
+                        json_points.append(json_body)
+                    else:
+                        if msgtype.lower() == "nkf1":
+                            ekf_data['ekf2_imu1'] = True
+                        elif msgtype.lower() == "nkf6":
+                            ekf_data['ekf2_imu2'] = True
+                        elif msgtype.lower() == "xkf1":
+                            ekf_data['ekf3_imu1'] = True
+                        elif msgtype.lower() == "xkf6":
+                            ekf_data['lef3_imu2'] = True
+                        elif (msgtype.lower() == "gps" or msgtype.lower() == "gps2") and anonymise == True:
+                            # Calculate the latitudinal offset if not already set
+                            if latOffset == 0:
+                                latOffset = _fields['Lat']
+                                logger.debug("Anonymising GPS Lat offset:"+str(latOffset))
+                            # Calculate the longitudinal offset if not already set
+                            if lngOffset == 0:
+                                lngOffset = _fields['Lng']
+                                logger.debug("Anonymising GPS Lng offset:"+str(lngOffset))
+                            # Apply offsets
+                            _fields['Lat'] = _fields['Lat'] - latOffset
+                            _fields['Lng'] = _fields['Lng'] - lngOffset
+                        json_body = {
+                            "database": self.app.influx_database,
+                            "time_precision": "ns",
+                            "measurement": "flight_"+msgtype.lower(),
+                            "tags": {
+                                "filename": filename
+                            },
+                            "time": last_epoch,
+                            "fields": _fields
+                        }
+                        json_points.append(json_body)
+                    counter += 1
+            # Batch writes to influxdb, much faster
+            if counter > 0 and counter % 10000 == 0:
+                # logger.debug(" - Batch sending 10000 points to influxdb:"+str(counter))
+                self.app.client.write_points(json_points, retention_policy='flightdata', batch_size=10000)
+                json_points = [] # Clear out json_points after bulk write
+        # Write any remaining points
+        self.app.client.write_points(json_points, retention_policy='flightdata', batch_size=10000)
+        logger.info("Processing complete of "+filename)
+        logger.info(str(counter) + " datapoints inserted.  First timestamp is " +str(first_timestamp)+":"+str(first_epoch) + ", Last timestamp is " + str(last_timestamp)+":"+str(last_epoch))
+        
+        # Update the meta entry with final result
+        try:
+            self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data, "processed")
+            #self.archive_file(filename)
+            self.dashboard_links()
+            self.dashboard_errors()
+        except Exception as e:
+            logger.critical("Error processing log entry: "+ str(repr(e)))
+            
+    def meta_entry(self, filename, start, finish, ekf_data, state="processed"):
+        # Work out source
+        file = os.path.basename(filename)
+        dirs = os.path.split(filename)
+        dirfrags = dirs[0].split(os.path.sep)
+        filename = dirs[1]
+        # Connect to meta db
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        # See if entry already exists
+        cursor.execute("SELECT id FROM logfiles WHERE filename='"+filename+"'")
+        try:
+            id_exists = cursor.fetchone()[0]
+        except:
+            id_exists = None
+        try:
+            ekf2 = True if ekf_data and ekf_data['ekf2_imu1'] or ekf_data['ekf2_imu2'] else False
+            ekf3 = True if ekf_data and ekf_data['ekf3_imu1'] or ekf_data['ekf3_imu2'] else False
+            ekf2ekf3 = True if ekf_data and ekf_data['ekf2_imu1'] and ekf_data['ekf3_imu1'] else False
+        except:
+            ekf2=ekf3=ekf2ekf3=False
+        if not id_exists:
+            cursor.execute('INSERT INTO logfiles (filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state) VALUES (?,?,?,?,?,?,?,?)', (filename,start,finish,dirfrags[-2].title(),ekf2,ekf3,ekf2ekf3,state))
+        else:
+            cursor.execute('UPDATE logfiles SET start=?,finish=?,source=?,ekf2=?,ekf3=?,ekf2ekf3=?,state=? WHERE id=?', (start,finish,dirfrags[-2].title(),ekf2,ekf3,ekf2ekf3,state,id_exists))
+        conn.commit()
+        conn.close()
+        
+    def archive_file(self, filename):
+        file = os.path.basename(filename)
+        dirs = os.path.split(filename)
+        dirfrags = dirs[0].split(os.path.sep)
+        destfile = os.path.sep.join(["/srv/maverick/data/analysis/archive",dirfrags[-2],dirs[1]])
+        shutil.move(filename, destfile)
+        logger.info("Archiving file from " +filename+ " to " +destfile)
+
+    def star_dashboards(self):
+        # This method queries the grafana database directly for starred dashboards and creates them if necessary
+        # A bit hacky, should be refactored through the API eventually
+        conn = sqlite3.connect("/srv/maverick/data/analysis/grafana/grafana.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT id from user where login='mav'")
+        userid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='Flight Logs Index'")
+        flightindexid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='Error Events Index'")
+        errorindexid = cursor.fetchone()[0]
+        cursor.execute("SELECT id from dashboard where title='System Dashboard'")
+        systemdashid = cursor.fetchone()[0]
+        # If star doesn't exist for flight index dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(flightindexid))
+        if not cursor.fetchone() and userid and flightindexid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, flightindexid))
+        # If star doesn't exist for error index dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(errorindexid))
+        if not cursor.fetchone() and userid and errorindexid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, errorindexid))
+        # If star doesn't exist for system dashboard, create it
+        cursor.execute("SELECT * from star where user_id="+str(userid)+" and dashboard_id="+str(systemdashid))
+        if not cursor.fetchone() and userid and systemdashid:
+            cursor.execute('INSERT INTO star (user_id,dashboard_id) VALUES (?,?)', (userid, systemdashid))
+        conn.commit()
+        
+    def dashboard_links(self):
+        # Retrieve metadata
+        logentries = []
+        conn = sqlite3.connect(self.app.config['meta_database'])
+        cursor = conn.cursor()
+        cursor.execute("SELECT filename,start,finish,source,ekf2,ekf3,ekf2ekf3,state,description FROM logfiles ORDER by finish DESC")
+        rows = cursor.fetchall()
+        if rows:
+            for row in rows:
+                try:
+                    link = None
+                    if row[7] == "processed":
+                        fromdt=str(int(float(row[1]))*1000)
+                        todt=str(int(float(row[2]))*1000)
+                        link="<tr>"
+                        link += "<td>"+row[0]+"</td>"
+                        link += "<td>"+datetime.datetime.fromtimestamp(float(row[1])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
+                        link += "<td>"+datetime.datetime.fromtimestamp(float(row[2])).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
+                        link += "<td>"
+                        link += "<a href='/analysis/grafana/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                        link += "&nbsp;"
+                        link += "<a href='/analysis/grafana/dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                        link += "</td>"
+                        if row[4] == 1:
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                        else:
+                            link += "<td></td>"
+                        if row[5] == 1:
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                        else:
+                            link += "<td></td>"
+                        if row[6] == 1:
+                            link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                        else:
+                            link += "<td></td>"
+                        try:
+                            link += "<td>"+str(row[7][0].upper() + row[7][1:])+"</td>"
+                        except:
+                            link += "<td>n/a</td>"
+                        if row[8]:
+                            link += "<td>"+str(row[8])+"</td>"
+                        else:
+                            link += "<td>-</td>"
+                        link += "</tr>"
+                    else:
+                        link="<tr>"
+                        link += "<td>"+row[0]+"</td>"
+                        link += "<td colspan='7' align='center'>"+str(row[7][0].upper() + row[7][1:])+"</td>"
+                        if row[8]:
+                            link += "<td>"+str(row[8])+"</td>"
+                        else:
+                            link += "<td>-</td>"
+                        link += "</tr>"
+                    logentries.append(link)
+                # If dates are in old format, skip entry
+                except:
+                    pass
+        else:
+            nodata ="<tr><td colspan=8 align='center'><b><i>No log entries have been processed yet</i></b></td></tr>"
+            logentries.append(nodata)
+        conn.close()
+        # Construct the dashboard
+        dashboard = {
+            "editable": False,
+            "panels": [{
+                  "content": "<table><thead><tr><th>Filename</th><th>Start</th><th>Finish</th><th>Flight Data Link</th><th colspan='3'>EKF Data Links</th><th>Status</th><th>Description</th></tr></thead><tbody>"+"\n".join(logentries)+"</tbody></table>",
+                  "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
+                  "mode": "html",
+                  "title": "Flight Log Index",
+                  "type": "text",
+                  "title": "Flight Logs",
+                  "id": 1
+            }],
+            "schemaVersion": 16,
+            "style": "dark",
+            "tags": ["ardupilot"],
+            "timezone": "browser",
+            "version": int(time.time()),
+            "title": "Flight Logs Index"
+        }
+        # Create/update the dashboard in grafana
+        #grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
+        #dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
+        with open("/srv/maverick/data/analysis/grafana/dashboards/flight-index.json", 'w') as flightindex:
+            json.dump(dashboard, flightindex)
+        logger.debug("Grafana dashboard updated")
+        
+    def dashboard_errors(self):
+        error_entries = []
+        # Retrieve metadata
+        errorsrs = self.app.client.query('select * from flightdata.events where "event_type"=\'err\';', epoch='ms')
+        errors = list(errorsrs.get_points())
+        if errors:
+            for error in errors:
+                try:
+                    fromdt=str(int(error['time']) - 30000)
+                    todt=str(int(error['time']) + 30000)
+                    link = "<tr><td>"+error['text']+"</td><td>"+datetime.datetime.fromtimestamp(int(error['time'])/1000).strftime('%Y-%m-%d %H:%M:%S')+"</td>"
+                    link += "<td>"
+                    link += "<a href='/analysis/grafana/dashboard/db/flight-data-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(117, 117, 117); border-color: rgb(155, 155, 155); color: #fff;\">Flight Data</a>"
+                    link += "&nbsp;"
+                    link += "<a href='/analysis/grafana/dashboard/db/mavexplorer-mavgraphs?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' background-color: rgb(31, 120, 193); border-color: rgb(69, 158, 231); color: #fff;\">Mavgraphs</a>"
+                    link += "</td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(88, 68, 119); border-color: rgb(126, 106, 157); color: #fff;\">EKF2</a></td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"background-color: rgb(98, 158, 81); border-color: rgb(136, 196, 119); color: #fff;\">EKF3</a></td>"
+                    link += "<td><a href='/analysis/grafana/dashboard/db/flight-ekf2-ekf3-analysis?orgId=10&from="+fromdt+"&to="+todt+"' class='label label-tag' style=\"color: #fff\">EKF2-EKF3</a></td>"
+                    link += "</tr>"
+                    error_entries.append(link)
+                # If dates are in old format, skip entry
+                except:
+                    pass
+        else:
+            nodata ="<tr><td colspan=8 align='center'><b><i>No log entries have been processed yet</i></b></td></tr>"
+            error_entries.append(nodata)
+
+        # Construct the dashboard
+        dashboard = {
+            "editable": False,
+            "panels": [{
+                  "content": "<table><thead><tr><th>Error Description</th><th>Event Time</th><th>Flight Data Links</th><th colspan='3'>EKF Data Links</th></tr></thead><tbody>"+"\n".join(error_entries)+"</tbody></table>",
+                  "gridPos": { "h": 24, "w": 24, "x": 0, "y": 0 },
+                  "mode": "html",
+                  "title": "Flight Log Index",
+                  "type": "text",
+                  "title": "Flight Logs",
+                  "id": 2
+            }],
+            "schemaVersion": 16,
+            "style": "dark",
+            "tags": ["ardupilot"],
+            "timezone": "browser",
+            "version": int(time.time()),
+            "title": "Flight Errors Index"
+        }
+        # Create/update the dashboard in grafana
+        #grafana = GrafanaClient((self.app.config['grafana_user'], self.app.config['grafana_password']), host=self.app.config['grafana_host'], port=self.app.config['grafana_port'])
+        #dashreturn = grafana.dashboards.db.create(dashboard=dashboard, overwrite=True)
+        with open("/srv/maverick/data/analysis/grafana/dashboards/flighterrors-index.json", 'w') as flighterrors:
+            json.dump(dashboard, flighterrors)
+        logger.debug("Grafana error event dashboard update")
+        
+    def error_text(self,subsys,ecode):
+        subsysId = {
+            1: "Main",
+            2: "Radio",
+            3: "Compass",
+            4: "Optical Flow",
+            5: "Failsafe Radio",
+            6: "Failsafe Battery",
+            7: "Failsafe GPS",
+            8: "Failsafe GCS",
+            9: "Failsafe Fence",
+            10: "Flight Mode",
+            11: "GPS",
+            12: "Crash Check",
+            13: "Flip",
+            14: "Autotune",
+            15: "Parachute",
+            16: "EKF Check",
+            17: "Failsafe EKF INAV",
+            18: "Barometer",
+            19: "CPU",
+            20: "Failsafe ADSB",
+            21: "Terrain",
+            22: "Navigation",
+            23: "Failsafe Terrain",
+            24: "EKF Primary"
+        }
+        ecodes = {}
+        if subsys == 1:
+            ecodes = {
+                1: "INS Delay"
+            }
+        elif subsys == 2:
+            ecodes = {
+                2: "Radio Late Frame"
+            }
+        elif subsys == 3:
+            ecodes = {
+                2: "Compass Failed to Read"
+            }
+        elif subsys == 5 or subsys == 6 or subsys == 7:
+            ecodes = {
+                0: "Failsafe Resolved",
+                1: "Failsafe Occurred"
+            }
+        elif subsys == 12:
+            ecodes = {
+                1: "Crash",
+                2: "Loss of Control"
+            }
+        elif subsys == 13:
+            ecodes = {
+                2: "Flip Abandoned"
+            }
+        elif subsys == 15:
+            ecodes = {
+                2: "Parachute Too Low",
+                3: "Parachute Landed"
+            }
+        elif subsys == 16:
+            ecodes = {
+                2: "Bad Variance",
+                0: "Variance Cleared"
+            }
+        elif subsys == 18:
+            ecodes = {
+                2: "Barometer Glitch"
+            }
+        elif subsys == 21:
+            ecodes = {
+                2: "Missing Terrain Data"
+            }
+        elif subsys == 22:
+            ecodes = {
+                2: "Failed to Set Destination",
+                3: "Restarted RTL",
+                4: "Failed Circle Init",
+                5: "Destination Outside Fence"
+            }
+        else:
+            ecodes = {
+                0: "Error Resolved",
+                1: "Failed to Initialise",
+                4: "Unhealthy"
+            }
+        
+        try:
+            if subsys == 10:
+                return [subsysId[subsys], "Attempting to change to flight mode: <b>"+self.mode_text(ecode)+"</b>"]
+            else:
+                return [subsysId[subsys], ecodes[ecode]]
+        except:
+            return [subsysId[subsys], None]
+
+    def modereason_text(self,id):
+        idText = {
+            0: "Reason Unknown",
+            1: "TX Command",
+            2: "GCS Command",
+            3: "Radio Failsafe",
+            4: "Battery Failsafe",
+            5: "GCS Failsafe",
+            6: "EKF Failsafe",
+            7: "GPS Glitch",
+            8: "Mission End",
+            9: "Throttle Land Escape",
+            10: "Fence Breach",
+            11: "Terrain Failsafe",
+            12: "Brake Timeout",
+            13: "Flip Complete",
+            14: "Avoidance",
+            15: "Avoidance Recovery",
+            16: "Throw Complete"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Mode Reason ID not recognised"
+
+    def mode_text(self,id):
+        idText = {
+            0: "Stabilize",
+            1: "Acro",
+            2: "Altitude Hold",
+            3: "Auto",
+            4: "Guided",
+            5: "Loiter",
+            6: "Return To Launch",
+            7: "Circle",
+            9: "Land",
+            11: "Drift",
+            13: "Sport",
+            14: "Flip",
+            15: "Autotune",
+            16: "Position Hold",
+            17: "Brake",
+            18: "Throw",
+            19: "Avoid ADSB",
+            20: "Guided No GPS"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Mode ID not recognised"
+
+    def event_text(self, id):
+        idText = {
+            7: "AutoPilot State",
+            8: "System Time Set",
+            9: "Init Simple Bearing",
+            10: "Armed",
+            11: "Disarmed",
+            15: "Auto Armed",
+            17: "Land Complete (Maybe)",
+            18: "Land Complete",
+            19: "Lost GPS",
+            21: "Flip Start",
+            22: "Flip End",
+            25: "Set Home",
+            26: "Simple On",
+            27: "Simple Off",
+            28: "Not Landed",
+            29: "Super Simple On",
+            30: "Autotune Initialised",
+            31: "Autotune Off",
+            32: "Autotune Restart",
+            33: "Autotune Success",
+            34: "Autotune Failed",
+            35: "Autotune Reached Limit",
+            36: "Autotune Pilot Testing",
+            37: "Autotune Saved Gains",
+            38: "Save Trim",
+            39: "Save/Add Waypoint",
+            41: "Fence Enable",
+            42: "Fence Disable",
+            43: "Acro Trainer Disabled",
+            44: "Acro Trainer Leveling",
+            45: "Acro Trainer Limited",
+            46: "Gripper Grab",
+            47: "Gripper Release",
+            49: "Parachute Disabled",
+            50: "Parachute Enabled",
+            51: "Parachute Released",
+            52: "Landing Gear Deployed",
+            53: "Landing Gear Retracted",
+            54: "Motors Emergency Stopped",
+            55: "Motors Emergency Stop Cleared",
+            56: "Motors Interlock Disabled",
+            57: "Motors Interlock Enabled",
+            58: "Rotor Runup Complete",
+            59: "Rotor Speed Below Critical",
+            60: "EKF Altitude Reset",
+            61: "Land Cancelled by Pilot",
+            62: "EKF Yaw Reset",
+            63: "Avoidance ADSB Enable",
+            64: "Avoidance ADSB Disable",
+            65: "Avoidance Proximity Enable",
+            66: "Avoidance Proximity Disable",
+            67: "GPS Primary Changed"
+        }
+        try:
+            return idText[id]
+        except:
+            return "Event ID not recognised"
+
+### Main App Class
+class App():
+    def __init__(self, process_name):
+        self.process_name = process_name
+        self.stdin_path = '/dev/null'
+        self.stdout_path = f"/srv/maverick/var/log/analysis/{self.process_name}.log"
+        self.stderr_path = f"/srv/maverick/var/log/analysis/{self.process_name}.log"
+        self.pidfile_path = f"/srv/maverick/var/run/{self.process_name}.pid"
+        self.pidfile_timeout = 15
+
+    def run(self):
+        logger.info("")
+        logger.info("--------------------------------")
+        logger.info(f"Starting {self.process_name} process")
+        # Get config
+        self.config = self.config_parse(f"/srv/maverick/config/analysis/{self.process_name}.conf")
+        self.metadb(self.config['meta_database'])
+        self.influx_database = self.config['influx_database']
+        self.client = InfluxDBClient(self.config['influx_server'], self.config['influx_port'], self.config['influx_user'], self.config['influx_password'], self.influx_database)
+        if not self.client:
+            logger.critical("Error connecting to InfluxDB")
+            sys.exit(1)
+        self.setup_influxdb()
+        self.logdirs = self.config['logdirs']
+        self.watch_dirs()
+        # Loop and wait for files
+        asyncore.loop()
+
+    def config_parse(self, path):
+        Config = ConfigParser.ConfigParser()
+        options = {}
+        try:
+            Config.read(path)
+            for item in Config.options("mavlog"):
+                options[item] = Config.get("mavlog", item)
+            logger.info("Config read from " + str(path))
+        except:
+            logger.critical("Error reading config file: " + str(path))
+            sys.exit(1)
+        return options
+
+    def setup_influxdb(self):
+        # Ensure database is created
+        self.client.create_database(self.influx_database)
+        self.client.switch_database(self.influx_database)
+        # First fetch retention policies
+        rps = self.client.get_list_retention_policies(database=self.influx_database)
+        rpSystem = False
+        rpFlight = False
+        for rp in rps:
+            if rp['name'] == "systemdata":
+                rpSystem = True
+            if rp['name'] == "flightdata":
+                rpFlight = True
+        # Ensure retention periods (RPs) are created.  Note: We don't use downsampling and CQs (yet, or possibly ever)
+        if not rpSystem:
+            self.client.create_retention_policy('systemdata', '3d', 1, database="maverick", default=True) # Only keep system data for 7 days
+        if not rpFlight:
+            self.client.create_retention_policy('flightdata', 'INF', 1, database="maverick", default=False) # Keep flight data inifinitely
+
+    def metadb(self, path):
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        # Create logfiles table if it doesn't exist
+        cursor.execute('CREATE TABLE IF NOT EXISTS logfiles (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT, start TEXT, finish TEXT, source TEXT, ekf2 INTEGER, ekf3 INTEGER, ekf2ekf3 INTEGER, description TEXT, state TEXT)')
+        # Add source column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN source TEXT");
+        except:
+            pass
+        # Add ekf2 column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN ekf2 INTEGER");
+        except:
+            pass
+        # Add ekf3 column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN ekf3 INTEGER");
+        except:
+            pass
+        # Add ekf2ekf3 column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN ekf2ekf3 INTEGER");
+        except:
+            pass
+        # Add description column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN description TEXT");
+        except:
+            pass
+        # Add state column if it doesn't exist
+        try:
+            cursor.execute("ALTER TABLE logfiles ADD COLUMN state TEXT");
+        except:
+            pass
+        
+        conn.commit()
+        conn.close()
+
+if __name__ == "__main__":
+    # Setup logging
+    logger = logging.getLogger("ProcessLog")
+    logger.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    process_name = "maverick-mavlog-realtime"
+    handler = logging.FileHandler(f"/srv/maverick/var/log/analysis/{process_name}.log")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    
+    # Create app instance
+    app = App()
+    app.run()
