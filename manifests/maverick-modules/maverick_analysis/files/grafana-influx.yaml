@@ -5,6 +5,6 @@ datasources:
     type: influxdb
     access: proxy
     orgId: 10
-    url: http://localhost:8086
+    url: http://localhost:6020
     database: maverick
     isDefault: true
