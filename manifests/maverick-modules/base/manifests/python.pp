@@ -83,10 +83,12 @@ class base::python (
 
     # Temporarily, we still need python-pip for some python2 pips (vision_landing)
     #  https://github.com/goodrobots/maverick/issues/995
-    package { "python-pip":
-        ensure      => present,
+    # But python2 doesn't exist anymore in ubuntu 20.04 onwards
+    if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "20") == 0 {
+        package { "python-pip":
+            ensure      => present,
+        }
     }
-
 
     # Install python using python module
     # This installs python 2.7
