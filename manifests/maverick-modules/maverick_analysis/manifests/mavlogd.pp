@@ -21,8 +21,8 @@ class maverick_analysis::mavlogd (
     String $grafana_host = $maverick_analysis::grafana::host,
     String $grafana_adminpass = $maverick_analysis::grafana::admin_password,
 ) {
-    ensure_packages(["python-lockfile"])
-    ensure_packages(["python-daemon"])
+    ensure_packages(["python3-lockfile"])
+    ensure_packages(["python3-daemon"])
     install_python_module { 'pip-pyinotify':
         pkgname     => 'pyinotify',
         ensure      => present,
@@ -75,13 +75,13 @@ class maverick_analysis::mavlogd (
         service{ "maverick-mavlogd":
             ensure          => running,
             enable          => true,
-            require         => Package["python-lockfile"],
+            require         => Package["python3-lockfile"],
         }
     } else {
         service{ "maverick-mavlogd":
             ensure          => stopped,
             enable          => false,
-            require         => Package["python-lockfile"],
+            require         => Package["python3-lockfile"],
         }
     }
 
