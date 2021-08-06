@@ -5,11 +5,11 @@ import os, re, sys, subprocess
 
 class Baseos(object):
     def __init__(self):
-        self.data = {'baseos_present': 'yes'}
+        self.data = {'present': 'yes'}
         
     def facter(self):
         # Define main data container
-        f = subprocess.getoutput(['facter'])
+        f = subprocess.getoutput(['facter --show-legacy'])
         data = f.split("\n")
         for line in data:
             r = re.search('^(.*)\s+=>\s+(.*)', line)
@@ -46,6 +46,7 @@ class Baseos(object):
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
     baseos = Baseos()
+    baseos.runall()
     # Don't run facter as a fact (obviously)
     # Finally, print the data out in the format expected of a fact provider
     if baseos.data:
