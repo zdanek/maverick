@@ -52,7 +52,7 @@ class base::sudoers (
           ensure		=> present,
           owner		=> "root",
           group		=> "root",
-          mode		=> "644",
+          mode		=> "440",
       }
   } else {
       file { "/etc/sudoers.d/mav":
@@ -60,7 +60,7 @@ class base::sudoers (
           ensure		=> present,
           owner		=> "root",
           group		=> "root",
-          mode		=> "644",
+          mode		=> "440",
       }
   }
 
