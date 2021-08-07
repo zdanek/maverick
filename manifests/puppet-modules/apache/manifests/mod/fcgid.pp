@@ -35,11 +35,11 @@
 #
 # @see https://httpd.apache.org/docs/current/mod/mod_fcgid.html for additional documentation.
 #
-class apache::mod::fcgid(
+class apache::mod::fcgid (
   $options = {},
 ) {
-  include ::apache
-  if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') or $::osfamily == 'FreeBSD' {
+  include apache
+  if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease >= '7') or $::osfamily == 'FreeBSD' {
     $loadfile_name = 'unixd_fcgid.load'
     $conf_name = 'unixd_fcgid.conf'
   } else {
@@ -55,11 +55,11 @@ class apache::mod::fcgid(
   # - $options
   file { $conf_name:
     ensure  => file,
-    path    => "${::apache::mod_dir}/${conf_name}",
-    mode    => $::apache::file_mode,
+    path    => "${apache::mod_dir}/${conf_name}",
+    mode    => $apache::file_mode,
     content => template('apache/mod/fcgid.conf.erb'),
-    require => Exec["mkdir ${::apache::mod_dir}"],
-    before  => File[$::apache::mod_dir],
+    require => Exec["mkdir ${apache::mod_dir}"],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 }

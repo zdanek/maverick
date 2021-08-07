@@ -7,7 +7,7 @@ Puppet::Type.
 
   # TODO: Use ruby bindings (can't find one that support IPC)
 
-  defaultfor :osfamily => [:debian, :redhat]
+  defaultfor :osfamily => [:debian, :freebsd, :redhat, :suse]
 
   mk_resource_methods
 
@@ -25,7 +25,11 @@ Puppet::Type.
         when /^olcSuffix: /
           suffix = line.split(' ')[1]
         when /^olcAccess: /
-          position, what, bys = line.match(/^olcAccess:\s+\{(\d+)\}to\s+(\S+(?:\s+filter=\S+)?(?:\s+attrs=\S+)?)(\s+by\s+.*)+$/).captures
+          begin
+            position, what, bys = line.match(/^olcAccess:\s+\{(\d+)\}to\s+(\S+(?:\s+filter=\S+)?(?:\s+attrs=\S+)?(?:\s+val=\S+)?)(\s+by\s+.*)+$/).captures
+          rescue
+            raise Puppet::Error, "Failed to parse olcAccess for suffix '#{suffix}': #{line}"
+          end
           access = []
           bys.split(/(?= by .+)/).each { |b|
             access << b.lstrip
@@ -57,7 +61,7 @@ Puppet::Type.
       if provider = accesses.find{ |access|
         if resources[name][:position]
           access.suffix == resources[name][:suffix] &&
-          access.position == resources[name][:position]
+          access.position == resources[name][:position].to_s
         else
           access.suffix == resources[name][:suffix] &&
           access.access.flatten == resources[name][:access].flatten &&
@@ -105,11 +109,12 @@ Puppet::Type.
   def getDn(*args); self.class.getDn(*args); end
 
   def exists?
-    @property_hash[:ensure] == :present
+    resource[:suffix] == @property_hash[:suffix] and
+      resource[:access].flatten == @property_hash[:access].flatten and
+      resource[:what] == @property_hash[:what]
   end
 
   def create
-    position = "{#{resource[:position]}}" if resource[:position]
     t = Tempfile.new('openldap_access')
     t << "dn: #{getDn(resource[:suffix])}\n"
     t << "add: olcAccess\n"
@@ -159,24 +164,8 @@ Puppet::Type.
     @property_flush = {}
   end
 
-  def what=(value)
-    @property_flush[:what] = value
-  end
-
-  def suffix=(value)
-    @property_flush[:suffix] = value
-  end
-
-  def position=(value)
-    @property_flush[:position] = value
-  end
-
   def access=(value)
     @property_flush[:access] = value.flatten
-  end
-
-  def islast=(value)
-    @property_flush[:islast] = value
   end
 
   def self.getCountOfOlcAccess(suffix)

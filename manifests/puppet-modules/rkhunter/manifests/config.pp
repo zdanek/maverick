@@ -2,15 +2,13 @@
 #
 # This module contain the configuration for rkhunter
 #
-# Parameters:   This module has no parameters
+# === Parameters
 #
-# Actions:      This module has no actions
+# @param allow_parameters List of custom parameters
 #
-# Requires:     This module has no requirements
-#
-# Sample Usage: include rkhunter::config
-#
-class rkhunter::config {
+class rkhunter::config (
+  $allow_parameters    = {},
+  ) {
 
   file { $rkhunter::params::config_rkhunter_conf:
     ensure  => file,
@@ -27,8 +25,8 @@ class rkhunter::config {
   }
 
   file { $rkhunter::params::config_rkhunter_script_directory:
-    ensure  => directory,
-    mode    => '0755';
+    ensure => directory,
+    mode   => '0755';
   }
 
   file { $rkhunter::params::config_rkhunter_script:

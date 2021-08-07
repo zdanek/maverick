@@ -112,7 +112,7 @@ result in...
           http_port     => 8080,
         },
         database => {
-          type          => 'sqlite3',
+          type          => 'mysql',
           host          => '127.0.0.1:3306',
           name          => 'grafana',
           user          => 'root',
@@ -226,6 +226,113 @@ ldap_cfg => {
     email     => 'email',
   }
 },
+```
+
+If you want to connect to multiple LDAP servers using different configurations,
+use an array to enwrap the configurations as shown below.
+
+```
+ldap_cfg => [
+  {
+    servers => [
+      {
+        host            => 'ldapserver1.domain1.com',
+        port            => 636+0,
+        use_ssl         => true,
+        search_filter   => '(sAMAccountName=%s)',
+        search_base_dns => [ 'dc=domain1,dc=com' ],
+        bind_dn         => 'user@domain1.com',
+        bind_password   => 'passwordhere',
+      },
+    ],
+    'servers.attributes' => {
+      name      => 'givenName',
+      surname   => 'sn',
+      username  => 'sAMAccountName',
+      member_of => 'memberOf',
+      email     => 'email',
+    },
+    'servers.group_mappings' => [
+      {
+        group_dn => cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+        org_role: Viewer
+      }
+    ],
+  },
+  {
+    servers => [
+      {
+        host            => 'ldapserver2.domain2.com',
+        port            => 389+0,
+        use_ssl         => false,
+        start_tls       => true,
+        search_filter   => '(uid=%s)',
+        search_base_dns => [ 'dc=domain2,dc=com' ],
+        bind_dn         => 'user@domain2.com',
+        bind_password   => 'passwordhere',
+      },
+    ],
+    'servers.attributes' => {
+      name      => 'givenName',
+      surname   => 'sn',
+      username  => 'uid',
+      member_of => 'memberOf',
+      email     => 'mail',
+    }
+    'servers.group_mappings' => [
+      {
+        'group_dn'      => 'cn=grafana_admins,ou=groups,dc=domain2,dc=com',
+        'org_role'      => 'Admin',
+        'grafana_admin' => true,
+      }
+    ],
+  },
+]
+
+
+#####
+# or in hiera-yaml style
+grafana::ldap_cfg:
+  - servers:
+      - host: ldapserver1.domain1.com
+        port: 636
+        use_ssl: true
+        search_filter: '(sAMAccountName=%s)'
+        search_base_dns: ['dc=domain1,dc=com']
+        bind_dn: 'user@domain1.com'
+        bind_password: 'passwordhere'
+    servers.attributes:
+      name: givenName
+      surname: sn
+      username: sAMAccountName
+      member_of: memberOf
+      email: email
+    servers.group_mappings:
+      - group_dn: cn=grafana_viewers,ou=groups,dc=domain1,dc=com
+        org_role: Viewer
+
+  - servers:
+      - host: ldapserver2.domain2.com
+        port: 389
+        use_ssl: false
+        start_tls: true
+        search_filter: '(uid=%s)',
+        search_base_dns: ['dc=domain2,dc=com']
+        bind_dn: 'user@domain2.com'
+        bind_password: 'passwordhere'
+    servers.attributes:
+      name: givenName
+      surname: sn
+      username: uid
+      member_of: memberOf
+      email: mail
+    servers.group_mappings:
+      - group_dn: cn=grafana_admins,ou=groups,dc=domain2,dc=com
+        org_role: Admin
+        grafana_admin: true
+
+
+#####
 ```
 
 ##### `container_cfg`
@@ -404,6 +511,10 @@ If you are using a sub-path for the Grafana API, you will need to set the `grafa
 - `grafana_datasource`
 - `grafana_organization`
 - `grafana_user`
+- `grafana_folder`
+- `grafana_team`
+- `grafana_membership`
+- `grafana_dashboard_permission`
 
 For instance, if your sub-path is `/grafana`, the `grafana_api_path` must
 be set to `/grafana/api`. Do not add a trailing `/` (slash) at the end of the value.
@@ -432,6 +543,117 @@ grafana_organization { 'example_org':
 
 `address` is an optional parameter that requires a hash. Address settings are `{"address1":"","address2":"","city":"","zipCode":"","state":"","country":""}`
 
+#### `grafana_team`
+
+In order to use the team resource, add the following to your manifest:
+
+```puppet
+grafana_team { 'example_team':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  home_dashboard   => 'example_dashboard',
+  organization     => 'example_org',
+}
+```
+
+Organziation must exist if specified.
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create teams via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`name` is optional if the name will differ from example_team above.
+
+`home_dashboard` is optional. Sets the home dashboard for team. Dashboard must exist.
+
+`organization` is optional. Defaults to `Main org.`
+
+#### `grafana_dashboard_permission`
+
+In order to use the dashboard permission resource, add one the following to your manifest:
+
+add permissions for user:
+
+```puppet
+grafana_dashboard_permission { 'example_user_permission':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  dashboard        => 'example_dashboard',
+  user             => 'example_user',
+  organization     => 'example_org',
+}
+```
+
+add permissions for team:
+
+```puppet
+grafana_dashboard_permission { 'example_team_permission':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  dashboard        => 'example_dashboard',
+  team             => 'example_team',
+  organization     => 'example_org',
+}
+```
+
+Organziation, team, user and dashboard must exist if specified.
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create teams via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`dashboard` is required. The dashboard to set permissions for.
+
+`user` is required if `team` not set. The user to add permissions for.
+
+`team` is required if `user` not set. the team to add permissions for.
+
+`name` is optional if the name will differ from example_team above.
+
+`organization` is optional. Defaults to `Main org.`
+
+#### `grafana_membership`
+
+In order to use the membership resource, add the following to your manifest:
+
+```puppet
+grafana_membership { 'example_membership':
+  ensure           => 'present',
+  grafana_url      => 'http://localhost:3000',
+  grafana_user     => 'admin',
+  grafana_password => '5ecretPassw0rd',
+  membership_type  => 'team',
+  organization     => 'example_org',
+  target_name      => 'example_team',
+  user_name        => 'example_user',
+  role             => 'Viewer'
+  }
+}
+```
+A membership is the concept of a user belonging to a target - either a `team` or an `organization`
+
+The user and target must both exist for a membership to be created
+
+`grafana_url`, `grafana_user`, and `grafana_password` are required to create memberships via the API.
+
+`ensure` is required. If the resource should be `present` or `absent`
+
+`membership_type` is required. Either `team` or `organization`
+
+`target_name` is required. Specifies the target of the membership.
+
+`user_name` is required. Specifies the user that is the focus of the membership.
+
+`role` is required. Specifies what rights to grant the user. Either `Viewer`, `Editor` or `Admin`
+
+`organization` is optional when using the `membership_type` of `team`. Defaults to `Main org.`
+
 #### `grafana_dashboard`
 
 In order to use the dashboard resource, add the following to your manifest:
@@ -442,6 +664,7 @@ grafana_dashboard { 'example_dashboard':
   grafana_user      => 'admin',
   grafana_password  => '5ecretPassw0rd',
   grafana_api_path  => '/grafana/api',
+  folder            => 'folder-name',
   organization      => 'NewOrg',
   content           => template('path/to/exported/file.json'),
 }
@@ -450,6 +673,7 @@ grafana_dashboard { 'example_dashboard':
 `content` must be valid JSON, and is parsed before imported.
 `grafana_user` and `grafana_password` are optional, and required when
 authentication is enabled in Grafana. `grafana_api_path` is optional, and only used when using sub-paths for the API. `organization` is optional, and used when creating a dashboard for a specific organization.
+`folder` is an optional parameter, but the folder resource must exist.
 
 Example:
 Make sure the `grafana-server` service is up and running before creating the `grafana_dashboard` definition. One option is to use the `http_conn_validator` from the [healthcheck](https://forge.puppet.com/puppet/healthcheck) module
@@ -636,9 +860,34 @@ It is possible to specify a custom plugin repository to install a plugin. This w
 ```puppet
 grafana_plugin { 'grafana-simple-json-datasource':
   ensure    => present,
-  repo => 'https://nexus.company.com/grafana/plugins',
+  repo      => 'https://nexus.company.com/grafana/plugins',
 }
 ```
+
+It is also possible to specify a custom plugin url to install a plugin. This will use the --pluginUrl option for plugin installation with grafana_cli.
+
+```puppet
+grafana_plugin { 'grafana-example-custom-plugin':
+  ensure     => present,
+  plugin_url => 'https://github.com/example/example-custom-plugin/zipball/v1.0.0'
+}
+```
+
+##### `grafana_folder`
+
+Creates and manages Grafana folders via the API.
+
+The following example creates a folder named 'folder1':
+```puppet
+grafana_folder { 'folder1':
+  ensure            => present,
+  grafana_url       => 'http://localhost:3000',
+  grafana_api_path  => '/grafana/api',
+  grafana_user      => 'admin',
+  grafana_password  => '5ecretPassw0rd',
+}
+```
+`grafana_api_path` is only required if using sub-paths for the API
 
 ##### `grafana::user`
 
@@ -864,6 +1113,44 @@ point to a locally available directory on the filesystem, typically
 the filesystem of the puppetserver/master. Thus you may specify a
 local directory with grafana dashboards you wish to provision into
 grafana.
+
+##### Provisioning with dashboards from grafana.com
+
+GrafanaLabs provides lots of [dashboards that may be reused](https://grafana.com/grafana/dashboards).
+Those ones are **not directly usable** for provisioning (this is
+a Grafana issue, not a Puppet one).
+
+In order to have a "provisionable" dashboard in JSON format, you have
+to prepare it before adding it in your Puppet code. Here are the steps
+to follow:
+
+1. Use a Grafana instance
+1. Import the desired dashboard
+1. Define its datasource
+1. From the dashboard view:
+    * Click the "Share dashboard" icon (top left corner of screen)
+    * Select the "Export" tab,
+    * Activate "Export for sharing externally"
+    * Click "Save to file"
+1. In the JSON file:
+    * Remove the keys `__imports` and `__requires`
+    * Replace all `${DS_PROMETHEUS}` by your datasource name
+1. Once saved, you may place this JSON file in your
+   `puppet:///modules/my_custom_module/dashboards` directory
+
+**Note:**
+
+This procedure have been tested with Grafana 6.x. It may not work for
+ any dashboard, depending on how it's been coded.
+
+Dashboards known to be "provisionable":
+
+* [Node Exporter Server Metric](https://grafana.com/dashboards/405)
+* [Prometheus Blackbox Exporter](https://grafana.com/dashboards/7587)
+
+Dashboards known not to be "provisionable":
+
+* [HTTP Services Status](https://grafana.com/dashboards/4859)
 
 ## Tasks
 

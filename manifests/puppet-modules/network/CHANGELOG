@@ -1,6 +1,73 @@
+2020-11-17 Release 3.6.0
+- Better support for RHEL8 with NetworkManager (#306) (pseiler)
+- Fix Centos 7 template symbol "" + Add Global Vlan Support and Hostname (chodorenko)
+- Allow to configure ipv6 autoconf / slaac globally for redhat systems (mat1010)
+- Remove .cfg condition for source interfaces.d (cgoubert)
+- Adding PREFIX= for RH. Adding CIDR ipv4 address format for RH (andres-moya)
+- Added RH ipv6 general params, kept backward compatible with ipv6enable (andres-moya)
+
+2019-12-24 Release 3.5.3
+- Added support for Rhel 8 #292 #296 (olifre FcoCalero)
+- Fixed forge package with .git dir #298 (a3li)
+- Fixed network::conf resource relationship managemeng #290 and #289 (findmyname666)
+- Added table support on mroute for RedHat (odivlad)
+
+2019-10-11 Release 3.5.2
+- Fixed gateway management on RedHat interfaces with multiple IP #176
+- Fixed 'string compared wit an integer' on Suse (pseiler)
+- Feature/hash policy (benibr)
+- Added all bonding opts to redhat template (benibr)
+- Deploy rule6 on RedHat - Fixes #279 (peterverraedt)
+- Ubuntu/Debian route up/down fix #278 (elmobp)
+
+2019-04-05 Release 3.5.1
+- Added support for add support for InfiniBand interface type on RHEL based Systems (odivlad)
+- Removing incorrect network prefix format from yaml example (jimmyt86)
+- Added support for Add support for PREFIX parameter as an alternative to NETMASK on RHEL based systems #263 (mrolli)
+- Added support for up to 3 DNS Servers in resolve.conf #258 (juztas)
+
+2018-10-01 Release 3.5.0
+- Use _cidr variable to generate routing config on EL #250 (stdietrich)
+- Added support for routes with multiple GWs for RedHat and Debian #244 (odvlad)
+- Added support for Ubuntu 1804 (legacy networking without netplan) #203
+- Added missing IPv6 parameters on RedHat systems #242 (NiklausHofer)
+
+2019-06-15 Release 3.4.5
+- Fixed incorrect variable names for extra_options #239 (beergeek)
+
+2018-06-11 Release 3.4.4
+- Added extra_options_$family params to network::interface
+- Added vid option to network::interface #237 (kobybr)
+- Added support for IPV6ADDR_SECONDARIES on Red Hat systems (tjikkun)
+- Add new mtu parameter to routes (tt-mtc)
+- Added per family extra_options param to network::interface
+- Added VID parameter to RedHat template (kobybr)
+
+2018-05-05 Release 3.4.3
+- Fixed support for Debian 9  #206 (dakr@solute.de)
+
+2018-04-28 Release 3.4.2
+- Added ipv6 support for RedHat routes #213 (tor.ledre@gmail.com)
+- Added ipv6 support for ip rule #213 (i.garnizov@gmail.com)
+
+2018-04-01 Release 3.4.1
+- Fix for Hostname isn't set without gateway #208
+- Fix for Debian version comparison
+- Documentation improvements (i.garnizov@gmail.com)
+
+2018-03-31 Release 3.4.0
+- Added nm_name parameter for RedHat interfaces #184 
+- Added option to customise route up template in network::mroute #121 
+- Fix for vlan package on Debian 9 #205
+- Added VRF support for Cumulus Linux
+- Support for Suse pre/post scripts
+- Add IPv6 support for Debian in network::interface
+- Add OVS support for Debian in network::interface
+
 2015-12-30 Release 3.2.0
 - Added network::mroute define
 - Smaller fixes and enhancements
+
 2013-11-18 Release 3.0.1
 - Basic module based on stdmod/puppet-skeleton-standard
 - Added network::interfaces define

@@ -38,7 +38,8 @@ class rkhunter::params {
       $linux                             = true
 
       # Package definition
-      $package_common                    = ['rkhunter', 'unhide']
+      $package_common                    = 'rkhunter'
+      $package_unhide                    = 'unhide'
 
       # Config definition
       $config_rkhunter_conf              = '/etc/rkhunter.conf'
@@ -59,7 +60,8 @@ class rkhunter::params {
       $linux                             = true
 
       # Package definition
-      $package_common                    = ['app-forensics/rkhunter', 'app-forensics/unhide']
+      $package_common                    = 'app-forensics/rkhunter'
+      $package_unhide                    = 'app-forensics/unhide'
 
       # Config definition
       $config_rkhunter_conf              = '/etc/rkhunter.conf'
@@ -78,11 +80,6 @@ class rkhunter::params {
     }
     default  : {
       $linux                             = false
-
-      # Misc
-      $rkhunter_bin                      = '/usr/bin/rkhunter'
-      $log_file                          = '/var/log/rkhunter/rkhunter.log'
-      $package_manager                   = 'NONE'
     }
   }
 
@@ -93,11 +90,15 @@ class rkhunter::params {
   $remote_syslog                         = false
   $tftp                                  = false
   $check_mk                              = false
+  $check_mk_script                       = '/etc/xinetd.d/check_mk'
   $oracle_xe                             = false
   $sap_igs                               = false
   $sap_icm                               = false
   $sap_db                                = false
   $sshd_root                             = 'unset'
+  $ssh_prot_v1                           = 2
   $web_cmd                               = 'unset'
   $disable_tests                         = ['suspscan', 'hidden_procs', 'deleted_files', 'packet_cap_apps', 'apps']
+  $cron_daily_run                        = 'y'
+  $cron_db_update                        = 'y'
 }

@@ -22,7 +22,7 @@ Puppet::Type.newtype(:openldap_database) do
 
   newproperty(:backend) do
     desc "The name of the backend."
-    newvalues('bdb', 'hdb', 'mdb', 'monitor', 'config', 'relay')
+    newvalues('bdb', 'hdb', 'mdb', 'monitor', 'config', 'relay', 'ldap')
     defaultto do
       case Facter.value(:osfamily)
       when 'Debian'
@@ -48,6 +48,8 @@ Puppet::Type.newtype(:openldap_database) do
         else
           'hdb'
         end
+      when 'FreeBSD'
+        'mdb'
       end
     end
   end
@@ -55,7 +57,7 @@ Puppet::Type.newtype(:openldap_database) do
   newproperty(:directory) do
     desc "The directory where the BDB files containing this database and associated indexes live."
     defaultto do
-      unless [ "monitor" , "config", "relay" ].include? "#{@resource[:backend]}"
+      unless [ "monitor" , "config", "relay", "ldap" ].include? "#{@resource[:backend]}"
         '/var/lib/ldap'
       end
     end
@@ -137,7 +139,7 @@ Puppet::Type.newtype(:openldap_database) do
 
     newvalues(:true, :false)
     defaultto do
-      if [ "monitor" , "config", "relay" ].include? "#{@resource[:backend]}"
+      if [ "monitor" , "config", "relay", "ldap" ].include? "#{@resource[:backend]}"
         :false
       else
         :true
@@ -207,7 +209,7 @@ Puppet::Type.newtype(:openldap_database) do
     desc "Limits the number entries returned and/or the time spent by a request"
 
     validate do |value|
-      if value !~ /^(\*|anonymous|users|self|(dn(\.\S+)?=\S+)|(dn\.\S+=\S+)|(group(\/oc(\/at)?)?=\S+))(\s+((time(\.(soft|hard))?=((\d+)|unlimited))|(size(\.(soft|hard|unchecked))?=((\d+)|unlimited))|(size\.pr=((\d+)|noEstimate|unlimited))|(size.prtotal=((\d+)|unlimited|disabled))))+$/
+      if value !~ /^(\*|anonymous|users|self|(dn(\.\S+)?=\S+)|(dn\.\S+=\S+)|(group(\/\S+(\/\S+)?)?=\S+))(\s+((time(\.(soft|hard))?=((\d+)|unlimited))|(size(\.(soft|hard|unchecked))?=((\d+)|unlimited))|(size\.pr=((\d+)|noEstimate|unlimited))|(size.prtotal=((\d+)|unlimited|disabled))))+$/
         raise ArgumentError, "Invalid limit: #{value}\nLimit values must be according to syntax described at http://www.openldap.org/doc/admin24/limits.html#Per-Database%20Limits"
       end
     end

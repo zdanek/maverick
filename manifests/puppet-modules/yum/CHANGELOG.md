@@ -4,6 +4,131 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v5.1.0](https://github.com/voxpupuli/puppet-yum/tree/v5.1.0) (2021-06-10)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v5.0.0...v5.1.0)
+
+**Implemented enhancements:**
+
+- Add support for AlmaLinux 8 [\#203](https://github.com/voxpupuli/puppet-yum/pull/203) ([tparkercbn](https://github.com/tparkercbn))
+
+## [v5.0.0](https://github.com/voxpupuli/puppet-yum/tree/v5.0.0) (2021-06-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v4.3.0...v5.0.0)
+
+**Breaking changes:**
+
+- Drop EoL Fedora support [\#211](https://github.com/voxpupuli/puppet-yum/pull/211) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL Puppet 5; Add Puppet 7 support [\#208](https://github.com/voxpupuli/puppet-yum/pull/208) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL CentOS 6 support [\#207](https://github.com/voxpupuli/puppet-yum/pull/207) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- Add support for rocky linux [\#212](https://github.com/voxpupuli/puppet-yum/pull/212) ([TheMeier](https://github.com/TheMeier))
+
+**Fixed bugs:**
+
+- fix package name for yum plugin versionlock on RHEL/CentOS 8 [\#205](https://github.com/voxpupuli/puppet-yum/pull/205) ([TheMeier](https://github.com/TheMeier))
+
+**Closed issues:**
+
+- gpgkey cannot specify more than one of content, source [\#204](https://github.com/voxpupuli/puppet-yum/issues/204)
+- yum::plugin::versionlock fails on CentOS/RHEL 8 [\#197](https://github.com/voxpupuli/puppet-yum/issues/197)
+- No Repos getting added [\#168](https://github.com/voxpupuli/puppet-yum/issues/168)
+- module doesn't manage proxy setting [\#157](https://github.com/voxpupuli/puppet-yum/issues/157)
+
+**Merged pull requests:**
+
+- puppetlabs/concat: allow 7.x [\#210](https://github.com/voxpupuli/puppet-yum/pull/210) ([bastelfreak](https://github.com/bastelfreak))
+- puppetlabs/stdlib: allow 7.x [\#209](https://github.com/voxpupuli/puppet-yum/pull/209) ([bastelfreak](https://github.com/bastelfreak))
+- Resolve puppet-lint [\#192](https://github.com/voxpupuli/puppet-yum/pull/192) ([jcpunk](https://github.com/jcpunk))
+- modulesync 3.0.0 & puppet-lint updates [\#188](https://github.com/voxpupuli/puppet-yum/pull/188) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v4.3.0](https://github.com/voxpupuli/puppet-yum/tree/v4.3.0) (2020-07-20)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v4.2.0...v4.3.0)
+
+**Implemented enhancements:**
+
+- Improve extraction of available updates [\#181](https://github.com/voxpupuli/puppet-yum/pull/181) ([smortex](https://github.com/smortex))
+- Use simpler code for tests for expected failures [\#173](https://github.com/voxpupuli/puppet-yum/pull/173) ([traylenator](https://github.com/traylenator))
+
+**Fixed bugs:**
+
+- De-duplicate start of string match character [\#179](https://github.com/voxpupuli/puppet-yum/pull/179) ([traylenator](https://github.com/traylenator))
+- versionlock must specify at least .\* for arch. [\#177](https://github.com/voxpupuli/puppet-yum/pull/177) ([traylenator](https://github.com/traylenator))
+
+**Closed issues:**
+
+- yum\_package\_updates fact misinterprets output [\#180](https://github.com/voxpupuli/puppet-yum/issues/180)
+
+**Merged pull requests:**
+
+- prepare release 4.3.0 [\#186](https://github.com/voxpupuli/puppet-yum/pull/186) ([vchepkov](https://github.com/vchepkov))
+- Add dnf tag to metadata [\#175](https://github.com/voxpupuli/puppet-yum/pull/175) ([traylenator](https://github.com/traylenator))
+
+## [v4.2.0](https://github.com/voxpupuli/puppet-yum/tree/v4.2.0) (2020-05-22)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v4.1.1...v4.2.0)
+
+**Implemented enhancements:**
+
+- Enable and add CentOS 8 accept tests [\#172](https://github.com/voxpupuli/puppet-yum/pull/172) ([traylenator](https://github.com/traylenator))
+- Support paramatized yum::versionlock [\#169](https://github.com/voxpupuli/puppet-yum/pull/169) ([traylenator](https://github.com/traylenator))
+- Add gpg key for EPEL8 [\#166](https://github.com/voxpupuli/puppet-yum/pull/166) ([thomasmeeus](https://github.com/thomasmeeus))
+- Add support for yum facts \(similar to the apt ones\) [\#141](https://github.com/voxpupuli/puppet-yum/pull/141) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- Rhel/Centos 8 versionlock doesn't work [\#150](https://github.com/voxpupuli/puppet-yum/issues/150)
+
+**Merged pull requests:**
+
+- Remove nested code blocks from string docs [\#171](https://github.com/voxpupuli/puppet-yum/pull/171) ([traylenator](https://github.com/traylenator))
+- Correct bolt URL [\#170](https://github.com/voxpupuli/puppet-yum/pull/170) ([traylenator](https://github.com/traylenator))
+- Fix several markdown lint issues [\#167](https://github.com/voxpupuli/puppet-yum/pull/167) ([dhoppe](https://github.com/dhoppe))
+- Use voxpupuli-acceptance [\#163](https://github.com/voxpupuli/puppet-yum/pull/163) ([ekohl](https://github.com/ekohl))
+- Fix yaml indentation inconsistency [\#161](https://github.com/voxpupuli/puppet-yum/pull/161) ([b3n4kh](https://github.com/b3n4kh))
+
+## [v4.1.1](https://github.com/voxpupuli/puppet-yum/tree/v4.1.1) (2020-03-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v4.1.0...v4.1.1)
+
+**Fixed bugs:**
+
+- Fedora/CentOS8: Ensure yum-utils/dnf-utils are present [\#159](https://github.com/voxpupuli/puppet-yum/pull/159) ([KeithWard](https://github.com/KeithWard))
+
+**Closed issues:**
+
+- CentOS/RHEL 8 Uses DNF but utils package is provided by yum-utils. [\#158](https://github.com/voxpupuli/puppet-yum/issues/158)
+
+**Merged pull requests:**
+
+- Support ensuring all yum group packages are installed [\#140](https://github.com/voxpupuli/puppet-yum/pull/140) ([treydock](https://github.com/treydock))
+
+## [v4.1.0](https://github.com/voxpupuli/puppet-yum/tree/v4.1.0) (2020-01-20)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v4.0.0...v4.1.0)
+
+**Implemented enhancements:**
+
+- add 'VirtuozzoLinux' support [\#147](https://github.com/voxpupuli/puppet-yum/pull/147) ([kBite](https://github.com/kBite))
+- Support for DNF-based distros, and Fedora defaults [\#143](https://github.com/voxpupuli/puppet-yum/pull/143) ([optiz0r](https://github.com/optiz0r))
+- Updated utils package for RHEL 8 [\#137](https://github.com/voxpupuli/puppet-yum/pull/137) ([rcalixte](https://github.com/rcalixte))
+
+**Fixed bugs:**
+
+- `require` \(not `contain`\) yum::plugin::versionlock [\#154](https://github.com/voxpupuli/puppet-yum/pull/154) ([alexjfisher](https://github.com/alexjfisher))
+
+**Merged pull requests:**
+
+- instantiate yumrepo & yum::config directly [\#148](https://github.com/voxpupuli/puppet-yum/pull/148) ([igalic](https://github.com/igalic))
+- Clean up acceptance spec helper [\#146](https://github.com/voxpupuli/puppet-yum/pull/146) ([ekohl](https://github.com/ekohl))
+- use $facts when accessing os fact [\#144](https://github.com/voxpupuli/puppet-yum/pull/144) ([igalic](https://github.com/igalic))
+- add requirement expression in metadata of task [\#138](https://github.com/voxpupuli/puppet-yum/pull/138) ([Dan33l](https://github.com/Dan33l))
+- Update concat dependency to allow puppetlabs/concat 6.x [\#136](https://github.com/voxpupuli/puppet-yum/pull/136) ([treydock](https://github.com/treydock))
+- Allow `puppetlabs/stdlib` 6.x [\#135](https://github.com/voxpupuli/puppet-yum/pull/135) ([alexjfisher](https://github.com/alexjfisher))
+
 ## [v4.0.0](https://github.com/voxpupuli/puppet-yum/tree/v4.0.0) (2019-05-07)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-yum/compare/v3.1.1...v4.0.0)
@@ -167,7 +292,7 @@ These should not affect the functionality of the module.
 **Merged pull requests:**
 
 - Contain the versionlock subclass to help with ordering around package resources [\#65](https://github.com/voxpupuli/puppet-yum/pull/65) ([bovy89](https://github.com/bovy89))
-- Support `ensure =\> absent` with yum::versionlock [\#62](https://github.com/voxpupuli/puppet-yum/pull/62) ([bovy89](https://github.com/bovy89))
+- Support `ensure => absent` with yum::versionlock [\#62](https://github.com/voxpupuli/puppet-yum/pull/62) ([bovy89](https://github.com/bovy89))
 
 ## [v2.0.0](https://github.com/voxpupuli/puppet-yum/tree/v2.0.0) (2017-06-14)
 
@@ -181,7 +306,7 @@ These should not affect the functionality of the module.
 
 - Add module data for EPEL [\#44](https://github.com/voxpupuli/puppet-yum/pull/44) ([lamawithonel](https://github.com/lamawithonel))
 - Manage yumrepos via data [\#40](https://github.com/voxpupuli/puppet-yum/pull/40) ([lamawithonel](https://github.com/lamawithonel))
-- Update README.md [\#39](https://github.com/voxpupuli/puppet-yum/pull/39) ([Yuav](https://github.com/Yuav))
+- Update README.md [\#39](https://github.com/voxpupuli/puppet-yum/pull/39) ([jskarpe](https://github.com/jskarpe))
 - Be more strict about versionlock strings [\#38](https://github.com/voxpupuli/puppet-yum/pull/38) ([lamawithonel](https://github.com/lamawithonel))
 
 **Fixed bugs:**
@@ -226,8 +351,8 @@ These should not affect the functionality of the module.
 
 **Merged pull requests:**
 
-- Update changelog and version [\#12](https://github.com/voxpupuli/puppet-yum/pull/12) ([Yuav](https://github.com/Yuav))
-- Added basic spec tests [\#11](https://github.com/voxpupuli/puppet-yum/pull/11) ([Yuav](https://github.com/Yuav))
+- Update changelog and version [\#12](https://github.com/voxpupuli/puppet-yum/pull/12) ([jskarpe](https://github.com/jskarpe))
+- Added basic spec tests [\#11](https://github.com/voxpupuli/puppet-yum/pull/11) ([jskarpe](https://github.com/jskarpe))
 - Bug: Puppet creates empty key files when using Hiera and create\_resources\(\) [\#7](https://github.com/voxpupuli/puppet-yum/pull/7) ([lklimek](https://github.com/lklimek))
 - Manage yum::versionlock with concat [\#6](https://github.com/voxpupuli/puppet-yum/pull/6) ([jpoittevin](https://github.com/jpoittevin))
 

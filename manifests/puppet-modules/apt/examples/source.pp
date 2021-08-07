@@ -2,13 +2,13 @@
 class { 'apt': }
 
 # Install the puppetlabs apt source
-# Release is automatically obtained from lsbdistcodename fact if available.
+# Release is automatically obtained from facts.
 apt::source { 'puppetlabs':
   location => 'http://apt.puppetlabs.com',
   repos    => 'main',
   key      => {
     id     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-    server => 'hkps.pool.sks-keyservers.net',
+    server => 'keyserver.ubuntu.com',
   },
 }
 
@@ -19,7 +19,7 @@ apt::source { 'debian_testing':
   repos    => 'main contrib non-free',
   key      => {
     id     => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-    server => 'hkps.pool.sks-keyservers.net',
+    server => 'keyserver.ubuntu.com',
   },
   pin      => '-10',
 }
@@ -29,7 +29,7 @@ apt::source { 'debian_unstable':
   repos    => 'main contrib non-free',
   key      => {
     id     => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-    server => 'hkps.pool.sks-keyservers.net',
+    server => 'keyserver.ubuntu.com',
   },
   pin      => '-10',
 }

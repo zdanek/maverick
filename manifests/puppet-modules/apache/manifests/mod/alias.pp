@@ -15,15 +15,19 @@
 #   - Gentoo: /var/www/icons
 #   - Red Hat: /var/www/icons, except on Apache 2.4, where it's /usr/share/httpd/icons
 # 
+# @param icons_path
+#   Change the alias for /icons/.
+#
 # @see https://httpd.apache.org/docs/current/mod/mod_alias.html for additional documentation.
 #
-class apache::mod::alias(
+class apache::mod::alias (
   $apache_version = undef,
   $icons_options  = 'Indexes MultiViews',
   # set icons_path to false to disable the alias
-  $icons_path     = $::apache::params::alias_icons_path,
+  $icons_path     = $apache::params::alias_icons_path,
+  $icons_prefix   = $apache::params::icons_prefix
 ) inherits ::apache::params {
-  include ::apache
+  include apache
   $_apache_version = pick($apache_version, $apache::apache_version)
   apache::mod { 'alias': }
 
@@ -31,11 +35,11 @@ class apache::mod::alias(
   if $icons_path {
     file { 'alias.conf':
       ensure  => file,
-      path    => "${::apache::mod_dir}/alias.conf",
-      mode    => $::apache::file_mode,
+      path    => "${apache::mod_dir}/alias.conf",
+      mode    => $apache::file_mode,
       content => template('apache/mod/alias.conf.erb'),
-      require => Exec["mkdir ${::apache::mod_dir}"],
-      before  => File[$::apache::mod_dir],
+      require => Exec["mkdir ${apache::mod_dir}"],
+      before  => File[$apache::mod_dir],
       notify  => Class['apache::service'],
     }
   }

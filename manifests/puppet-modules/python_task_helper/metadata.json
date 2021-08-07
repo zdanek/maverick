@@ -1,16 +1,13 @@
 {
   "name": "puppetlabs-python_task_helper",
-  "version": "0.3.0",
-  "author": "Puppet, Inc.",
+  "version": "0.5.0",
+  "author": "puppetlabs",
   "summary": "A Python helper library for use by Puppet Tasks",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-python_task_helper",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-python_task_helper",
-  "issues_url": "https://github.com/puppetlabs/puppetlabs-python_task_helper/issues",
   "dependencies": [
-  
+
   ],
-  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "CentOS",
@@ -78,7 +75,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.7.0 < 7.0.0"
+      "version_requirement": ">= 4.7.0 < 8.0.0"
     }
   ],
   "pdk-version": "1.7.1",

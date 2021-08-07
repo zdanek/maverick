@@ -10,7 +10,7 @@
 # @param src Pip --src parameter to; if the requirements file contains --editable resources, this parameter specifies where they will be installed. See the pip documentation for more.
 # @param environment Additional environment variables required to install the packages.
 # @param forceupdate Run a pip install requirements even if we don't receive an event from the requirements file - Useful for when the requirements file is written as part of a resource other than file (E.g vcsrepo)
-# @param cwd  The directory from which to run the "pip install" command.
+# @param cwd The directory from which to run the "pip install" command.
 # @param extra_pip_args Extra arguments to pass to pip after the requirements file
 # @param manage_requirements Create the requirements file if it doesn't exist.
 # @param fix_requirements_owner Change owner and group of requirements file.
@@ -26,23 +26,22 @@
 #   }
 #
 define python::requirements (
-  $requirements                       = $name,
-  $virtualenv                         = 'system',
-  Enum['pip', 'pip3'] $pip_provider   = 'pip',
-  $owner                              = 'root',
-  $group                              = 'root',
-  Optional[Stdlib::HTTPUrl] $proxy    = undef,
-  $src                                = false,
-  $environment                        = [],
-  $forceupdate                        = false,
-  $cwd                                = undef,
-  $extra_pip_args                     = '',
-  $manage_requirements                = true,
-  $fix_requirements_owner             = true,
-  $log_dir                            = '/tmp',
-  $timeout                            = 1800,
+  Stdlib::Absolutepath                         $requirements           = $name,
+  Variant[Enum['system'],Stdlib::Absolutepath] $virtualenv             = 'system',
+  Enum['pip', 'pip3']                          $pip_provider           = 'pip',
+  String[1]                                    $owner                  = 'root',
+  String[1]                                    $group                  = 'root',
+  Optional[Stdlib::HTTPUrl]                    $proxy                  = undef,
+  Any                                          $src                    = false,
+  Array                                        $environment            = [],
+  Boolean                                      $forceupdate            = false,
+  Optional[Stdlib::Absolutepath]               $cwd                    = undef,
+  String                                       $extra_pip_args         = '',
+  Boolean                                      $manage_requirements    = true,
+  Boolean                                      $fix_requirements_owner = true,
+  Stdlib::Absolutepath                         $log_dir                = '/tmp',
+  Integer                                      $timeout                = 1800,
 ) {
-
   include python
 
   if $virtualenv == 'system' and ($owner != 'root' or $group != 'root') {
@@ -81,7 +80,7 @@ define python::requirements (
   # the same requirements file.
   if !defined(File[$requirements]) and $manage_requirements == true {
     file { $requirements:
-      ensure  => present,
+      ensure  => file,
       mode    => '0644',
       owner   => $owner_real,
       group   => $group_real,
@@ -89,6 +88,7 @@ define python::requirements (
       replace => false,
       content => '# Puppet will install and/or update pip packages listed here',
     }
+
     $local_subscribe = File[$requirements]
   } else {
     $local_subscribe = undef

@@ -13,7 +13,7 @@
 #
 # @note
 #   Currently requires the puppetlabs/concat module on the Puppet Forge and
-#   uses storeconfigs on the Puppet Master to export/collect resources
+#   uses storeconfigs on the Puppet Server to export/collect resources
 #   from all balancer members.
 #
 # @param name
@@ -38,12 +38,11 @@
 #     options          => ['ping=5', 'disablereuse=on', 'retry=5', 'ttl=120'],
 #   }
 #
-define apache::balancermember(
+define apache::balancermember (
   $balancer_cluster,
   $url = "http://${::fqdn}/",
   $options = [],
 ) {
-
   concat::fragment { "BalancerMember ${name}":
     target  => "apache_balancer_${balancer_cluster}",
     content => inline_template(" BalancerMember ${url} <%= @options.join ' ' %>\n"),

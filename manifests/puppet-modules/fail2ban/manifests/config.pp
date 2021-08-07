@@ -11,7 +11,8 @@ class fail2ban::config {
 
   # This variable is determined here since it overrides the normally permitted
   # values.
-  if $facts['os']['release']['major'] == '8' {
+  if $facts['os']['family'] == 'Debian' and
+    $facts['os']['release']['major'] == '8' {
     # fail2ban 0.8 had integer loglevels, whereas 0.9 has symbolic names for
     # levels.
     #
@@ -64,7 +65,9 @@ class fail2ban::config {
 
   # Non-trivial override of default logpath value for jessie when param not set
   # fail2ban 0.8 expects to have logpath defined somewhere..
-  if ($facts['os']['release']['major'] == '8' ) and (! $fail2ban::logpath) {
+  if ($facts['os']['family'] == 'Debian') and
+    ($facts['os']['release']['major'] == '8' ) and (! $fail2ban::logpath)
+  {
     $logpath = '/var/log/messages'
   }
   else {

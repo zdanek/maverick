@@ -222,7 +222,7 @@
 [Puppet Forge]: https://forge.puppet.com
 [Puppet]: https://puppet.com
 [Puppetモジュール]: https://docs.puppet.com/puppet/latest/reference/modules_fundamentals.html
-[Puppetモジュールのコード]: https://github.com/puppetlabs/puppetlabs-apache/blob/master/manifests/default_mods.pp
+[Puppetモジュールのコード]: https://github.com/puppetlabs/puppetlabs-apache/blob/main/manifests/default_mods.pp
 [`purge_configs`]: #purge_configs
 [`purge_vhost_dir`]: #purge_vhost_dir
 [Python]: https://www.python.org/
@@ -2851,7 +2851,6 @@ Apacheモジュール`mod_rewrite`をインストールして有効にします�
   * RedHat/FreeBSD/Suse/Gentoo: 'default'.
   * Debian/Ubuntu + Apache >= 2.4: 'default'.
   * Debian/Ubuntu + Apache < 2.4: 'file:\${APACHE_RUN_DIR}/ssl_mutex'.
-  * Ubuntu 10.04: 'file:/var/run/apache2/ssl_mutex'.
 
 
 ##### クラス: `apache::mod::status`
@@ -5660,7 +5659,7 @@ Apacheが読みこむhtpasswdファイルに適したフォーマットでパス
 <a id="limitations"></a>
 ## 制約事項
 
- サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-apache/blob/master/metadata.json)を参照してください。
+ サポートされているオペレーティングシステムの一覧については、[metadata.json](https://github.com/puppetlabs/puppetlabs-apache/blob/main/metadata.json)を参照してください。
 
 ### FreeBSD
 
@@ -5733,10 +5732,6 @@ apache::vhost { 'test.server':
 ```
 
 `chcon`ではなく、`semanage fcontext`を用いてコンテキストを設定する必要があります。これは、Puppetの`file`リソースでは、リソースにより指定されていない場合、その値のコンテキストがリセットされるためです。
-
-### Ubuntu 10.04
-
-[`apache::vhost::WSGIImportScript`][]パラメータにより、Apacheの古いバージョンではサポートされていないバーチャルホスト内のステートメントが作成され、不具合が生じます。これは今後のリファクタリングで修正される予定です。
 
 ### Ubuntu 16.04
 [`apache::mod::suphp`][]クラスは、リポジトリに適合するパッケージがないため、テストされていません。

@@ -28,6 +28,10 @@ Puppet::Type.type(:sshkey).provide(
     0o644
   end
 
+  def title
+    "#{property_hash[:name]}@#{property_hash[:type]}"
+  end
+
   def self.default_target
     case Facter.value(:operatingsystem)
     when 'Darwin'
@@ -45,5 +49,10 @@ Puppet::Type.type(:sshkey).provide(
     else
       '/etc/ssh/ssh_known_hosts'
     end
+  end
+
+  def self.resource_for_record(record, resources)
+    name = "#{record[:name]}@#{record[:type]}"
+    resources[name]
   end
 end

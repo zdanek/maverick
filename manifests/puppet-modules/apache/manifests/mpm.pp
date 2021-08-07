@@ -2,15 +2,15 @@
 #
 # @api private
 define apache::mpm (
-  $lib_path       = $::apache::lib_path,
-  $apache_version = $::apache::apache_version,
+  $lib_path       = $apache::lib_path,
+  $apache_version = $apache::apache_version,
 ) {
   if ! defined(Class['apache']) {
     fail('You must include the apache base class before using any apache defined resources')
   }
 
   $mpm     = $name
-  $mod_dir = $::apache::mod_dir
+  $mod_dir = $apache::mod_dir
 
   $_lib  = "mod_mpm_${mpm}.so"
   $_path = "${lib_path}/${_lib}"
@@ -32,37 +32,37 @@ define apache::mpm (
       }
     }
   } else {
-      if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${mod_dir}/${mpm}.load":
-          ensure  => file,
-          path    => "${mod_dir}/${mpm}.load",
-          content => "LoadModule ${_id} ${_path}\n",
-          require => [
-            Package['httpd'],
-            Exec["mkdir ${mod_dir}"],
-          ],
-          before  => File[$mod_dir],
-          notify  => Class['apache::service'],
-        }
+    if versioncmp($apache_version, '2.4') >= 0 {
+      file { "${mod_dir}/${mpm}.load":
+        ensure  => file,
+        path    => "${mod_dir}/${mpm}.load",
+        content => "LoadModule ${_id} ${_path}\n",
+        require => [
+          Package['httpd'],
+          Exec["mkdir ${mod_dir}"],
+        ],
+        before  => File[$mod_dir],
+        notify  => Class['apache::service'],
       }
     }
+  }
 
   case $::osfamily {
     'debian': {
-      file { "${::apache::mod_enable_dir}/${mpm}.conf":
+      file { "${apache::mod_enable_dir}/${mpm}.conf":
         ensure  => link,
-        target  => "${::apache::mod_dir}/${mpm}.conf",
-        require => Exec["mkdir ${::apache::mod_enable_dir}"],
-        before  => File[$::apache::mod_enable_dir],
+        target  => "${apache::mod_dir}/${mpm}.conf",
+        require => Exec["mkdir ${apache::mod_enable_dir}"],
+        before  => File[$apache::mod_enable_dir],
         notify  => Class['apache::service'],
       }
 
       if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${::apache::mod_enable_dir}/${mpm}.load":
+        file { "${apache::mod_enable_dir}/${mpm}.load":
           ensure  => link,
-          target  => "${::apache::mod_dir}/${mpm}.load",
-          require => Exec["mkdir ${::apache::mod_enable_dir}"],
-          before  => File[$::apache::mod_enable_dir],
+          target  => "${apache::mod_dir}/${mpm}.load",
+          require => Exec["mkdir ${apache::mod_enable_dir}"],
+          before  => File[$apache::mod_enable_dir],
           notify  => Class['apache::service'],
         }
 
@@ -79,28 +79,28 @@ define apache::mpm (
           ensure => present,
           before => [
             Class['apache::service'],
-            File[$::apache::mod_enable_dir],
+            File[$apache::mod_enable_dir],
           ],
         }
       }
 
-
       if $mpm == 'itk' {
         if ( ( $::operatingsystem == 'Ubuntu' ) or ( ($::operatingsystem == 'Debian') and ( versioncmp($::operatingsystemrelease, '8.0.0') >= 0 ) ) ) {
           include apache::mpm::disable_mpm_event
+          include apache::mpm::disable_mpm_worker
         }
 
         package { 'libapache2-mpm-itk':
           ensure => present,
           before => [
             Class['apache::service'],
-            File[$::apache::mod_enable_dir],
+            File[$apache::mod_enable_dir],
           ],
         }
       }
 
       if $mpm == 'prefork' {
-        if ( ( $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease,'18.04') >= 0 ) or ( $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '9.0.0') >= 0 ) ) {
+        if ( ( $::operatingsystem == 'Ubuntu' and versioncmp($::operatingsystemrelease,'18.04') >= 0 ) or ( $::operatingsystem == 'Debian' and versioncmp($::operatingsystemrelease, '8.0.0') >= 0 ) ) {
           include apache::mpm::disable_mpm_event
           include apache::mpm::disable_mpm_worker
         }
@@ -112,11 +112,10 @@ define apache::mpm (
           include apache::mpm::disable_mpm_prefork
         }
       }
-
     }
 
     'freebsd': {
-      class { '::apache::package':
+      class { 'apache::package':
         mpm_module => $mpm,
       }
     }
@@ -127,20 +126,20 @@ define apache::mpm (
       # so we don't fail
     }
     'Suse': {
-      file { "${::apache::mod_enable_dir}/${mpm}.conf":
+      file { "${apache::mod_enable_dir}/${mpm}.conf":
         ensure  => link,
-        target  => "${::apache::mod_dir}/${mpm}.conf",
-        require => Exec["mkdir ${::apache::mod_enable_dir}"],
-        before  => File[$::apache::mod_enable_dir],
+        target  => "${apache::mod_dir}/${mpm}.conf",
+        require => Exec["mkdir ${apache::mod_enable_dir}"],
+        before  => File[$apache::mod_enable_dir],
         notify  => Class['apache::service'],
       }
 
       if versioncmp($apache_version, '2.4') >= 0 {
-        file { "${::apache::mod_enable_dir}/${mpm}.load":
+        file { "${apache::mod_enable_dir}/${mpm}.load":
           ensure  => link,
-          target  => "${::apache::mod_dir}/${mpm}.load",
-          require => Exec["mkdir ${::apache::mod_enable_dir}"],
-          before  => File[$::apache::mod_enable_dir],
+          target  => "${apache::mod_dir}/${mpm}.load",
+          require => Exec["mkdir ${apache::mod_enable_dir}"],
+          before  => File[$apache::mod_enable_dir],
           notify  => Class['apache::service'],
         }
 

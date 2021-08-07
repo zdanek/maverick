@@ -1,4 +1,3 @@
-
 # @summary
 #   Installs and configures `mod_security`.
 # 
@@ -26,6 +25,12 @@
 # @param audit_log_parts
 #   Defines which parts of each transaction are going to be recorded in the audit log. Each part is assigned a single letter; when a
 #   letter appears in the list then the equivalent part will be recorded.
+# 
+# @param audit_log_type
+#   Defines the type of audit logging mechanism to be used.
+# 
+# @param audit_log_storage_dir
+#   Defines the directory where concurrent audit log entries are to be stored. This directive is only needed when concurrent audit logging is used.
 # 
 # @param secpcrematchlimit
 #   Sets the match limit in the PCRE library.
@@ -88,16 +93,20 @@
 # @see https://github.com/SpiderLabs/ModSecurity/wiki for additional documentation.
 #
 class apache::mod::security (
-  $logroot                    = $::apache::params::logroot,
-  $version                     = $::apache::params::modsec_version,
-  $crs_package                 = $::apache::params::modsec_crs_package,
-  $activated_rules             = $::apache::params::modsec_default_rules,
-  $modsec_dir                  = $::apache::params::modsec_dir,
-  $modsec_secruleengine        = $::apache::params::modsec_secruleengine,
+  $logroot                    = $apache::params::logroot,
+  $version                     = $apache::params::modsec_version,
+  $crs_package                 = $apache::params::modsec_crs_package,
+  $activated_rules             = $apache::params::modsec_default_rules,
+  $custom_rules                = $apache::params::modsec_custom_rules,
+  $custom_rules_set            = $apache::params::modsec_custom_rules_set,
+  $modsec_dir                  = $apache::params::modsec_dir,
+  $modsec_secruleengine        = $apache::params::modsec_secruleengine,
   $audit_log_relevant_status   = '^(?:5|4(?!04))',
-  $audit_log_parts             = $::apache::params::modsec_audit_log_parts,
-  $secpcrematchlimit           = $::apache::params::secpcrematchlimit,
-  $secpcrematchlimitrecursion  = $::apache::params::secpcrematchlimitrecursion,
+  $audit_log_parts             = $apache::params::modsec_audit_log_parts,
+  $audit_log_type              = $apache::params::modsec_audit_log_type,
+  $audit_log_storage_dir       = undef,
+  $secpcrematchlimit           = $apache::params::secpcrematchlimit,
+  $secpcrematchlimitrecursion  = $apache::params::secpcrematchlimitrecursion,
   $allowed_methods             = 'GET HEAD POST OPTIONS',
   $content_types               = 'application/x-www-form-urlencoded|multipart/form-data|text/xml|application/xml|application/x-amf',
   $restricted_extensions       = '.asa/ .asax/ .ascx/ .axd/ .backup/ .bak/ .bat/ .cdx/ .cer/ .cfg/ .cmd/ .com/ .config/ .conf/ .cs/ .csproj/ .csr/ .dat/ .db/ .dbf/ .dll/ .dos/ .htr/ .htw/ .ida/ .idc/ .idq/ .inc/ .ini/ .key/ .licx/ .lnk/ .log/ .mdb/ .old/ .pass/ .pdb/ .pol/ .printer/ .pwd/ .resources/ .resx/ .sql/ .sys/ .vb/ .vbs/ .vbproj/ .vsdisco/ .webinfo/ .xsd/ .xsx/',
@@ -116,7 +125,7 @@ class apache::mod::security (
   $secrequestbodyinmemorylimit = '131072',
   $manage_security_crs         = true,
 ) inherits ::apache::params {
-  include ::apache
+  include apache
 
   $_secdefaultaction = $secdefaultaction ? {
     /log/   => $secdefaultaction, # it has log or nolog,auditlog or log,noauditlog
@@ -127,7 +136,7 @@ class apache::mod::security (
     fail('FreeBSD is not currently supported')
   }
 
-  if ($::osfamily == 'Suse' and $::operatingsystemrelease < '11') {
+  if ($::osfamily == 'Suse' and versioncmp($::operatingsystemrelease, '11') < 0) {
     fail('SLES 10 is not currently supported.')
   }
 
@@ -149,17 +158,16 @@ class apache::mod::security (
     lib => 'mod_security2.so',
   }
 
-
   ::apache::mod { 'unique_id_module':
     id  => 'unique_id_module',
     lib => 'mod_unique_id.so',
   }
 
-  if $crs_package  {
+  if $crs_package {
     package { $crs_package:
       ensure => 'installed',
       before => [
-        File[$::apache::confd_dir],
+        File[$apache::confd_dir],
         File[$modsec_dir],
       ],
     }
@@ -169,6 +177,8 @@ class apache::mod::security (
   # - logroot
   # - $modsec_dir
   # - $audit_log_parts
+  # - $audit_log_type
+  # - $audit_log_storage_dir
   # - secpcrematchlimit
   # - secpcrematchlimitrecursion
   # - secrequestbodylimit
@@ -177,12 +187,12 @@ class apache::mod::security (
   file { 'security.conf':
     ensure  => file,
     content => template('apache/mod/security.conf.erb'),
-    mode    => $::apache::file_mode,
-    path    => "${::apache::mod_dir}/${mod_conf_name}",
-    owner   => $::apache::params::user,
-    group   => $::apache::params::group,
-    require => Exec["mkdir ${::apache::mod_dir}"],
-    before  => File[$::apache::mod_dir],
+    mode    => $apache::file_mode,
+    path    => "${apache::mod_dir}/${mod_conf_name}",
+    owner   => $apache::params::user,
+    group   => $apache::params::group,
+    require => Exec["mkdir ${apache::mod_dir}"],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 
@@ -199,13 +209,34 @@ class apache::mod::security (
 
   file { "${modsec_dir}/activated_rules":
     ensure  => directory,
-    owner   => $::apache::params::user,
-    group   => $::apache::params::group,
+    owner   => $apache::params::user,
+    group   => $apache::params::group,
     mode    => '0555',
     purge   => true,
     force   => true,
     recurse => true,
     notify  => Class['apache::service'],
+  }
+
+  if $custom_rules {
+    # Template to add custom rule and included in security configuration
+    file {"${modsec_dir}/custom_rules":
+      ensure  => directory,
+      owner   => $apache::params::user,
+      group   => $apache::params::group,
+      mode    => $apache::file_mode,
+      require => File[$modsec_dir],
+    }
+
+    file { "${modsec_dir}/custom_rules/custom_01_rules.conf":
+      ensure  => file,
+      owner   => $apache::params::user,
+      group   => $apache::params::group,
+      mode    => $apache::file_mode,
+      content => template('apache/mod/security_custom.conf.erb'),
+      require => File["${modsec_dir}/custom_rules"],
+      notify  => Class['apache::service'],
+    }
   }
 
   if $manage_security_crs {

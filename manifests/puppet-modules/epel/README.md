@@ -1,8 +1,13 @@
 # Configure EPEL (Extra Repository for Enterprise Linux)
 
-# Note
-
-This is the last release that will support anything before Puppet 4.
+[![Build Status](https://github.com/voxpupuli/puppet-epel/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-epel/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-epel/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-epel/actions/workflows/release.yml)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/epel.svg)](https://forge.puppetlabs.com/puppet/epel)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/epel.svg)](https://forge.puppetlabs.com/puppet/epel)
+[![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/epel.svg)](https://forge.puppetlabs.com/puppet/epel)
+[![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/epel.svg)](https://forge.puppetlabs.com/puppet/epel)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-epel)
+[![AGPL v3 License](https://img.shields.io/github/license/voxpupuli/puppet-epel.svg)](LICENSE)
 
 # About
 This module basically just mimics the epel-release rpm. The same repos are
@@ -27,6 +32,8 @@ In nearly all cases, you can simply _include epel_ or classify your nodes with
 the epel class. There are quite a few parameters available if you need to modify
 the default settings for the epel repository such as having your own mirror, an
 http proxy, or disable gpg checking.
+
+A list of all parameters is available in [REFERENCE.md](REFERENCE.md).
 
 You can also use a puppet one-liner to get epel onto a system.
 
@@ -58,56 +65,12 @@ included with EPEL release, this will not have them.
 * [EPEL Wiki](http://fedoraproject.org/wiki/EPEL)
 * [epel-release package information](http://mirrors.servercentral.net/fedora/epel/6/i386/repoview/epel-release.html)
 
-# ChangeLog
+# Testing and Compatibility
 
-=======
-
-1.3.0
- * Add ability to disable and not define any resources from this module. This is useful if another module pulls in this module, but you already have epel managed another way.
- * Ability to specify your own TLS certs
- * repo files are now templated instead of sourced.
- * properly use metalink vs mirrorlist
-
- 1.2.2
- * Add dep on stdlib for getvar function call
-
- 1.2.1
- * Minor fix that lets facter 1.6 still work
- * Enforce strict variables
-
-  1.2.0
-  * Rework testing to use TravisCI
-  * If you specify a baseurl, disable mirrorlist
-
-  1.1.1
-  * Ensure that GPG keys are using short IDs (issue #33)
-
-  1.1.0
-  * Default URLs to be https
-  * Add ability to include/exclude packages
-
-  1.0.2
-  * Update README with usage section.
-  * Fix regression when os_maj_version fact was required
-  * Ready for 1.0 - replace Modulefile with metadata.json
-  * Replace os_maj_version custom fact with operatingsystemmajrelease
-  * Works for EPEL7 now as well.
-
-# Testing
-
-  * This is commonly used on Puppet Enterprise 3.x
-  * This was tested using Puppet 3.3.0 on Centos5/6
-  * This was tested using Puppet 3.1.1 on Amazon's AWS Linux
-  * This was tested using Puppet 3.8 and Puppet 4 now as well!
-  * Note Ruby 2.2 and Puppet 3.8 are not yet friends.
-  * I assume it will work on any RHEL variant (Amazon Linux is debatable as a variant)
-  * Amazon Linux compatability not promised, as EPEL doesn't always work with it.
-
-# Lifecycle
-
-  * No functionality has been introduced that should break Puppet 2.6 or 2.7, but I am no longer testing these versions of Puppet as they are end-of-lifed from Puppet Labs.
-  * This also assumes a facter of greater than 1.7.0 -- at least from a testing perspective.
-  * I'm not actively fixing bugs for anything in facter < 2 or puppet < 3.8
+* This module is tested on CentOS 6, 7 and 8 with Puppet 5 and Puppet 6.
+* It should work on any RHEL variant such as RedHat, OracleLinux, Scientific Linux etc.
+* Amazon Linux compatability is not promised, as EPEL doesn't always work with it.
+* Support for EL5 is deprecated. It *may* still work but we have no acceptance tests.  CentOS 5 is EOL and RHEL5 and OracleLinux 5 extended support for most customers is due to end in 2020.
 
 ## Unit tests
 
@@ -128,7 +91,9 @@ If you have Vagrant >=1.1.0 you can also run system tests:
 Available RSPEC_SET options are in .nodeset.yml
 
 # License
-Apache Software License 2.0
+
+This module is distributed under the [Apache License 2.0](LICENSE).
+Since version 3, it is maintained by [Vox Pupuli](https://voxpupuli.org/).
 
 # Author/Contributors
  * Aaron <slapula@users.noreply.github.com>
@@ -150,6 +115,7 @@ Apache Software License 2.0
  * Riccardo Calixte <rcalixte@broadinstitute.org>
  * Robert Story <rstory@localhost>
  * Rob Nelson <rnelson0@gmail.com>
+ * Siebrand Mazeland <siebrand@kitano.nl>
  * Stefan Goethals <stefan@zipkid.eu>
  * Tim Rupp <caphrim007@gmail.com>
  * Toni Schmidbauer <toni@stderr.at>
@@ -158,4 +124,4 @@ Apache Software License 2.0
  * Vlastimil Holer <holer@ics.muni.cz>
 
 # Alternatives
-If you're on CentOS 7, you can just `yum install epel-release` as it's in centos-extras.
+If you're on CentOS 7 or CentOS 8, you can just `yum install epel-release` as it's in centos-extras.

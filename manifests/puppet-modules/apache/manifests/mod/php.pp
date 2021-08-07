@@ -11,15 +11,18 @@ class apache::mod::php (
   $content          = undef,
   $template         = 'apache/mod/php.conf.erb',
   $source           = undef,
-  $root_group       = $::apache::params::root_group,
-  $php_version      = $::apache::params::php_version,
+  $root_group       = $apache::params::root_group,
+  $php_version      = $apache::params::php_version,
   $libphp_prefix    = 'libphp'
 ) inherits apache::params {
+  include apache
+  if (versioncmp($php_version, '8') < 0) {
+    $mod = "php${php_version}"
+  } else {
+    $mod = 'php'
+  }
 
-  include ::apache
-  $mod = "php${php_version}"
-
-  if $::apache::version::scl_httpd_version == undef and $::apache::version::scl_php_version != undef {
+  if $apache::version::scl_httpd_version == undef and $apache::version::scl_php_version != undef {
     fail('If you define apache::version::scl_php_version, you also need to specify apache::version::scl_httpd_version')
   }
   if defined(Class['::apache::mod::prefork']) {
@@ -47,7 +50,7 @@ class apache::mod::php (
   }
 
   # Determine if we have a package
-  $mod_packages = $::apache::mod_packages
+  $mod_packages = $apache::mod_packages
   if $package_name {
     $_package_name = $package_name
   } elsif has_key($mod_packages, $mod) { # 2.6 compatibility hack
@@ -64,7 +67,15 @@ class apache::mod::php (
     $_lib = "librh-php${_php_version_no_dot}-php${_php_major}.so"
   } else {
     # Controls php version and libphp prefix
-    $_lib = "${libphp_prefix}${php_version}.so"
+    $_lib = $_php_major ? {
+      '8'     => "${libphp_prefix}.so",
+      default => "${libphp_prefix}${php_version}.so",
+    }
+  }
+  $_module_id = $_php_major ? {
+    '5'     => 'php5_module',
+    '7'     => 'php7_module',
+    default => 'php_module',
   }
 
   if $::operatingsystem == 'SLES' {
@@ -72,36 +83,36 @@ class apache::mod::php (
       package        => $_package_name,
       package_ensure => $package_ensure,
       lib            => "mod_${mod}.so",
-      id             => "php${_php_major}_module",
-      path           => "${::apache::lib_path}/mod_${mod}.so",
+      id             => $_module_id,
+      path           => "${apache::lib_path}/mod_${mod}.so",
     }
   } else {
     ::apache::mod { $mod:
       package        => $_package_name,
       package_ensure => $package_ensure,
       lib            => $_lib,
-      id             => "php${_php_major}_module",
+      id             => $_module_id,
       path           => $path,
     }
   }
 
-  include ::apache::mod::mime
-  include ::apache::mod::dir
+  include apache::mod::mime
+  include apache::mod::dir
   Class['::apache::mod::mime'] -> Class['::apache::mod::dir'] -> Class['::apache::mod::php']
 
   # Template uses $extensions
   file { "${mod}.conf":
     ensure  => file,
-    path    => "${::apache::mod_dir}/${mod}.conf",
+    path    => "${apache::mod_dir}/${mod}.conf",
     owner   => 'root',
     group   => $root_group,
-    mode    => $::apache::file_mode,
+    mode    => $apache::file_mode,
     content => $manage_content,
     source  => $source,
     require => [
-      Exec["mkdir ${::apache::mod_dir}"],
+      Exec["mkdir ${apache::mod_dir}"],
     ],
-    before  => File[$::apache::mod_dir],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 }

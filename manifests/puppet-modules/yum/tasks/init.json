@@ -4,11 +4,17 @@
   "parameters": {
     "action": {
       "description": "Action to perform ",
-      "type": "Enum[update, upgrade]"
+      "type": "Enum[update, upgrade, 'list updates']"
     },
     "quiet": {
       "description": "Run without output ",
       "type": "Optional[Boolean]"
     }
-  }
+  },
+    "implementations": [
+      {
+        "name": "init.rb",
+        "requirements": ["puppet-agent"]
+      }
+    ]
 }

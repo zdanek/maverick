@@ -9,6 +9,7 @@ A Python helper library for use by [Puppet Tasks](https://puppet.com/docs/bolt/1
 1. [Requirements](#requirements)
 1. [Setup](#setup)
 1. [Usage](#usage)
+1. [Debugging](#debugging)
 
 ## Description
 
@@ -54,7 +55,7 @@ if __name__ == '__main__':
 
 You can then run the task like any other Bolt task
 ```shell
-bolt task run mymodule::task -n target.example.com name='Robert'
+bolt task run mymodule::task -t target.example.com name='Robert'
 ```
 
 You can find this example in [examples](examples), as well as an example test in [tests](tests). For a real task, `examples` would be renamed to `tasks`.
@@ -64,4 +65,26 @@ You can additionally provide detailed errors by raising a `TaskError`, such as
 class MyTask(TaskHelper):
     def task(self, args):
         raise TaskError('my task errored', 'mytask/error_kind', {'location': 'task entry'})
+```
+
+## Debugging
+
+When writing your task, it can be helpful to write debugging statements to locate
+the source of any errors. The library includes a `debug` method that accepts arbitrary
+values and logs it as a debugging statement. If the task errors, the list of
+debugging statements will be included in the resulting error message.
+
+The list of debugging statements can also be accessed from the task itself by accessing
+the `debug_statements` attribute. This can be used to include the debugging statements in
+a `TaskError` that you explicitly raise.
+
+Adding a debugging statement:
+```python
+self.debug('Result of method call: {}'.format(result))
+```
+Adding the list of debugging statements to a `TaskError`:
+```python
+raise TaskError('my task error message',
+                'mytask/error-kind',
+                { 'debug': self.debug_statements })
 ```

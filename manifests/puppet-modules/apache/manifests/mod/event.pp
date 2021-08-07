@@ -45,7 +45,7 @@
 #   apache::mod::worker on the same server.
 #
 # @see https://httpd.apache.org/docs/current/mod/event.html for additional documentation.
-#
+# @note Unsupported platforms: SLES: all
 class apache::mod::event (
   $startservers           = '2',
   $maxclients             = '150',
@@ -60,7 +60,7 @@ class apache::mod::event (
   $threadlimit            = '64',
   $listenbacklog          = '511',
 ) {
-  include ::apache
+  include apache
 
   $_apache_version = pick($apache_version, $apache::apache_version)
 
@@ -78,8 +78,8 @@ class apache::mod::event (
   }
   File {
     owner => 'root',
-    group => $::apache::params::root_group,
-    mode  => $::apache::file_mode,
+    group => $apache::params::root_group,
+    mode  => $apache::file_mode,
   }
 
   # Template uses:
@@ -90,25 +90,25 @@ class apache::mod::event (
   # - $threadsperchild
   # - $maxrequestsperchild
   # - $serverlimit
-  file { "${::apache::mod_dir}/event.conf":
+  file { "${apache::mod_dir}/event.conf":
     ensure  => file,
-    mode    => $::apache::file_mode,
+    mode    => $apache::file_mode,
     content => template('apache/mod/event.conf.erb'),
-    require => Exec["mkdir ${::apache::mod_dir}"],
-    before  => File[$::apache::mod_dir],
+    require => Exec["mkdir ${apache::mod_dir}"],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 
   case $::osfamily {
     'redhat': {
       if versioncmp($_apache_version, '2.4') >= 0 {
-        apache::mpm{ 'event':
+        apache::mpm { 'event':
           apache_version => $_apache_version,
         }
       }
     }
     'debian','freebsd' : {
-      apache::mpm{ 'event':
+      apache::mpm { 'event':
         apache_version => $_apache_version,
       }
     }

@@ -129,6 +129,7 @@
 [Hash]: https://docs.puppet.com/puppet/latest/reference/lang_data_hash.html
 [`HttpProtocolOptions`]: http://httpd.apache.org/docs/current/mod/core.html#httpprotocoloptions
 
+[IAC Team]: https://puppetlabs.github.io/iac/
 [`IncludeOptional`]: https://httpd.apache.org/docs/current/mod/core.html#includeoptional
 [`Include`]: https://httpd.apache.org/docs/current/mod/core.html#include
 [interval syntax]: https://httpd.apache.org/docs/current/mod/mod_expires.html#AltSyn
@@ -218,7 +219,7 @@
 [Puppet Forge]: https://forge.puppet.com
 [Puppet]: https://puppet.com
 [Puppet module]: https://docs.puppet.com/puppet/latest/reference/modules_fundamentals.html
-[Puppet module's code]: https://github.com/puppetlabs/puppetlabs-apache/blob/master/manifests/default_mods.pp
+[Puppet module's code]: https://github.com/puppetlabs/puppetlabs-apache/blob/main/manifests/default_mods.pp
 [`purge_configs`]: #purge_configs
 [`purge_vhost_dir`]: #purge_vhost_dir
 [Python]: https://www.python.org/
@@ -816,7 +817,7 @@ Load balancing scheduler algorithms (`lbmethod`) are listed [in mod_proxy_balanc
 <a id="reference"></a> 
 ## Reference
 
-For information on classes, types and functions see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-apache/blob/master/REFERENCE.md)
+For information on classes, types and functions see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-apache/blob/main/REFERENCE.md)
 
 ### Templates
 
@@ -829,7 +830,7 @@ The Apache module has a task that allows a user to reload the Apache config with
 <a id="limitations"></a>
 ## Limitations
 
-For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-apache/blob/master/metadata.json)
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-apache/blob/main/metadata.json)
 
 ### FreeBSD
 
@@ -840,6 +841,7 @@ In order to use this module on FreeBSD, you _must_ use apache24-2.4.12 (www/apac
 On Gentoo, this module depends on the [`gentoo/puppet-portage`][] Puppet module. Although several options apply or enable certain features and settings for Gentoo, it is not a [supported operating system][] for this module.
 
 ### RHEL/CentOS
+
 The [`apache::mod::auth_cas`][], [`apache::mod::passenger`][], [`apache::mod::proxy_html`][] and [`apache::mod::shib`][] classes are not functional on RH/CentOS without providing dependency packages from extra repositories.
 
 See their respective documentation below for related repositories and packages.
@@ -850,7 +852,7 @@ The [`apache::mod::passenger`][] and [`apache::mod::proxy_html`][] classes are u
 
 #### RHEL/CentOS 6
 
-The [`apache::mod::passenger`][] class is not installing, because the the EL6 repository is missing compatible packages.
+The [`apache::mod::passenger`][] class is not installing, because the EL6 repository is missing compatible packages.
 
 #### RHEL/CentOS 7
 
@@ -901,11 +903,10 @@ apache::vhost { 'test.server':
 }
 ```
 
+**NOTE:** On RHEL 8, the SELinux packages contained in `policycoreutils-python` have been replaced by the `policycoreutils-python-utils` package.
+See [here](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/considerations_in_adopting_rhel_8/index#selinux-python3_security) for more details.
+
 You must set the contexts using `semanage fcontext` instead of `chcon` because Puppet's `file` resources reset the values' context in the database if the resource doesn't specify it.
-
-### Ubuntu 10.04
-
-The [`apache::vhost::WSGIImportScript`][] parameter creates a statement inside the virtual host that is unsupported on older versions of Apache, causing it to fail. This will be remedied in a future refactoring.
 
 ### Ubuntu 16.04
 The [`apache::mod::suphp`][] class is untested since repositories are missing compatible packages.
@@ -933,12 +934,13 @@ To check the code coverage, run:
 COVERAGE=yes bundle exec rake parallel_spec
 ```
 
-## Development
+
 
 Acceptance tests for this module leverage [puppet_litmus](https://github.com/puppetlabs/puppet_litmus).
 To run the acceptance tests follow the instructions [here](https://github.com/puppetlabs/puppet_litmus/wiki/Tutorial:-use-Litmus-to-execute-acceptance-tests-with-a-sample-module-(MoTD)#install-the-necessary-gems-for-the-module).
 You can also find a tutorial and walkthrough of using Litmus and the PDK on [YouTube](https://www.youtube.com/watch?v=FYfR7ZEGHoE).
 
+### Development Support
 If you run into an issue with this module, or if you would like to request a feature, please [file a ticket](https://tickets.puppetlabs.com/browse/MODULES/).
 Every Monday the Puppet IA Content Team has [office hours](https://puppet.com/community/office-hours) in the [Puppet Community Slack](http://slack.puppet.com/), alternating between an EMEA friendly time (1300 UTC) and an Americas friendly time (0900 Pacific, 1700 UTC).
 
@@ -949,3 +951,58 @@ If you submit a change to this module, be sure to regenerate the reference docum
 ```bash
 puppet strings generate --format markdown --out REFERENCE.md
 ```
+
+### Apache MOD Test & Support Lifecycle
+#### Adding Support for a new Apache MOD
+Support for new [Apache Modules] can be added under the [`apache::mod`] namespace.
+Acceptance tests should be added for each new [Apache Module][Apache Modules] added.
+Ideally, the acceptance tests should run on all compatible platforms that this module is supported on (see `metdata.json`), however there are cases when a more niche module is difficult to set up and install on a particular Linux distro.
+This could be for one or more of the following reasons:
+- Package not available in default repositories of distro
+- Package dependencies not available in default repositories of distro
+- Package (and/or its dependencies) are only available in a specific version of an OS
+
+In these cases, it is possible to exclude a module from a test platform using a specific tag, defined above the class declaration:
+```puppet
+# @note Unsupported platforms: OS: ver, ver; OS: ver, ver, ver; OS: all
+class apache::mod::foobar {
+...
+}
+```
+For example:
+```puppet
+# @note Unsupported platforms: RedHat: 5, 6; Ubuntu: 14.04; SLES: all; Scientific: 11 SP1
+class apache::mod::actions {
+...
+}
+```
+Please be aware of the following format guidelines for the tag:
+- All OS/Version declarations must be preceded with `@note Unsupported platforms:`
+- The tag must be declared ABOVE the class declaration (i.e. not as footer at the bottom of the file)
+- Each OS/Version declaration must be separated by semicolons (`;`)
+- Each version must be separated by a comma (`,`)
+- Versions CANNOT be declared in ranges (e.g. `RedHat:5-7`), they should be explicitly declared (e.g. `RedHat:5,6,7`)
+- However, to declare all versions of an OS as unsupported, use the word `all` (e.g. `SLES:all`)
+- OSs with word characters as part of their versions are acceptable (e.g. `Scientific: 11 SP1, 11 SP2, 12, 13`)
+- Spaces are permitted between OS/Version declarations and version numbers within a declaration
+- Refer to the `operatingsystem_support` values in the `metadata.json` to find the acceptable OS name and version syntax:
+  - E.g. `OracleLinux` OR `oraclelinux`, not: `Oracle` or `OraLinux`
+  - E.g. `RedHat` OR `redhat`, not: `Red Hat Enterprise Linux`, `RHEL`, or `Red Hat`
+
+If the tag is incorrectly formatted, a warning will be printed out at the end of the test run, indicating what tag(s) could not be parsed.
+This will not halt the execution of other tests.  
+
+Once the class is tagged, it is possible to exclude a test for that particular [Apache MOD][Apache Modules] using RSpec's filtering and a helper method:
+```ruby
+describe 'auth_oidc', if: mod_supported_on_platform('apache::mod::auth_openidc') do
+```
+The `mod_supported_on_platform` helper method takes the [Apache Module][Apache Modules] class definition as defined in the manifests under `manifest/mod`.
+
+This functionality can be disabled by setting the `DISABLE_MOD_TEST_EXCLUSION` environment variable.
+When set, all exclusions will be ignored.
+#### Test Support Lifecycle
+The puppetlabs-apache module supports a large number of compatible platforms and [Apache Modules][Apache modules].
+As a result, Apache Module tests can fail because a package or package dependency has been removed from a Linux distribution repository.
+The [IAC Team][IAC Team] will try to resolve these issues and keep instructions updated, but due to limited resources this won’t always be possible.
+In these cases, we will exclude test(s) from certain platforms.
+As always, we welcome help from our community members, and the IAC team is here to assist and answer questions.

@@ -2,8 +2,6 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  base_url = "https://boxes.koumbit.net"
-
   # If you don't have this plugin, the puppet provisioning will most likely
   # fail. You can fix that by manually downloading the puppet module
   # dependencies of this plugin and placing them in tests/modules/
@@ -21,20 +19,14 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :jessie do |jessie|
-    box = "koumbit/jessie64"
-    jessie.vm.box = box
-    jessie.vm.box_url = "#{base_url}/#{box}"
+    jessie.vm.box = "debian-8-amd64"
   end
 
   config.vm.define :stretch do |stretch|
-    box = "koumbit/stretch64"
-    stretch.vm.box = box
-    stretch.vm.box_url = "#{base_url}/#{box}"
+    stretch.vm.box = "debian-9-amd64"
   end
 
   config.vm.define :buster do |buster|
-    box = "koumbit/buster64"
-    buster.vm.box = box
-    buster.vm.box_url = "#{base_url}/#{box}"
+    buster.vm.box = "debian-10-amd64"
   end
 end

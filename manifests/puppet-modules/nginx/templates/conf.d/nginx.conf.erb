@@ -16,9 +16,15 @@ worker_processes <%= @worker_processes %>;
 <% if @worker_rlimit_nofile -%>
 worker_rlimit_nofile <%= @worker_rlimit_nofile %>;
 <% end -%>
+<% if @pcre_jit -%>
+pcre_jit <%= @pcre_jit %>;
+<% end -%>
 
 <% if @pid -%>
 pid        <%= @pid %>;
+<% end -%>
+<% if @include_modules_enabled -%>
+include /etc/nginx/modules-enabled/*.conf;
 <% end -%>
 <% if @nginx_cfg_prepend -%>
 
@@ -37,10 +43,13 @@ events {
   <%- end -%>
   worker_connections <%= @worker_connections -%>;
   <%- if @multi_accept == 'on' -%>
-    multi_accept on;
+  multi_accept on;
   <%- end -%>
   <%- if @events_use -%>
-    use <%= @events_use %>;
+  use <%= @events_use %>;
+  <%- end -%>
+  <%- @debug_connections.each do |address| -%>
+  debug_connection <%= address %>;
   <%- end -%>
 }
 
@@ -87,6 +96,16 @@ http {
   error_log <%= @nginx_error_log %> <%= @nginx_error_log_severity %>;
 <% end -%>
 
+<% if @limit_req_zone -%>
+<% if @limit_req_zone.is_a?(Array) -%>
+<%- @limit_req_zone.each do |limit_req_zone_item| -%>
+  limit_req_zone <%= limit_req_zone_item %>;
+<% end -%>
+<% else -%>
+  limit_req_zone <%= @limit_req_zone %>;
+<% end -%>
+<% end -%>
+
 <% if @sendfile == 'on' -%>
   sendfile on;
   <%- if @http_tcp_nopush == 'on' -%>
@@ -105,12 +124,24 @@ http {
   keepalive_requests  <%= @keepalive_requests %>;
   client_body_timeout <%= @client_body_timeout %>;
   send_timeout        <%= @send_timeout %>;
+<% if @lingering_close -%>
+  lingering_close      <%= @lingering_close %>;
+<% end -%>
+<% if @lingering_time -%>
+  lingering_time      <%= @lingering_time %>;
+<% end -%>
   lingering_timeout   <%= @lingering_timeout %>;
   tcp_nodelay         <%= @http_tcp_nodelay %>;
+<% if @reset_timedout_connection -%>
+  reset_timedout_connection <%= @reset_timedout_connection %>;
+<% end -%>
 
 <% if @etag -%>
   etag <%= @etag %>;
 
+<% end -%>
+<% if @gzip_static -%>
+   gzip_static       <%= @gzip_static %>;
 <% end -%>
 <% if @gzip == 'on' -%>
   gzip              on;
@@ -206,6 +237,61 @@ http {
 <% end -%>
 <% if @fastcgi_cache_use_stale -%>
   fastcgi_cache_use_stale <%= @fastcgi_cache_use_stale %>;
+<% end -%>
+
+<% if @ssl_dhparam -%>
+  ssl_dhparam               <%= @ssl_dhparam %>;
+<% end -%>
+<% if @ssl_ecdh_curve -%>
+  ssl_ecdh_curve            <%= @ssl_ecdh_curve %>;
+<% end -%>
+<% if @ssl_session_cache -%>
+  ssl_session_cache         <%= @ssl_session_cache %>;
+<% end -%>
+<% if @ssl_session_timeout -%>
+  ssl_session_timeout       <%= @ssl_session_timeout %>;
+<% end -%>
+<% if @ssl_session_tickets -%>
+  ssl_session_tickets       <%= @ssl_session_tickets %>;
+<% end -%>
+<% if @ssl_session_ticket_key -%>
+  ssl_session_ticket_key    <%= @ssl_session_ticket_key %>;
+<% end -%>
+<% if @ssl_buffer_size -%>
+  ssl_buffer_size           <%= @ssl_buffer_size %>;
+<% end -%>
+<% if @ssl_protocols -%>
+  ssl_protocols             <%= @ssl_protocols %>;
+<% end -%>
+<% if @ssl_ciphers -%>
+  ssl_ciphers               <%= @ssl_ciphers %>;
+<% end -%>
+<% if @ssl_prefer_server_ciphers -%>
+  ssl_prefer_server_ciphers <%= @ssl_prefer_server_ciphers %>;
+<% end -%>
+<% if @ssl_crl -%>
+  ssl_crl                   <%= @ssl_crl %>;
+<% end -%>
+<% if @ssl_stapling -%>
+  ssl_stapling              <%= @ssl_stapling %>;
+<% end -%>
+<% if @ssl_stapling_file -%>
+  ssl_stapling_file         <%= @ssl_stapling_file %>;
+<% end -%>
+<% if @ssl_stapling_responder -%>
+  ssl_stapling_responder    <%= @ssl_stapling_responder %>;
+<% end -%>
+<% if @ssl_stapling_verify -%>
+  ssl_stapling_verify       <%= @ssl_stapling_verify %>;
+<% end -%>
+<% if @ssl_trusted_certificate -%>
+  ssl_trusted_certificate   <%= @ssl_trusted_certificate %>;
+<% end -%>
+<% if @ssl_verify_depth -%>
+  ssl_verify_depth          <%= @ssl_verify_depth %>;
+<% end -%>
+<% if @ssl_password_file -%>
+  ssl_password_file         <%= @ssl_password_file %>;
 <% end -%>
 <% if @http_cfg_append -%>
 

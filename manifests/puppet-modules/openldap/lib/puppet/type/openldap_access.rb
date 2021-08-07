@@ -11,20 +11,20 @@ Puppet::Type.newtype(:openldap_access) do
     desc "The slapd.conf file"
   end
 
-  newproperty(:islast) do
+  newparam(:position) do
+    desc "Where to place the new entry"
+  end
+
+  newparam(:islast) do
     desc "Is this olcAccess the last one?"
   end
 
-  newproperty(:what) do
+  newparam(:what) do
     desc "The entries and/or attributes to which the access applies"
   end
 
-  newproperty(:suffix) do
+  newparam(:suffix) do
     desc "The suffix to which the access applies"
-  end
-
-  newproperty(:position) do
-    desc "Where to place the new entry"
   end
 
   newproperty(:access, :array_matching => :all ) do
@@ -48,9 +48,10 @@ Puppet::Type.newtype(:openldap_access) do
   end
 
   def self.title_patterns
+    what_re = %r{\S+=\S+(?:\s+\S+=\S+)*}
     [
       [
-        /^(\{(\d+)\}to\s+(\S+)\s+(by\s+.+)\s+on\s+(.+))$/,
+        /^(\{(\d+)\}to\s+(#{what_re})\s+(by\s+.+)\s+on\s+(.+))$/,
         [
           [ :name ],
           [ :position ],
@@ -60,7 +61,7 @@ Puppet::Type.newtype(:openldap_access) do
         ],
       ],
       [
-        /^(\{(\d+)\}to\s+(\S+)\s+(by\s+.+))$/,
+        /^(\{(\d+)\}to\s+(#{what_re})\s+(by\s+.+))$/,
         [
           [ :name ],
           [ :position ],
@@ -69,7 +70,7 @@ Puppet::Type.newtype(:openldap_access) do
         ],
       ],
       [
-        /^(to\s+(\S+)\s+(by\s+.+)\s+on\s+(.+))$/,
+        /^(to\s+(#{what_re})\s+(by\s+.+)\s+on\s+(.+))$/,
         [
           [ :name ],
           [ :what ],
@@ -78,7 +79,7 @@ Puppet::Type.newtype(:openldap_access) do
         ],
       ],
       [
-        /^(to\s+(\S+)\s+(by\s+.+))$/,
+        /^(to\s+(#{what_re})\s+(by\s+.+))$/,
         [
           [ :name ],
           [ :what ],

@@ -1,6 +1,6 @@
 # NGINX module for Puppet
 
-[![Build Status](https://travis-ci.org/voxpupuli/puppet-nginx.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-nginx)
+[![Build Status](https://github.com/voxpupuli/puppet-nginx/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-nginx/actions?query=workflow%3ACI)
 [![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-nginx/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-nginx)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/nginx.svg)](https://forge.puppetlabs.com/puppet/nginx)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/nginx.svg)](https://forge.puppetlabs.com/puppet/nginx)
@@ -19,12 +19,13 @@ This module manages NGINX configuration.
 ### Requirements
 
 * Puppet 4.6.1 or later.  Puppet 3 was supported up until release 0.6.0.
-* apt is now a soft dependency. If your system uses apt, you'll need to configure an appropriate version of the apt module. Version 4.4.0 or higher is recommended because of the proper handling of `apt-transport-https`.
+* apt is now a soft dependency. If your system uses apt, you'll need to
+  configure an appropriate version of the apt module. Version 4.4.0 or higher is
+  recommended because of the proper handling of `apt-transport-https`.
 
 ### Additional Documentation
 
-* [A Quickstart Guide to the NGINX Puppet Module][quickstart]
-  [quickstart]: <https://github.com/voxpupuli/puppet-nginx/blob/master/docs/quickstart.md>
+* [A Quickstart Guide to the NGINX Puppet Module](https://github.com/voxpupuli/puppet-nginx/blob/master/docs/quickstart.md)
 
 ### Install and bootstrap an NGINX instance
 
@@ -64,7 +65,7 @@ nginx::resource::upstream { 'puppet_rack_app':
       port   => 3001,
       weight => 1,
     },
-    'localhost:3002': => {
+    'localhost:3002' => {
       server => 'localhost',
       port   => 3002,
       weight => 2,
@@ -99,7 +100,8 @@ nginx::resource::mailhost { 'domain1.example':
 
 ### Convert upstream members from Array to Hash
 
-The datatype Array for members of a nginx::resource::upstream is replaced by a Hash. The following configuration is no longer valid:
+The datatype Array for members of a nginx::resource::upstream is replaced by a
+Hash. The following configuration is no longer valid:
 
 ```puppet
 nginx::resource::upstream { 'puppet_rack_app':
@@ -349,7 +351,9 @@ define web::nginx_ssl_with_redirect (
   nginx::resource::server { "${name}.${::domain}":
     ensure              => present,
     www_root            => "${full_web_path}/${name}/",
-    location_cfg_append => { 'rewrite' => '^ https://$server_name$request_uri? permanent' },
+    location_cfg_append => {
+      'rewrite' => '^ https://$server_name$request_uri? permanent'
+    }‚,
   }
 
   if !$www_root {
@@ -406,7 +410,7 @@ nginx::resource::location { "some_root":
 }
 ```
 
-# Call class web::nginx_ssl_with_redirect
+## Call class web::nginx_ssl_with_redirect
 
 ```puppet
 web::nginx_ssl_with_redirect { 'sub-domain-name':

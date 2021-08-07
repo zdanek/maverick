@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 #
 # seeded_rand.rb
 #
 Puppet::Parser::Functions.newfunction(
   :seeded_rand,
-  :arity => 2,
-  :type => :rvalue,
-  :doc => <<-DOC
+  arity: 2,
+  type: :rvalue,
+  doc: <<-DOC,
     @summary
       Generates a random whole number greater than or equal to 0 and less than MAX, using the value of SEED for repeatable randomness.
 
@@ -28,5 +30,5 @@ DOC
 
   max = args[0].to_i
   seed = Digest::MD5.hexdigest(args[1]).hex
-  Puppet::Util.deterministic_rand(seed, max)
+  Puppet::Util.deterministic_rand_int(seed, max)
 end

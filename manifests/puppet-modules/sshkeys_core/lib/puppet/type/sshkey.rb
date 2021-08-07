@@ -8,14 +8,47 @@ module Puppet
 
     ensurable
 
-    newproperty(:type) do
+    def name
+      "#{self[:name]}@#{self[:type]}"
+    end
+
+    alias_method :title, :name
+
+    def self.parameters_to_include
+      [:name, :type]
+    end
+
+    def self.title_patterns
+      [
+        [
+          %r{^(.*?)@(.*)$},
+          [
+            [:name],
+            [:type],
+          ],
+        ],
+        [
+          %r{^([^@]+)$},
+          [
+            [:name],
+          ],
+        ],
+      ]
+    end
+
+    newparam(:type) do
       desc 'The encryption type used.  Probably ssh-dss or ssh-rsa.'
 
-      newvalues :'ssh-dss', :'ssh-ed25519', :'ssh-rsa', :'ecdsa-sha2-nistp256', :'ecdsa-sha2-nistp384', :'ecdsa-sha2-nistp521'
+      isnamevar
+
+      newvalues :'ssh-dss', :'ssh-ed25519', :'ssh-rsa', :'ecdsa-sha2-nistp256', :'ecdsa-sha2-nistp384', :'ecdsa-sha2-nistp521',
+                :'sk-ecdsa-sha2-nistp256@openssh.com', :'sk-ssh-ed25519@openssh.com'
 
       aliasvalue(:dsa, :'ssh-dss')
       aliasvalue(:ed25519, :'ssh-ed25519')
       aliasvalue(:rsa, :'ssh-rsa')
+      aliasvalue(:'ecdsa-sk', :'sk-ecdsa-sha2-nistp256@openssh.com')
+      aliasvalue(:'ed25519-sk', :'sk-ssh-ed25519@openssh.com')
     end
 
     newproperty(:key) do

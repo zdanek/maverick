@@ -3,7 +3,7 @@
 # Contributor: Remi Ferrand <remi{dot}ferrand_at_cc(dot)in2p3.fr> (2015)
 # Contributor: Tim Meusel <tim@bastelfreak.de> (2017)
 #
-define ssh::client::config::user(
+define ssh::client::config::user (
   Enum['present', 'absent']      $ensure              = present,
   Optional[Stdlib::Absolutepath] $target              = undef,
   Optional[Stdlib::Absolutepath] $user_home_dir       = undef,
@@ -11,7 +11,7 @@ define ssh::client::config::user(
   Hash $options                                       = {},
   String[1] $user                                     = $name,
 ) {
-  include ::ssh::params
+  include ssh::params
 
   # If a specific target file was specified,
   # it must have higher priority than any
@@ -33,7 +33,7 @@ define ssh::client::config::user(
         file { $user_ssh_dir:
           ensure => directory,
           owner  => $user,
-          mode   => $::ssh::params::user_ssh_directory_default_mode,
+          mode   => $ssh::params::user_ssh_directory_default_mode,
           before => Concat_file[$_target],
         }
       }
@@ -44,7 +44,7 @@ define ssh::client::config::user(
     concat_file { $_target:
       ensure => $ensure,
       owner  => $user,
-      mode   => $::ssh::params::user_ssh_config_default_mode,
+      mode   => $ssh::params::user_ssh_config_default_mode,
       tag    => $name,
     }
   }

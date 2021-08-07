@@ -10,7 +10,6 @@
 #
 # @example Usage
 #
-#   ```puppet
 #   Hash $foo = {
 #     bar => { 'a' => true, 'b' => 'b' },
 #     baz => false,
@@ -18,17 +17,14 @@
 #   }
 #
 #   yum::bool2num_hash_recursive($foo)
-#   ```
 #
 #   The above would return:
 #
-#   ```puppet
 #   {
 #     bar => { 'a' => 1, 'b' => 'b' },
 #     baz => 0,
 #     qux => [{ 'c' => true }, { 'd' => false }],
 #   }
-#   ```
 #
 function yum::bool2num_hash_recursive($arg) {
   assert_type(Hash, $arg)
@@ -38,7 +34,9 @@ function yum::bool2num_hash_recursive($arg) {
       Hash    => yum::bool2num_hash_recursive($value),
       default => $value,
     }
-    Hash({ $key => $return_value })
+    # see the issue for the strange/asymetrical whitespace
+    # https://github.com/kuleuven/puppet-lint-manifest_whitespace-check/issues/8
+    Hash( { $key => $return_value })
   }.reduce |$attrs_memo, $kv| {
     merge($attrs_memo, $kv)
   }

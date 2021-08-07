@@ -138,6 +138,25 @@ x509_request { '/path/to/request.csr':
 }
 ```
 
+### cert\_file
+
+This type controls a file containing a serialized X.509 certificate. It accepts the source in either `PEM` or `DER` format and stores it in the desired serialization format to the file.
+
+```puppet
+cert_file { '/path/to/certs/cacert_root1.pem':
+  ensure => present,
+  source => 'http://www.cacert.org/certs/root_X0F.der',
+  format => pem,
+}
+```
+
+Attributes:
+
+* `path` (namevar): path to the file where the certificate should be stored
+* `ensure`: `present` or `absent`
+* `source`: the URL the certificate should be downloaded from
+* `format`: the storage format for the certificate file (`pem` or `der`)
+
 ## Definitions
 
 ### openssl::certificate::x509
@@ -205,6 +224,16 @@ openssl::export::pem_cert { 'foo':
   in_pass  => 'my_pkcs12_password',
 }
 ```
+This definition exports PEM certificates from a DER certificate:
+
+```puppet
+openssl::export::pem_cert { 'foo':
+  ensure   => 'present',
+  der_cert => '/here/is/my/certstore.der',
+  pem_cert => '/here/is/my/cert.pem',
+}
+```
+
 
 ### openssl::export::pem_key
 
@@ -253,6 +282,19 @@ openssl::dhparam { '/path/to/dhparam.pem':
   group  => 'adm',
   mode   => '0640',
 }
+```
+
+## Functions
+
+### cert_aia_caissuers
+
+The function parses a X509 certificate for the authorityInfoAccess extension and return with the URL found as caIssuers, or nil if no URL or extension found. Invoking as deferred function, this can be used to download the issuer certificate:
+
+```puppet
+  file { '/ssl/certs/caissuer.crt':
+    ensure => file,
+    source => Deferred('cert_aia_caissuers', ["/etc/ssl/certs/${facts['networking']['fqdn']}.crt"]),
+  }
 ```
 
 ## Contributing

@@ -58,6 +58,7 @@ Puppet::Type.newtype(:grafana_datasource) do
 
   newproperty(:password) do
     desc 'The password for the datasource (optional)'
+    sensitive true
   end
 
   newproperty(:database) do
@@ -110,6 +111,7 @@ Puppet::Type.newtype(:grafana_datasource) do
 
   newproperty(:secure_json_data) do
     desc 'Additional secure JSON data to configure the datasource (optional)'
+    sensitive true
 
     validate do |value|
       unless value.nil? || value.is_a?(Hash)
@@ -118,7 +120,17 @@ Puppet::Type.newtype(:grafana_datasource) do
     end
   end
 
+  def set_sensitive_parameters(sensitive_parameters) # rubocop:disable Style/AccessorMethodName
+    parameter(:password).sensitive = true if parameter(:password)
+    parameter(:basic_auth_password).sensitive = true if parameter(:basic_auth_password)
+    super(sensitive_parameters)
+  end
+
   autorequire(:service) do
     'grafana-server'
+  end
+
+  autorequire(:grafana_conn_validator) do
+    'grafana'
   end
 end

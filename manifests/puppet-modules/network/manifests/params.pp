@@ -5,8 +5,12 @@
 class network::params {
 
   $service_restart_exec = $::osfamily ? {
-    'Debian'  => '/sbin/ifdown -a && /sbin/ifup -a',
+    'Debian'  => '/sbin/ifdown -a --force ; /sbin/ifup -a',
     'Solaris' => '/usr/sbin/svcadm restart svc:/network/physical:default',
+    'RedHat'  => $::operatingsystemmajrelease ? {
+      '8'     => 'nmcli connection reload',
+      default => 'service network restart',
+    },
     default   => 'service network restart',
   }
 
@@ -33,6 +37,11 @@ class network::params {
     'Debian' => '/etc/network',
     'Redhat' => '/etc/sysconfig/network-scripts',
     'Suse'   => '/etc/sysconfig/network',
+    default  => undef,
+  }
+
+  $package_name = $::operatingsystem ? {
+    'Ubuntu' => 'ifupdown',
     default  => undef,
   }
 

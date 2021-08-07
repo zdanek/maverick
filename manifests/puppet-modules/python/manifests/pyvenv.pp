@@ -22,15 +22,16 @@
 #   }
 #
 define python::pyvenv (
-  $ensure           = present,
-  $version          = 'system',
-  $systempkgs       = false,
-  $venv_dir         = $name,
-  $owner            = 'root',
-  $group            = 'root',
-  $mode             = '0755',
-  $path             = [ '/bin', '/usr/bin', '/usr/sbin', '/usr/local/bin' ],
-  $environment      = [],
+  Python::Package::Ensure     $ensure      = present,
+  Python::Version             $version     = 'system',
+  Boolean                     $systempkgs  = false,
+  Stdlib::Absolutepath        $venv_dir    = $name,
+  String[1]                   $owner       = 'root',
+  String[1]                   $group       = 'root',
+  Stdlib::Filemode            $mode        = '0755',
+  Array[Stdlib::Absolutepath] $path        = ['/bin', '/usr/bin', '/usr/sbin', '/usr/local/bin',],
+  Array                       $environment = [],
+  Python::Venv::PipVersion    $pip_version = 'latest',
 ) {
   include python
 
@@ -40,24 +41,19 @@ define python::pyvenv (
       default  => $version,
     }
 
-    $python_version_parts = split($python_version, '[.]')
+    $python_version_parts      = split($python_version, '[.]')
     $normalized_python_version = sprintf('%s.%s', $python_version_parts[0], $python_version_parts[1])
 
     # Debian splits the venv module into a seperate package
-    if ( $facts['os']['family'] == 'Debian'){
-      $python3_venv_package="python${normalized_python_version}-venv"
-      case $facts['os']['distro']['codename'] {
-        'xenial','bionic','cosmic','disco',
-        'jessie','stretch','buster': {
-          ensure_packages ($python3_venv_package)
-          Package[$python3_venv_package] -> File[$venv_dir]
-        }
-        default: {}
-      }
+    if ( $facts['os']['family'] == 'Debian') {
+      $python3_venv_package = "python${normalized_python_version}-venv"
+      ensure_packages($python3_venv_package)
+
+      Package[$python3_venv_package] -> File[$venv_dir]
     }
 
     # pyvenv is deprecated since 3.6 and will be removed in 3.8
-    if (versioncmp($normalized_python_version, '3.6') >=0) {
+    if versioncmp($normalized_python_version, '3.6') >=0 {
       $virtualenv_cmd = "${python::exec_prefix}python${normalized_python_version} -m venv"
     } else {
       $virtualenv_cmd = "${python::exec_prefix}pyvenv-${normalized_python_version}"
@@ -68,7 +64,7 @@ define python::pyvenv (
       default    => $path,
     }
 
-    if ( $systempkgs == true ) {
+    if $systempkgs == true {
       $system_pkgs_flag = '--system-site-packages'
     } else {
       $system_pkgs_flag = ''
@@ -81,15 +77,21 @@ define python::pyvenv (
       mode   => $mode,
     }
 
-    $pip_cmd   = "${python::exec_prefix}${venv_dir}/bin/pip"
+    $pip_cmd = "${python::exec_prefix}${venv_dir}/bin/pip"
+
+    $pip_upgrade = ($pip_version != 'latest') ? {
+      true  => "--upgrade 'pip ${pip_version}'",
+      false => '--upgrade pip',
+    }
 
     exec { "python_virtualenv_${venv_dir}":
-      command     => "${virtualenv_cmd} --clear ${system_pkgs_flag} ${venv_dir} && ${pip_cmd} --log ${venv_dir}/pip.log install --upgrade pip && ${pip_cmd} --log ${venv_dir}/pip.log install --upgrade setuptools",
+      command     => "${virtualenv_cmd} --clear ${system_pkgs_flag} ${venv_dir} && ${pip_cmd} --log ${venv_dir}/pip.log install ${pip_upgrade} && ${pip_cmd} --log ${venv_dir}/pip.log install --upgrade setuptools",
       user        => $owner,
       creates     => "${venv_dir}/bin/activate",
       path        => $_path,
       cwd         => '/tmp',
       environment => $environment,
+      timeout     => 600,
       unless      => "grep '^[\\t ]*VIRTUAL_ENV=[\\\\'\\\"]*${venv_dir}[\\\"\\\\'][\\t ]*$' ${venv_dir}/bin/activate", #Unless activate exists and VIRTUAL_ENV is correct we re-create the virtualenv
       require     => File[$venv_dir],
     }

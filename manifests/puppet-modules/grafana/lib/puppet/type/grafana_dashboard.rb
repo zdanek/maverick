@@ -11,6 +11,10 @@ Puppet::Type.newtype(:grafana_dashboard) do
     desc 'The title of the dashboard.'
   end
 
+  newparam(:folder) do
+    desc 'The folder to place the dashboard in (optional)'
+  end
+
   newproperty(:content) do
     desc 'The JSON representation of the dashboard.'
 
@@ -77,5 +81,9 @@ Puppet::Type.newtype(:grafana_dashboard) do
   end
   autorequire(:service) do
     'grafana-server'
+  end
+
+  autorequire(:grafana_conn_validator) do
+    'grafana'
   end
 end

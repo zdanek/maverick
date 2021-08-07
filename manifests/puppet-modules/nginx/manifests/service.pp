@@ -1,55 +1,40 @@
-# Class: nginx::service
+# @summary Manage NGINX service management
 #
-# This module manages NGINX service management and server rebuild
+# @api private
 #
-# Parameters:
-#
-# There are no default parameters for this class.
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
-#
-# This class file is not called directly
-class nginx::service(
-  $service_restart = $nginx::service_restart,
-  $service_ensure  = $nginx::service_ensure,
-  $service_enable  = $nginx::service_enable,
-  $service_name    = $nginx::service_name,
-  $service_flags   = $nginx::service_flags,
-  $service_manage  = $nginx::service_manage,
-) {
-
+class nginx::service {
   assert_private()
 
-  if $service_manage {
-    case $facts['os']['name'] {
-      'OpenBSD': {
-        service { $service_name:
-          ensure     => $service_ensure,
-          enable     => $service_enable,
-          flags      => $service_flags,
-          hasstatus  => true,
-          hasrestart => true,
-        }
-      }
-      default: {
-        service { $service_name:
-          ensure     => $service_ensure,
-          enable     => $service_enable,
-          hasstatus  => true,
-          hasrestart => true,
-        }
-      }
+  if $nginx::service_config_check {
+    exec { 'nginx_config_check':
+      command     => $nginx::service_config_check_command,
+      refreshonly => true,
+      path        => [
+        '/usr/local/sbin',
+        '/usr/local/bin',
+        '/usr/sbin',
+        '/usr/bin',
+        '/sbin',
+        '/bin',
+      ],
     }
+
+    File <| tag == 'nginx_config_file' |> ~> Exec['nginx_config_check']
+    Concat <| tag == 'nginx_config_file' |> ~> Exec['nginx_config_check']
   }
 
-  # Allow overriding of 'restart' of Service resource; not used by default
-  if $service_restart {
-    Service[$service_name] {
-      restart => $service_restart,
+  if $nginx::service_manage {
+    $service_require = $nginx::service_config_check ? {
+      true  => Exec['nginx_config_check'],
+      false => undef,
+    }
+
+    service { $nginx::service_name:
+      ensure  => $nginx::service_ensure,
+      enable  => $nginx::service_enable,
+      flags   => $nginx::service_flags,
+      restart => $nginx::service_restart,
+      require => $service_require,
     }
   }
 }

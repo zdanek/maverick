@@ -2,12 +2,11 @@ clamav
 =============
 
 [![Build Status](https://travis-ci.org/edestecd/puppet-clamav.svg)](https://travis-ci.org/edestecd/puppet-clamav)
-[![Puppet Forge](https://img.shields.io/puppetforge/v/edestecd/clamav.svg)](https://forge.puppetlabs.com/edestecd/clamav)
-[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/edestecd/clamav.svg)](https://forge.puppetlabs.com/edestecd/clamav)
-[![Puppet Forge Score](https://img.shields.io/puppetforge/f/edestecd/clamav.svg)](https://forge.puppetlabs.com/edestecd/clamav/scores)
-[![Issue Stats](http://issuestats.com/github/edestecd/puppet-clamav/badge/pr?style=flat)](http://issuestats.com/github/edestecd/puppet-clamav)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/edestecd/clamav.svg)](https://forge.puppet.com/edestecd/clamav)
+[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/edestecd/clamav.svg)](https://forge.puppet.com/edestecd/clamav)
+[![Puppet Forge Score](https://img.shields.io/puppetforge/f/edestecd/clamav.svg)](https://forge.puppet.com/edestecd/clamav/scores)
 
-####Table of Contents
+#### Table of Contents
 
 1. [Overview](#overview)
 2. [Module Description - What the module does and why it is useful](#module-description)
@@ -21,11 +20,11 @@ clamav
 6. [Development - Guide for contributing to the module](#development)
 7. [Contributors](#contributors)
 
-##Overview
+## Overview
 
 Puppet Module to install/configure clamd and freshclam on Debian and RedHat
 
-##Module Description
+## Module Description
 
 The clamav module provides some classes to install and configure most of the components of clamav.  
 You may also choose to manage only the parts that you need.  
@@ -37,21 +36,23 @@ This module has the following components that can be managed (or not):
 * clamav user
 * clam daemon
 * freshclam daemon/cron (dependent on OS)
+* clamav-milter (RHEL7 and derivatives only for now)
 
-##Setup
+## Setup
 
-###What clamav affects
+### What clamav affects
 
 * clamav/clamd/freshclam package install
 * clamav/clamd/freshclam config files
 * clamd/freshclam services or daily cron on redhat
+* clamav-milter package install, config files, service (optional)
 * clam user/group (optional)
 
-###Setup Requirements
+### Setup Requirements
 
 only need to install the module
 
-###Beginning with clamav
+### Beginning with clamav
 
 Minimal clamav package install for command line use:
 
@@ -59,9 +60,9 @@ Minimal clamav package install for command line use:
 include clamav
 ```
 
-##Usage
+## Usage
 
-###Manage the clam and freshclam daemon with stock config
+### Manage the clam and freshclam daemon with stock config
 
 ```puppet
 class { 'clamav':
@@ -72,7 +73,7 @@ class { 'clamav':
 }
 ```
 
-###Also manage the clam user and group
+### Also manage the clam user and group
 
 ```puppet
 class { 'clamav':
@@ -85,7 +86,7 @@ class { 'clamav':
 }
 ```
 
-###Customize the clamd and freshclam config
+### Customize the clamd and freshclam config
 
 ```puppet
 class { 'clamav':
@@ -108,7 +109,31 @@ class { 'clamav':
 }
 ```
 
-###Configure with hiera yaml
+### Add clamav-milter support and customize its config (RHEL7 and derivatives only)
+#### Please note that as of RHEL 7.2 only the TCP socket has been tested successfully
+
+```puppet
+class { 'clamav':
+  manage_repo           => false,
+  clamd_options         => {
+    'TCPSocket' => '3310',
+    'TCPAddr'   => '127.0.0.1',
+  },
+
+  clamav_milter_options => {
+    'AddHeader'  => 'add',
+    'OnInfected' => 'Reject',
+    'RejectMsg'  => 'Message rejected: Infected by %v',
+  },
+
+  manage_clamd          => true,
+  manage_freshclam      => true,
+  manage_clamav_milter  => true,
+  clamd_service_ensure  => 'running',
+}
+```
+
+### Configure with hiera yaml
 
 ```puppet
 include clamav
@@ -131,7 +156,7 @@ clamav::freshclam_options:
   - clam.host2.mydomain.com
 ```
 
-##Reference
+## Reference
 
 ### Classes
 
@@ -140,7 +165,7 @@ clamav::freshclam_options:
 * clamav::clamd
 * clamav::freshclam
 
-##Limitations
+## Limitations
 
 This module has been built on and tested against Puppet 3.8 and higher.  
 While I am sure other versions work, I have not tested them.
@@ -148,6 +173,6 @@ While I am sure other versions work, I have not tested them.
 This module supports modern RedHat and Debian based systems.  
 No plans to support other versions (unless you add it :)..
 
-##Development
+## Development
 
 Pull Requests welcome

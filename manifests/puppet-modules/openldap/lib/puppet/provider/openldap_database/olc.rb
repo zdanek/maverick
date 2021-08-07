@@ -7,12 +7,12 @@ Puppet::Type.
 
   # TODO: Use ruby bindings (can't find one that support IPC)
 
-  defaultfor :osfamily => [:debian, :redhat]
+  defaultfor :osfamily => [:debian, :freebsd, :redhat, :suse]
 
   mk_resource_methods
 
   def self.instances
-    databases = slapcat("(|(olcDatabase=monitor)(olcDatabase={0}config)(&(objectClass=olcDatabaseConfig)(|(objectClass=olcBdbConfig)(objectClass=olcHdbConfig)(objectClass=olcMdbConfig)(objectClass=olcMonitorConfig)(objectClass=olcRelayConfig))))")
+    databases = slapcat("(|(olcDatabase=monitor)(olcDatabase={0}config)(&(objectClass=olcDatabaseConfig)(|(objectClass=olcBdbConfig)(objectClass=olcHdbConfig)(objectClass=olcMdbConfig)(objectClass=olcMonitorConfig)(objectClass=olcRelayConfig)(objectClass=olcLDAPConfig))))")
 
     databases.split("\n\n").collect do |paragraph|
       suffix = nil
@@ -36,7 +36,7 @@ Puppet::Type.
       paragraph.gsub("\n ", "").split("\n").collect do |line|
         case line
         when /^olcDatabase: /
-          index, backend = line.match(/^olcDatabase: \{(\d+)\}(bdb|hdb|mdb|monitor|config|relay)$/).captures
+          index, backend = line.match(/^olcDatabase: \{(\d+)\}(bdb|hdb|mdb|monitor|config|relay|ldap)$/).captures
         when /^olcDbDirectory: /
           directory = line.split(' ')[1]
         when /^olcRootDN: /
@@ -98,11 +98,11 @@ Puppet::Type.
           end
         end
       end
-      if backend == 'monitor' and !suffix
-        suffix = 'cn=monitor'
+      if backend.match(/monitor/i) and !suffix
+        suffix = "cn=#{backend}"
       end
-      if backend == 'config' and !suffix
-        suffix = 'cn=config'
+      if backend.match(/config/i) and !suffix
+        suffix = "cn=#{backend}"
       end
       new(
         :ensure          => :present,
@@ -151,7 +151,12 @@ Puppet::Type.
   end
 
   def destroy
-    default_confdir = Facter.value(:osfamily) == 'Debian' ? '/etc/ldap/slapd.d' : Facter.value(:osfamily) == 'RedHat' ? '/etc/openldap/slapd.d' : nil
+    default_confdir = case Facter.value(:osfamily)
+                      when 'Debian' then '/etc/ldap/slapd.d'
+                      when 'RedHat' then '/etc/openldap/slapd.d'
+                      when 'FreeBSD' then '/usr/local/etc/openldap/slapd.d'
+                      else nil
+                      end
     backend = @property_hash[:backend]
 
     fetch_index
@@ -221,6 +226,9 @@ Puppet::Type.
       t << "olcSuffix: #{resource[:suffix]}\n" if resource[:suffix]
     when "monitor"
       # WRITE HERE FOR MONITOR ONLY
+    when "ldap"
+      # WRITE HERE FOR LDAP ONLY
+      t << "olcSuffix: #{resource[:suffix]}\n" if resource[:suffix]
     else
       t << "olcDbDirectory: #{resource[:directory]}\n" if resource[:directory]
       t << "olcSuffix: #{resource[:suffix]}\n" if resource[:suffix]

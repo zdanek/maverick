@@ -51,31 +51,27 @@
 #   are referenced by a managed_repo. This will use the same merging behavior
 #   as repos.
 #
+# @param utils_package_name
+#   Name of the utils package, e.g. 'yum-utils', or 'dnf-utils'.
+#
 # @example Enable management of the default repos for a supported OS:
-#   ```yaml
 #   ---
 #   yum::manage_os_default_repos: true
-#   ```
 #
 # @example Add Hiera data to disable *management* of the CentOS Base repo:
-#   ```yaml
 #   ---
 #   yum::manage_os_default_repos: true
 #   yum::repo_exclusions:
 #       - 'base'
-#   ```
 #
 # @example Ensure the CentOS base repo is removed from the agent system(s):
-#   ```yaml
 #   ---
 #   yum::manage_os_default_repos: true
 #   yum::repos:
 #       base:
 #           ensure: 'absent'
-#   ```
 #
 # @example Add a custom repo:
-#   ```yaml
 #   ---
 #   yum::managed_repos:
 #       - 'example_repo'
@@ -88,38 +84,35 @@
 #           gpgcheck: true
 #           gpgkey: 'file:///etc/pki/gpm-gpg/RPM-GPG-KEY-Example'
 #           target: '/etc/yum.repos.d/example.repo'
-#   ```
 #
 # @example Use a custom `baseurl` for the CentOS Base repo:
-#   ```yaml
 #   ---
 #   yum::manage_os_default_repos: true
 #   yum::repos:
 #       base:
 #           baseurl: 'https://repos.example.com/CentOS/base/'
 #           mirrorlist: '--'
-#   ```
 #
 class yum (
   Boolean $clean_old_kernels = true,
   Boolean $keep_kernel_devel = false,
-  Hash[String, Variant[String, Integer, Boolean, Hash[String, Variant[String, Integer, Boolean]]]] $config_options = { },
+  Hash[String, Variant[String, Integer, Boolean, Hash[String, Variant[String, Integer, Boolean]]]] $config_options = {},
   Optional[Hash[String, Optional[Hash[String, Variant[String, Integer, Boolean]]]]] $repos = {},
   Array[String] $managed_repos = [],
   Boolean $manage_os_default_repos = false,
   Array[String] $os_default_repos = [],
   Array[String] $repo_exclusions = [],
   Hash[String, Hash[String, String]] $gpgkeys = {},
+  String $utils_package_name = 'yum-utils',
 ) {
-
   $module_metadata            = load_module_metadata($module_name)
   $supported_operatingsystems = $module_metadata['operatingsystem_support']
   $supported_os_names         = $supported_operatingsystems.map |$os| {
     $os['operatingsystem']
   }
 
-  unless member($supported_os_names, $::os['name']) {
-    fail("${::os['name']} not supported")
+  unless member($supported_os_names, $facts['os']['name']) {
+    fail("${facts['os']['name']} not supported")
   }
 
   $_managed_repos = $manage_os_default_repos ? {
@@ -133,8 +126,8 @@ class yum (
 
     $normalized_repos.each |$yumrepo, $attributes| {
       if member($_managed_repos_minus_exclusions, $yumrepo) {
-        Resource['yumrepo'] {
-          $yumrepo: * => $attributes,
+        yumrepo { $yumrepo:
+          * => $attributes,
         }
         # Handle GPG Key
         if ('gpgkey' in $attributes) {
@@ -168,8 +161,8 @@ class yum (
       }
 
       $_normalized_ensure = $_ensure ? {
-        Boolean => Hash({ ensure => bool2num($_ensure) }), # lint:ignore:unquoted_string_in_selector
-        default => Hash({ ensure => $_ensure }), # lint:ignore:unquoted_string_in_selector
+        Boolean => Hash( { 'ensure' => bool2num($_ensure) }),
+        default => Hash( { ensure => $_ensure }), # lint:ignore:unquoted_string_in_selector
       }
 
       $_normalized_attrs = $attrs ? {
@@ -177,14 +170,14 @@ class yum (
         default => $_normalized_ensure,
       }
 
-      Hash({ $key => $_normalized_attrs })
+      Hash( { $key => $_normalized_attrs })
     }.reduce |$memo, $cfg_opt_hash| {
       merge($memo, $cfg_opt_hash)
     }
 
     $_normalized_config_options.each |$config, $attributes| {
-      Resource['yum::config'] {
-        $config: * => $attributes,
+      yum::config { $config:
+        * => $attributes,
       }
     }
   }
@@ -199,7 +192,7 @@ class yum (
   }
 
   # cleanup old kernels
-  ensure_packages(['yum-utils'])
+  ensure_packages([$utils_package_name])
 
   $_real_installonly_limit = $config_options['installonly_limit'] ? {
     Variant[String, Integer] => $config_options['installonly_limit'],
@@ -221,7 +214,7 @@ class yum (
   exec { 'package-cleanup_oldkernels':
     command     => shellquote($_pc_cmd),
     refreshonly => true,
-    require     => Package['yum-utils'],
+    require     => Package[$utils_package_name],
     subscribe   => $_clean_old_kernels_subscribe,
   }
 }

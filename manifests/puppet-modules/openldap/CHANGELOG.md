@@ -1,3 +1,28 @@
+## 2020-02-27 - Release 2.0.0
+
+- update dependencies and Puppet version [\#261](https://github.com/camptocamp/puppet-openldap/pull/261) ([Dan33l](https://github.com/Dan33l))
+- declare this module as compatible with ubuntu1804 [\#260](https://github.com/camptocamp/puppet-openldap/pull/260) ([Dan33l](https://github.com/Dan33l))
+- Port openldap\_password() to Puppet 4.x function API [\#258](https://github.com/camptocamp/puppet-openldap/pull/258) ([raphink](https://github.com/raphink))
+
+## 2020-01-28 - Release 1.18.0
+
+- Fix acceptance [\#257](https://github.com/camptocamp/puppet-openldap/pull/257) ([raphink](https://github.com/raphink))
+- Convert to PDK [\#254](https://github.com/camptocamp/puppet-openldap/pull/254) ([raphink](https://github.com/raphink))
+- add parameter nss\_initgroups\_ignoreusers [\#253](https://github.com/camptocamp/puppet-openldap/pull/253) ([tobiWu](https://github.com/tobiWu))
+- Mark test as pending [\#252](https://github.com/camptocamp/puppet-openldap/pull/252) ([mcanevet](https://github.com/mcanevet))
+- Fix title\_patterns to support multiple fields in what [\#250](https://github.com/camptocamp/puppet-openldap/pull/250) ([raphink](https://github.com/raphink))
+- add sssvlv overlay compatibility [\#247](https://github.com/camptocamp/puppet-openldap/pull/247) ([clement-dufaure](https://github.com/clement-dufaure))
+- Add support for back\_ldap and specific values of attrs in ACLs [\#246](https://github.com/camptocamp/puppet-openldap/pull/246) ([jdow](https://github.com/jdow))
+- Fix regexp in access\_wrapper [\#243](https://github.com/camptocamp/puppet-openldap/pull/243) ([amateo](https://github.com/amateo))
+- Enable usage of puppetlabs-stdlib 5.x.x [\#240](https://github.com/camptocamp/puppet-openldap/pull/240) ([jacksgt](https://github.com/jacksgt))
+- Fix regex for group-based limits [\#235](https://github.com/camptocamp/puppet-openldap/pull/235) ([kasimon](https://github.com/kasimon))
+- Add socks support [\#233](https://github.com/camptocamp/puppet-openldap/pull/233) ([jas01](https://github.com/jas01))
+- Fix usage of slapcat when removing an overlay [\#232](https://github.com/camptocamp/puppet-openldap/pull/232) ([treydock](https://github.com/treydock))
+- Fix setting ACL if they had been set before [\#230](https://github.com/camptocamp/puppet-openldap/pull/230) ([fklajn-opera](https://github.com/fklajn-opera))
+- cn can be in uppercase [\#190](https://github.com/camptocamp/puppet-openldap/pull/190) ([Poil](https://github.com/Poil))
+- Add support for back\_sock [\#173](https://github.com/camptocamp/puppet-openldap/pull/173) ([jas01](https://github.com/jas01))
+- Support SASL and GSSAPI options in ldap.conf [\#165](https://github.com/camptocamp/puppet-openldap/pull/165) ([modax](https://github.com/modax))
+
 ## 2018-09-07 - Release 1.17.0
 
 - Drop legacy PE statement and puppet_version in metadata.json

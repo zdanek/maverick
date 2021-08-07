@@ -1,29 +1,20 @@
-# Class: nginx
+# @summary Manage NGINX
 #
-# This module manages NGINX.
+# Packaged NGINX
+#   - RHEL: EPEL or custom package
+#   - Debian/Ubuntu: Default Install or custom package
+#   - SuSE: Default Install or custom package
 #
-# Parameters:
-#
-# Actions:
-#
-# Requires:
-#  puppetlabs-stdlib - https://github.com/puppetlabs/puppetlabs-stdlib
-#
-#  Packaged NGINX
-#    - RHEL: EPEL or custom package
-#    - Debian/Ubuntu: Default Install or custom package
-#    - SuSE: Default Install or custom package
-#
-#  stdlib
-#    - puppetlabs-stdlib module >= 0.1.6
-#
-# Sample Usage:
-#
-# The module works with sensible defaults:
-#
-# node default {
+# @example Use the sensible defaults
 #   include nginx
-# }
+#
+# @param include_modules_enabled
+#   When set, nginx will include module configurations files installed in the
+#   /etc/nginx/modules-enabled directory.
+#
+# @param passenger_package_name
+#   The name of the package to install in order for the passenger module of
+#   nginx being usable.
 #
 # @param nginx_version
 #   The version of nginx installed (or being installed).
@@ -32,6 +23,21 @@
 #   already installed.  If the fact is unavailable, it defaults to '1.6.0'.
 #   You may need to set this manually to get a working and idempotent
 #   configuration.
+#
+# @param debug_connections
+#   Configures nginx `debug_connection` lines in the `events` section of the nginx config.
+#   See http://nginx.org/en/docs/ngx_core_module.html#debug_connection
+#
+# @param service_config_check
+#  whether to en- or disable the config check via nginx -t on config changes
+#
+# @param service_config_check_command
+#  Command to execute to validate the generated configuration.
+#
+# @param reset_timedout_connection
+#   Enables or disables resetting timed out connections and connections closed
+#   with the non-standard code 444.
+#
 class nginx (
   ### START Nginx Configuration ###
   Variant[Stdlib::Absolutepath, Boolean] $client_body_temp_path = $nginx::params::client_body_temp_path,
@@ -45,12 +51,13 @@ class nginx (
   $global_owner                                              = $nginx::params::global_owner,
   $global_group                                              = $nginx::params::global_group,
   $global_mode                                               = $nginx::params::global_mode,
+  Optional[Variant[String[1], Array[String[1]]]] $limit_req_zone = undef,
   Stdlib::Absolutepath $log_dir                              = $nginx::params::log_dir,
   String[1] $log_user                                        = $nginx::params::log_user,
   String[1] $log_group                                       = $nginx::params::log_group,
   Stdlib::Filemode $log_mode                                 = $nginx::params::log_mode,
   Variant[String, Array[String]] $http_access_log            = "${log_dir}/${nginx::params::http_access_log_file}",
-  $http_format_log                                           = undef,
+  Optional[String] $http_format_log                          = undef,
   Variant[String, Array[String]] $nginx_error_log            = "${log_dir}/${nginx::params::nginx_error_log_file}",
   Nginx::ErrorLogSeverity $nginx_error_log_severity          = 'error',
   $pid                                                       = $nginx::params::pid,
@@ -63,9 +70,12 @@ class nginx (
   Boolean $super_user                                        = $nginx::params::super_user,
   $temp_dir                                                  = $nginx::params::temp_dir,
   Boolean $server_purge                                      = false,
+  Boolean $include_modules_enabled                           = $nginx::params::include_modules_enabled,
 
   # Primary Templates
-  $conf_template                                             = 'nginx/conf.d/nginx.conf.erb',
+  String[1] $conf_template                                   = 'nginx/conf.d/nginx.conf.erb',
+  String[1] $fastcgi_conf_template                           = 'nginx/server/fastcgi.conf.erb',
+  String[1] $uwsgi_params_template                           = 'nginx/server/uwsgi_params.erb',
 
   ### START Nginx Configuration ###
   Optional[Enum['on', 'off']] $absolute_redirect             = undef,
@@ -76,8 +86,11 @@ class nginx (
   $client_body_timeout                                       = '60s',
   $send_timeout                                              = '60s',
   $lingering_timeout                                         = '5s',
+  Optional[Enum['on','off','always']] $lingering_close       = undef,
+  Optional[String[1]] $lingering_time                        = undef,
   Optional[Enum['on', 'off']] $etag                          = undef,
   Optional[String] $events_use                               = undef,
+  Array[Nginx::DebugConnection] $debug_connections           = [],
   String $fastcgi_cache_inactive                             = '20m',
   Optional[String] $fastcgi_cache_key                        = undef,
   String $fastcgi_cache_keys_zone                            = 'd3:100m',
@@ -94,6 +107,7 @@ class nginx (
   $gzip_proxied                                              = 'off',
   $gzip_types                                                = undef,
   Enum['on', 'off'] $gzip_vary                               = 'off',
+  Optional[Enum['on', 'off', 'always']] $gzip_static         = undef,
   Optional[Variant[Hash, Array]] $http_cfg_prepend           = undef,
   Optional[Variant[Hash, Array]] $http_cfg_append            = undef,
   Optional[Variant[Array[String], String]] $http_raw_prepend = undef,
@@ -143,6 +157,7 @@ class nginx (
   Enum['on', 'off'] $spdy                                    = 'off',
   Enum['on', 'off'] $http2                                   = 'off',
   Enum['on', 'off'] $ssl_stapling                            = 'off',
+  Enum['on', 'off'] $ssl_stapling_verify                     = 'off',
   Stdlib::Absolutepath $snippets_dir                         = $nginx::params::snippets_dir,
   Boolean $manage_snippets_dir                               = true,
   $types_hash_bucket_size                                    = '512',
@@ -151,9 +166,23 @@ class nginx (
   Enum['on', 'off'] $ssl_prefer_server_ciphers               = 'on',
   Variant[Integer, Enum['auto']] $worker_processes           = 'auto',
   Integer $worker_rlimit_nofile                              = 1024,
-  $ssl_protocols                                             = 'TLSv1 TLSv1.1 TLSv1.2',
-  $ssl_ciphers                                               = 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS', # lint:ignore:140chars
+  Optional[Enum['on', 'off']] $pcre_jit                      = undef,
+  String $ssl_protocols                                      = 'TLSv1 TLSv1.1 TLSv1.2',
+  String $ssl_ciphers                                        = 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS', # lint:ignore:140chars
   Optional[Stdlib::Unixpath] $ssl_dhparam                    = undef,
+  Optional[String] $ssl_ecdh_curve                           = undef,
+  String $ssl_session_cache                                  = 'shared:SSL:10m',
+  String $ssl_session_timeout                                = '5m',
+  Optional[Enum['on', 'off']] $ssl_session_tickets           = undef,
+  Optional[Stdlib::Absolutepath] $ssl_session_ticket_key     = undef,
+  Optional[String] $ssl_buffer_size                          = undef,
+  Optional[Stdlib::Absolutepath] $ssl_crl                    = undef,
+  Optional[Stdlib::Absolutepath] $ssl_stapling_file          = undef,
+  Optional[String] $ssl_stapling_responder                   = undef,
+  Optional[Stdlib::Absolutepath] $ssl_trusted_certificate    = undef,
+  Optional[Integer] $ssl_verify_depth                        = undef,
+  Optional[Stdlib::Absolutepath] $ssl_password_file          = undef,
+  Optional[Enum['on', 'off']] $reset_timedout_connection     = undef,
 
   ### START Package Configuration ###
   $package_ensure                                            = present,
@@ -165,16 +194,19 @@ class nginx (
   Boolean $mime_types_preserve_defaults                      = false,
   Optional[String] $repo_release                             = undef,
   $passenger_package_ensure                                  = 'present',
+  String[1] $passenger_package_name                          = $nginx::params::passenger_package_name,
   Optional[Stdlib::HTTPUrl] $repo_source                     = undef,
   ### END Package Configuration ###
 
   ### START Service Configuation ###
-  $service_ensure                                            = running,
+  Stdlib::Ensure::Service $service_ensure                    = 'running',
   $service_enable                                            = true,
   $service_flags                                             = undef,
   $service_restart                                           = undef,
   $service_name                                              = 'nginx',
   $service_manage                                            = true,
+  Boolean $service_config_check                              = false,
+  String $service_config_check_command                       = 'nginx -t',
   ### END Service Configuration ###
 
   ### START Hiera Lookups ###
@@ -197,7 +229,6 @@ class nginx (
 
   ### END Hiera Lookups ###
 ) inherits nginx::params {
-
   contain 'nginx::package'
   contain 'nginx::config'
   contain 'nginx::service'

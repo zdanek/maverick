@@ -1,18 +1,19 @@
-require "spec_helper"
-require "facter"
+require 'spec_helper'
+require 'facter'
 
-describe Facter::Util::Fact do
+describe Facter.fact(:openssl_version) do
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) { facts }
-      before {
+
+      before(:each) do
         Facter.clear
-      }
-      describe "openssl_version" do
+      end
+      describe 'openssl_version' do
         context 'with value' do
           before :each do
-            Facter::Util::Resolution.stubs(:which).with('openssl').returns(true)
-            Facter::Util::Resolution.stubs(:exec).with('openssl version 2>&1').returns('OpenSSL 0.9.8zg 14 July 2015')
+            allow(Facter::Util::Resolution).to receive(:which).with('openssl').and_return(true)
+            allow(Facter::Util::Resolution).to receive(:exec).with('openssl version 2>&1').and_return('OpenSSL 0.9.8zg 14 July 2015')
           end
           it {
             expect(Facter.value(:openssl_version)).to eq('0.9.8zg')
@@ -20,33 +21,45 @@ describe Facter::Util::Fact do
         end
         context 'with broken openssl' do
           before :each do
-            Facter::Util::Resolution.stubs(:which).with('openssl').returns(true)
-            Facter::Util::Resolution.stubs(:exec).with('openssl version 2>&1').returns('openssl: /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0: version `OPENSSL_1.0.1s\' not found (required by openssl)')
+            allow(Facter::Util::Resolution).to receive(:which).with('openssl').and_return(true)
+            allow(Facter::Util::Resolution).to receive(:exec).with('openssl version 2>&1')
+                                                             .and_return('openssl: /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.0: version `OPENSSL_1.0.1s\' not found (required by openssl)')
           end
           it {
             expect(Facter.value(:openssl_version)).to be_nil
           }
         end
       end
-      describe "openssl_version rhel" do
+      describe 'openssl_version rhel' do
         context 'with value' do
           before :each do
-            Facter::Util::Resolution.stubs(:which).with('openssl').returns(true)
-            Facter::Util::Resolution.stubs(:exec).with('openssl version 2>&1').returns('OpenSSL 1.0.1e-fips 11 Feb 2013')
+            allow(Facter::Util::Resolution).to receive(:which).with('openssl').and_return(true)
+            allow(Facter::Util::Resolution).to receive(:exec).with('openssl version 2>&1').and_return('OpenSSL 1.0.1e-fips 11 Feb 2013')
           end
           it {
             expect(Facter.value(:openssl_version)).to eq('1.0.1e-fips')
           }
         end
       end
-      describe "openssl_version centos" do
+      describe 'openssl_version centos' do
         context 'with value' do
           before :each do
-            Facter::Util::Resolution.stubs(:which).with('openssl').returns(true)
-            Facter::Util::Resolution.stubs(:exec).with('openssl version 2>&1').returns('OpenSSL 1.0.2g  1 Mar 2016')
+            allow(Facter::Util::Resolution).to receive(:which).with('openssl').and_return(true)
+            allow(Facter::Util::Resolution).to receive(:exec).with('openssl version 2>&1').and_return('OpenSSL 1.0.2g  1 Mar 2016')
           end
           it {
             expect(Facter.value(:openssl_version)).to eq('1.0.2g')
+          }
+        end
+      end
+      describe 'openssl_version rhel8' do
+        context 'with value' do
+          before :each do
+            allow(Facter::Util::Resolution).to receive(:which).with('openssl').and_return(true)
+            allow(Facter::Util::Resolution).to receive(:exec).with('openssl version 2>&1').and_return('OpenSSL 1.1.1c FIPS  28 May 2019')
+          end
+          it {
+            expect(Facter.value(:openssl_version)).to eq('1.1.1c')
           }
         end
       end

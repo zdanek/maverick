@@ -1,6 +1,6 @@
 {
   "name": "puppet-collectd",
-  "version": "10.1.0",
+  "version": "12.2.0",
   "author": "Vox Pupuli",
   "summary": "Puppet module for Collectd",
   "license": "Apache-2.0",
@@ -9,20 +9,24 @@
   "issues_url": "https://github.com/voxpupuli/puppet-collectd/issues",
   "dependencies": [
     {
-      "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.25.0 < 6.0.0"
+      "name": "puppetlabs-apt",
+      "version_requirement": ">= 2.2.0 < 8.0.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 1.2.5 < 6.0.0"
+      "version_requirement": ">= 4.1.0 < 7.0.0"
     },
     {
-      "name": "stahnma-epel",
-      "version_requirement": ">= 1.2.2 < 2.0.0"
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.25.0 < 7.0.0"
     },
     {
-      "name": "puppetlabs-apt",
-      "version_requirement": ">= 2.2.0 < 8.0.0"
+      "name": "puppet-epel",
+      "version_requirement": ">= 3.0.0 < 4.0.0"
+    },
+    {
+      "name": "puppetlabs-python_task_helper",
+      "version_requirement": ">= 0.2.0 < 1.0.0"
     }
   ],
   "data_provider": null,
@@ -30,19 +34,22 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -54,35 +61,23 @@
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "8"
-      ]
-    },
-    {
-      "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [
-        "14.04",
-        "16.04"
-      ]
-    },
-    {
-      "operatingsystem": "Solaris",
-      "operatingsystemrelease": [
-        "11"
-      ]
-    },
-    {
-      "operatingsystem": "FreeBSD",
-      "operatingsystemrelease": [
+        "8",
         "9",
         "10"
       ]
     },
     {
-      "operatingsystem": "OpenBSD",
+      "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "5.7",
-        "5.8",
-        "5.9"
+        "16.04",
+        "18.04"
+      ]
+    },
+    {
+      "operatingsystem": "FreeBSD",
+      "operatingsystemrelease": [
+        "11",
+        "12"
       ]
     },
     {
@@ -95,7 +90,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.10.0 < 7.0.0"
+      "version_requirement": ">= 5.5.8 < 7.0.0"
     }
   ],
   "tags": [

@@ -89,6 +89,10 @@ class openldap::client::config {
     'absent' => 'rm NSS_BASE_SHADOW',
     default  => "set NSS_BASE_SHADOW ${::openldap::client::nss_base_shadow}",
   }
+  $nss_initgroups_ignoreusers = $::openldap::client::nss_initgroups_ignoreusers ? {
+    undef   => undef,
+    default => "set NSS_INITGROUPS_IGNOREUSERS ${::openldap::client::nss_initgroups_ignoreusers}",
+  }
   $pam_filter = $::openldap::client::pam_filter ? {
     undef    => undef,
     'absent' => 'rm PAM_FILTER',
@@ -129,6 +133,47 @@ class openldap::client::config {
     'absent' => 'rm TLS_REQCERT',
     default  => "set TLS_REQCERT ${::openldap::client::tls_reqcert}",
   }
+  $tls_moznss_compatibility = $::openldap::client::tls_moznss_compatibility ? {
+    undef    => undef,
+    'absent' => 'rm TLS_MOZNSS_COMPATIBILITY',
+    default  => "set TLS_MOZNSS_COMPATIBILITY ${::openldap::client::tls_moznss_compatibility}",
+  }
+  $sasl_mech = $::openldap::client::sasl_mech ? {
+    undef   => undef,
+    default => "set SASL_MECH ${::openldap::client::sasl_mech}",
+  }
+  $sasl_realm = $::openldap::client::sasl_realm ? {
+    undef   => undef,
+    default => "set SASL_REALM ${::openldap::client::sasl_realm}",
+  }
+  $sasl_authcid = $::openldap::client::sasl_authcid ? {
+    undef   => undef,
+    default => "set SASL_AUTHCID ${::openldap::client::sasl_authcid}",
+  }
+  $_sasl_secprops = $::openldap::client::sasl_secprops ? {
+    undef   => undef,
+    default => join(flatten([$::openldap::client::sasl_secprops]), ','),
+  }
+  $sasl_secprops = $_sasl_secprops ? {
+    undef   => undef,
+    default => "set SASL_SECPROPS ${_sasl_secprops}",
+  }
+  $sasl_nocanon = $::openldap::client::sasl_nocanon ? {
+    undef   => undef,
+    default => "set SASL_NOCANON ${::openldap::client::sasl_nocanon}",
+  }
+  $gssapi_sign = $::openldap::client::gssapi_sign ? {
+    undef   => undef,
+    default => "set GSSAPI_SIGN ${::openldap::client::gssapi_sign}",
+  }
+  $gssapi_encrypt = $::openldap::client::gssapi_encrypt ? {
+    undef   => undef,
+    default => "set GSSAPI_ENCRYPT ${::openldap::client::gssapi_encrypt}",
+  }
+  $gssapi_allow_remote_principal = $::openldap::client::gssapi_allow_remote_principal ? {
+    undef   => undef,
+    default => "set GSSAPI_ALLOW_REMOTE_PRINCIPAL ${::openldap::client::gssapi_allow_remote_principal}",
+  }
   $sudoers_base = $::openldap::client::sudoers_base ? {
     undef    => undef,
     'absent' => 'rm SUDOERS_BASE',
@@ -152,6 +197,7 @@ class openldap::client::config {
     $nss_base_hosts,
     $nss_base_passwd,
     $nss_base_shadow,
+    $nss_initgroups_ignoreusers,
     $pam_filter,
     $pam_login_attribute,
     $pam_member_attribute,
@@ -160,6 +206,15 @@ class openldap::client::config {
     $tls_cacert,
     $tls_cacertdir,
     $tls_reqcert,
+    $tls_moznss_compatibility,
+    $sasl_mech,
+    $sasl_realm,
+    $sasl_authcid,
+    $sasl_secprops,
+    $sasl_nocanon,
+    $gssapi_sign,
+    $gssapi_encrypt,
+    $gssapi_allow_remote_principal,
     $sudoers_base,
   ])
   augeas { 'ldap.conf':

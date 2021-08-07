@@ -6,24 +6,27 @@
 
 class clamav::params {
 
-  #### init vars ####
-  $manage_user              = false
-  $manage_clamd             = false
-  $manage_freshclam         = false
-  $clamd_service_ensure     = 'running'
-  $clamd_service_enable     = true
-  $freshclam_service_ensure = 'running'
-  $freshclam_service_enable = true
+  # ### init vars ####
+  $manage_user                  = false
+  $manage_clamd                 = false
+  $manage_clamav_milter         = false
+  $manage_freshclam             = false
+  $clamd_service_ensure         = 'running'
+  $clamd_service_enable         = true
+  $freshclam_service_ensure     = 'running'
+  $freshclam_service_enable     = true
+  $clamav_milter_service_ensure = 'running'
+  $clamav_milter_service_enable = true
 
   if ($::osfamily == 'RedHat') and (versioncmp($::operatingsystemrelease, '6.0') >= 0) {
-    #### init vars ####
+    # ### init vars ####
     $manage_repo    = true
     $clamav_package = 'clamav'
     $clamav_version = 'installed'
     $freshclam_service = undef
 
     if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
-      #### user vars ####
+      # ### user vars ####
       $user              = 'clamscan'
       $comment           = 'Clamav scanner user'
       $uid               = 496
@@ -33,29 +36,43 @@ class clamav::params {
       $group             = 'clamscan'
       $groups            = undef
 
-      #### clamd vars ####
+      # ### clamd vars ####
       $clamd_package     = 'clamav-scanner-systemd'
       $clamd_version     = 'installed'
       $clamd_config      = '/etc/clamd.d/scan.conf'
       $clamd_service     = 'clamd@scan'
       $clamd_options     = {}
 
-      #### Default values OS specific ####
+      # ### Default values OS specific ####
       $clamd_default_localsocket = '/var/run/clamd.scan/clamd.sock'
       $clamd_default_logfile     = undef # '/var/log/clamd.scan'
       $clamd_default_pidfile     = '/var/run/clamd.scan/clamd.pid'
       $freshclam_default_databaseowner = 'clamupdate'
       $freshclam_default_updatelogfile = undef # '/var/log/freshclam.log'
 
-      #### freshclam vars ####
+      # ### freshclam vars ####
       $freshclam_package = 'clamav-update'
       $freshclam_version = 'installed'
       $freshclam_config  = '/etc/freshclam.conf'
       $freshclam_options = {}
       $freshclam_sysconfig = '/etc/sysconfig/freshclam'
       $freshclam_delay     = undef
+
+      # ### clamav_milter vars ####
+      $clamav_milter_package     = 'clamav-milter-systemd'
+      $clamav_milter_version     = 'installed'
+      $clamav_milter_config      = '/etc/mail/clamav-milter.conf'
+      $clamav_milter_service     = 'clamav-milter'
+      $clamav_milter_options     = {}
+      $clamav_milter_default_options = {
+        'User'                     => 'clamilt',
+        'MilterSocket'             => 'inet:8890@localhost',
+        'ClamdSocket'              => 'tcp:127.0.0.1',
+        'LogSyslog'                => 'yes',
+      }
+
     } else {
-      #### user vars ####
+      # ### user vars ####
       $user              = 'clam'
       $comment           = 'Clam Anti Virus Checker'
       $uid               = 496
@@ -65,30 +82,38 @@ class clamav::params {
       $group             = 'clam'
       $groups            = undef
 
-      #### clamd vars ####
+      # ### clamd vars ####
       $clamd_package     = 'clamd'
       $clamd_version     = 'installed'
       $clamd_config      = '/etc/clamd.conf'
       $clamd_service     = 'clamd'
       $clamd_options     = {}
 
-      #### Default values OS specific ####
+      # ### Default values OS specific ####
       $clamd_default_localsocket = '/var/run/clamav/clamd.sock'
       $clamd_default_logfile     = '/var/log/clamav/clamd.log'
       $clamd_default_pidfile     = '/var/run/clamav/clamd.pid'
       $freshclam_default_databaseowner = $user
       $freshclam_default_updatelogfile = '/var/log/clamav/freshclam.log'
 
-      #### freshclam vars ####
+      # ### freshclam vars ####
       $freshclam_package = undef
       $freshclam_version = undef
       $freshclam_config  = '/etc/freshclam.conf'
       $freshclam_options = {}
       $freshclam_sysconfig = undef
       $freshclam_delay     = undef
+
+      # ### clamav_milter vars ####
+      $clamav_milter_package     = undef
+      $clamav_milter_version     = undef
+      $clamav_milter_config      = undef
+      $clamav_milter_service     = undef
+      $clamav_milter_options     = undef
+      $clamav_milter_default_options = undef
     }
 
-    #### Default values OS specific ####
+    # ### Default values OS specific ####
     $clamd_default_databasedirectory  = '/var/lib/clamav'
     $clamd_default_logrotate          = undef
     $clamd_default_logsyslog          = true
@@ -99,12 +124,12 @@ class clamav::params {
     (($::operatingsystem == 'Debian') and (versioncmp($::operatingsystemrelease, '7.0') >= 0)) or
     (($::operatingsystem == 'Ubuntu') and (versioncmp($::operatingsystemrelease, '12.0') >= 0))
   ) {
-    #### init vars ####
+    # ### init vars ####
     $manage_repo       = false
     $clamav_package    = 'clamav'
     $clamav_version    = 'installed'
 
-    #### user vars ####
+    # ### user vars ####
     $user              = 'clamav'
     $comment           = undef
     $uid               = 496
@@ -114,14 +139,14 @@ class clamav::params {
     $group             = 'clamav'
     $groups            = undef
 
-    #### clamd vars ####
+    # ### clamd vars ####
     $clamd_package     = 'clamav-daemon'
     $clamd_version     = 'installed'
     $clamd_config      = '/etc/clamav/clamd.conf'
     $clamd_service     = 'clamav-daemon'
     $clamd_options     = {}
 
-    #### freshclam vars ####
+    # ### freshclam vars ####
     $freshclam_package = 'clamav-freshclam'
     $freshclam_version = 'installed'
     $freshclam_config  = '/etc/clamav/freshclam.conf'
@@ -130,7 +155,15 @@ class clamav::params {
     $freshclam_sysconfig = undef
     $freshclam_delay     = undef
 
-    #### Default values OS specific ####
+    # ### clamav_milter vars ####
+    $clamav_milter_package     = undef
+    $clamav_milter_version     = undef
+    $clamav_milter_config      = undef
+    $clamav_milter_service     = undef
+    $clamav_milter_options     = undef
+    $clamav_milter_default_options = undef
+
+    # ### Default values OS specific ####
     $clamd_default_databasedirectory  = '/var/lib/clamav'
     $clamd_default_localsocket        = '/var/run/clamav/clamd.ctl'
     $clamd_default_logfile            = '/var/log/clamav/clamav.log'
@@ -149,7 +182,6 @@ class clamav::params {
   $clamd_default_options = {
     'AlgorithmicDetection'           => true,
     'AllowAllMatchScan'              => true,
-    'AllowSupplementaryGroups'       => true,
     'ArchiveBlockEncrypted'          => false,
     'Bytecode'                       => true,
     'BytecodeSecurity'               => 'TrustSigned',
@@ -218,7 +250,6 @@ class clamav::params {
   }
 
   $freshclam_default_options = {
-    'AllowSupplementaryGroups' => false,
     'Bytecode'                 => true,
     'Checks'                   => '24',
     'CompressLocalDatabase'    => 'no',

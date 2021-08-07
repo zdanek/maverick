@@ -2,6 +2,99 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v7.1.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v7.1.0) (2021-05-15)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v7.0.1...v7.1.0)
+
+### Added
+
+- pw\_hash: add support for bcrypt variants [\#1173](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1173) ([kjetilho](https://github.com/kjetilho))
+
+## [v7.0.1](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v7.0.1) (2021-04-12)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v7.0.0...v7.0.1)
+
+### Fixed
+
+- Fix typo in validate\_ipv6\_address function [\#1176](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1176) ([nbarrientos](https://github.com/nbarrientos))
+
+## [v7.0.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v7.0.0) (2021-03-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.6.0...v7.0.0)
+
+### Changed
+
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#1164](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1164) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Added
+
+- Stdlib::Email type [\#1160](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1160) ([b4ldr](https://github.com/b4ldr))
+
+### Fixed
+
+- \(bugfix\) Setting stricter email validation [\#1163](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1163) ([pmcmaw](https://github.com/pmcmaw))
+- \(IAC-1414\) Throw error in range\(\) function when step size invalid [\#1161](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1161) ([sanfrancrisko](https://github.com/sanfrancrisko))
+
+## [v6.6.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v6.6.0) (2021-02-02)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.5.0...v6.6.0)
+
+### Added
+
+- stdlib::ensure: new fuction to cast ensure values [\#1150](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1150) ([b4ldr](https://github.com/b4ldr))
+- \(feat\) Add support for Puppet 7 [\#1144](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1144) ([daianamezdrea](https://github.com/daianamezdrea))
+- Allow options injection for to\_yaml [\#1137](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1137) ([baurmatt](https://github.com/baurmatt))
+- Allow start/end checks on empty strings [\#1135](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1135) ([jvrsantacruz](https://github.com/jvrsantacruz))
+- Stdlib::HttpStatus: add type for HTTP status codes as per rfc2616 [\#1132](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1132) ([b4ldr](https://github.com/b4ldr))
+
+### Fixed
+
+- \(IAC-1375\) fix unit tests for pe\_version fact, when using later facte… [\#1155](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1155) ([tphoney](https://github.com/tphoney))
+- seeded\_rand: update funtion to ensure it returns an int not String [\#1139](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1139) ([b4ldr](https://github.com/b4ldr))
+
+## [v6.5.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v6.5.0) (2020-09-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.4.0...v6.5.0)
+
+### Added
+
+- Add parsehocon\(\) function [\#1130](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1130) ([reidmv](https://github.com/reidmv))
+- Add new types for Stdlib::Ensure::File [\#1129](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1129) ([b4ldr](https://github.com/b4ldr))
+- Add additional types Stdlib::Port::Dynamic,Ephemeral,Registered,User} [\#1128](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1128) ([b4ldr](https://github.com/b4ldr))
+- Stdlib::Datasize: This CR adds a new data size type alias [\#1126](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1126) ([b4ldr](https://github.com/b4ldr))
+
+## [v6.4.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v6.4.0) (2020-08-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.3.0...v6.4.0)
+
+### Added
+
+- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch `main` [\#1117](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1117) ([david22swan](https://github.com/david22swan))
+- \(IAC-746\) - Add ubuntu 20.04 support [\#1110](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1110) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- \[MODULES-10781\] Fix defined type defined\_with\_params\(\) [\#1122](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1122) ([trevor-vaughan](https://github.com/trevor-vaughan))
+- \[MODULES-10729\] defined\_with\_params - unnamed type [\#1115](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1115) ([trevor-vaughan](https://github.com/trevor-vaughan))
+
+## [v6.3.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v6.3.0) (2020-04-16)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.2.0...v6.3.0)
+
+### Added
+
+- Add start\_with function [\#1086](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1086) ([baurmatt](https://github.com/baurmatt))
+- stdlib::end\_with: create String.end\_with function [\#1084](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1084) ([b4ldr](https://github.com/b4ldr))
+- Adding str2saltedpbkdf2 function [\#1040](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1040) ([genebean](https://github.com/genebean))
+
+### Fixed
+
+- \(MODULES-10623\) explicitly top-scope calls to JSON methods [\#1101](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1101) ([tkishel](https://github.com/tkishel))
+- \[IAC-547\] Remove strftime from stdlib as it has already been replaced by the puppet agent since 4.8.0 [\#1097](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1097) ([carabasdaniel](https://github.com/carabasdaniel))
+- Add correct namespace for start\_with function [\#1095](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1095) ([baurmatt](https://github.com/baurmatt))
+- intersection: show types in exception due to invalid arguments [\#1077](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1077) ([runejuhl](https://github.com/runejuhl))
+- Make type aliases stricter [\#1066](https://github.com/puppetlabs/puppetlabs-stdlib/pull/1066) ([pegasd](https://github.com/pegasd))
+
 ## [v6.2.0](https://github.com/puppetlabs/puppetlabs-stdlib/tree/v6.2.0) (2019-12-10)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-stdlib/compare/v6.1.0...v6.2.0)
@@ -389,7 +482,7 @@ This release sees a massive update to all unit tests to test UTF8 characters. Th
 - Permit double slash in absolute/Unix path types.
 
 #### Bugfixes
-- Fix unsupported data type error with rspec-puppet master.
+- Fix unsupported data type error with rspec-puppet server.
 - Now allows test module metadata.json to be read by Puppet.
 - Fix acceptance test failure "Hiera is not a class".
 - Removal of unsupported platforms and future parser setting in acceptance tests.
@@ -1033,7 +1126,7 @@ This is a supported release
 
 ##### 2012-07-19 - Jeff McCune <jeff@puppetlabs.com> - 2.4.0
 
- * (Maint) use PuppetlabsSpec::PuppetInternals.scope (master) (deafe88)
+ * (Maint) use PuppetlabsSpec::PuppetInternals.scope (main) (deafe88)
 
 ##### 2012-07-10 - Hailee Kenney <hailee@puppetlabs.com> - 2.4.0
 
@@ -1059,7 +1152,7 @@ This is a supported release
  * (#13595) initialize\_everything\_for\_tests couples modules Puppet ver (3222f35)
  * (#13439) Fix MRI 1.9 issue with spec\_helper (15c5fd1)
  * (#13439) Fix test failures with Puppet 2.6.x (665610b)
- * (#13439) refactor spec helper for compatibility with both puppet 2.7 and master (82194ca)
+ * (#13439) refactor spec helper for compatibility with both puppet 2.7 and server (82194ca)
  * (#13494) Specify the behavior of zero padded strings (61891bb)
 
 ##### 2012-03-29 Puppet Labs <support@puppetlabs.com> - 2.1.3
@@ -1152,4 +1245,4 @@ This is a supported release
 * Add stdlib::stages class with a standard set of stages
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

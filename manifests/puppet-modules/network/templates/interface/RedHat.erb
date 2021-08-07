@@ -1,4 +1,7 @@
 # File Managed by Puppet
+<% if @description and ! @description.empty? -%>
+# <%= @description %>
+<% end -%>
 DEVICE="<%= @interface %>"
 <% if ! @ovsbootproto -%>
 BOOTPROTO="<%= @manage_bootproto %>"
@@ -35,6 +38,9 @@ LAYER2="<%= @layer2 %>"
 <% if @nettype -%>
 NETTYPE="<%= @nettype %>"
 <% end -%>
+<% if @zlinux_options -%>
+OPTIONS="<%= @zlinux_options %>"
+<% end -%>
 <% if @manage_ipaddr and ! @manage_ipaddr.empty? -%>
 <% if @ipaddress.kind_of?(Array) -%>
 <%- (1..(@ipaddress.length)).each do |id| -%>
@@ -42,6 +48,21 @@ IPADDR<%= id %>="<%= @ipaddress[id-1] %>"
 <% end -%>
 <% else -%>
 IPADDR="<%= @manage_ipaddr %>"
+<% end -%>
+<% end -%>
+<% if @manage_prefix -%>
+<% if @ipaddress.kind_of?(Array) -%>
+<% if @manage_prefix.kind_of?(Array) -%>
+<%- (1..(@manage_prefix.length)).each do |id| -%>
+PREFIX<%= id %>="<%= @manage_prefix[id-1] %>"
+<% end -%>
+<% else -%>
+<%- (1..(@ipaddress.length)).each do |id| -%>
+PREFIX<%= id %>="<%= @manage_prefix %>"
+<% end -%>
+<% end -%>
+<% else -%>
+PREFIX="<%= @manage_prefix %>"
 <% end -%>
 <% end -%>
 <% if @netmask -%>
@@ -63,7 +84,15 @@ NETMASK="<%= @netmask %>"
 BROADCAST="<%= @broadcast %>"
 <% end -%>
 <% if @gateway -%>
+<% if @ipaddress.kind_of?(Array) -%>
+<% if @operatingsystemmajrelease.to_i > 6 -%>
+GATEWAY1="<%= @gateway %>"
+<% else -%>
 GATEWAY="<%= @gateway %>"
+<% end -%>
+<% else -%>
+GATEWAY="<%= @gateway %>"
+<% end -%>
 <% end -%>
 <% if @manage_defroute -%>
 DEFROUTE="<%= @manage_defroute %>"
@@ -73,17 +102,25 @@ HWADDR="<%= @manage_hwaddr %>"
 <% end -%>
 <% if @ipv6init -%>
 IPV6INIT="<%= @ipv6init %>"
+<% end -%>
 <% if @ipv6_autoconf -%>
 IPV6_AUTOCONF="<%= @ipv6_autoconf %>"
 <% end -%>
+<% if @ipv6_privacy -%>
+IPV6_PRIVACY="<%= @ipv6_privacy %>"
+<% end -%>
+<% if @ipv6_addr_gen_mode -%>
+IPV6_ADDR_GEN_MODE="<%= @ipv6_addr_gen_mode %>"
+<% end -%>
 <% if @ipv6addr -%>
-IPV6_ADDR="<%= @ipv6addr %>"
+IPV6ADDR="<%= @ipv6addr %>"
+<% end -%>
+<% unless @ipv6addr_secondaries.empty? -%>
+IPV6ADDR_SECONDARIES="<%= @ipv6addr_secondaries.sort.join(' ') %>"
 <% end -%>
 <% if @ipv6_defaultgw -%>
 IPV6_DEFAULTGW="<%= @ipv6_defaultgw %>"
 <% end -%>
-<% end -%>
-
 <% if @dhcp_hostname -%>
 DHCP_HOSTNAME="<%= @dhcp_hostname %>"
 <% end -%>
@@ -95,6 +132,9 @@ DNS1="<%= @dns1 %>"
 <% end -%>
 <% if @dns2 -%>
 DNS2="<%= @dns2 %>"
+<% end -%>
+<% if @dns3 -%>
+DNS3="<%= @dns3 %>"
 <% end -%>
 <% if @domain -%>
 DOMAIN="<%= @domain %>"
@@ -114,8 +154,8 @@ BONDING_MASTER="<%= @bonding_master %>"
 <% if @bonding_opts -%>
 BONDING_OPTS="<%= @bonding_opts %>"
 <% else -%>
-<% if @bond_mode or @bond_miimon -%>
-BONDING_OPTS="<%- if @bond_mode -%>mode=<%= @bond_mode %><%- end -%><%- if @bond_miimon -%> miimon=<%= @bond_miimon %><%- end -%>"
+<% if @bond_mode or @bond_miimon or @bond_downdelay or @bond_updelay or @bond_lacp_rate or @bond_primary or @bond_xmit_hash_policy or @bond_arp_interval or @bond_arp_iptarget or @bond_fail_over_mac or @bond_ad_select or @use_carrier or @primary_reselect -%>
+BONDING_OPTS="<%- if @bond_mode -%>mode=<%= @bond_mode -%><%- end -%><%- if @bond_miimon -%> miimon=<%= @bond_miimon -%><%- end -%><%- if @bond_downdelay -%> downdelay=<%= @bond_downdelay -%><%- end -%><%- if @bond_updelay -%> updelay=<%= @bond_updelay -%><%- end -%><%- if @bond_lacp_rate -%> lacp_rate=<%= @bond_lacp_rate -%><%- end -%><%- if @bond_primary -%> primary=<%= @bond_primary -%><%- end -%><%- if @bond_xmit_hash_policy -%> xmit_hash_policy=<%= @bond_xmit_hash_policy -%><%- end -%><%- if @bond_arp_interval -%> arp_interval=<%= @bond_arp_interval -%><%- end -%><%- if @bond_arp_iptarget -%> arp_iptarget=<%= @bond_arp_iptarget -%><%- end -%><%- if @bond_fail_over_mac -%> fail_over_mac=<%= @bond_fail_over_mac -%><%- end -%><%- if @bond_ad_select -%> ad_select=<%= @bond_ad_select -%><%- end -%><%- if @use_carrier -%> use_carrier=<%= @use_carrier -%><%- end -%><%- if @primary_reselect -%> primary_reselect=<%= @primary_reselect -%><%- end -%>"
 <% end -%>
 <% end -%>
 <% if @team_config -%>
@@ -124,11 +164,20 @@ TEAM_CONFIG='<%= @team_config -%>'
 <% if @team_master -%>
 TEAM_MASTER=<%= @team_master %>
 <% end -%>
+<% if @team_port_config -%>
+TEAM_PORT_CONFIG='<%= @team_port_config %>'
+<% end -%>
 <% if @mtu -%>
 MTU="<%= @mtu %>"
 <% end -%>
 <% if @vlan -%>
 VLAN="<%= @vlan %>"
+<% end -%>
+<% if @vlan_id -%>
+VLAN_ID="<%= @vlan_id %>"
+<% end -%>
+<% if @vid -%>
+VID="<%= @vid %>"
 <% end -%>
 <% if @vlan_name_type -%>
 VLAN_NAME_TYPE="<%= @vlan_name_type %>"
@@ -150,6 +199,9 @@ ARP="<%= @arp %>"
 <% end -%>
 <% if @zone -%>
 ZONE="<%= @zone %>"
+<% end -%>
+<% if @onparent-%>
+ONPARENT="<%= @onparent %>"
 <% end -%>
 <% if @nozeroconf -%>
 NOZEROCONF="<%= @nozeroconf %>"
@@ -193,11 +245,27 @@ OVSDHCPINTERFACES="<%= @ovsdhcpinterfaces %>"
 <% if @ovsbootproto -%>
 OVSBOOTPROTO="<%= @ovsbootproto %>"
 <% end -%>
-<% if @ovsrequries -%>
-OVSREQURIES="<%= @ovsrequries %>"
+<% if @ovsrequires -%>
+OVSREQUIRES="<%= @ovsrequires %>"
+<% end -%>
+<% if @nm_name -%>
+NAME="<%= @nm_name %>"
+<% end -%>
+<% if @options_extra_redhat -%>
+<% @options_extra_redhat.each do |k,v| -%>
+<%= k %>="<%= v %>"
+<% end -%>
 <% end -%>
 <% if @check_link_down == true -%>
 check_link_down() {
    return 1;
 }
+<% end -%>
+<% if @connected_mode -%>
+CONNECTED_MODE=yes
+<% end -%>
+<% if @iprule -%>
+<%- (0..(@iprule.length-1)).each do |id| -%>
+ROUTING_RULE_<%= id+1 %>="<%= @iprule[id] %>"
+<%- end -%>
 <% end -%>

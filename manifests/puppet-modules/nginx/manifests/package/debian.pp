@@ -1,25 +1,12 @@
-# Class: nginx::package::debian
-#
-# This module manages NGINX package installation on debian based systems
-#
-# Parameters:
-#
-# There are no default parameters for this class.
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
-#
-# This class file is not called directly
+# @summary Manage NGINX package installation on debian based systems
+# @api private
 class nginx::package::debian {
-
   $package_name             = $nginx::package_name
   $package_source           = $nginx::package_source
   $package_ensure           = $nginx::package_ensure
   $package_flavor           = $nginx::package_flavor
   $passenger_package_ensure = $nginx::passenger_package_ensure
+  $passenger_package_name   = $nginx::passenger_package_name
   $manage_repo              = $nginx::manage_repo
   $release                  = $nginx::repo_release
   $repo_source              = $nginx::repo_source
@@ -44,7 +31,7 @@ class nginx::package::debian {
         apt::source { 'nginx':
           location => $stable_repo_source,
           repos    => 'nginx',
-          key      => {'id' => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62'},
+          key      => { 'id' => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62' },
           release  => $release,
         }
       }
@@ -56,7 +43,7 @@ class nginx::package::debian {
         apt::source { 'nginx':
           location => $mainline_repo_source,
           repos    => 'nginx',
-          key      => {'id' => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62'},
+          key      => { 'id' => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62' },
           release  => $release,
         }
       }
@@ -68,10 +55,10 @@ class nginx::package::debian {
         apt::source { 'nginx':
           location => $passenger_repo_source,
           repos    => 'main',
-          key      => {'id' => '16378A33A6EF16762922526E561F9B9CAC40B2F7'},
+          key      => { 'id' => '16378A33A6EF16762922526E561F9B9CAC40B2F7' },
         }
 
-        package { 'passenger':
+        package { $passenger_package_name:
           ensure  => $passenger_package_ensure,
           require => Exec['apt_update'],
         }

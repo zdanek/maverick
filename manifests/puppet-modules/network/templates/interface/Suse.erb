@@ -1,4 +1,7 @@
 # File Managed by Puppet
+<% if @description and ! @description.empty? -%>
+# <%= @description %>
+<% end -%>
 BOOTPROTO="<%= @manage_bootproto %>"
 STARTMODE="<%= @manage_startmode %>"
 USERCONTROL="<%= @usercontrol %>"
@@ -28,6 +31,9 @@ MTU="<%= @mtu %>"
 <% end -%>
 <% if @vlan -%>
 VLAN_ID="<%= @vlan %>"
+<% end -%>
+<% if @manage_hwaddr -%>
+LLADDR="<%= @manage_hwaddr %>"
 <% end -%>
 <% if @bridge -%>
 BRIDGE="<%= @bridge %>"
@@ -70,4 +76,27 @@ FIREWALL="<%= @firewall %>"
 <% end -%>
 <% if @remote_ipaddr -%>
 REMOTE_IPADDR="<%= @remote_ipaddr %>"
+<% end -%>
+<% if @check_duplicate_ip -%>
+CHECK_DUPLICATE_IP="<%= @check_duplicate_ip %>"
+<% end -%>
+<% if @send_gratuitous_arp -%>
+SEND_GRATUITOUS_ARP="<%= @send_gratuitous_arp %>"
+<% end -%>
+<% if @pre_up_script -%>
+PRE_UP_SCRIPT="<%= @pre_up_script %>"
+<% end -%>
+<% if @post_up_script -%>
+POST_UP_SCRIPT="<%= @post_up_script %>"
+<% end -%>
+<% if @pre_down_script -%>
+PRE_DOWN_SCRIPT="<%= @pre_down_script %>"
+<% end -%>
+<% if @post_down_script -%>
+POST_DOWN_SCRIPT="<%= @post_down_script %>"
+<% end -%>
+<% if @options_extra_suse -%>
+<% @options_extra_suse.each do |k,v| -%>
+<%= k %>="<%= v %>"
+<% end -%>
 <% end -%>

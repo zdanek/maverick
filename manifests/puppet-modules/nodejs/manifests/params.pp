@@ -11,7 +11,7 @@ class nodejs::params {
   $repo_proxy_password         = 'absent'
   $repo_proxy_username         = 'absent'
   $repo_release                = undef
-  $repo_url_suffix             = '8.x'
+  $repo_url_suffix             = '12.x'
   $use_flags                   = ['npm', 'snapshot']
 
   $cmd_exe_path = $facts['os']['family'] ? {
@@ -21,21 +21,40 @@ class nodejs::params {
 
   case $facts['os']['family'] {
     'Debian': {
-      if $facts['os']['release']['major'] =~ /^[89]$/ {
+      if $facts['os']['release']['major'] =~ /^(9|10)$/ {
+        $debian_nodejs_dev_package_name = $facts['os']['release']['major'] ? {
+          '9'     => 'nodejs-dev',
+          default => 'libnode-dev',
+        }
+        $debian_npm_package_name = $facts['os']['release']['major'] ? {
+          '9'     => false,
+          default => 'npm',
+        }
         $manage_package_repo       = true
         $nodejs_debug_package_name = 'nodejs-dbg'
-        $nodejs_dev_package_name   = undef
+        $nodejs_dev_package_name   = $debian_nodejs_dev_package_name
         $nodejs_dev_package_ensure = 'absent'
         $nodejs_package_name       = 'nodejs'
         $npm_package_ensure        = 'absent'
-        $npm_package_name          = false
+        $npm_package_name          = $debian_npm_package_name
         $npm_path                  = '/usr/bin/npm'
         $repo_class                = '::nodejs::repo::nodesource'
       }
-      elsif $facts['os']['release']['full'] =~ /^1[468]\.04$/ {
+      elsif $facts['os']['release']['full'] =~ /^1[68]\.04$/ {
         $manage_package_repo       = true
         $nodejs_debug_package_name = 'nodejs-dbg'
         $nodejs_dev_package_name   = 'nodejs-dev'
+        $nodejs_dev_package_ensure = 'absent'
+        $nodejs_package_name       = 'nodejs'
+        $npm_package_ensure        = 'absent'
+        $npm_package_name          = 'npm'
+        $npm_path                  = '/usr/bin/npm'
+        $repo_class                = '::nodejs::repo::nodesource'
+      }
+      elsif $facts['os']['release']['full'] =~ /^20\.04$/ {
+        $manage_package_repo       = true
+        $nodejs_debug_package_name = 'nodejs-dbg'
+        $nodejs_dev_package_name   = 'libnode-dev'
         $nodejs_dev_package_ensure = 'absent'
         $nodejs_package_name       = 'nodejs'
         $npm_package_ensure        = 'absent'
@@ -59,7 +78,7 @@ class nodejs::params {
       $package_provider          = undef
     }
     'RedHat': {
-      if $facts['os']['release']['major'] =~ /^[67]$/ {
+      if $facts['os']['release']['major'] =~ /^[78]$/ {
         $manage_package_repo       = true
         $nodejs_debug_package_name = 'nodejs-debuginfo'
         $nodejs_dev_package_name   = 'nodejs-devel'
@@ -93,7 +112,7 @@ class nodejs::params {
         $repo_class                = '::nodejs::repo::nodesource'
       }
       else {
-        fail("The ${module_name} module is not supported on ${::operatingsystem} ${::operatingsystemrelease}.")
+        fail("The ${module_name} module is not supported on ${facts['os']['name']} ${facts['os']['release']['full']}.")
       }
       $package_provider          = undef
     }
@@ -129,7 +148,7 @@ class nodejs::params {
       $nodejs_package_name       = 'www/node'
       $npm_package_ensure        = 'present'
       $npm_package_name          = 'www/npm'
-      $npm_path                  = '/usr/bin/npm'
+      $npm_path                  = '/usr/local/bin/npm'
       $repo_class                = undef
       $package_provider          = undef
     }

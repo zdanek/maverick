@@ -1,5 +1,10 @@
+# @summary
+#   Params class
+#
+# @api private
+#
 class ssh::params {
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       $server_package_name = 'openssh-server'
       $client_package_name = 'openssh-client'
@@ -9,7 +14,7 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'ssh'
       $sftp_server_path = '/usr/lib/openssh/sftp-server'
-      $host_priv_key_group = 'root'
+      $host_priv_key_group = 0
     }
     'RedHat': {
       $server_package_name = 'openssh-server'
@@ -20,10 +25,10 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'sshd'
       $sftp_server_path = '/usr/libexec/openssh/sftp-server'
-      if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+      if versioncmp($facts['os']['release']['major'], '7') >= 0 {
         $host_priv_key_group = 'ssh_keys'
       } else {
-        $host_priv_key_group = 'root'
+        $host_priv_key_group = 0
       }
     }
     'FreeBSD', 'DragonFly': {
@@ -35,7 +40,7 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'sshd'
       $sftp_server_path = '/usr/libexec/sftp-server'
-      $host_priv_key_group = 'root'
+      $host_priv_key_group = 0
     }
     'OpenBSD': {
       $server_package_name = undef
@@ -46,7 +51,7 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'sshd'
       $sftp_server_path = '/usr/libexec/sftp-server'
-      $host_priv_key_group = 'root'
+      $host_priv_key_group = 0
     }
     'Darwin': {
       $server_package_name = undef
@@ -57,7 +62,7 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'com.openssh.sshd'
       $sftp_server_path = '/usr/libexec/sftp-server'
-      $host_priv_key_group = 'root'
+      $host_priv_key_group = 0
     }
     'ArchLinux': {
       $server_package_name = 'openssh'
@@ -68,7 +73,7 @@ class ssh::params {
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
       $service_name = 'sshd.service'
       $sftp_server_path = '/usr/lib/ssh/sftp-server'
-      $host_priv_key_group = 'root'
+      $host_priv_key_group = 0
     }
     'Suse': {
       $server_package_name = 'openssh'
@@ -77,14 +82,13 @@ class ssh::params {
       $sshd_config = '/etc/ssh/sshd_config'
       $ssh_config = '/etc/ssh/ssh_config'
       $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
-      $host_priv_key_group = 'root'
-      case $::operatingsystem {
+      $host_priv_key_group = 0
+      case $facts['os']['name'] {
         'SLES': {
           $service_name = 'sshd'
-          # $::operatingsystemmajrelease isn't available on e.g. SLES 10
-          case $::operatingsystemrelease {
+          case $facts['os']['release']['full'] {
             /^10\./, /^11\./: {
-              if ($::architecture == 'x86_64') {
+              if ($facts['os']['architecture'] == 'x86_64') {
                 $sftp_server_path = '/usr/lib64/ssh/sftp-server'
               } else {
                 $sftp_server_path = '/usr/lib/ssh/sftp-server'
@@ -100,12 +104,12 @@ class ssh::params {
           $sftp_server_path = '/usr/lib/ssh/sftp-server'
         }
         default: {
-          fail("Unsupported platform: ${::osfamily}/${::operatingsystem}")
+          fail("Unsupported platform: ${facts['os']['family']}/${facts['os']['name']}")
         }
       }
     }
     'Solaris': {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'SmartOS': {
           $server_package_name = undef
           $client_package_name = undef
@@ -115,7 +119,7 @@ class ssh::params {
           $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
           $service_name = 'svc:/network/ssh:default'
           $sftp_server_path = 'internal-sftp'
-          $host_priv_key_group = 'root'
+          $host_priv_key_group = 0
         }
         default: {
           $sshd_dir = '/etc/ssh'
@@ -124,8 +128,8 @@ class ssh::params {
           $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
           $service_name = 'svc:/network/ssh:default'
           $sftp_server_path = 'internal-sftp'
-          $host_priv_key_group = 'root'
-          case versioncmp($::kernelrelease, '5.10') {
+          $host_priv_key_group = 0
+          case versioncmp($facts['kernelrelease'], '5.10') {
             1: {
               # Solaris 11 and later
               $server_package_name = '/service/network/ssh'
@@ -138,14 +142,14 @@ class ssh::params {
             }
             default: {
               # Solaris 9 and earlier not supported
-              fail("Unsupported platform: ${::osfamily}/${::kernelrelease}")
+              fail("Unsupported platform: ${facts['os']['family']}/${facts['kernelrelease']}")
             }
           }
         }
       }
     }
     default: {
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'Gentoo': {
           $server_package_name = 'openssh'
           $client_package_name = 'openssh'
@@ -155,7 +159,7 @@ class ssh::params {
           $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
           $service_name = 'sshd'
           $sftp_server_path = '/usr/lib/misc/sftp-server'
-          $host_priv_key_group = 'root'
+          $host_priv_key_group = 0
         }
         'Amazon': {
           $server_package_name = 'openssh-server'
@@ -166,10 +170,10 @@ class ssh::params {
           $ssh_known_hosts = '/etc/ssh/ssh_known_hosts'
           $service_name = 'sshd'
           $sftp_server_path = '/usr/libexec/openssh/sftp-server'
-          $host_priv_key_group = 'root'
+          $host_priv_key_group = 0
         }
         default: {
-          fail("Unsupported platform: ${::osfamily}/${::operatingsystem}")
+          fail("Unsupported platform: ${facts['os']['family']}/${facts['os']['name']}")
         }
       }
     }
@@ -178,7 +182,7 @@ class ssh::params {
   # ssh & sshd default options:
   # - OpenBSD doesn't know about UsePAM
   # - Sun_SSH doesn't know about UsePAM & AcceptEnv; SendEnv & HashKnownHosts
-  case $::osfamily {
+  case $facts['os']['family'] {
     'OpenBSD': {
       $sshd_default_options = {
         'ChallengeResponseAuthentication' => 'no',
@@ -205,7 +209,8 @@ class ssh::params {
           "${sshd_dir}/ssh_host_dsa_key",
         ],
       }
-      $ssh_default_options = { }
+      $ssh_default_options = {
+      }
     }
     default: {
       $sshd_default_options = {

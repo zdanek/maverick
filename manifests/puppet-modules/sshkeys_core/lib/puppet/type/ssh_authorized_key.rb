@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 module Puppet
   Type.newtype(:ssh_authorized_key) do
     @doc = "Manages SSH authorized keys. Currently only type 2 keys are supported.
@@ -48,14 +50,28 @@ module Puppet
       isnamevar
     end
 
+    newparam(:drop_privileges, boolean: true, parent: Puppet::Parameter::Boolean) do
+      desc "Whether to drop privileges when writing the key file. This is
+        useful for creating files in paths not writable by the target user. Note
+        the possible security implications of managing file ownership and
+        permissions as a privileged user."
+
+      defaultto true
+    end
+
     newproperty(:type) do
       desc 'The encryption type used.'
 
-      newvalues :'ssh-dss', :'ssh-rsa', :'ecdsa-sha2-nistp256', :'ecdsa-sha2-nistp384', :'ecdsa-sha2-nistp521', :'ssh-ed25519'
+      newvalues :'ssh-dss', :'ssh-rsa', :'ecdsa-sha2-nistp256', :'ecdsa-sha2-nistp384', :'ecdsa-sha2-nistp521', :'ssh-ed25519',
+                :'sk-ecdsa-sha2-nistp256@openssh.com', :'sk-ssh-ed25519@openssh.com', :'ssh-rsa-cert-v01@openssh.com',
+                :'ssh-ed25519-cert-v01@openssh.com', :'ssh-dss-cert-v01@openssh.com', :'ecdsa-sha2-nistp256-cert-v01@openssh.com',
+                :'ecdsa-sha2-nistp384-cert-v01@openssh.com', :'ecdsa-sha2-nistp521-cert-v01@openssh.com'
 
       aliasvalue(:dsa, :'ssh-dss')
       aliasvalue(:ed25519, :'ssh-ed25519')
       aliasvalue(:rsa, :'ssh-rsa')
+      aliasvalue(:'ecdsa-sk', :'sk-ecdsa-sha2-nistp256@openssh.com')
+      aliasvalue(:'ed25519-sk', :'sk-ssh-ed25519@openssh.com')
     end
 
     newproperty(:key) do
@@ -83,7 +99,8 @@ module Puppet
       desc "The absolute filename in which to store the SSH key. This
         property is optional and should be used only in cases where keys
         are stored in a non-standard location, for instance when not in
-        `~user/.ssh/authorized_keys`."
+        `~user/.ssh/authorized_keys`. The parent directory must be present
+        if the target is in a privileged path."
 
       defaultto :absent
 
@@ -147,7 +164,12 @@ module Puppet
     end
 
     # regular expression suitable for use by a ParsedFile based provider
-    REGEX = %r{^(?:(.+)\s+)?(ssh-dss|ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521)\s+([^ ]+)\s*(.*)$}
+    REGEX = %r{^(?:(.+)\s+)?(ssh-dss|ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp256|
+            ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ecdsa-sk|ed25519-sk|
+            sk-ecdsa-sha2-nistp256@openssh.com|sk-ssh-ed25519@openssh.com|
+            ssh-rsa-cert-v01@openssh.com|ssh-ed25519-cert-v01@openssh.com|
+            ssh-dss-cert-v01@openssh.com|ecdsa-sha2-nistp256-cert-v01@openssh.com|
+            ecdsa-sha2-nistp384-cert-v01@openssh.com|ecdsa-sha2-nistp521-cert-v01@openssh.com)\s+([^ ]+)\s*(.*)$}x
     def self.keyline_regex
       REGEX
     end

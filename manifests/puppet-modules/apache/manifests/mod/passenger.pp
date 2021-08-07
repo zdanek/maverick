@@ -301,7 +301,7 @@
 #   - Around 08/20/2017 UnionStation was discontinued options were removed.
 #   - As of 08/20/2017 there are 77 available/deprecated/removed settings.
 #
-# @see https://www.phusionpassenger.com/library/config/apache/reference/ for additional documentation.
+# @see https://www.phusionpassenger.com/docs/references/config_reference/apache/ for additional documentation.
 #
 class apache::mod::passenger (
   $manage_repo                                                                               = true,
@@ -312,6 +312,7 @@ class apache::mod::passenger (
   $mod_package_ensure                                                                        = undef,
   $mod_path                                                                                  = undef,
   $passenger_allow_encoded_slashes                                                           = undef,
+  Optional[String] $passenger_anonymous_telemetry_proxy                                      = undef,
   $passenger_app_env                                                                         = undef,
   $passenger_app_group_name                                                                  = undef,
   $passenger_app_root                                                                        = undef,
@@ -320,14 +321,16 @@ class apache::mod::passenger (
   $passenger_buffer_response                                                                 = undef,
   $passenger_buffer_upload                                                                   = undef,
   $passenger_concurrency_model                                                               = undef,
-  $passenger_conf_file                                                                       = $::apache::params::passenger_conf_file,
-  $passenger_conf_package_file                                                               = $::apache::params::passenger_conf_package_file,
+  $passenger_conf_file                                                                       = $apache::params::passenger_conf_file,
+  $passenger_conf_package_file                                                               = $apache::params::passenger_conf_package_file,
   $passenger_data_buffer_dir                                                                 = undef,
   $passenger_debug_log_file                                                                  = undef,
   $passenger_debugger                                                                        = undef,
   $passenger_default_group                                                                   = undef,
-  $passenger_default_ruby                                                                    = $::apache::params::passenger_default_ruby,
+  $passenger_default_ruby                                                                    = $apache::params::passenger_default_ruby,
   $passenger_default_user                                                                    = undef,
+  Optional[Boolean] $passenger_disable_anonymous_telemetry                                   = undef,
+  Optional[Boolean] $passenger_disable_log_prefix                                           = undef,
   $passenger_disable_security_update_check                                                   = undef,
   $passenger_enabled                                                                         = undef,
   $passenger_error_override                                                                  = undef,
@@ -362,17 +365,19 @@ class apache::mod::passenger (
   $passenger_response_buffer_high_watermark                                                  = undef,
   $passenger_restart_dir                                                                     = undef,
   $passenger_rolling_restarts                                                                = undef,
-  $passenger_root                                                                            = $::apache::params::passenger_root,
-  $passenger_ruby                                                                            = $::apache::params::passenger_ruby,
+  $passenger_root                                                                            = $apache::params::passenger_root,
+  $passenger_ruby                                                                            = $apache::params::passenger_ruby,
   $passenger_security_update_check_proxy                                                     = undef,
   $passenger_show_version_in_header                                                          = undef,
   $passenger_socket_backlog                                                                  = undef,
+  Optional[String] $passenger_spawn_dir                                                      = undef,
   Optional[Enum['smart', 'direct', 'smart-lv2', 'conservative']] $passenger_spawn_method     = undef,
   $passenger_start_timeout                                                                   = undef,
   $passenger_startup_file                                                                    = undef,
   $passenger_stat_throttle_rate                                                              = undef,
   $passenger_sticky_sessions                                                                 = undef,
   $passenger_sticky_sessions_cookie_name                                                     = undef,
+  Optional[String] $passenger_sticky_sessions_cookie_attributes                              = undef,
   $passenger_thread_count                                                                    = undef,
   $passenger_use_global_queue                                                                = undef,
   $passenger_user                                                                            = undef,
@@ -394,11 +399,16 @@ class apache::mod::passenger (
   $rails_user_switching                                                                      = undef,
   $wsgi_auto_detect                                                                          = undef,
 ) inherits ::apache::params {
-  include ::apache
+  include apache
   if $passenger_installed_version {
     if $passenger_allow_encoded_slashes {
       if (versioncmp($passenger_installed_version, '4.0.0') < 0) {
         fail("Passenger config option :: passenger_allow_encoded_slashes is not introduced until version 4.0.0 :: ${passenger_installed_version} is the version reported")
+      }
+    }
+    if $passenger_anonymous_telemetry_proxy {
+      if (versioncmp($passenger_installed_version, '6.0.0') < 0) {
+        fail("Passenger config option :: passenger_anonymous_telemetry_proxy is not introduced until version 6.0.0 :: ${passenger_installed_version} is the version reported")
       }
     }
     if $passenger_app_env {
@@ -469,6 +479,16 @@ class apache::mod::passenger (
     if $passenger_default_user {
       if (versioncmp($passenger_installed_version, '3.0.0') < 0) {
         fail("Passenger config option :: passenger_default_user is not introduced until version 3.0.0 :: ${passenger_installed_version} is the version reported")
+      }
+    }
+    if $passenger_disable_anonymous_telemetry {
+      if (versioncmp($passenger_installed_version, '6.0.0') < 0) {
+        fail("Passenger config option :: passenger_disable_anonymous_telemetry is not introduced until version 6.0.0 :: ${passenger_installed_version} is the version reported")
+      }
+    }
+    if $passenger_disable_log_prefix {
+      if (versioncmp($passenger_installed_version, '6.0.2') < 0) {
+        fail("Passenger config option :: passenger_disable_log_prefix is not introduced until version 6.0.2 :: ${passenger_installed_version} is the version reported")
       }
     }
     if $passenger_disable_security_update_check {
@@ -661,6 +681,11 @@ class apache::mod::passenger (
         fail("Passenger config option :: passenger_socket_backlog is not introduced until version 5.0.24 :: ${passenger_installed_version} is the version reported")
       }
     }
+    if $passenger_spawn_dir {
+      if (versioncmp($passenger_installed_version, '6.0.3') < 0) {
+        fail("Passenger config option :: passenger_spawn_dir is not introduced until version 6.0.3 :: ${passenger_installed_version} is the version reported")
+      }
+    }
     if $passenger_spawn_method {
       if (versioncmp($passenger_installed_version, '2.0.0') < 0) {
         fail("Passenger config option :: passenger_spawn_method is not introduced until version 2.0.0 :: ${passenger_installed_version} is the version reported")
@@ -689,6 +714,11 @@ class apache::mod::passenger (
     if $passenger_sticky_sessions_cookie_name {
       if (versioncmp($passenger_installed_version, '4.0.45') < 0) {
         fail("Passenger config option :: passenger_sticky_sessions_cookie_name is not introduced until version 4.0.45 :: ${passenger_installed_version} is the version reported")
+      }
+    }
+    if $passenger_sticky_sessions_cookie_attributes {
+      if (versioncmp($passenger_installed_version, '6.0.5') < 0) {
+        fail("Passenger config option :: passenger_sticky_sessions_cookie_attributes is not introduced until version 6.0.5 :: ${passenger_installed_version} is the version reported")
       }
     }
     if $passenger_thread_count {
@@ -788,7 +818,7 @@ class apache::mod::passenger (
   # Managed by the package, but declare it to avoid purging
   if $passenger_conf_package_file {
     file { 'passenger_package.conf':
-      path => "${::apache::confd_dir}/${passenger_conf_package_file}",
+      path => "${apache::confd_dir}/${passenger_conf_package_file}",
     }
   }
 
@@ -807,7 +837,11 @@ class apache::mod::passenger (
 
   if $::osfamily == 'RedHat' and $manage_repo {
     if $::operatingsystem == 'Amazon' {
-      $baseurl = 'https://oss-binaries.phusionpassenger.com/yum/passenger/el/6Server/$basearch'
+      if $::operatingsystemmajrelease == '2' {
+        $baseurl = 'https://oss-binaries.phusionpassenger.com/yum/passenger/el/7/$basearch'
+      } else {
+        $baseurl = 'https://oss-binaries.phusionpassenger.com/yum/passenger/el/6/$basearch'
+      }
     } else {
       $baseurl = 'https://oss-binaries.phusionpassenger.com/yum/passenger/el/$releasever/$basearch'
     }
@@ -818,7 +852,7 @@ class apache::mod::passenger (
       descr         => 'passenger',
       enabled       => '1',
       gpgcheck      => '0',
-      gpgkey        => 'https://packagecloud.io/phusion/passenger/gpgkey',
+      gpgkey        => 'https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt',
       repo_gpgcheck => '1',
       sslcacert     => '/etc/pki/tls/certs/ca-bundle.crt',
       sslverify     => '1',
@@ -922,10 +956,10 @@ class apache::mod::passenger (
   # - $rack_autodetect : this options is only for backward compatiblity with older versions of this class
   file { 'passenger.conf':
     ensure  => file,
-    path    => "${::apache::mod_dir}/${passenger_conf_file}",
+    path    => "${apache::mod_dir}/${passenger_conf_file}",
     content => template('apache/mod/passenger.conf.erb'),
-    require => Exec["mkdir ${::apache::mod_dir}"],
-    before  => File[$::apache::mod_dir],
+    require => Exec["mkdir ${apache::mod_dir}"],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 }

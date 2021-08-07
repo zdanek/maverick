@@ -43,6 +43,9 @@ Puppet::Type.newtype(:grafana_user) do
 
   newproperty(:password) do
     desc 'The password for the user'
+    def insync?(_is)
+      provider.check_password
+    end
   end
 
   newproperty(:email) do
@@ -59,7 +62,16 @@ Puppet::Type.newtype(:grafana_user) do
     defaultto :false
   end
 
+  def set_sensitive_parameters(sensitive_parameters) # rubocop:disable Style/AccessorMethodName
+    parameter(:password).sensitive = true if parameter(:password)
+    super(sensitive_parameters)
+  end
+
   autorequire(:service) do
     'grafana-server'
+  end
+
+  autorequire(:grafana_conn_validator) do
+    'grafana'
   end
 end

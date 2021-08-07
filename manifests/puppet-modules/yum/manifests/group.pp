@@ -20,10 +20,9 @@
 #
 define yum::group (
   Array[String[1]]                                    $install_options = [],
-  Enum['present', 'installed', 'absent', 'purged'] $ensure             = 'present',
+  Enum['present', 'installed', 'latest', 'absent', 'purged'] $ensure   = 'present',
   Optional[Integer] $timeout                                           = undef,
 ) {
-
   Exec {
     path        => '/bin:/usr/bin:/sbin:/usr/sbin',
     environment => 'LC_ALL=C',
@@ -35,6 +34,14 @@ define yum::group (
         command => join(concat(["yum -y groupinstall '${name}'"], $install_options), ' '),
         unless  => "yum grouplist hidden '${name}' | egrep -i '^Installed.+Groups:$'",
         timeout => $timeout,
+      }
+      if $ensure == 'latest' {
+        exec { "yum-groupinstall-${name}-latest":
+          command => join(concat(["yum -y groupinstall '${name}'"], $install_options), ' '),
+          onlyif  => "yum groupinfo '${name}' | egrep '\\s+\\+'",
+          timeout => $timeout,
+          require => Exec["yum-groupinstall-${name}"],
+        }
       }
     }
 

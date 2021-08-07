@@ -1,184 +1,418 @@
-## 2019-04-16 - Release 1.12.0
+# Changelog
 
-- Add ability to generate Elliptic Curve key pairs (#99)
+## [2.0.0](https://github.com/camptocamp/puppet-openssl/tree/2.0.0) (2021-05-04)
 
-## 2019-03-01 - Release 1.11.0
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.14.0...2.0.0)
 
-- Support unencrypted CSRs (#84)
-- Add the `x509_extensions` directive so generated certificates
-  also include x509 data. Fixes #44. (#89)
-- Update dhparams example in README.md (#92)
-- Add ability to generate x509 certificates with extKeyUsage (#96) 
-- Do not use legacy puppet-lint-absolute_classname-check plugin
-- Fix variable reference in `templates/cert.cnf.erb` to fix spec tests. (#97)
-- Update dependencies to accept stdlib 5
-- Add support for Puppet 5 & 6
-- Update supported OSes
+**Breaking changes:**
 
-## 2017-04-18 - Release 1.10.0
+- update pdk, dependencies and requirements [\#125](https://github.com/camptocamp/puppet-openssl/pull/125) ([rtib](https://github.com/rtib))
 
-- Increase default keysize to 2048bit (#80)
-- Add fastmode (#80)
-- Add definitions to export PEM cert/key from PKCS12 container (#85)
-- Remove pe requirement
-- Use Data Types (#87)
+**Implemented enhancements:**
 
-## 2017-01-10 - Release 1.9.0
+- add cert\_file type [\#124](https://github.com/camptocamp/puppet-openssl/pull/124) ([rtib](https://github.com/rtib))
+- Allow DER certificates to be converted to PEM format [\#122](https://github.com/camptocamp/puppet-openssl/pull/122) ([ptiggerdine](https://github.com/ptiggerdine))
+- function to extract caIssuers URL from authorityInfoAccess extension [\#120](https://github.com/camptocamp/puppet-openssl/pull/120) ([rtib](https://github.com/rtib))
+- Allow openssl\_version regex to match more FIPS versions [\#112](https://github.com/camptocamp/puppet-openssl/pull/112) ([runejuhl](https://github.com/runejuhl))
 
-- Add $openssl::packages::package_name parameter (fix #69)
-- Add test for dh_param (fix #64)
-- Ensure authentication is a symbol (fix #72)
-- Add openssl::certificates class (fix #77)
-- Handle refresh for x509_cert and x509_request (fix #75, fix #71)
-- Check if there are matches in openssl_version() before returning (#74)
-- Deprecate Puppet 3 compatibility
-- Update test framework
+**Closed issues:**
 
-## 2016-08-19 - Release 1.8.2
+- Parameters for openssl.cnf [\#41](https://github.com/camptocamp/puppet-openssl/issues/41)
 
-- Fix unit tests
-- Announce support of Debian 8, Ubuntu 16.04 and RedHat 7 in metadata.json
+**Merged pull requests:**
 
-## 2016-08-19 - Release 1.8.1
+- readd dependencies to class to generate configs [\#119](https://github.com/camptocamp/puppet-openssl/pull/119) ([trefzer](https://github.com/trefzer))
+- add autorequire for file path to all defined types [\#117](https://github.com/camptocamp/puppet-openssl/pull/117) ([trefzer](https://github.com/trefzer))
+- add class to generate configs [\#116](https://github.com/camptocamp/puppet-openssl/pull/116) ([trefzer](https://github.com/trefzer))
+- add support for OpenBSD [\#115](https://github.com/camptocamp/puppet-openssl/pull/115) ([trefzer](https://github.com/trefzer))
+- fix spec test, failing Time.now is not executed in same second [\#114](https://github.com/camptocamp/puppet-openssl/pull/114) ([trefzer](https://github.com/trefzer))
+- allow for numeric owner and group IDs for file resources [\#113](https://github.com/camptocamp/puppet-openssl/pull/113) ([kenyon](https://github.com/kenyon))
 
-- Fix error "failure to load inifile" resulting in failed Puppet run (issue #63)
+## [1.14.0](https://github.com/camptocamp/puppet-openssl/tree/1.14.0) (2020-03-05)
 
-## 2016-08-18 - Release 1.8.0
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.13.0...1.14.0)
 
-- Fix validation of the size parameter (fix #70, fix #58)
-- Add argument key_size to openssl::certificate::x509 (fix #55)
+**Breaking changes:**
 
-## 2016-03-30 - Release 1.7.1
+- in\_pass, out\_pass and chaincert params to Optional\[String\] [\#111](https://github.com/camptocamp/puppet-openssl/pull/111) ([raphink](https://github.com/raphink))
 
-- Fix false parsing of IPAddress field (issue #61)
-- Fix openssl_version fact on RedHat-based OSes (issue #66, fixes #62 and #65)
+**Implemented enhancements:**
 
-## 2016-03-18 - Release 1.7.0
+- Update stdlib dependency [\#109](https://github.com/camptocamp/puppet-openssl/pull/109) ([treydock](https://github.com/treydock))
 
-- Add openssl_version fact (issue #60, fix #57)
-- Various fixes to tests
+**Closed issues:**
 
-## 2016-02-22 - Release 1.6.1
+- 1.13.0 introduced bug in `openssl::export::pkcs12` [\#110](https://github.com/camptocamp/puppet-openssl/issues/110)
 
-- Fix failure to load inifile (issue #56)
+## [1.13.0](https://github.com/camptocamp/puppet-openssl/tree/1.13.0) (2020-01-07)
 
-## 2016-02-18 - Release 1.6.0
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.12.0...1.13.0)
 
-- Change certificate existence logic (issue #51)
-- Add dhparam type and provider (issue #53)
-- Fix unit tests for Puppet 4
+**Implemented enhancements:**
 
-## 2015-11-17 - Release 1.5.1
+- Rubocop [\#108](https://github.com/camptocamp/puppet-openssl/pull/108) ([raphink](https://github.com/raphink))
+- Port specs to rspec 3 [\#107](https://github.com/camptocamp/puppet-openssl/pull/107) ([raphink](https://github.com/raphink))
+- Port cert\_date\_valid function to Puppet 4.x API [\#106](https://github.com/camptocamp/puppet-openssl/pull/106) ([raphink](https://github.com/raphink))
+- Convert to PDK [\#105](https://github.com/camptocamp/puppet-openssl/pull/105) ([raphink](https://github.com/raphink))
+- Manifests cleanup [\#104](https://github.com/camptocamp/puppet-openssl/pull/104) ([raphink](https://github.com/raphink))
 
-Use ensure_package for ca-certificate
+## [1.12.0](https://github.com/camptocamp/puppet-openssl/tree/1.12.0) (2019-04-17)
 
-## 2015-09-23 - Release 1.5.0
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.11.0...1.12.0)
 
-Customizable cnf/crt/csr/key paths
+**Implemented enhancements:**
 
-## 2015-09-15 - Release 1.4.0
+- Add ability to generate Elliptic Curve key pairs [\#99](https://github.com/camptocamp/puppet-openssl/pull/99) ([fabbks](https://github.com/fabbks))
 
-Add a req_ext parameter to x509_cert type
-Allow to manage whether adding v3 SAN from config
+## [1.11.0](https://github.com/camptocamp/puppet-openssl/tree/1.11.0) (2019-03-01)
 
-## 2015-08-21 - Release 1.3.10
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.10.0...1.11.0)
 
-Use docker for acceptance tests
+**Implemented enhancements:**
 
-## 2015-06-26 - Release 1.3.9
+- Ability to generate x509 certificates with extKeyUsage [\#96](https://github.com/camptocamp/puppet-openssl/pull/96) ([madchap](https://github.com/madchap))
+- Add the x509\_extensions directive to support SAN in certificate [\#89](https://github.com/camptocamp/puppet-openssl/pull/89) ([johnbillion](https://github.com/johnbillion))
+- Changes to support unencrypted CSRs [\#84](https://github.com/camptocamp/puppet-openssl/pull/84) ([WetHippie](https://github.com/WetHippie))
 
-Fix strict_variables activation with rspec-puppet 2.2
+**Closed issues:**
 
-## 2015-05-28 - Release 1.3.8
+- dhparam doesn't work without 'ensure' [\#90](https://github.com/camptocamp/puppet-openssl/issues/90)
+- Request for ability to create unencrypted private key [\#83](https://github.com/camptocamp/puppet-openssl/issues/83)
+- Can't add SAN records [\#44](https://github.com/camptocamp/puppet-openssl/issues/44)
 
-Add beaker_spec_helper to Gemfile
+**Merged pull requests:**
 
-## 2015-05-26 - Release 1.3.7
+- Fix spec tests [\#97](https://github.com/camptocamp/puppet-openssl/pull/97) ([coreone](https://github.com/coreone))
+- Update dhparams example in README.md [\#92](https://github.com/camptocamp/puppet-openssl/pull/92) ([tlcowling](https://github.com/tlcowling))
 
-Use random application order in nodeset
+## [1.10.0](https://github.com/camptocamp/puppet-openssl/tree/1.10.0) (2017-04-18)
 
-## 2015-05-26 - Release 1.3.6
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.9.0...1.10.0)
 
-add utopic & vivid nodesets
+**Breaking changes:**
 
-## 2015-05-25 - Release 1.3.5
+- Make the $fastmode parameter for openssl::dhparam default to false. [\#86](https://github.com/camptocamp/puppet-openssl/pull/86) ([rpasing](https://github.com/rpasing))
+- Fastmode, Default Keysize increased, path defaults to name  [\#80](https://github.com/camptocamp/puppet-openssl/pull/80) ([c33s](https://github.com/c33s))
 
-Don't allow failure on Puppet 4
+**Implemented enhancements:**
 
-## 2015-05-13 - Release 1.3.4
+- Data types [\#87](https://github.com/camptocamp/puppet-openssl/pull/87) ([raphink](https://github.com/raphink))
+- Add definitions to export PEM cert/key from PKCS12 container [\#85](https://github.com/camptocamp/puppet-openssl/pull/85) ([michalmiddleton](https://github.com/michalmiddleton))
 
-Add puppet-lint-file_source_rights-check gem
+**Closed issues:**
 
-## 2015-05-12 - Release 1.3.3
+- Add "fastmode" for dhparam generation [\#79](https://github.com/camptocamp/puppet-openssl/issues/79)
+- Readme for dhparam wrong? [\#78](https://github.com/camptocamp/puppet-openssl/issues/78)
 
-Don't pin beaker
+## [1.9.0](https://github.com/camptocamp/puppet-openssl/tree/1.9.0) (2017-01-10)
 
-## 2015-04-27 - Release 1.3.2
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.8.2...1.9.0)
 
-Add nodeset ubuntu-12.04-x86_64-openstack
+**Implemented enhancements:**
 
-## 2015-04-17 - Release 1.3.1
+- handle refresh \(RE: \#71\) [\#75](https://github.com/camptocamp/puppet-openssl/pull/75) ([gaima8](https://github.com/gaima8))
+- Check if there are matches before returning [\#74](https://github.com/camptocamp/puppet-openssl/pull/74) ([raphink](https://github.com/raphink))
 
-- Add beaker nodesets
+**Closed issues:**
 
-## 2015-04-03 - Release 1.3.0
+- x509\_request doesn't handle refresh [\#71](https://github.com/camptocamp/puppet-openssl/issues/71)
 
-- Use sha256 instead of sha1 by default
-- Confine rspec pinning to ruby 1.8
+**Merged pull requests:**
 
-## 2015-03-24 - Release 1.2.8
+- Error: Unknown authentication type 'dsa' when setting authentication [\#72](https://github.com/camptocamp/puppet-openssl/pull/72) ([christophelec](https://github.com/christophelec))
 
-- Various spec improvements
+## [1.8.2](https://github.com/camptocamp/puppet-openssl/tree/1.8.2) (2016-08-19)
 
-## 2015-03-10 - Release 1.2.7
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.8.1...1.8.2)
 
-- Stop managing ca-certificates file
-- Various spec improvements
+## [1.8.1](https://github.com/camptocamp/puppet-openssl/tree/1.8.1) (2016-08-19)
 
-## 2015-02-18 - Release 1.2.6
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.8.0...1.8.1)
 
-- Various spec improvements
-- Linting
+**Closed issues:**
 
-## 2015-01-19 - Release 1.2.5
+- Error "failure to load inifile" resulting in failed Puppet run [\#63](https://github.com/camptocamp/puppet-openssl/issues/63)
 
-- Add puppet-lint plugins
+**Merged pull requests:**
 
-## 2015-01-07 - Release 1.2.4
+- Use Puppet::Util::Inifile instead of Inifile [\#73](https://github.com/camptocamp/puppet-openssl/pull/73) ([raphink](https://github.com/raphink))
 
-- Fix unquoted strings in cases
+## [1.8.0](https://github.com/camptocamp/puppet-openssl/tree/1.8.0) (2016-08-18)
 
-## 2015-01-05 - Release 1.2.3
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.7.2...1.8.0)
 
-- Fix .travis.yml
+**Merged pull requests:**
 
-## 2014-12-18 - Release 1.2.2
+- Add argument key\_size to openssl::certificate::x509 [\#55](https://github.com/camptocamp/puppet-openssl/pull/55) ([kronos-pbrideau](https://github.com/kronos-pbrideau))
 
-- Fix LICENSE file to match metadata.json
-- Remove puppet_version from metadata.json
+## [1.7.2](https://github.com/camptocamp/puppet-openssl/tree/1.7.2) (2016-06-29)
 
-## 2014-12-18 - Release 1.2.1
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.7.1...1.7.2)
 
-- Various improvements in unit tests
+**Closed issues:**
 
-## 2014-12-09 - Release 1.2.0
+- dhparam generation fails  [\#58](https://github.com/camptocamp/puppet-openssl/issues/58)
 
-- Fix metadata.json warnings
-- Add future parser tests
-- Fix future parser errors
+**Merged pull requests:**
 
-## 2014-11-25 - Release 1.1.0
+- Fix validation of the size parameter [\#70](https://github.com/camptocamp/puppet-openssl/pull/70) ([mmalchuk](https://github.com/mmalchuk))
 
-- Corrected and added new features for openssl::export::pkcs12
+## [1.7.1](https://github.com/camptocamp/puppet-openssl/tree/1.7.1) (2016-03-30)
 
-## 2014-11-17 - Release 1.0.1
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.7.0...1.7.1)
 
-- Lint metadata.json
+**Closed issues:**
 
-## 2014-10-20 - Release 1.0.0
+- Error: Facter: error while resolving custom fact "openssl\_version" [\#62](https://github.com/camptocamp/puppet-openssl/issues/62)
 
-- Setup automatic Forge releases
+**Merged pull requests:**
 
-## 2014-07-02 - Release 0.3.0
+- fixes \#62 - error resolving openssl\_version on RHEL 6 [\#66](https://github.com/camptocamp/puppet-openssl/pull/66) ([mike-es](https://github.com/mike-es))
+- altnames can represent ip addresses [\#61](https://github.com/camptocamp/puppet-openssl/pull/61) ([garrettrowell](https://github.com/garrettrowell))
 
-- Add more tests
+## [1.7.0](https://github.com/camptocamp/puppet-openssl/tree/1.7.0) (2016-03-18)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.6.1...1.7.0)
+
+**Closed issues:**
+
+- Add openssl\_version fact [\#57](https://github.com/camptocamp/puppet-openssl/issues/57)
+
+**Merged pull requests:**
+
+- Fixes \#57 [\#60](https://github.com/camptocamp/puppet-openssl/pull/60) ([jyaworski](https://github.com/jyaworski))
+
+## [1.6.1](https://github.com/camptocamp/puppet-openssl/tree/1.6.1) (2016-02-22)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.6.0...1.6.1)
+
+**Merged pull requests:**
+
+- Fix failure to load inifile causing Puppet agent to fail. [\#56](https://github.com/camptocamp/puppet-openssl/pull/56) ([olavmrk](https://github.com/olavmrk))
+
+## [1.6.0](https://github.com/camptocamp/puppet-openssl/tree/1.6.0) (2016-02-18)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.5.1...1.6.0)
+
+**Implemented enhancements:**
+
+- dhparam: add [\#53](https://github.com/camptocamp/puppet-openssl/pull/53) ([josephholsten](https://github.com/josephholsten))
+- Change cert existance logic [\#51](https://github.com/camptocamp/puppet-openssl/pull/51) ([sorrowless](https://github.com/sorrowless))
+
+## [1.5.1](https://github.com/camptocamp/puppet-openssl/tree/1.5.1) (2015-11-17)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.5.0...1.5.1)
+
+**Implemented enhancements:**
+
+- packages: switch to stlib ensure\_packages\(\) to play nice with other modules which install ca-certificates [\#52](https://github.com/camptocamp/puppet-openssl/pull/52) ([josephholsten](https://github.com/josephholsten))
+- Manage ca-certificates package on redhat too [\#49](https://github.com/camptocamp/puppet-openssl/pull/49) ([edestecd](https://github.com/edestecd))
+
+**Closed issues:**
+
+- ca-certificates package is available in redhat also [\#47](https://github.com/camptocamp/puppet-openssl/issues/47)
+
+## [1.5.0](https://github.com/camptocamp/puppet-openssl/tree/1.5.0) (2015-09-23)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.4.0...1.5.0)
+
+**Implemented enhancements:**
+
+- Make it easy to customize cnf/crt/csr/key paths [\#46](https://github.com/camptocamp/puppet-openssl/pull/46) ([robbat2](https://github.com/robbat2))
+
+## [1.4.0](https://github.com/camptocamp/puppet-openssl/tree/1.4.0) (2015-09-15)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.10...1.4.0)
+
+**Merged pull requests:**
+
+- Fix san use in certificate [\#50](https://github.com/camptocamp/puppet-openssl/pull/50) ([sorrowless](https://github.com/sorrowless))
+
+## [1.3.10](https://github.com/camptocamp/puppet-openssl/tree/1.3.10) (2015-08-21)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.9...1.3.10)
+
+**Closed issues:**
+
+- No way to set desired openssl package version [\#35](https://github.com/camptocamp/puppet-openssl/issues/35)
+
+**Merged pull requests:**
+
+- Allow to set package version [\#48](https://github.com/camptocamp/puppet-openssl/pull/48) ([edestecd](https://github.com/edestecd))
+
+## [1.3.9](https://github.com/camptocamp/puppet-openssl/tree/1.3.9) (2015-06-26)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.8...1.3.9)
+
+## [1.3.8](https://github.com/camptocamp/puppet-openssl/tree/1.3.8) (2015-05-28)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.7...1.3.8)
+
+## [1.3.7](https://github.com/camptocamp/puppet-openssl/tree/1.3.7) (2015-05-26)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.6...1.3.7)
+
+## [1.3.6](https://github.com/camptocamp/puppet-openssl/tree/1.3.6) (2015-05-26)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.5...1.3.6)
+
+**Merged pull requests:**
+
+- Add key\_mode/group/owner parameters [\#45](https://github.com/camptocamp/puppet-openssl/pull/45) ([robbat2](https://github.com/robbat2))
+
+## [1.3.5](https://github.com/camptocamp/puppet-openssl/tree/1.3.5) (2015-05-25)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.4...1.3.5)
+
+## [1.3.4](https://github.com/camptocamp/puppet-openssl/tree/1.3.4) (2015-05-13)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.3...1.3.4)
+
+## [1.3.3](https://github.com/camptocamp/puppet-openssl/tree/1.3.3) (2015-05-12)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.2...1.3.3)
+
+## [1.3.2](https://github.com/camptocamp/puppet-openssl/tree/1.3.2) (2015-04-27)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.1...1.3.2)
+
+## [1.3.1](https://github.com/camptocamp/puppet-openssl/tree/1.3.1) (2015-04-17)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.3.0...1.3.1)
+
+## [1.3.0](https://github.com/camptocamp/puppet-openssl/tree/1.3.0) (2015-04-03)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.8...1.3.0)
+
+**Closed issues:**
+
+- Google has depreciated sha1 for certs [\#36](https://github.com/camptocamp/puppet-openssl/issues/36)
+
+**Merged pull requests:**
+
+- templates/cert.cnf.erb: Use sha256 instead of sha1 by default [\#43](https://github.com/camptocamp/puppet-openssl/pull/43) ([lathiat](https://github.com/lathiat))
+
+## [1.2.8](https://github.com/camptocamp/puppet-openssl/tree/1.2.8) (2015-03-24)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.7...1.2.8)
+
+## [1.2.7](https://github.com/camptocamp/puppet-openssl/tree/1.2.7) (2015-03-10)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.6...1.2.7)
+
+**Merged pull requests:**
+
+- Remove useless ca-certificates file management [\#38](https://github.com/camptocamp/puppet-openssl/pull/38) ([ckaenzig](https://github.com/ckaenzig))
+
+## [1.2.6](https://github.com/camptocamp/puppet-openssl/tree/1.2.6) (2015-02-18)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.5...1.2.6)
+
+## [1.2.5](https://github.com/camptocamp/puppet-openssl/tree/1.2.5) (2015-01-19)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.4...1.2.5)
+
+## [1.2.4](https://github.com/camptocamp/puppet-openssl/tree/1.2.4) (2015-01-07)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.3...1.2.4)
+
+## [1.2.3](https://github.com/camptocamp/puppet-openssl/tree/1.2.3) (2015-01-05)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.2...1.2.3)
+
+## [1.2.2](https://github.com/camptocamp/puppet-openssl/tree/1.2.2) (2014-12-18)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.1...1.2.2)
+
+## [1.2.1](https://github.com/camptocamp/puppet-openssl/tree/1.2.1) (2014-12-18)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.2.0...1.2.1)
+
+## [1.2.0](https://github.com/camptocamp/puppet-openssl/tree/1.2.0) (2014-12-09)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.1.0...1.2.0)
+
+## [1.1.0](https://github.com/camptocamp/puppet-openssl/tree/1.1.0) (2014-11-25)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.0.1...1.1.0)
+
+**Closed issues:**
+
+- Generating pkcs12 Certificate [\#33](https://github.com/camptocamp/puppet-openssl/issues/33)
+
+**Merged pull requests:**
+
+- Pkcs12 modifications [\#34](https://github.com/camptocamp/puppet-openssl/pull/34) ([cjeanneret](https://github.com/cjeanneret))
+
+## [1.0.1](https://github.com/camptocamp/puppet-openssl/tree/1.0.1) (2014-11-17)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/1.0.0...1.0.1)
+
+## [1.0.0](https://github.com/camptocamp/puppet-openssl/tree/1.0.0) (2014-10-20)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/0.3.2...1.0.0)
+
+**Closed issues:**
+
+- Improve doc to show how to generate password-free certs [\#30](https://github.com/camptocamp/puppet-openssl/issues/30)
+
+**Merged pull requests:**
+
+-  Improvement in doc to show how to generate password-free certs [\#32](https://github.com/camptocamp/puppet-openssl/pull/32) ([enekogb](https://github.com/enekogb))
+
+## [0.3.2](https://github.com/camptocamp/puppet-openssl/tree/0.3.2) (2014-09-23)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/0.3.1...0.3.2)
+
+## [0.3.1](https://github.com/camptocamp/puppet-openssl/tree/0.3.1) (2014-07-04)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/0.3.0...0.3.1)
+
+**Merged pull requests:**
+
+- Puppet 3 fixes, cleanup [\#31](https://github.com/camptocamp/puppet-openssl/pull/31) ([foonix](https://github.com/foonix))
+
+## [0.3.0](https://github.com/camptocamp/puppet-openssl/tree/0.3.0) (2014-07-02)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/0.2.0...0.3.0)
+
+**Closed issues:**
+
+- RANDFILE not correct on ubuntu 12.04.04 [\#29](https://github.com/camptocamp/puppet-openssl/issues/29)
+- Add the ability to specify the version of openssl that you want installed [\#24](https://github.com/camptocamp/puppet-openssl/issues/24)
+- Push new version to the Forge [\#22](https://github.com/camptocamp/puppet-openssl/issues/22)
+- Fix dependency issue with puppetlabs-stdlib \(version number wrong\) [\#17](https://github.com/camptocamp/puppet-openssl/issues/17)
+- creating a cert doesn't include altnames [\#13](https://github.com/camptocamp/puppet-openssl/issues/13)
+
+## [0.2.0](https://github.com/camptocamp/puppet-openssl/tree/0.2.0) (2014-03-03)
+
+[Full Changelog](https://github.com/camptocamp/puppet-openssl/compare/735e515565a28b466165eac8fcc6d4125356b9a0...0.2.0)
+
+**Closed issues:**
+
+- Replace has\_variable? test with simple if @var test in templates/cert.cnf.erb  [\#16](https://github.com/camptocamp/puppet-openssl/issues/16)
+- incorrect check against undef in default template [\#15](https://github.com/camptocamp/puppet-openssl/issues/15)
+- Wrong command called [\#1](https://github.com/camptocamp/puppet-openssl/issues/1)
+
+**Merged pull requests:**
+
+- Fix bug with x509\_Request not having the cnf template present [\#28](https://github.com/camptocamp/puppet-openssl/pull/28) ([jrnt30](https://github.com/jrnt30))
+- Document 'group' parameter [\#27](https://github.com/camptocamp/puppet-openssl/pull/27) ([pataquets](https://github.com/pataquets))
+- Add 'group' parameter to x509 certificate. [\#26](https://github.com/camptocamp/puppet-openssl/pull/26) ([pataquets](https://github.com/pataquets))
+- Added certificate signing request dependency on configuration template [\#25](https://github.com/camptocamp/puppet-openssl/pull/25) ([tylerwalts](https://github.com/tylerwalts))
+- Fix for issue 16 [\#21](https://github.com/camptocamp/puppet-openssl/pull/21) ([ghost](https://github.com/ghost))
+- Ignore Gemfile.lock [\#20](https://github.com/camptocamp/puppet-openssl/pull/20) ([ghost](https://github.com/ghost))
+- Deprecation warnings when running rake spec [\#19](https://github.com/camptocamp/puppet-openssl/pull/19) ([ghost](https://github.com/ghost))
+- Deprecation warning when running bundle install [\#18](https://github.com/camptocamp/puppet-openssl/pull/18) ([ghost](https://github.com/ghost))
+- Add cnf\_tpl param to openssl::certificate::x509. [\#12](https://github.com/camptocamp/puppet-openssl/pull/12) ([Sliim](https://github.com/Sliim))
+- Fix puppet-lint link in README.md [\#11](https://github.com/camptocamp/puppet-openssl/pull/11) ([Sliim](https://github.com/Sliim))
+- Update Modulefile to work with other modules requiring stdlib [\#10](https://github.com/camptocamp/puppet-openssl/pull/10) ([LarsFronius](https://github.com/LarsFronius))
+- Add x509\_cert and x509\_csr types and providers [\#9](https://github.com/camptocamp/puppet-openssl/pull/9) ([raphink](https://github.com/raphink))
+- Export pkcs12 without password [\#8](https://github.com/camptocamp/puppet-openssl/pull/8) ([raphink](https://github.com/raphink))
+- openssl: added support for various distributions. [\#5](https://github.com/camptocamp/puppet-openssl/pull/5) ([mfournier](https://github.com/mfournier))
+- openssl::export::pkcs12 - new definition. name says it all [\#3](https://github.com/camptocamp/puppet-openssl/pull/3) ([cjeanneret](https://github.com/cjeanneret))
+- openssl::certificate::x509 - corrected call to script [\#2](https://github.com/camptocamp/puppet-openssl/pull/2) ([cjeanneret](https://github.com/cjeanneret))
+
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

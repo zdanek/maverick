@@ -1,6 +1,6 @@
 {
   "name": "puppet-yum",
-  "version": "4.0.0",
+  "version": "5.1.0",
   "author": "Vox Pupuli",
   "summary": "YUM utilities",
   "license": "MIT",
@@ -10,46 +10,58 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.13.0 < 6.0.0"
+      "version_requirement": ">= 4.18.0 < 8.0.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 1.2.5 < 6.0.0"
+      "version_requirement": ">= 1.2.5 < 8.0.0"
     }
   ],
-  "data_provider": null,
   "tags": [
     "yum",
     "package",
     "rpm",
+    "dnf",
     "voxpupuli"
   ],
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "6",
-        "7"
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Rocky",
+      "operatingsystemrelease": [
+        "8"
       ]
     },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "Scientific",
       "operatingsystemrelease": [
-        "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "6",
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "VirtuozzoLinux",
+      "operatingsystemrelease": [
         "7"
       ]
     },
@@ -58,12 +70,18 @@
       "operatingsystemrelease": [
         "2017"
       ]
+    },
+    {
+      "operatingsystem": "AlmaLinux",
+      "operatingsystemrelease": [
+        "8"
+      ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 5.5.8 < 7.0.0"
+      "version_requirement": ">= 6.1.0 < 8.0.0"
     }
   ]
 }

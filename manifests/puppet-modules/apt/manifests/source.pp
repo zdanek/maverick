@@ -6,7 +6,7 @@
 #     repos    => 'main',
 #     key      => {
 #       id     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-#       server => 'hkps.pool.sks-keyservers.net',
+#       server => 'keyserver.ubuntu.com',
 #     },
 #   }
 #
@@ -27,7 +27,7 @@
 #
 # @param include
 #   Configures include options. Valid options: a hash of available keys.
-# 
+#
 # @option include [Boolean] :deb
 #   Specifies whether to request the distribution's compiled binaries. Default true.
 #
@@ -35,17 +35,21 @@
 #   Specifies whether to request the distribution's uncompiled source code. Default false.
 #
 # @param key
-#   Creates a declaration of the apt::key defined type. Valid options: a string to be passed to the `id` parameter of the `apt::key` 
-#   defined type, or a hash of `parameter => value` pairs to be passed to `apt::key`'s `id`, `server`, `content`, `source`, and/or 
-#   `options` parameters.
+#   Creates a declaration of the apt::key defined type. Valid options: a string to be passed to the `id` parameter of the `apt::key`
+#   defined type, or a hash of `parameter => value` pairs to be passed to `apt::key`'s `id`, `server`, `content`, `source`, `weak_ssl`,
+#   and/or `options` parameters.
+#
+# @param keyring
+#   Absolute path to a file containing the PGP keyring used to sign this repository. Value is used to set signed-by on the source entry.
+#   See https://wiki.debian.org/DebianRepository/UseThirdParty for details.
 #
 # @param pin
-#   Creates a declaration of the apt::pin defined type. Valid options: a number or string to be passed to the `id` parameter of the 
+#   Creates a declaration of the apt::pin defined type. Valid options: a number or string to be passed to the `id` parameter of the
 #   `apt::pin` defined type, or a hash of `parameter => value` pairs to be passed to `apt::pin`'s corresponding parameters.
 #
 # @param architecture
-#   Tells Apt to only download information for specified architectures. Valid options: a string containing one or more architecture names, 
-#   separated by commas (e.g., 'i386' or 'i386,alpha,powerpc'). Default: undef (if unspecified, Apt downloads information for all architectures 
+#   Tells Apt to only download information for specified architectures. Valid options: a string containing one or more architecture names,
+#   separated by commas (e.g., 'i386' or 'i386,alpha,powerpc'). Default: undef (if unspecified, Apt downloads information for all architectures
 #   defined in the Apt::Architectures option).
 #
 # @param allow_unsigned
@@ -62,6 +66,7 @@ define apt::source(
   String $repos                                 = 'main',
   Optional[Variant[Hash]] $include              = {},
   Optional[Variant[String, Hash]] $key          = undef,
+  Optional[Stdlib::AbsolutePath] $keyring       = undef,
   Optional[Variant[Hash, Numeric, String]] $pin = undef,
   Optional[String] $architecture                = undef,
   Boolean $allow_unsigned                       = false,
@@ -73,10 +78,10 @@ define apt::source(
   $_before = Apt::Setting["list-${title}"]
 
   if !$release {
-    if $facts['lsbdistcodename'] {
-      $_release = $facts['lsbdistcodename']
+    if $facts['os']['distro']['codename'] {
+      $_release = $facts['os']['distro']['codename']
     } else {
-      fail(translate('lsbdistcodename fact not available: release parameter required'))
+      fail('os.distro.codename fact not available: release parameter required')
     }
   } else {
     $_release = $release
@@ -84,21 +89,33 @@ define apt::source(
 
   if $ensure == 'present' {
     if ! $location {
-      fail(translate('cannot create a source entry without specifying a location'))
+      fail('cannot create a source entry without specifying a location')
+    }
+    elsif ($::apt::proxy['https_acng']) and ($location =~ /(?i:^https:\/\/)/) {
+      $_location = regsubst($location, 'https://','http://HTTPS///')
+    }
+    else {
+      $_location = $location
     }
     # Newer oses, do not need the package for HTTPS transport.
     $_transport_https_releases = [ 'wheezy', 'jessie', 'stretch', 'trusty', 'xenial' ]
-    if ($_release in $_transport_https_releases or $facts['lsbdistcodename'] in $_transport_https_releases) and $location =~ /(?i:^https:\/\/)/ {
+    if ($facts['os']['distro']['codename'] in $_transport_https_releases) and $_location =~ /(?i:^https:\/\/)/ {
       ensure_packages('apt-transport-https')
     }
+  } else {
+    $_location = undef
   }
 
   $includes = merge($::apt::include_defaults, $include)
 
+  if $key and $keyring {
+    fail("parameters key and keyring are mutualy exclusive")
+  }
+
   if $key {
     if $key =~ Hash {
       unless $key['id'] {
-        fail(translate('key hash must contain at least an id entry'))
+        fail('key hash must contain at least an id entry')
       }
       $_key = merge($::apt::source_key_defaults, $key)
     } else {
@@ -111,9 +128,12 @@ define apt::source(
   $sourcelist = epp('apt/source.list.epp', {
     'comment'          => $comment,
     'includes'         => $includes,
-    'opt_architecture' => $architecture,
-    'allow_unsigned'   => $allow_unsigned,
-    'location'         => $location,
+    'options'          => delete_undef_values({
+      'arch'      => $architecture,
+      'trusted'   => $allow_unsigned ? {true => "yes", false => undef},
+      'signed-by' => $keyring,
+    }),
+    'location'         => $_location,
     'release'          => $_release,
     'repos'            => $repos,
   })
@@ -137,7 +157,7 @@ define apt::source(
         'origin'   => $host,
       }
     } else {
-      fail(translate('Received invalid value for pin parameter'))
+      fail('Received invalid value for pin parameter')
     }
     create_resources('apt::pin', { "${name}" => $_pin })
   }
@@ -152,13 +172,14 @@ define apt::source(
       }
 
       apt::key { "Add key: ${$_key['id']} from Apt::Source ${title}":
-        ensure  => $_ensure,
-        id      => $_key['id'],
-        server  => $_key['server'],
-        content => $_key['content'],
-        source  => $_key['source'],
-        options => $_key['options'],
-        before  => $_before,
+        ensure   => $_ensure,
+        id       => $_key['id'],
+        server   => $_key['server'],
+        content  => $_key['content'],
+        source   => $_key['source'],
+        options  => $_key['options'],
+        weak_ssl => $_key['weak_ssl'],
+        before   => $_before,
       }
     }
   }

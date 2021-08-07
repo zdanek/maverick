@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'net/ftp'
 require 'tempfile'
@@ -166,7 +168,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
           end
         end
         unless found_match
-          raise(_('The id in your manifest %{_resource} and the fingerprint from content/source don\'t match. Check for an error in the id and content/source is legitimate.') % { _resource: resource[:name] }) # rubocop:disable Metrics/LineLength
+          raise(_('The id in your manifest %{_resource} and the fingerprint from content/source don\'t match. Check for an error in the id and content/source is legitimate.') % { _resource: resource[:name] }) # rubocop:disable Layout/LineLength
         end
       else
         warning('/usr/bin/gpg cannot be found for verification of the id.')
@@ -175,29 +177,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     file
   end
 
-  # Update a key if it is expired
-  def update_expired_key
-    # Return without doing anything if refresh or expired is false
-    return unless resource[:refresh] == true && resource[:expired] == true
-
-    # Execute command to update key
-    command = []
-
-    unless resource[:source].nil? && resource[:content].nil?
-      raise(_('an unexpected condition occurred while trying to add the key: %{_resource}') % { _resource: resource[:id] })
-    end
-
-    # Breaking up the command like this is needed because it blows up
-    # if --recv-keys isn't the last argument.
-    command.push('adv', '--no-tty', '--keyserver', resource[:server])
-    unless resource[:options].nil?
-      command.push('--keyserver-options', resource[:options])
-    end
-    command.push('--recv-keys', resource[:id])
-  end
-
   def exists?
-    update_expired_key
     # report expired keys as non-existing when refresh => true
     @property_hash[:ensure] == :present && !(resource[:refresh] && @property_hash[:expired])
   end

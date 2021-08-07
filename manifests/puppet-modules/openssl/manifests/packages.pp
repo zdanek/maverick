@@ -2,9 +2,13 @@
 #
 # Sets up packages for openssl
 class openssl::packages {
-  package { 'openssl':
-    ensure => $openssl::package_ensure,
-    name   => $openssl::package_name,
+  assert_private()
+
+  if $openssl::package_name {
+    package { 'openssl':
+      ensure => $openssl::package_ensure,
+      name   => $openssl::package_name,
+    }
   }
 
   if $::osfamily == 'Debian' or (

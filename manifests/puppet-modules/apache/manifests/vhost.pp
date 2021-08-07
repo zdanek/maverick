@@ -150,6 +150,10 @@
 # @param cas_validate_url
 #   Sets the URL to use when validating a client-presented ticket in an HTTP query string.
 # 
+# @param cas_cookie_path
+#   Sets the location where information on the current session should be stored. This should
+#   be writable by the web server only.
+#
 # @param comment
 #   Adds comments to the header of the configuration file. Pass as string or an array of strings.
 #   For example:
@@ -216,6 +220,23 @@
 #   parameters has a value. If none of these parameters has a value, given a virtual host 
 #   `example.com`, Puppet defaults to `$logroot/example.com_error_ssl.log` for SSL virtual 
 #   hosts and `$logroot/example.com_error.log` for non-SSL virtual hosts.
+#
+# @param error_log_format
+#   Sets the [ErrorLogFormat](https://httpd.apache.org/docs/current/mod/core.html#errorlogformat)
+#   format specification for error log entries inside virtual host
+#   For example:
+#   ``` puppet
+#   apache::vhost { 'site.name.fdqn':
+#     ...
+#     error_log_format => [
+#       '[%{uc}t] [%-m:%-l] [R:%L] [C:%{C}L] %7F: %E: %M',
+#       { '[%{uc}t] [R:%L] Request %k on C:%{c}L pid:%P tid:%T' => 'request' }, 
+#       { "[%{uc}t] [R:%L] UA:'%+{User-Agent}i'" => 'request' },
+#       { "[%{uc}t] [R:%L] Referer:'%+{Referer}i'" => 'request' },
+#       { '[%{uc}t] [C:%{c}L] local\ %a remote\ %A' => 'connection' },
+#     ],
+#   }
+#   ```
 # 
 # @param error_documents
 #   A list of hashes which can be used to override the 
@@ -579,7 +600,7 @@
 #   Sets the `Options` for the specified virtual host. For example:
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     options => ['Indexes','FollowSymLinks','MultiViews'],
 #   }
 #   ```
@@ -607,185 +628,197 @@
 #   using the PassengerEnabled directive with the PassengerHighPerformance directive.
 # 
 # @param passenger_base_uri
-#   Sets [PassengerBaseURI](https://www.phusionpassenger.com/library/config/apache/reference/#passengerbase_rui), 
+#   Sets [PassengerBaseURI](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerbase_rui),
 #    to specify that the given URI is a distinct application served by Passenger.
 # 
 # @param passenger_ruby
-#   Sets [PassengerRuby](https://www.phusionpassenger.com/library/config/apache/reference/#passengerruby), 
+#   Sets [PassengerRuby](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerruby),
 #   specifying the Ruby interpreter to use when serving the relevant web applications.
 # 
 # @param passenger_python
-#   Sets [PassengerPython](https://www.phusionpassenger.com/library/config/apache/reference/#passengerpython), 
+#   Sets [PassengerPython](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerpython),
 #   specifying the Python interpreter to use when serving the relevant web applications.
 # 
 # @param passenger_nodejs
-#   Sets the [`PassengerNodejs`](https://www.phusionpassenger.com/library/config/apache/reference/#passengernodejs), 
+#   Sets the [`PassengerNodejs`](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengernodejs),
 #   specifying Node.js command to use when serving the relevant web applications.
 # 
 # @param passenger_meteor_app_settings
-#   Sets [PassengerMeteorAppSettings](https://www.phusionpassenger.com/library/config/apache/reference/#passengermeteorappsettings), 
+#   Sets [PassengerMeteorAppSettings](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermeteorappsettings),
 #   specifying a JSON file with settings for the application when using a Meteor 
 #   application in non-bundled mode.
 # 
 # @param passenger_app_env
-#   Sets [PassengerAppEnv](https://www.phusionpassenger.com/library/config/apache/reference/#passengerappenv), 
+#   Sets [PassengerAppEnv](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerappenv),
 #   the environment for the Passenger application. If not specified, defaults to the global 
 #   setting or 'production'.
 # 
 # @param passenger_app_root
-#   Sets [PassengerRoot](https://www.phusionpassenger.com/library/config/apache/reference/#passengerapproot), 
+#   Sets [PassengerRoot](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerapproot),
 #   the location of the Passenger application root if different from the DocumentRoot.
 # 
 # @param passenger_app_group_name
-#   Sets [PassengerAppGroupName](https://www.phusionpassenger.com/library/config/apache/reference/#passengerappgroupname), 
+#   Sets [PassengerAppGroupName](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerappgroupname),
 #    the name of the application group that the current application should belong to.
 # 
+# @param passenger_app_start_command
+#   Sets [PassengerAppStartCommand](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerappstartcommand),
+#    how Passenger should start your app on a specific port.
+#
 # @param passenger_app_type
-#   Sets [PassengerAppType](https://www.phusionpassenger.com/library/config/apache/reference/#passengerapptype), 
+#   Sets [PassengerAppType](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerapptype),
 #    to force Passenger to recognize the application as a specific type.
 # 
 # @param passenger_startup_file
-#   Sets the [PassengerStartupFile](https://www.phusionpassenger.com/library/config/apache/reference/#passengerstartupfile) 
+#   Sets the [PassengerStartupFile](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstartupfile),
 #   path. This path is relative to the application root.
 # 
 # @param passenger_restart_dir
-#   Sets the [PassengerRestartDir](https://www.phusionpassenger.com/library/config/apache/reference/#passengerrestartdir) 
+#   Sets the [PassengerRestartDir](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerrestartdir),
 #    to customize the directory in which `restart.txt` is searched for.
 # 
 # @param passenger_spawn_method
-#   Sets [PassengerSpawnMethod](https://www.phusionpassenger.com/library/config/apache/reference/#passengerspawnmethod), 
+#   Sets [PassengerSpawnMethod](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerspawnmethod),
 #   whether Passenger spawns applications directly, or using a prefork copy-on-write mechanism.
 # 
 # @param passenger_load_shell_envvars
-#   Sets [PassengerLoadShellEnvvars](https://www.phusionpassenger.com/library/config/apache/reference/#passengerloadshellenvvars), 
+#   Sets [PassengerLoadShellEnvvars](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerloadshellenvvars),
 #   to enable or disable the loading of shell environment variables before spawning the application.
 # 
 # @param passenger_rolling_restarts
-#   Sets [PassengerRollingRestarts](https://www.phusionpassenger.com/library/config/apache/reference/#passengerrollingrestarts), 
+#   Sets [PassengerRollingRestarts](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerrollingrestarts),
 #   to enable or disable support for zero-downtime application restarts through `restart.txt`.
 # 
 # @param passenger_resist_deployment_errors
-#   Sets [PassengerResistDeploymentErrors](https://www.phusionpassenger.com/library/config/apache/reference/#passengerresistdeploymenterrors), 
+#   Sets [PassengerResistDeploymentErrors](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerresistdeploymenterrors),
 #   to enable or disable resistance against deployment errors.
 # 
 # @param passenger_user
-#   Sets [PassengerUser](https://www.phusionpassenger.com/library/config/apache/reference/#passengeruser), 
+#   Sets [PassengerUser](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengeruser),
 #   the running user for sandboxing applications.
 # 
 # @param passenger_group
-#   Sets [PassengerGroup](https://www.phusionpassenger.com/library/config/apache/reference/#passengergroup), 
+#   Sets [PassengerGroup](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengergroup),
 #   the running group for sandboxing applications.
 # 
 # @param passenger_friendly_error_pages
-#   Sets [PassengerFriendlyErrorPages](https://www.phusionpassenger.com/library/config/apache/reference/#passengerfriendlyerrorpages), 
+#   Sets [PassengerFriendlyErrorPages](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerfriendlyerrorpages),
 #   which can display friendly error pages whenever an application fails to start. This 
 #   friendly error page presents the startup error message, some suggestions for solving 
 #   the problem, a backtrace and a dump of the environment variables.
 # 
 # @param passenger_min_instances
-#   Sets [PassengerMinInstances](https://www.phusionpassenger.com/library/config/apache/reference/#passengermininstances), 
+#   Sets [PassengerMinInstances](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermininstances),
 #   the minimum number of application processes to run.
 # 
 # @param passenger_max_instances
-#   Sets [PassengerMaxInstances](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxinstances), 
+#   Sets [PassengerMaxInstances](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxinstances),
 #   the maximum number of application processes to run.
 # 
 # @param passenger_max_preloader_idle_time
-#   Sets [PassengerMaxPreloaderIdleTime](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxpreloaderidletime), 
+#   Sets [PassengerMaxPreloaderIdleTime](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxpreloaderidletime),
 #   the maximum amount of time the preloader waits before shutting down an idle process.
 # 
 # @param passenger_force_max_concurrent_requests_per_process
-#   Sets [PassengerForceMaxConcurrentRequestsPerProcess](https://www.phusionpassenger.com/library/config/apache/reference/#passengerforcemaxconcurrentrequestsperprocess), 
+#   Sets [PassengerForceMaxConcurrentRequestsPerProcess](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerforcemaxconcurrentrequestsperprocess),
 #   the maximum amount of concurrent requests the application can handle per process.
 # 
 # @param passenger_start_timeout
-#   Sets [PassengerStartTimeout](https://www.phusionpassenger.com/library/config/apache/reference/#passengerstarttimeout), 
+#   Sets [PassengerStartTimeout](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstarttimeout),
 #   the timeout for the application startup.
 # 
 # @param passenger_concurrency_model
-#   Sets [PassengerConcurrencyModel](https://www.phusionpassenger.com/library/config/apache/reference/#passengerconcurrencyodel), 
+#   Sets [PassengerConcurrencyModel](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerconcurrencyodel),
 #   to specify the I/O concurrency model that should be used for Ruby application processes. 
 #   Passenger supports two concurrency models:<br />
-#   * `process` – single-threaded, multi-processed I/O concurrency.
-#   * `thread` – multi-threaded, multi-processed I/O concurrency.
+#   * `process` - single-threaded, multi-processed I/O concurrency.
+#   * `thread` - multi-threaded, multi-processed I/O concurrency.
 # 
 # @param passenger_thread_count
-#   Sets [PassengerThreadCount](https://www.phusionpassenger.com/library/config/apache/reference/#passengerthreadcount), 
+#   Sets [PassengerThreadCount](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerthreadcount),
 #   the number of threads that Passenger should spawn per Ruby application process.<br />
 #   This option only has effect if PassengerConcurrencyModel is `thread`.
 # 
 # @param passenger_max_requests
-#   Sets [PassengerMaxRequests](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequests), 
+#   Sets [PassengerMaxRequests](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxrequests),
 #   the maximum number of requests an application process will process.
 # 
 # @param passenger_max_request_time
-#   Sets [PassengerMaxRequestTime](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequesttime), 
+#   Sets [PassengerMaxRequestTime](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxrequesttime),
 #   the maximum amount of time, in seconds, that an application process may take to 
 #   process a request.
 # 
 # @param passenger_memory_limit
-#   Sets [PassengerMemoryLimit](https://www.phusionpassenger.com/library/config/apache/reference/#passengermemorylimit), 
+#   Sets [PassengerMemoryLimit](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermemorylimit),
 #   the maximum amount of memory that an application process may use, in megabytes.
 # 
 # @param passenger_stat_throttle_rate
-#   Sets [PassengerStatThrottleRate](https://www.phusionpassenger.com/library/config/apache/reference/#passengerstatthrottlerate), 
+#   Sets [PassengerStatThrottleRate](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstatthrottlerate),
 #   to set a limit, in seconds, on how often Passenger will perform it's filesystem checks.
 # 
 # @param passenger_pre_start
-#   Sets [PassengerPreStart](https://www.phusionpassenger.com/library/config/apache/reference/#passengerprestart), 
+#   Sets [PassengerPreStart](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerprestart),
 #   the URL of the application if pre-starting is required.
 # 
 # @param passenger_high_performance
-#   Sets [PassengerHighPerformance](https://www.phusionpassenger.com/library/config/apache/reference/#passengerhighperformance), 
+#   Sets [PassengerHighPerformance](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerhighperformance),
 #   to enhance performance in return for reduced compatibility.
 # 
 # @param passenger_buffer_upload
-#   Sets [PassengerBufferUpload](https://www.phusionpassenger.com/library/config/apache/reference/#passengerbufferupload),
+#   Sets [PassengerBufferUpload](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerbufferupload),
 #   to buffer HTTP client request bodies before they are sent to the application.
 # 
 # @param passenger_buffer_response
-#   Sets [PassengerBufferResponse](https://www.phusionpassenger.com/library/config/apache/reference/#passengerbufferresponse),
+#   Sets [PassengerBufferResponse](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerbufferresponse),
 #   to buffer Happlication-generated responses.
 # 
 # @param passenger_error_override
-#   Sets [PassengerErrorOverride](https://www.phusionpassenger.com/library/config/apache/reference/#passengererroroverride),
+#   Sets [PassengerErrorOverride](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengererroroverride),
 #   to specify whether Apache will intercept and handle response with HTTP status codes of
 #   400 and higher.
 # 
 # @param passenger_max_request_queue_size
-#   Sets [PassengerMaxRequestQueueSize](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequestqueuesize),
+#   Sets [PassengerMaxRequestQueueSize](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxrequestqueuesize),
 #   to specify the maximum amount of requests that are allowed to queue whenever the maximum
 #   concurrent request limit is reached. If the queue is already at this specified limit, then 
 #   Passenger immediately sends a "503 Service Unavailable" error to any incoming requests.<br />
 #   A value of 0 means that the queue size is unbounded.
 # 
 # @param passenger_max_request_queue_time
-#   Sets [PassengerMaxRequestQueueTime](https://www.phusionpassenger.com/library/config/apache/reference/#passengermaxrequestqueuetime),
+#   Sets [PassengerMaxRequestQueueTime](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengermaxrequestqueuetime),
 #   to specify the maximum amount of time that requests are allowed to stay in the queue 
 #   whenever the maximum concurrent request limit is reached. If a request reaches this specified 
 #   limit, then Passenger immeaditly sends a "504 Gateway Timeout" error for that request.<br />
 #   A value of 0 means that the queue time is unbounded.
 # 
 # @param passenger_sticky_sessions
-#   Sets [PassengerStickySessions](https://www.phusionpassenger.com/library/config/apache/reference/#passengerstickysessions), 
+#   Sets [PassengerStickySessions](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstickysessions),
 #   to specify that, whenever possible, all requests sent by a client will be routed to the same 
 #   originating application process.
 # 
 # @param passenger_sticky_sessions_cookie_name
-#   Sets [PassengerStickySessionsCookieName](https://www.phusionpassenger.com/library/config/apache/reference/#passengerstickysessionscookiename), 
+#   Sets [PassengerStickySessionsCookieName](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstickysessionscookiename),
 #   to specify the name of the sticky sessions cookie.
+#
+# @param passenger_sticky_sessions_cookie_attributes
+#   Sets [PassengerStickySessionsCookieAttributes](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerstickysessionscookieattributes),
+#   the attributes of the sticky sessions cookie.
 # 
 # @param passenger_allow_encoded_slashes
-#   Sets [PassengerAllowEncodedSlashes](https://www.phusionpassenger.com/library/config/apache/reference/#passengerallowencodedslashes), 
+#   Sets [PassengerAllowEncodedSlashes](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerallowencodedslashes),
 #   to allow URLs with encoded slashes. Please note that this feature will not work properly
 #   unless Apache's `AllowEncodedSlashes` is also enabled.
 # 
+# @param passenger_app_log_file
+#   Sets [PassengerAppLogFile](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerapplogfile),
+#   app specific messages logged to a different file in addition to Passenger log file.
+#
 # @param passenger_debugger
-#   Sets [PassengerDebugger](https://www.phusionpassenger.com/library/config/apache/reference/#passengerdebugger), 
+#   Sets [PassengerDebugger](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerdebugger),
 #   to turn support for Ruby application debugging on or off. 
 # 
 # @param passenger_lve_min_uid
-#   Sets [PassengerLveMinUid](https://www.phusionpassenger.com/library/config/apache/reference/#passengerlveminuid), 
+#   Sets [PassengerLveMinUid](https://www.phusionpassenger.com/docs/references/config_reference/apache/#passengerlveminuid),
 #   to only allow the spawning of application processes with UIDs equal to, or higher than, this 
 #   specified value on LVE-enabled kernels.
 # 
@@ -839,7 +872,7 @@
 #   configuration. Optionally, parameters can be added as an array.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     proxy_pass => [
 #       { 'path' => '/a', 'url' => 'http://backend-a/' },
 #       { 'path' => '/b', 'url' => 'http://backend-b/' },
@@ -888,7 +921,7 @@
 #   length, and the items are order-dependent.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     redirect_source => ['/images','/downloads'],
 #     redirect_dest   => ['http://img.example.com/','http://downloads.example.com/'],
 #   }
@@ -898,7 +931,7 @@
 #   Specifies the status to append to the redirect.
 #   ``` puppet
 #     apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     redirect_status => ['temp','permanent'],
 #   }
 #   ```
@@ -909,7 +942,7 @@
 #   and redirectmatch_dest.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     redirectmatch_status => ['404','404'],
 #     redirectmatch_regexp => ['\.git(/.*|$)/','\.svn(/.*|$)'],
 #     redirectmatch_dest => ['http://www.example.com/$1','http://www.example.com/$2'],
@@ -922,7 +955,7 @@
 #   and redirectmatch_dest.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     redirectmatch_status => ['404','404'],
 #     redirectmatch_regexp => ['\.git(/.*|$)/','\.svn(/.*|$)'],
 #     redirectmatch_dest => ['http://www.example.com/$1','http://www.example.com/$2'],
@@ -935,7 +968,7 @@
 #   and redirectmatch_regexp.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     redirectmatch_status => ['404','404'],
 #     redirectmatch_regexp => ['\.git(/.*|$)/','\.svn(/.*|$)'],
 #     redirectmatch_dest => ['http://www.example.com/$1','http://www.example.com/$2'],
@@ -948,7 +981,7 @@
 #   and so on.
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     request_headers => [
 #       'append MirrorID "mirror 12"',
 #       'unset MirrorID',
@@ -963,7 +996,7 @@
 #   For example, you can specify that anyone trying to access index.html is served welcome.html
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     rewrites => [ { rewrite_rule => ['^index\.html$ welcome.html'] } ]
 #   }
 #   ```
@@ -971,7 +1004,7 @@
 #   For instance, if you wanted to rewrite URLs only if the visitor is using IE
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     rewrites => [
 #       {
 #         comment      => 'redirect IE',
@@ -985,7 +1018,7 @@
 #   only when the browser is Lynx or Mozilla (version 1 or 2)
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     rewrites => [
 #       {
 #         comment      => 'Lynx or Mozilla v1/2',
@@ -998,7 +1031,7 @@
 #   Multiple rewrites and conditions are also possible
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     rewrites => [
 #       {
 #         comment      => 'Lynx or Mozilla v1/2',
@@ -1050,7 +1083,7 @@
 #   `rewrite_inherit` parameter to `true`:
 #   ``` puppet
 #   apache::vhost { 'site.name.fdqn':
-#     …
+#     ...
 #     rewrites => [
 #       <rules>,
 #     ],
@@ -1334,7 +1367,7 @@
 #   configuration.
 #   ``` puppet
 #   apache::vhost { 'monitor':
-#     …
+#     ...
 #     directories => [
 #       {
 #         path => '/path/to/directory',
@@ -1446,12 +1479,30 @@
 #   }
 #   ```
 # 
+# @param gssapi
+#  Specfies mod_auth_gssapi parameters for particular directories in a virtual host directory
+#  ```puppet
+#   include apache::mod::auth_gssapi
+#   apache::vhost { 'sample.example.net':
+#     docroot     => '/path/to/directory',
+#     directories => [
+#       { path   => '/path/to/different/dir',
+#         gssapi => {
+#           credstore => 'keytab:/foo/bar.keytab',
+#           localname => 'Off',
+#           sslonly   => 'On',
+#         }
+#       },
+#     ],
+#   }
+#   ```
+#
 # @param ssl
 #   Enables SSL for the virtual host. SSL virtual hosts only respond to HTTPS queries.
 #
 # @param ssl_ca
 #   Specifies the SSL certificate authority to be used to verify client certificates used 
-#   for authentication. You must also set `ssl_verify_client` to use this.
+#   for authentication.
 #
 # @param ssl_cert
 #   Specifies the SSL certification.
@@ -1469,8 +1520,7 @@
 #   preferred order.
 #
 # @param ssl_certs_dir
-#   Specifies the location of the SSL certification directory to verify client certs. Will not 
-#   be used unless `ssl_verify_client` is also set (see below).
+#   Specifies the location of the SSL certification directory to verify client certs.
 #
 # @param ssl_chain
 #   Specifies the SSL chain. This default works out of the box, but it must be updated in 
@@ -1505,7 +1555,7 @@
 #   directive, which sets the certificate verification level for client authentication.
 #   ``` puppet
 #   apache::vhost { 'sample.example.net':
-#     …
+#     ...
 #     ssl_verify_client => 'optional',
 #   }
 #   ```
@@ -1516,7 +1566,7 @@
 #   verification. You must set `ssl_verify_client` for it to take effect.
 #   ``` puppet
 #   apache::vhost { 'sample.example.net':
-#     …
+#     ...
 #     ssl_verify_client => 'require',
 #     ssl_verify_depth => 1,
 #   }
@@ -1559,10 +1609,18 @@
 #   concatenation of the PEM-encoded certificate files in order of preference.
 #   ``` puppet
 #   apache::vhost { 'sample.example.net':
-#     …
+#     ...
 #     ssl_proxy_machine_cert => '/etc/httpd/ssl/client_certificate.pem',
 #   }
 #   ```
+# @param ssl_proxy_machine_cert_chain
+#   Sets the [SSLProxyMachineCertificateChainFile](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxymachinecertificatechainfile)
+#   directive, which specifies an all-in-one file where you keep the certificate chain for
+#   all of the client certs in use. This directive will be needed if the remote server
+#   presents a list of CA certificates that are not direct signers of one of the configured
+#   client certificates. This referenced file is simply the concatenation of the various
+#   PEM-encoded certificate files. Upon startup, each client certificate configured will be
+#   examined and a chain of trust will be constructed.
 #
 # @param ssl_proxy_check_peer_cn
 #   Sets the [SSLProxyCheckPeerCN](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslproxycheckpeercn) 
@@ -1586,14 +1644,14 @@
 #   A string:
 #   ``` puppet
 #   apache::vhost { 'sample.example.net':
-#     …
+#     ...
 #     ssl_options => '+ExportCertData',
 #   }
 #   ```
 #   An array:
 #   ``` puppet
 #   apache::vhost { 'sample.example.net':
-#     …
+#     ...
 #     ssl_options => ['+StrictRequire', '+ExportCertData'],
 #   }
 #   ```
@@ -1618,6 +1676,12 @@
 #   Can be used to set the [SSLStaplingReturnResponderErrors](http://httpd.apache.org/docs/current/mod/mod_ssl.html#sslstaplingreturnrespondererrors) directive.<br />
 #   This parameter only applies to Apache 2.4 or higher and is ignored on older versions.
 #
+# @param ssl_user_name
+#   Sets the [SSLUserName](https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslusername) directive.
+#
+# @param ssl_reload_on_change
+#   Enable reloading of apache if the content of ssl files have changed.
+#
 # @param use_canonical_name
 #   Specifies whether to use the [`UseCanonicalName directive`](https://httpd.apache.org/docs/2.4/mod/core.html#usecanonicalname),
 #   which allows you to configure how the server determines it's own name and port.
@@ -1626,7 +1690,59 @@
 #   this lets you define configuration variables inside a vhost using [`Define`](https://httpd.apache.org/docs/2.4/mod/core.html#define),
 #   these can then be used to replace configuration values. All Defines are Undefined at the end of the VirtualHost.
 #
-define apache::vhost(
+# @param auth_oidc
+#   Enable `mod_auth_openidc` parameters for OpenID Connect authentication.
+#
+# @param oidc_settings
+#   An Apache::OIDCSettings Struct containing (mod_auth_openidc settings)[https://github.com/zmartzone/mod_auth_openidc/blob/master/auth_openidc.conf].
+#
+# @param limitreqfields
+#   The `limitreqfields` parameter sets the maximum number of request header fields in
+#   an HTTP request. This directive gives the server administrator greater control over
+#   abnormal client request behavior, which may be useful for avoiding some forms of
+#   denial-of-service attacks. The value should be increased if normal clients see an error
+#   response from the server that indicates too many fields were sent in the request.
+#
+# @param limitreqfieldsize
+#   The `limitreqfieldsize` parameter sets the maximum ammount of _bytes_ that will
+#   be allowed within a request header.
+#
+# @param limitreqline
+#   Limit the size of the HTTP request line that will be accepted from the client
+#   This directive sets the number of bytes that will be allowed on the HTTP
+#   request-line. The LimitRequestLine directive allows the server administrator
+#   to set the limit on the allowed size of a client's HTTP request-line. Since
+#   the request-line consists of the HTTP method, URI, and protocol version, the
+#   LimitRequestLine directive places a restriction on the length of a request-URI
+#   allowed for a request on the server. A server needs this value to be large
+#   enough to hold any of its resource names, including any information that might
+#   be passed in the query part of a GET request.
+#
+# @param limitreqbody
+#   Restricts the total size of the HTTP request body sent from the client
+#   The LimitRequestBody directive allows the user to set a limit on the allowed
+#   size of an HTTP request message body within the context in which the
+#   directive is given (server, per-directory, per-file or per-location). If the
+#   client request exceeds that limit, the server will return an error response
+#   instead of servicing the request.
+#
+# @param $use_servername_for_filenames
+#   When set to true, default log / config file names will be derived from the sanitized
+#   value of the $servername parameter.
+#   When set to false (default), the existing behaviour of using the $name parameter
+#   will remain.
+#
+# @param $use_port_for_filenames
+#   When set to true and use_servername_for_filenames is also set to true, default log /
+#   config file names will be derived from the sanitized value of both the $servername and
+#   $port parameters.
+#   When set to false (default), the port is not included in the file names and may lead to
+#   duplicate declarations if two virtual hosts use the same domain.
+#
+# @param $mdomain
+#   All the names in the list are managed as one Managed Domain (MD). mod_md will request
+#   one single certificate that is valid for all these names.
+define apache::vhost (
   Variant[Boolean,String] $docroot,
   $manage_docroot                                                                   = true,
   $virtual_docroot                                                                  = false,
@@ -1635,24 +1751,25 @@ define apache::vhost(
   Boolean $ip_based                                                                 = false,
   $add_listen                                                                       = true,
   $docroot_owner                                                                    = 'root',
-  $docroot_group                                                                    = $::apache::params::root_group,
+  $docroot_group                                                                    = $apache::params::root_group,
   $docroot_mode                                                                     = undef,
   Array[Enum['h2', 'h2c', 'http/1.1']] $protocols                                   = [],
   Optional[Boolean] $protocols_honor_order                                          = undef,
   $serveradmin                                                                      = undef,
   Boolean $ssl                                                                      = false,
-  $ssl_cert                                                                         = $::apache::default_ssl_cert,
-  $ssl_key                                                                          = $::apache::default_ssl_key,
-  $ssl_chain                                                                        = $::apache::default_ssl_chain,
-  $ssl_ca                                                                           = $::apache::default_ssl_ca,
-  $ssl_crl_path                                                                     = $::apache::default_ssl_crl_path,
-  $ssl_crl                                                                          = $::apache::default_ssl_crl,
-  $ssl_crl_check                                                                    = $::apache::default_ssl_crl_check,
-  $ssl_certs_dir                                                                    = $::apache::params::ssl_certs_dir,
+  $ssl_cert                                                                         = $apache::default_ssl_cert,
+  $ssl_key                                                                          = $apache::default_ssl_key,
+  $ssl_chain                                                                        = $apache::default_ssl_chain,
+  $ssl_ca                                                                           = $apache::default_ssl_ca,
+  $ssl_crl_path                                                                     = $apache::default_ssl_crl_path,
+  $ssl_crl                                                                          = $apache::default_ssl_crl,
+  $ssl_crl_check                                                                    = $apache::default_ssl_crl_check,
+  $ssl_certs_dir                                                                    = $apache::params::ssl_certs_dir,
+  Boolean $ssl_reload_on_change                                                     = $apache::default_ssl_reload_on_change,
   $ssl_protocol                                                                     = undef,
   $ssl_cipher                                                                       = undef,
-  $ssl_honorcipherorder                                                             = undef,
-  $ssl_verify_client                                                                = undef,
+  Variant[Boolean, Enum['on', 'On', 'off', 'Off'], Undef] $ssl_honorcipherorder     = undef,
+  Optional[Enum['none', 'optional', 'require', 'optional_no_ca']] $ssl_verify_client = undef,
   $ssl_verify_depth                                                                 = undef,
   Optional[Enum['none', 'optional', 'require', 'optional_no_ca']] $ssl_proxy_verify = undef,
   Optional[Integer[0]] $ssl_proxy_verify_depth                                      = undef,
@@ -1661,6 +1778,7 @@ define apache::vhost(
   Optional[Enum['on', 'off']] $ssl_proxy_check_peer_name                            = undef,
   Optional[Enum['on', 'off']] $ssl_proxy_check_peer_expire                          = undef,
   $ssl_proxy_machine_cert                                                           = undef,
+  $ssl_proxy_machine_cert_chain                                                     = undef,
   $ssl_proxy_cipher_suite                                                           = undef,
   $ssl_proxy_protocol                                                               = undef,
   $ssl_options                                                                      = undef,
@@ -1669,6 +1787,7 @@ define apache::vhost(
   Optional[Boolean] $ssl_stapling                                                   = undef,
   $ssl_stapling_timeout                                                             = undef,
   $ssl_stapling_return_errors                                                       = undef,
+  Optional[String] $ssl_user_name                                                   = undef,
   $priority                                                                         = undef,
   Boolean $default_vhost                                                            = false,
   $servername                                                                       = $name,
@@ -1677,12 +1796,12 @@ define apache::vhost(
   $override                                                                         = ['None'],
   $directoryindex                                                                   = '',
   $vhost_name                                                                       = '*',
-  $logroot                                                                          = $::apache::logroot,
+  $logroot                                                                          = $apache::logroot,
   Enum['directory', 'absent'] $logroot_ensure                                       = 'directory',
   $logroot_mode                                                                     = undef,
   $logroot_owner                                                                    = undef,
   $logroot_group                                                                    = undef,
-  $log_level                                                                        = undef,
+  Optional[Apache::LogLevel] $log_level                                             = undef,
   Boolean $access_log                                                               = true,
   $access_log_file                                                                  = false,
   $access_log_pipe                                                                  = false,
@@ -1690,12 +1809,22 @@ define apache::vhost(
   $access_log_format                                                                = false,
   $access_log_env_var                                                               = false,
   Optional[Array] $access_logs                                                      = undef,
+  Optional[Boolean] $use_servername_for_filenames                                   = false,
+  Optional[Boolean] $use_port_for_filenames                                         = false,
   $aliases                                                                          = undef,
   Optional[Variant[Hash, Array[Variant[Array,Hash]]]] $directories                  = undef,
   Boolean $error_log                                                                = true,
   $error_log_file                                                                   = undef,
   $error_log_pipe                                                                   = undef,
   $error_log_syslog                                                                 = undef,
+  Optional[
+    Array[
+      Variant[
+        String,
+        Hash[String, Enum['connection', 'request']]
+      ]
+    ]
+  ]       $error_log_format                                                         = undef,
   Optional[Pattern[/^((Strict|Unsafe)?\s*(\b(Registered|Lenient)Methods)?\s*(\b(Allow0\.9|Require1\.0))?)$/]] $http_protocol_options = undef,
   $modsec_audit_log                                                                 = undef,
   $modsec_audit_log_file                                                            = undef,
@@ -1704,15 +1833,19 @@ define apache::vhost(
   Optional[Variant[Stdlib::Absolutepath, Enum['disabled']]] $fallbackresource       = undef,
   $scriptalias                                                                      = undef,
   $scriptaliases                                                                    = [],
+  Optional[Integer] $limitreqfieldsize                                              = undef,
+  Optional[Integer] $limitreqfields                                                 = undef,
+  Optional[Integer] $limitreqline                                                   = undef,
+  Optional[Integer] $limitreqbody                                                   = undef,
   $proxy_dest                                                                       = undef,
   $proxy_dest_match                                                                 = undef,
   $proxy_dest_reverse_match                                                         = undef,
   $proxy_pass                                                                       = undef,
   $proxy_pass_match                                                                 = undef,
   Boolean $proxy_requests                                                           = false,
-  $suphp_addhandler                                                                 = $::apache::params::suphp_addhandler,
-  Enum['on', 'off'] $suphp_engine                                                   = $::apache::params::suphp_engine,
-  $suphp_configpath                                                                 = $::apache::params::suphp_configpath,
+  $suphp_addhandler                                                                 = $apache::params::suphp_addhandler,
+  Enum['on', 'off'] $suphp_engine                                                   = $apache::params::suphp_engine,
+  $suphp_configpath                                                                 = $apache::params::suphp_configpath,
   $php_flags                                                                        = {},
   $php_values                                                                       = {},
   $php_admin_flags                                                                  = {},
@@ -1759,8 +1892,8 @@ define apache::vhost(
   $fastcgi_dir                                                                      = undef,
   $fastcgi_idle_timeout                                                             = undef,
   $additional_includes                                                              = [],
-  $use_optional_includes                                                            = $::apache::use_optional_includes,
-  $apache_version                                                                   = $::apache::apache_version,
+  $use_optional_includes                                                            = $apache::use_optional_includes,
+  $apache_version                                                                   = $apache::apache_version,
   Optional[Enum['on', 'off', 'nodecode']] $allow_encoded_slashes                    = undef,
   Optional[Pattern[/^[\w-]+ [\w-]+$/]] $suexec_user_group                           = undef,
 
@@ -1789,6 +1922,7 @@ define apache::vhost(
   Optional[String] $passenger_app_env                                               = undef,
   Optional[Stdlib::Absolutepath] $passenger_app_root                                = undef,
   Optional[String] $passenger_app_group_name                                        = undef,
+  Optional[String] $passenger_app_start_command                                     = undef,
   Optional[Enum['meteor', 'node', 'rack', 'wsgi']] $passenger_app_type              = undef,
   Optional[String] $passenger_startup_file                                          = undef,
   Optional[String] $passenger_restart_dir                                           = undef,
@@ -1819,7 +1953,9 @@ define apache::vhost(
   Optional[Integer] $passenger_max_request_queue_time                               = undef,
   Optional[Boolean] $passenger_sticky_sessions                                      = undef,
   Optional[String] $passenger_sticky_sessions_cookie_name                           = undef,
+  Optional[String] $passenger_sticky_sessions_cookie_attributes                     = undef,
   Optional[Boolean] $passenger_allow_encoded_slashes                                = undef,
+  Optional[String] $passenger_app_log_file                                          = undef,
   Optional[Boolean] $passenger_debugger                                             = undef,
   Optional[Integer] $passenger_lve_min_uid                                          = undef,
   $add_default_charset                                                              = undef,
@@ -1851,18 +1987,21 @@ define apache::vhost(
   $cas_login_url                                                                    = undef,
   $cas_validate_url                                                                 = undef,
   $cas_validate_saml                                                                = undef,
+  $cas_cookie_path                                                                  = undef,
   Optional[String] $shib_compat_valid_user                                          = undef,
   Optional[Enum['On', 'on', 'Off', 'off', 'DNS', 'dns']] $use_canonical_name        = undef,
   Optional[Variant[String,Array[String]]] $comment                                  = undef,
   Hash $define                                                                      = {},
+  Boolean $auth_oidc                                                                = false,
+  Optional[Apache::OIDCSettings] $oidc_settings                                     = undef,
+  Optional[Variant[Boolean,String]] $mdomain                                        = undef,
 ) {
-
   # The base class must be included first because it is used by parameter defaults
   if ! defined(Class['apache']) {
     fail('You must include the apache base class before using any apache defined resources')
   }
 
-  $apache_name = $::apache::apache_name
+  $apache_name = $apache::apache_name
 
   if $rewrites {
     unless empty($rewrites) {
@@ -1872,10 +2011,6 @@ define apache::vhost(
   }
 
   # Input validation begins
-
-  if $log_level {
-    apache::validate_apache_log_level($log_level)
-  }
 
   if $access_log_file and $access_log_pipe {
     fail("Apache::Vhost[${name}]: 'access_log_file' and 'access_log_pipe' cannot be defined at the same time")
@@ -1892,29 +2027,45 @@ define apache::vhost(
   # Input validation ends
 
   if $ssl and $ensure == 'present' {
-    include ::apache::mod::ssl
+    include apache::mod::ssl
     # Required for the AddType lines.
-    include ::apache::mod::mime
+    include apache::mod::mime
+  }
+
+  if $ssl_honorcipherorder =~ Boolean or $ssl_honorcipherorder == undef {
+    $_ssl_honorcipherorder = $ssl_honorcipherorder
+  } else {
+    $_ssl_honorcipherorder = $ssl_honorcipherorder ? {
+      'on'    => true,
+      'On'    => true,
+      'off'   => false,
+      'Off'   => false,
+      default => true,
+    }
   }
 
   if $auth_kerb and $ensure == 'present' {
-    include ::apache::mod::auth_kerb
+    include apache::mod::auth_kerb
+  }
+
+  if $auth_oidc and $ensure == 'present' {
+    include apache::mod::auth_openidc
   }
 
   if $virtual_docroot {
-    include ::apache::mod::vhost_alias
+    include apache::mod::vhost_alias
   }
 
   if $wsgi_application_group or $wsgi_daemon_process or ($wsgi_import_script and $wsgi_import_script_options) or $wsgi_process_group or ($wsgi_script_aliases and ! empty($wsgi_script_aliases)) or $wsgi_pass_authorization {
-    include ::apache::mod::wsgi
+    include apache::mod::wsgi
   }
 
   if $suexec_user_group {
-    include ::apache::mod::suexec
+    include apache::mod::suexec
   }
 
-  if $passenger_spawn_method or $passenger_app_root or $passenger_app_env or $passenger_ruby or $passenger_min_instances or $passenger_max_requests or $passenger_start_timeout or $passenger_pre_start or $passenger_user or $passenger_group or $passenger_high_performance or $passenger_nodejs or $passenger_sticky_sessions or $passenger_startup_file {
-    include ::apache::mod::passenger
+  if $passenger_enabled != undef or $passenger_start_timeout != undef or $passenger_ruby != undef or $passenger_python != undef or $passenger_nodejs != undef or $passenger_meteor_app_settings != undef or $passenger_app_env != undef or $passenger_app_root != undef or $passenger_app_group_name != undef or $passenger_app_start_command != undef or $passenger_app_type != undef or $passenger_startup_file != undef or $passenger_restart_dir != undef or $passenger_spawn_method != undef or $passenger_load_shell_envvars != undef or $passenger_rolling_restarts != undef or $passenger_resist_deployment_errors != undef or $passenger_min_instances != undef or $passenger_max_instances != undef or $passenger_max_preloader_idle_time != undef or $passenger_force_max_concurrent_requests_per_process != undef or $passenger_concurrency_model != undef or $passenger_thread_count != undef or $passenger_high_performance != undef or $passenger_max_request_queue_size != undef or $passenger_max_request_queue_time != undef or $passenger_user != undef or $passenger_group != undef or $passenger_friendly_error_pages != undef or $passenger_buffer_upload != undef or $passenger_buffer_response != undef or $passenger_allow_encoded_slashes != undef or $passenger_lve_min_uid != undef or $passenger_base_uri != undef or $passenger_error_override != undef or $passenger_sticky_sessions != undef or $passenger_sticky_sessions_cookie_name != undef or $passenger_sticky_sessions_cookie_attributes != undef or $passenger_app_log_file != undef or $passenger_debugger != undef or $passenger_max_requests != undef or $passenger_max_request_time != undef or $passenger_memory_limit != undef {
+    include apache::mod::passenger
   }
 
   # Configure the defaultness of a vhost
@@ -1928,8 +2079,64 @@ define apache::vhost(
     $priority_real = '25-'
   }
 
-  ## Apache include does not always work with spaces in the filename
-  $filename = regsubst($name, ' ', '_', 'G')
+  # https://httpd.apache.org/docs/2.4/fr/mod/core.html#servername
+  # Syntax:	ServerName [scheme://]domain-name|ip-address[:port]
+  # Sometimes, the server runs behind a device that processes SSL, such as a reverse proxy, load balancer or SSL offload
+  # appliance.
+  # When this is the case, specify the https:// scheme and the port number to which the clients connect in the ServerName
+  # directive to make sure that the server generates the correct self-referential URLs.
+  $normalized_servername = regsubst($servername, '(https?:\/\/)?([a-z0-9\/%_+.,#?!@&=-]+)(:?\d+)?', '\2', 'G')
+
+  # IAC-1186: A number of configuration and log file names are generated using the $name parameter. It is possible for
+  # the $name parameter to contain spaces, which could then be transferred to the log / config filenames. Although
+  # POSIX compliant, this can be cumbersome.
+  #
+  # It seems more appropriate to use the $servername parameter to derive default log / config filenames from. We should
+  # also perform some sanitiation on the $servername parameter to strip spaces from it, as it defaults to the value of
+  # $name, should $servername NOT be defined.
+  #
+  # Because a single hostname may be use by multiple virtual hosts listening on different ports, the $port paramter can
+  # optionaly be used to avoid duplicate resources.
+  #
+  # We will retain the default behaviour for filenames but allow the use of a sanitized version of $servername to be
+  # used, using the new $use_servername_for_filenames and $use_port_for_filenames parameters.
+  #
+  # This will default to false until the next major release (v7.0.0), at which point, we will default this to true and
+  # warn about it's imminent deprecation in the subsequent major release (v8.0.0)
+  #
+  # In v8.0.0, we will deprecate the $use_servername_for_filenames and $use_port_for_filenames parameters altogether
+  # and use the sanitized value of $servername for default log / config filenames.
+  $filename = $use_servername_for_filenames ? {
+    true => $use_port_for_filenames ? {
+      true  => regsubst("${normalized_servername}-${port}", ' ', '_', 'G'),
+      false => regsubst($normalized_servername, ' ', '_', 'G'),
+    },
+    false => $name,
+  }
+
+  if ! $use_servername_for_filenames and $name != $normalized_servername {
+    $use_servername_for_filenames_warn_msg = '
+    It is possible for the $name parameter to be defined with spaces in it. Although supported on POSIX systems, this
+    can lead to cumbersome file names. The $servername attribute has stricter conditions from Apache (i.e. no spaces)
+    When $use_servername_for_filenames = true, the $servername parameter, sanitized, is used to construct log and config
+    file names.
+
+    From version v7.0.0 of the puppetlabs-apache module, this parameter will default to true. From version v8.0.0 of the
+    module, the $use_servername_for_filenames will be removed and log/config file names will be derived from the
+    sanitized $servername parameter when not explicitly defined.'
+    warning($use_servername_for_filenames_warn_msg)
+  } elsif ! $use_port_for_filenames {
+    $use_port_for_filenames_warn_msg = '
+    It is possible for multiple virtual hosts to be configured using the same $servername but a different port. When
+    using $use_servername_for_filenames, this can lead to duplicate resource declarations.
+    When $use_port_for_filenames = true, the $servername and $port parameters, sanitized, are used to construct log and
+    config file names.
+
+    From version v7.0.0 of the puppetlabs-apache module, this parameter will default to true. From version v8.0.0 of the
+    module, the $use_port_for_filenames will be removed and log/config file names will be derived from the
+    sanitized $servername parameter when not explicitly defined.'
+    warning($use_port_for_filenames_warn_msg)
+  }
 
   # This ensures that the docroot exists
   # But enables it to be specified across multiple vhost resources
@@ -1965,11 +2172,11 @@ define apache::vhost(
 
   if $access_log and !$access_logs {
     $_access_logs = [{
-      'file'        => $access_log_file,
-      'pipe'        => $access_log_pipe,
-      'syslog'      => $access_log_syslog,
-      'format'      => $access_log_format,
-      'env'         => $access_log_env_var
+        'file'        => $access_log_file,
+        'pipe'        => $access_log_pipe,
+        'syslog'      => $access_log_syslog,
+        'format'      => $access_log_format,
+        'env'         => $access_log_env_var
     }]
   } elsif $access_logs {
     $_access_logs = $access_logs
@@ -1988,10 +2195,17 @@ define apache::vhost(
     $error_log_destination = $error_log_syslog
   } else {
     if $ssl {
-      $error_log_destination = "${logroot}/${name}_error_ssl.log"
+      $error_log_destination = "${logroot}/${filename}_error_ssl.log"
     } else {
-      $error_log_destination = "${logroot}/${name}_error.log"
+      $error_log_destination = "${logroot}/${filename}_error.log"
     }
+  }
+
+  if versioncmp($apache_version, '2.4') >= 0 {
+    $error_log_format24 = $error_log_format
+  }
+  else {
+    $error_log_format24 = undef
   }
 
   if $modsec_audit_log == false {
@@ -2002,14 +2216,13 @@ define apache::vhost(
     $modsec_audit_log_destination = $modsec_audit_log_pipe
   } elsif $modsec_audit_log {
     if $ssl {
-      $modsec_audit_log_destination = "${logroot}/${name}_security_ssl.log"
+      $modsec_audit_log_destination = "${logroot}/${filename}_security_ssl.log"
     } else {
-      $modsec_audit_log_destination = "${logroot}/${name}_security.log"
+      $modsec_audit_log_destination = "${logroot}/${filename}_security.log"
     }
   } else {
     $modsec_audit_log_destination = undef
   }
-
 
   if $ip {
     $_ip = any2array(enclose_ipv6($ip))
@@ -2054,48 +2267,48 @@ define apache::vhost(
   # Load mod_rewrite if needed and not yet loaded
   if $rewrites or $rewrite_cond {
     if ! defined(Class['apache::mod::rewrite']) {
-      include ::apache::mod::rewrite
+      include apache::mod::rewrite
     }
   }
 
   # Load mod_alias if needed and not yet loaded
   if ($scriptalias or $scriptaliases != [])
-    or ($aliases and $aliases != [])
-    or ($redirect_source and $redirect_dest)
-    or ($redirectmatch_regexp or $redirectmatch_status or $redirectmatch_dest){
+  or ($aliases and $aliases != [])
+  or ($redirect_source and $redirect_dest)
+  or ($redirectmatch_regexp or $redirectmatch_status or $redirectmatch_dest) {
     if ! defined(Class['apache::mod::alias'])  and ($ensure == 'present') {
-      include ::apache::mod::alias
+      include apache::mod::alias
     }
   }
 
   # Load mod_proxy if needed and not yet loaded
   if ($proxy_dest or $proxy_pass or $proxy_pass_match or $proxy_dest_match) {
     if ! defined(Class['apache::mod::proxy']) {
-      include ::apache::mod::proxy
+      include apache::mod::proxy
     }
     if ! defined(Class['apache::mod::proxy_http']) {
-      include ::apache::mod::proxy_http
+      include apache::mod::proxy_http
     }
   }
 
   # Load mod_fastcgi if needed and not yet loaded
   if $fastcgi_server and $fastcgi_socket {
     if ! defined(Class['apache::mod::fastcgi']) {
-      include ::apache::mod::fastcgi
+      include apache::mod::fastcgi
     }
   }
 
   # Check if mod_headers is required to process $headers/$request_headers
   if $headers or $request_headers {
     if ! defined(Class['apache::mod::headers']) {
-      include ::apache::mod::headers
+      include apache::mod::headers
     }
   }
 
   # Check if mod_filter is required to process $filters
   if $filters {
     if ! defined(Class['apache::mod::filter']) {
-      include ::apache::mod::filter
+      include apache::mod::filter
     }
   }
 
@@ -2104,7 +2317,7 @@ define apache::vhost(
   $use_env_mod = $setenv and ! empty($setenv)
   if ($use_env_mod) {
     if ! defined(Class['apache::mod::env']) {
-      include ::apache::mod::env
+      include apache::mod::env
     }
   }
   # Check if mod_setenvif is required and not yet loaded.
@@ -2113,7 +2326,7 @@ define apache::vhost(
 
   if ($use_setenvif_mod) {
     if ! defined(Class['apache::mod::setenvif']) {
-      include ::apache::mod::setenvif
+      include apache::mod::setenvif
     }
   }
 
@@ -2140,7 +2353,7 @@ define apache::vhost(
       }
     }
 
-    $_directories = [ merge($_directory, $_directory_version) ]
+    $_directories = [merge($_directory, $_directory_version)]
   } else {
     $_directories = undef
   }
@@ -2172,29 +2385,29 @@ define apache::vhost(
 
   concat { "${priority_real}${filename}.conf":
     ensure  => $ensure,
-    path    => "${::apache::vhost_dir}/${priority_real}${filename}.conf",
+    path    => "${apache::vhost_dir}/${priority_real}${filename}.conf",
     owner   => 'root',
-    group   => $::apache::params::root_group,
-    mode    => $::apache::file_mode,
+    group   => $apache::params::root_group,
+    mode    => $apache::file_mode,
     order   => 'numeric',
     require => Package['httpd'],
     notify  => Class['apache::service'],
   }
   # NOTE(pabelanger): This code is duplicated in ::apache::vhost::custom and
   # needs to be converted into something generic.
-  if $::apache::vhost_enable_dir {
-    $vhost_enable_dir = $::apache::vhost_enable_dir
+  if $apache::vhost_enable_dir {
+    $vhost_enable_dir = $apache::vhost_enable_dir
     $vhost_symlink_ensure = $ensure ? {
-      present => link,
+      'present' => link,
       default => $ensure,
     }
-    file{ "${priority_real}${filename}.conf symlink":
+    file { "${priority_real}${filename}.conf symlink":
       ensure  => $vhost_symlink_ensure,
       path    => "${vhost_enable_dir}/${priority_real}${filename}.conf",
-      target  => "${::apache::vhost_dir}/${priority_real}${filename}.conf",
+      target  => "${apache::vhost_dir}/${priority_real}${filename}.conf",
       owner   => 'root',
-      group   => $::apache::params::root_group,
-      mode    => $::apache::file_mode,
+      group   => $apache::params::root_group,
+      mode    => $apache::file_mode,
       require => Concat["${priority_real}${filename}.conf"],
       notify  => Class['apache::service'],
     }
@@ -2292,6 +2505,7 @@ define apache::vhost(
 
   # Template uses:
   # - $error_log
+  # - $error_log_format24
   # - $log_level
   # - $error_log_destination
   # - $log_level
@@ -2377,6 +2591,25 @@ define apache::vhost(
   }
 
   # Template uses:
+  # - $ssl_proxyengine
+  # - $ssl_proxy_verify
+  # - $ssl_proxy_verify_depth
+  # - $ssl_proxy_ca_cert
+  # - $ssl_proxy_check_peer_cn
+  # - $ssl_proxy_check_peer_name
+  # - $ssl_proxy_check_peer_expire
+  # - $ssl_proxy_machine_cert
+  # - $ssl_proxy_machine_cert_chain
+  # - $ssl_proxy_protocol
+  if $ssl_proxyengine {
+    concat::fragment { "${name}-sslproxy":
+      target  => "${priority_real}${filename}.conf",
+      order   => 160,
+      content => template('apache/vhost/_sslproxy.erb'),
+    }
+  }
+
+  # Template uses:
   # - $proxy_dest
   # - $proxy_pass
   # - $proxy_pass_match
@@ -2386,7 +2619,7 @@ define apache::vhost(
   if $proxy_dest or $proxy_pass or $proxy_pass_match or $proxy_dest_match or $proxy_preserve_host {
     concat::fragment { "${name}-proxy":
       target  => "${priority_real}${filename}.conf",
-      order   => 160,
+      order   => 170,
       content => template('apache/vhost/_proxy.erb'),
     }
   }
@@ -2429,7 +2662,7 @@ define apache::vhost(
   # Template uses:
   # - $scriptaliases
   # - $scriptalias
-  if ( $scriptalias or $scriptaliases != [] ) {
+  if ( $scriptalias or $scriptaliases != []) {
     concat::fragment { "${name}-scriptalias":
       target  => "${priority_real}${filename}.conf",
       order   => 200,
@@ -2470,36 +2703,36 @@ define apache::vhost(
   # - $ssl_crl_check
   # - $ssl_protocol
   # - $ssl_cipher
-  # - $ssl_honorcipherorder
+  # - $_ssl_honorcipherorder
   # - $ssl_verify_client
   # - $ssl_verify_depth
   # - $ssl_options
   # - $ssl_openssl_conf_cmd
   # - $ssl_stapling
   # - $apache_version
-  if $ssl {
+  if $ssl and $ensure == 'present' {
     concat::fragment { "${name}-ssl":
       target  => "${priority_real}${filename}.conf",
       order   => 230,
       content => template('apache/vhost/_ssl.erb'),
     }
-  }
 
-  # Template uses:
-  # - $ssl_proxyengine
-  # - $ssl_proxy_verify
-  # - $ssl_proxy_verify_depth
-  # - $ssl_proxy_ca_cert
-  # - $ssl_proxy_check_peer_cn
-  # - $ssl_proxy_check_peer_name
-  # - $ssl_proxy_check_peer_expire
-  # - $ssl_proxy_machine_cert
-  # - $ssl_proxy_protocol
-  if $ssl_proxyengine {
-    concat::fragment { "${name}-sslproxy":
-      target  => "${priority_real}${filename}.conf",
-      order   => 230,
-      content => template('apache/vhost/_sslproxy.erb'),
+    if $ssl_reload_on_change {
+      [$ssl_cert, $ssl_key, $ssl_ca, $ssl_chain, $ssl_crl].each |$ssl_file| {
+        if $ssl_file {
+          include apache::mod::ssl::reload
+          $_ssl_file_copy = regsubst($ssl_file, '/', '_', 'G')
+          file { "${filename}${_ssl_file_copy}":
+            path    => "${apache::params::puppet_ssl_dir}/${filename}${_ssl_file_copy}",
+            source  => "file://${ssl_file}",
+            owner   => 'root',
+            group   => $apache::params::root_group,
+            mode    => '0640',
+            seltype => 'cert_t',
+            notify  => Class['apache::service'],
+          }
+        }
+      }
     }
   }
 
@@ -2608,7 +2841,7 @@ define apache::vhost(
   }
 
   if $h2_copy_files != undef or $h2_direct != undef or $h2_early_hints != undef or $h2_max_session_streams != undef or $h2_modern_tls_only != undef or $h2_push != undef or $h2_push_diary_size != undef or $h2_push_priority != [] or $h2_push_resource != [] or $h2_serialize_headers != undef or $h2_stream_max_mem_size != undef or $h2_tls_cool_down_secs != undef or $h2_tls_warm_up_size != undef or $h2_upgrade != undef or $h2_window_size != undef {
-    include ::apache::mod::http2
+    include apache::mod::http2
 
     concat::fragment { "${name}-http2":
       target  => "${priority_real}${filename}.conf",
@@ -2617,20 +2850,55 @@ define apache::vhost(
     }
   }
 
+  if $mdomain {
+    include apache::mod::md
+  }
+
   # Template uses:
-  # - $passenger_spawn_method
-  # - $passenger_app_root
-  # - $passenger_app_env
-  # - $passenger_ruby
-  # - $passenger_min_instances
-  # - $passenger_max_requests
+  # - $passenger_enabled
   # - $passenger_start_timeout
+  # - $passenger_ruby
+  # - $passenger_python
+  # - $passenger_nodejs
+  # - $passenger_meteor_app_settings
+  # - $passenger_app_env
+  # - $passenger_app_root
+  # - $passenger_app_group_name
+  # - $passenger_app_start_command
+  # - $passenger_app_type
+  # - $passenger_startup_file
+  # - $passenger_restart_dir
+  # - $passenger_spawn_method
+  # - $passenger_load_shell_envvars
+  # - $passenger_rolling_restarts
+  # - $passenger_resist_deployment_errors
+  # - $passenger_min_instances
+  # - $passenger_max_instances
+  # - $passenger_max_preloader_idle_time
+  # - $passenger_force_max_concurrent_requests_per_process
+  # - $passenger_concurrency_model
+  # - $passenger_thread_count
+  # - $passenger_high_performance
+  # - $passenger_max_request_queue_size
+  # - $passenger_max_request_queue_time
   # - $passenger_user
   # - $passenger_group
-  # - $passenger_nodejs
+  # - $passenger_friendly_error_pages
+  # - $passenger_buffer_upload
+  # - $passenger_buffer_response
+  # - $passenger_allow_encoded_slashes
+  # - $passenger_lve_min_uid
+  # - $passenger_base_uri
+  # - $passenger_error_override
   # - $passenger_sticky_sessions
-  # - $passenger_startup_file
-  if $passenger_spawn_method or $passenger_app_root or $passenger_app_env or $passenger_ruby or $passenger_min_instances or $passenger_start_timeout or $passenger_user or $passenger_group or $passenger_nodejs or $passenger_sticky_sessions or $passenger_startup_file{
+  # - $passenger_sticky_sessions_cookie_name
+  # - $passenger_sticky_sessions_cookie_attributes
+  # - $passenger_app_log_file
+  # - $passenger_debugger
+  # - $passenger_max_requests
+  # - $passenger_max_request_time
+  # - $passenger_memory_limit
+  if $passenger_enabled != undef or $passenger_start_timeout != undef or $passenger_ruby != undef or $passenger_python != undef or $passenger_nodejs != undef or $passenger_meteor_app_settings != undef or $passenger_app_env != undef or $passenger_app_root != undef or $passenger_app_group_name != undef or $passenger_app_start_command != undef or $passenger_app_type != undef or $passenger_startup_file != undef or $passenger_restart_dir != undef or $passenger_spawn_method != undef or $passenger_load_shell_envvars != undef or $passenger_rolling_restarts != undef or $passenger_resist_deployment_errors != undef or $passenger_min_instances != undef or $passenger_max_instances != undef or $passenger_max_preloader_idle_time != undef or $passenger_force_max_concurrent_requests_per_process != undef or $passenger_concurrency_model != undef or $passenger_thread_count != undef or $passenger_high_performance != undef or $passenger_max_request_queue_size != undef or $passenger_max_request_queue_time != undef or $passenger_user != undef or $passenger_group != undef or $passenger_friendly_error_pages != undef or $passenger_buffer_upload != undef or $passenger_buffer_response != undef or $passenger_allow_encoded_slashes != undef or $passenger_lve_min_uid != undef or $passenger_base_uri != undef or $passenger_error_override != undef or $passenger_sticky_sessions != undef or $passenger_sticky_sessions_cookie_name != undef or $passenger_sticky_sessions_cookie_attributes != undef or $passenger_app_log_file != undef or $passenger_debugger != undef or $passenger_max_requests != undef or $passenger_max_request_time != undef or $passenger_memory_limit != undef {
     concat::fragment { "${name}-passenger":
       target  => "${priority_real}${filename}.conf",
       order   => 300,
@@ -2713,6 +2981,17 @@ define apache::vhost(
       target  => "${priority_real}${filename}.conf",
       order   => 350,
       content => template('apache/vhost/_http_protocol_options.erb'),
+    }
+  }
+
+  # Template uses:
+  # - $auth_oidc
+  # - $oidc_settings
+  if $auth_oidc {
+    concat::fragment { "${name}-auth_oidc":
+      target  => "${priority_real}${filename}.conf",
+      order   => 360,
+      content => template('apache/vhost/_auth_oidc.erb'),
     }
   }
 

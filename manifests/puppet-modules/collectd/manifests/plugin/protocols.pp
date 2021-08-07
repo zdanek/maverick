@@ -4,8 +4,7 @@ class collectd::plugin::protocols (
   Boolean $ignoreselected = false,
   Array $values           = []
 ) {
-
-  include ::collectd
+  include collectd
 
   collectd::plugin { 'protocols':
     ensure  => $ensure,

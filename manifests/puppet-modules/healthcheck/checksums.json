@@ -1,16 +1,16 @@
 {
-  "CHANGELOG.md": "e52f53892a13f2f7af4e798def356500",
-  "Gemfile": "128029ce5e7ab1a327eac6cc2475f0ad",
+  "CHANGELOG.md": "7413f84d660adbd96f4b5669e239cb38",
+  "Gemfile": "abe4f834992db2124eecfe094eb4cc06",
   "LICENSE": "3b83ef96387f14655fc854ddc3c6bd57",
-  "README.md": "689736cc95af8d2c9feeb0dfdcefcb04",
-  "Rakefile": "ffd3b9d39dbbd3a38751f46de2f5ebf7",
+  "README.md": "0f863a95bbbb3231eb80219fa66f5853",
+  "Rakefile": "90f5e04fcf98664dfce089ec2dae2109",
   "lib/puppet/provider/http_conn_validator/http_conn_validator.rb": "0d5ffe307191d44963b5b7d4ea67cf7e",
   "lib/puppet/provider/tcp_conn_validator/tcp_port.rb": "8eb4d7b543d59f49542f7669ca0edf3d",
   "lib/puppet/type/http_conn_validator.rb": "4006d36d4e18e7c05542cc4d2ddea3f1",
   "lib/puppet/type/tcp_conn_validator.rb": "e3e60dbb510175b21b8333785a4153a9",
   "lib/puppet_x/puppet-community/http_validator.rb": "ede8cafbabf3204c54b155c8f1c62b63",
-  "lib/puppet_x/puppet-community/tcp_validator.rb": "a128f0fc664e1c946238d909a774a332",
-  "metadata.json": "db9509756f2c76ee2a22a056d861c0af",
+  "lib/puppet_x/puppet-community/tcp_validator.rb": "848fe65941d21ad6ea102fc2d7be9ca7",
+  "metadata.json": "68e4357b59325a2ed4891274691d3b56",
   "spec/acceptance/nodesets/archlinux-2-x64.yml": "daafcfcb4c8c8766856f52cec6ae5e86",
   "spec/acceptance/nodesets/ec2/amazonlinux-2016091.yml": "b3dc2d81918fcc6d56855c88ba5b7ce8",
   "spec/acceptance/nodesets/ec2/image_templates.yaml": "516f9c4c3407993a100090ce9e1a643c",
@@ -18,5 +18,5 @@
   "spec/acceptance/nodesets/ec2/sles-12sp2-x64.yml": "2506efcc9fb420132edc37bf88d6e21d",
   "spec/acceptance/nodesets/ec2/ubuntu-1604-x64.yml": "87efd97ff1b073c3448f429a8ffc5a7c",
   "spec/acceptance/nodesets/ec2/windows-2016-base-x64.yml": "e9db4dd16c60c52b433694130c2583a0",
-  "spec/spec_helper.rb": "ac015a3f5ae88cf99df3fcebf1578660"
+  "spec/spec_helper.rb": "a66b643907fe4d911e659943ed920d26"
 }

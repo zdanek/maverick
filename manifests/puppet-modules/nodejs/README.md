@@ -51,14 +51,14 @@ To install Node.js and npm (using the NodeSource repository if possible):
 class { 'nodejs': }
 ```
 
-The default version installed is currently `8.x`.
+The default version installed is currently `12.x`.
 
-If you wish to install a Node.js 9.x release from the NodeSource repository
-rather than 8.x on Debian/RHEL platforms:
+If you wish to install a Node.js 13.x release from the NodeSource repository
+rather than 12.x on Debian/RHEL platforms:
 
 ```puppet
 class { 'nodejs':
-  repo_url_suffix => '9.x',
+  repo_url_suffix => '13.x',
 }
 ```
 
@@ -120,7 +120,7 @@ Two types of npm packages are supported:
   package type.
 * npm local packages are supported via the Puppet defined type nodejs::npm.
 
-For more information regarding global vs local installation see the [nodejs blog](http://blog.nodejs.org/2011/03/23/npm-1-0-global-vs-local-installation/)
+For more information regarding global vs local installation see the [nodejs blog](https://nodejs.org/en/blog/npm/npm-1-0-global-vs-local-installation/)
 
 ### npm global packages
 
@@ -380,6 +380,10 @@ applied before the local installation of npm packages using `nodejs::npm`.
 Path to cmd.exe on Windows. Defaults to C:\Windows\system32\cmd.exe. You may
 need to change this parameter for certain versions of Windows Server.
 
+#### `manage_nodejs_package`
+
+Whether to manage the nodejs and nodejs-dev packages. Defaults to `true`.
+
 #### `manage_package_repo`
 
 Whether to manage an external repository and use it as the source of the
@@ -481,8 +485,8 @@ then work as expected on these systems.
 
 #### `repo_url_suffix`
 
-Defaults to ```8.x``` which means that the latest NodeSource 8.x release
-is installed. If you wish to install a 9.x release or greater, you will
+Defaults to ```12.x``` which means that the latest NodeSource 12.x release
+is installed. If you wish to install a 13.x release or greater, you will
 need to set this value accordingly. This parameter is a just a reflection of
 the NodeSource URL structure - NodeSource might remove old versions (such as
 0.10 and 0.12) or add new ones (such as 20.x) at any time.
@@ -490,14 +494,11 @@ the NodeSource URL structure - NodeSource might remove old versions (such as
 The following are ``repo_url_suffix`` values that reflect NodeSource versions
 that were available on 2017-11-29:
 
-* Debian 8 (Jessie) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Debian 9 (Stretch) ```4.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Debian (Sid) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
-* Ubuntu 14.04 (Trusty) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Ubuntu 16.04 (Xenial) ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Ubuntu 16.10 (Yakkety) ```0.12``` ```4.x``` ```6.x``` ```7.x``` ```8.x```
 * Ubuntu 17.10 (Artful) ```4.x``` ```6.x``` ```8.x``` ```9.x```
-* RHEL/CentOS 6 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * RHEL/CentOS 7 ```0.10``` ```0.12``` ```4.x``` ```5.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
 * Amazon Linux - See RHEL/CentOS 7
 * Fedora 25 ```4.x``` ```6.x``` ```7.x``` ```8.x``` ```9.x```
@@ -518,16 +519,15 @@ this with the package_provider parameter to use an alternative
 
 This module has received limited testing on:
 
-* CentOS/RHEL 6/7
-* Debian 8
-* Ubuntu 14.04
+* CentOS/RHEL 7/8
+* Debian 9/10
+* Ubuntu 16.04/18.04/20.04
 
 The following platforms should also work, but have not been tested:
 
 * Amazon Linux
 * Archlinux
 * Darwin
-* Debian 9
 * Fedora
 * FreeBSD
 * Gentoo
@@ -542,8 +542,8 @@ This modules uses `puppetlabs-apt` for the management of the NodeSource
 repository. If using an operating system of the Debian-based family, you will
 need to ensure that `puppetlabs-apt` version 4.4.0 or above is installed.
 
-If using CentOS/RHEL 6/7 and you wish to install Node.js from EPEL rather
-than from the NodeSource repository, you will need to ensure `stahnma-epel` is
+If using CentOS/RHEL 7 and you wish to install Node.js from EPEL rather
+than from the NodeSource repository, you will need to ensure `puppet-epel` is
 installed and is applied before this module.
 
 If using Gentoo, you will need to ensure `gentoo-portage` is installed.

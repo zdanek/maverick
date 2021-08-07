@@ -1,0 +1,7 @@
+fixtures:
+  repositories:
+    stdlib:
+      repo: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
+      ref: 'v7.0.0'
+  symlinks:
+    dnsclient: "#{source_dir}"

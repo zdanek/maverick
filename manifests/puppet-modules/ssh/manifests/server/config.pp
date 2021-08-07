@@ -1,5 +1,10 @@
+# @summary
+#   Managed ssh server configuration
+#
+# @api private
+#
 class ssh::server::config {
-  $options = $::ssh::server::merged_options
+  $options = $ssh::server::merged_options
 
   case $ssh::server::validate_sshd_file {
     true: {
@@ -10,7 +15,7 @@ class ssh::server::config {
     }
   }
 
-  if $::ssh::server::use_augeas {
+  if $ssh::server::use_augeas {
     create_resources('sshd_config', $options)
   } else {
     concat { $ssh::params::sshd_config:
@@ -29,9 +34,9 @@ class ssh::server::config {
     }
   }
 
-  if $::ssh::server::use_issue_net {
+  if $ssh::server::use_issue_net {
     file { $ssh::params::issue_net:
-      ensure  => present,
+      ensure  => file,
       owner   => 0,
       group   => 0,
       mode    => '0644',

@@ -4,7 +4,7 @@ Puppet::Type.newtype(:ssl_pkey) do
 
   ensurable
 
-  newparam(:path, :namevar => true) do
+  newparam(:path, namevar: true) do
     desc 'The path to the key'
     validate do |value|
       path = Pathname.new(value)
@@ -26,7 +26,7 @@ Puppet::Type.newtype(:ssl_pkey) do
 
   newparam(:size) do
     desc 'The key size'
-    newvalues /\d+/
+    newvalues %r{\d+}
     defaultto 2048
 
     munge do |val|
@@ -41,5 +41,9 @@ Puppet::Type.newtype(:ssl_pkey) do
 
   newparam(:password) do
     desc 'The optional password for the key'
+  end
+
+  autorequire(:file) do
+    Pathname.new(self[:path]).parent.to_s
   end
 end

@@ -1,9 +1,14 @@
+# @summary
+#   Internal define to managed ssh server param
+#
+# @api private
+#
 define ssh::server::config::setting (
   $key,
   $value,
   $order = '10'
 ) {
-  include ::ssh::params
+  include ssh::params
 
   if is_bool($value) {
     $real_value = $value ? {
@@ -24,5 +29,4 @@ define ssh::server::config::setting (
     content => "\n# added by Ssh::Server::Config::Setting[${name}]\n${key} ${real_value}\n",
     order   => $order,
   }
-
 }

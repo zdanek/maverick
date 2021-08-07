@@ -37,8 +37,25 @@
 #   - If true, will trigger a restart of all network interfaces
 #   - If false, will only start/restart this specific interface
 #
+# [*reload_command*]
+#   String. Default: $::operatingsystem ? {'CumulusLinux' => 'ifreload -a',
+#                                          default        => "ifdown ${interface}; ifup ${interface}",
+#                                         }
+#   Defines the command(s) that will be used to reload a nic when restart_all_nic
+#   is set to false
+#
 # [*options*]
 #   A generic hash of custom options that can be used in a custom template
+#
+# [*options_extra_redhat*]
+# [*options_extra_debian*]
+# [*options_extra_suse*]
+#   Custom hashes of options that are added to the default template that manages
+#   interfaces respectively under RedHat, Debian and Suse families
+#
+# [*description*]
+#   String. Optional. Default: undef
+#   Adds comment with given description in file before interface declaration.
 #
 # == Debian only parameters
 #
@@ -46,6 +63,7 @@
 #    Both ipaddress (standard name) and address (Debian param name) if set
 #    configure the ipv4 address of the interface.
 #    If both are present address is used.
+#    Note, that if $my_inner_ipaddr (for GRE) is set - it is used instead.
 #
 #  $manage_order  = 10,
 #    This is used by concat to define the order of your fragments,
@@ -66,6 +84,21 @@
 #    Map to Debian interfaces parameters (with _ instead of -)
 #    Note that these params MUST be arrays, even if with only one element
 #
+#  $nonlocal_gateway = undef,
+#    Gateway, that does not belong to interface's network and needs extra
+#    route to be available. Shortcut for:
+#
+#      post-up ip route add $nonlocal_gateway dev $interface
+#      post-up ip route add default via $nonlocal_gateway dev $interface
+#      pre-down ip route del default via $nonlocal_gateway dev $interface
+#      pre-down ip route del $nonlocal_gateway dev $interface
+#
+#  $additional_networks = [],
+#    Convenience shortcut to add more networks to the interface. Expands to:
+#
+#      up ip addr add $network dev $interface
+#      down ip addr del $network dev $interface
+#
 # Check the arguments in the code for the other Debian specific settings
 # If defined they are set in the used template.
 #
@@ -74,6 +107,7 @@
 #  $type          = 'Ethernet',
 #    Defaults to 'Ethernet', but following types are supported for OVS:
 #    "OVSPort", "OVSIntPort", "OVSBond", "OVSTunnel" and "OVSPatchPort".
+#    'InfiniBand' type is supported as well.
 #
 #  $ipaddr        = undef,
 #    Both ipaddress (standard name) and ipaddr (RedHat param name) if set
@@ -82,6 +116,10 @@
 #
 #  $hwaddr        = undef,
 #    hwaddr if set configures the mac address of the interface.
+#
+#  $prefix        = undef,
+#    Network PREFIX aka CIDR notation of the network mask. The PREFIX
+#    takes precedence if both PREFIX and NETMASK are set.
 #
 #  $bootproto        = '',
 #    Both enable_dhcp (standard) and bootproto (Debian specific param name),
@@ -111,7 +149,10 @@
 #  $hotswap = undef
 #    Set to no to prevent interface from being activated when hot swapped - Default is yes
 #
-# == RedHat only GRE interface specific parameters
+#  $vid = undef
+#    Set to specify vlan id #
+#
+# == RedHat and Debian only GRE interface specific parameters
 #
 #  $peer_outer_ipaddr = undef
 #    IP address of the remote tunnel endpoint
@@ -140,6 +181,9 @@
 #    For types other than "OVSBridge" type. It specifies the OVS bridge
 #    to which port, patch or tunnel should be attached to.
 #
+#  $ovs_ports       = undef,
+#    It specifies the OVS ports should OVS bridge attach
+#
 #  $ovs_extra       = undef,
 #    Optional: extra ovs-vsctl commands seperate by "--" (double dash)
 #
@@ -165,6 +209,22 @@
 # Check the arguments in the code for the other RedHat specific settings
 # If defined they are set in the used template.
 #
+# == RedHat only InfiniBand specific parameters
+#
+#  $connected_mode = undef,
+#     Enable or not InfiniBand CONNECTED_MODE. It true, CONNECTED_MODE=yes will
+#     be added to ifcfg file.
+#
+# == Suse and Debian only parameters
+#
+#  $aliases = undef
+#     Array of aliased IPs for given interface.
+#     Note, that for Debian generated interfaces will have static method and
+#     netmask 255.255.255.255.  If you need something other - generate
+#     interfaces by hand.  Also note, that interfaces will be named
+#     $interface:$idx, where $idx is IP index in list, starting from 0.
+#     If you're adding manual interfaces - beware of clashes.
+#
 # == Suse only parameters
 #
 # Check the arguments in the code for the other Suse specific settings
@@ -180,14 +240,44 @@
 #     The networking hardware type.  qeth, lcs or ctc.
 #     The default is 'qeth'.
 #
+#  $layer2 = undef,
+#     The networking layer mode in Red Hat 6. 0 or 1.
+#     The defauly is 0. From Red Hat 7 this is confifured using the options
+#     parameter below.
+#
+#  $zlinux_options = undef
+#     You can add any valid sysfs attribute and its value to the OPTIONS
+#     parameter.The Red Hat Enterprise Linux (7 )installation program currently
+#     uses this to configure the layer mode (layer2) and the relative port
+#     number (portno) of qeth devices.
+#
+# @example Configure a vlan interface:
+#
+#    network::interface { 'ens18.252':
+#      method          => 'static',
+#      ipaddress       => '10.10.10.10',
+#      netmask         => '255.255.255.0',
+#      type            => 'vlan',
+#    }
+#
 define network::interface (
 
   $enable                = true,
   $ensure                = 'present',
   $template              = "network/interface/${::osfamily}.erb",
   $options               = undef,
+  $options_extra_redhat  = undef,
+  $options_extra_debian  = undef,
+  $options_extra_suse    = undef,
   $interface             = $name,
-  $restart_all_nic       = true,
+  $restart_all_nic = $::osfamily ? {
+    'RedHat' => $::operatingsystemmajrelease ? {
+      '8'     => false,
+      default => true,
+    },
+    default  => true,
+  },
+  $reload_command        = undef,
 
   $enable_dhcp           = false,
 
@@ -198,6 +288,8 @@ define network::interface (
   $gateway               = undef,
   $hwaddr                = undef,
   $mtu                   = undef,
+
+  $description           = undef,
 
   ## Debian specific
   $manage_order          = '10',
@@ -242,6 +334,10 @@ define network::interface (
   $autoconf              = undef,
   $vlan_raw_device       = undef,
 
+  # Convenience shortcuts
+  $nonlocal_gateway      = undef,
+  $additional_networks   = [ ],
+
   # Common ifupdown scripts
   $up                    = [ ],
   $pre_up                = [ ],
@@ -249,6 +345,10 @@ define network::interface (
   $down                  = [ ],
   $pre_down              = [ ],
   $post_down             = [ ],
+
+  # For virtual routing and forwarding (VRF)
+  $vrf                   = undef,
+  $vrf_table             = undef,
 
   # For bonding
   $slaves                = [ ],
@@ -266,11 +366,13 @@ define network::interface (
   $bond_arp_interval     = undef,
   $bond_arp_iptarget     = undef,
   $bond_fail_over_mac    = undef,
+  $bond_ad_select        = undef,
   $use_carrier           = undef,
   $primary_reselect      = undef,
 
   # For teaming
   $team_config           = undef,
+  $team_port_config      = undef,
   $team_master           = undef,
 
   # For bridging
@@ -296,6 +398,7 @@ define network::interface (
 
   ## RedHat specific
   $ipaddr                = '',
+  $prefix                = undef,
   $uuid                  = undef,
   $bootproto             = '',
   $userctl               = 'no',
@@ -303,16 +406,21 @@ define network::interface (
   $ethtool_opts          = undef,
   $ipv6init              = undef,
   $ipv6_autoconf         = undef,
+  $ipv6_privacy          = undef,
+  $ipv6_addr_gen_mode    = undef,
   $ipv6addr              = undef,
+  $ipv6addr_secondaries  = [],
   $ipv6_defaultgw        = undef,
   $dhcp_hostname         = undef,
   $srcaddr               = undef,
   $peerdns               = '',
   $peerntp               = '',
   $onboot                = '',
+  $onparent              = undef,
   $defroute              = undef,
   $dns1                  = undef,
   $dns2                  = undef,
+  $dns3                  = undef,
   $domain                = undef,
   $nm_controlled         = undef,
   $master                = undef,
@@ -321,6 +429,8 @@ define network::interface (
   $bonding_opts          = undef,
   $vlan                  = undef,
   $vlan_name_type        = undef,
+  $vlan_id               = undef,
+  $vid                   = undef,
   $physdev               = undef,
   $bridge                = undef,
   $arpcheck              = undef,
@@ -331,6 +441,11 @@ define network::interface (
   $check_link_down       = false,
   $hotplug               = undef,
   $persistent_dhclient   = undef,
+  $nm_name               = undef,
+  $iprule                = undef,
+
+  # RedHat specific for InfiniBand
+  $connected_mode        = undef,
 
   # RedHat specific for GRE
   $peer_outer_ipaddr     = undef,
@@ -338,23 +453,27 @@ define network::interface (
   $my_outer_ipaddr       = undef,
   $my_inner_ipaddr       = undef,
 
-  # RedHat specific for Open vSwitch
-  $devicetype            = undef,
-  $bond_ifaces           = undef,
+  # RedHat and Debian specific for Open vSwitch
+  $devicetype            = undef, # On RedHat. Same of ovs_type for Debian
+  $bond_ifaces           = undef, # On RedHat Same of ovs_bonds for Debian
+  $ovs_type              = undef, # Debian
+  $ovs_bonds             = undef, # Debian
   $ovs_bridge            = undef,
+  $ovs_ports             = undef,
   $ovs_extra             = undef,
   $ovs_options           = undef,
   $ovs_patch_peer        = undef,
-  $ovsrequries           = undef,
+  $ovsrequires           = undef,
   $ovs_tunnel_type       = undef,
   $ovs_tunnel_options    = undef,
   $ovsdhcpinterfaces     = undef,
   $ovsbootproto          = undef,
 
-  # RedHat specifice for zLinux
+  # RedHat specific for zLinux
   $subchannels           = undef,
   $nettype               = undef,
   $layer2                = undef,
+  $zlinux_options        = undef,
 
   ## Suse specific
   $startmode             = '',
@@ -362,6 +481,12 @@ define network::interface (
   $firewall              = undef,
   $aliases               = undef,
   $remote_ipaddr         = undef,
+  $check_duplicate_ip    = undef,
+  $send_gratuitous_arp   = undef,
+  $pre_up_script         = undef,
+  $post_up_script        = undef,
+  $pre_down_script       = undef,
+  $post_down_script      = undef,
 
   # For bonding
   $bond_moduleopts       = undef,
@@ -379,6 +504,7 @@ define network::interface (
 
   include ::network
 
+  validate_re($ensure, '^(present|absent)$', "Ensure can only be present or absent (to add or remove an interface). Current value: ${ensure}")
   validate_bool($auto)
   validate_bool($enable)
   validate_bool($restart_all_nic)
@@ -400,9 +526,18 @@ define network::interface (
   if $::architecture == 's390x' {
     validate_array($subchannels)
     validate_re($nettype, '^(qeth|lcs|ctc)$', "${name}::\$nettype may be 'qeth', 'lcs' or 'ctc' only and is set to <${nettype}>.")
-    validate_re($layer2, '^0|1$', "${name}::\$layer2 must be 1 or 0 and is to <${layer2}>.")
+    # Different parameters required for RHEL6 and RHEL7
+    if $::operatingsystemmajrelease =~ /^7|^8/ {
+      validate_string($zlinux_options)
+    } else {
+      validate_re($layer2, '^0|1$', "${name}::\$layer2 must be 1 or 0 and is to <${layer2}>.")
+    }
   }
-
+  if $::osfamily == 'RedHat' {
+    if $iprule != undef {
+      validate_array($iprule)
+    }
+  }
   if $arp != undef and ! ($arp in ['yes', 'no']) {
     fail('arp must be one of: undef, yes, no')
   }
@@ -413,6 +548,26 @@ define network::interface (
 
   if $nozeroconf != undef and ! ($nozeroconf in ['yes', 'no']) {
     fail('nozeroconf must be one of: undef, yes, no')
+  }
+
+  if $check_duplicate_ip != undef and ! ($check_duplicate_ip in ['yes', 'no']) {
+    fail('check_duplicate_ip must be one of: undef, yes, no')
+  }
+
+  if $send_gratuitous_arp != undef and ! ($send_gratuitous_arp in ['yes', 'no']) {
+    fail('send_gratuitous_arp must be one of: undef, yes, no')
+  }
+
+  if $::osfamily != 'RedHat' and ($type == 'InfiniBand' or $connected_mode) {
+    fail('InfiniBand parameters are supported only for RedHat family.')
+  }
+
+  if $type != 'InfiniBand' and $connected_mode != undef {
+    fail('CONNECTED_MODE parameter available for InfiniBand interfaces only')
+  }
+
+  if $prefix != undef and $netmask != undef {
+    fail('Use either netmask or prefix to define the netmask for the interface')
   }
 
   $manage_hwaddr = $hwaddr ? {
@@ -439,15 +594,18 @@ define network::interface (
     'ppp': { $manage_address = undef }
     'wvdial': { $manage_address = undef }
     default: {
-        $manage_address = $address ? {
+      $manage_address = $my_inner_ipaddr ? {
+        undef     => $address ? {
           ''      => $ipaddress,
           default => $address,
-        }
+        },
+        default   => $my_inner_ipaddr,
       }
+    }
   }
 
   # Redhat and Suse specific
-  if $::operatingsystem == 'SLES' and $::operatingsystemrelease =~ /^12/ {
+  if $::operatingsystem == 'SLES' and versioncmp($::operatingsystemrelease, '12') >= 0 {
     $bootproto_false = 'static'
   } else {
     $bootproto_false = 'none'
@@ -465,6 +623,8 @@ define network::interface (
       'dhcp'  => 'yes',
       default => 'no',
     },
+    true    => 'yes',
+    false   => 'no',
     default => $peerdns,
   }
   $manage_peerntp = $peerntp ? {
@@ -474,9 +634,17 @@ define network::interface (
     },
     default => $peerntp,
   }
-  $manage_ipaddr = $ipaddr ? {
-    ''      => $ipaddress,
-    default => $ipaddr,
+  case $ipaddr {
+    '': { $manage_ipaddr = $ipaddress}
+    default: {
+      if $ipaddr =~ /^([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\/([0-9]|[1-2][0-9]|3[0-2])$/ {
+        $manage_ipaddr = $1
+        $manage_prefix = $2
+      } else {
+        $manage_ipaddr = $ipaddr
+        $manage_prefix = $prefix
+      }
+    }
   }
   $manage_onboot = $onboot ? {
     ''     => $enable ? {
@@ -499,11 +667,21 @@ define network::interface (
   }
 
   # Resources
-
+  $real_reload_command = $reload_command ? {
+    undef => $::operatingsystem ? {
+        'CumulusLinux' => 'ifreload -a',
+        'RedHat'       => $::operatingsystemmajrelease ? {
+          '8'     => "/usr/bin/nmcli device reapply ${interface}",
+          default => "ifdown ${interface} --force ; ifup ${interface}",
+        },
+        default        => "ifdown ${interface} --force ; ifup ${interface}",
+      },
+    default => $reload_command,
+  }
   if $restart_all_nic == false and $::kernel == 'Linux' {
     exec { "network_restart_${name}":
-      command     => "ifdown ${name}; ifup ${name}",
-      path        => '/sbin',
+      command     => $real_reload_command,
+      path        => '/sbin:/bin:/usr/sbin:/usr/bin',
       refreshonly => true,
     }
     $network_notify = "Exec[network_restart_${name}]"
@@ -515,7 +693,8 @@ define network::interface (
 
     'Debian': {
       if $vlan_raw_device {
-        if !defined(Package['vlan']) {
+        if versioncmp('9.0', $::operatingsystemrelease) >= 0
+        and !defined(Package['vlan']) {
           package { 'vlan':
             ensure => 'present',
           }
@@ -523,14 +702,24 @@ define network::interface (
       }
 
       if $network::config_file_per_interface {
+        if ! defined(File['/etc/network/interfaces.d']) {
+          file { '/etc/network/interfaces.d':
+            ensure => 'directory',
+            mode   => '0755',
+            owner  => 'root',
+            group  => 'root',
+          }
+        }
         if $::operatingsystem == 'CumulusLinux' {
           file { "interface-${name}":
+            ensure  => $ensure,
             path    => "/etc/network/interfaces.d/${name}",
             content => template($template),
             notify  => $network_notify,
           }
           if ! defined(File_line['config_file_per_interface']) {
             file_line { 'config_file_per_interface':
+              ensure => $ensure,
               path   => '/etc/network/ifupdown2/ifupdown2.conf',
               line   => 'addon_scripts_support=1',
               match  => 'addon_scripts_suppor*',
@@ -539,18 +728,22 @@ define network::interface (
           }
         } else {
           file { "interface-${name}":
+            ensure  => $ensure,
             path    => "/etc/network/interfaces.d/${name}.cfg",
             content => template($template),
             notify  => $network_notify,
           }
           if ! defined(File_line['config_file_per_interface']) {
             file_line { 'config_file_per_interface':
+              ensure => $ensure,
               path   => '/etc/network/interfaces',
-              line   => 'source /etc/network/interfaces.d/*.cfg',
+              line   => 'source /etc/network/interfaces.d/*',
               notify => $network_notify,
             }
           }
         }
+        File['/etc/network/interfaces.d']
+        -> File["interface-${name}"]
       } else {
         if ! defined(Concat['/etc/network/interfaces']) {
           concat { '/etc/network/interfaces':
@@ -579,6 +772,14 @@ define network::interface (
     }
 
     'RedHat': {
+      if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+        if ! defined(Service['NetworkManager']) {
+          service { 'NetworkManager':
+            ensure => running,
+            enable => true,
+          }
+        }
+      }
       file { "/etc/sysconfig/network-scripts/ifcfg-${name}":
         ensure  => $ensure,
         content => template($template),
@@ -596,8 +797,8 @@ define network::interface (
             ensure => 'present',
           }
         }
-        Package['vlan'] ->
-        File["/etc/sysconfig/network/ifcfg-${name}"]
+        Package['vlan']
+        -> File["/etc/sysconfig/network/ifcfg-${name}"]
       }
       if $bridge {
         if !defined(Package['bridge-utils']) {
@@ -605,8 +806,8 @@ define network::interface (
             ensure => 'present',
           }
         }
-        Package['bridge-utils'] ->
-        File["/etc/sysconfig/network/ifcfg-${name}"]
+        Package['bridge-utils']
+        -> File["/etc/sysconfig/network/ifcfg-${name}"]
       }
 
       file { "/etc/sysconfig/network/ifcfg-${name}":

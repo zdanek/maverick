@@ -734,7 +734,7 @@ if [ "z$_rubydev" == "z" ]; then
 fi
 
 # Check that puppet is installed through gem
-declare -A GEMVERSIONS=( [puppet]=6.21.1 [hiera]=3.6.0 [facter]=4.0.51 [puppet-strings]=2.6.0 )
+declare -A GEMVERSIONS=( [puppet]=7.9.0 [hiera]=3.7.0 [facter]=4.2.2 [puppet-strings]=2.8.0 )
 for pkg in "hiera" "facter" "puppet" "puppet-strings"; do
     if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
         echo "Installing $pkg from gems"
@@ -877,6 +877,11 @@ if [ -e /srv/maverick -a -e /boot/maverick ]; then
     if [ $? -eq 0 ]; then
         sudo rm -rf /boot/maverick
     fi
+fi
+
+# If puppet root dir doesn't exist, create it
+if [ ! -d /opt/puppetlabs/puppet ]; then
+    sudo mkdir -p /opt/puppetlabs/puppet
 fi
 
 DT=$(date +"%Y-%m-%d-%H-%M")

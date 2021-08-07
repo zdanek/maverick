@@ -23,6 +23,7 @@ class openldap::client(
   $nss_base_hosts                               = undef,
   $nss_base_passwd                              = undef,
   $nss_base_shadow                              = undef,
+  $nss_initgroups_ignoreusers                   = undef,
 
   # PAM Options
   $pam_filter                                   = undef,
@@ -35,6 +36,19 @@ class openldap::client(
   Optional[Stdlib::Absolutepath] $tls_cacertdir = undef,
   $tls_checkpeer                                = undef,
   $tls_reqcert                                  = undef,
+  Optional[Openldap::Tls_moznss_compatibility] $tls_moznss_compatibility = undef,
+
+  # SASL Options
+  $sasl_mech            = undef,
+  $sasl_realm           = undef,
+  $sasl_authcid         = undef,
+  $sasl_secprops        = undef,
+  $sasl_nocanon         = undef,
+
+  # GSSAPI Options
+  $gssapi_sign                   = undef,
+  $gssapi_encrypt                = undef,
+  $gssapi_allow_remote_principal = undef,
 
   # SUDO Options
   $sudoers_base                                 = undef,

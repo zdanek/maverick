@@ -1,6 +1,6 @@
 {
   "name": "example42-network",
-  "version": "3.3.6",
+  "version": "3.6.0",
   "author": "Alessandro Franceschi",
   "summary": "Example42 Network Module",
   "license": "Apache-2.0",
@@ -8,17 +8,23 @@
   "project_page": "https://github.com/example42/puppet-network",
   "issues_url": "https://github.com/example42/puppet-network/issues",
   "dependencies": [
-    {"name":"puppetlabs/stdlib","version_requirement":">= 2.0.1"},
-    {"name":"puppetlabs/concat","version_requirement":">= 1.0.0"}
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 2.0.1 <7.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": ">= 1.0.0 <7.0.0"
+    }
   ],
-  "data_provider": null,
   "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -26,7 +32,8 @@
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -34,7 +41,8 @@
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -42,7 +50,8 @@
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
@@ -51,7 +60,8 @@
         "11 SP1",
         "11 SP3",
         "12",
-        "12 SP1"
+        "12 SP1",
+        "15 SP1"
       ]
     },
     {
@@ -59,7 +69,9 @@
       "operatingsystemrelease": [
         "5",
         "6",
-        "7"
+        "7",
+        "8",
+        "9"
       ]
     },
     {
@@ -67,7 +79,9 @@
       "operatingsystemrelease": [
         "10.04",
         "12.04",
-        "14.04"
+        "14.04",
+        "16.04",
+        "18.04"
       ]
     },
     {
@@ -89,12 +103,8 @@
   ],
   "requirements": [
     {
-      "name": "pe",
-      "version_requirement": ">= 3.0.0 < 2015.4.0"
-    },
-    {
       "name": "puppet",
-      "version_requirement": ">= 3.0.0 <5.0.0"
+      "version_requirement": ">= 3.0.0 <7.0.0"
     }
   ]
 }

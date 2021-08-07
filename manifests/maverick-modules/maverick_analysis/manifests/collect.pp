@@ -136,11 +136,13 @@ class maverick_analysis::collect (
         service_name    => 'maverick-collectd',
         typesdb         => [$typesdb],
     }
-    service { "collectd":
+    
+    service { "system-collectd":
+        name            => 'collectd',
         ensure          => stopped,
         enable          => false,
     }
-
+    
     ### Collectd Plugins
     collectd::plugin::aggregation::aggregator {'cpu':
         plugin           => 'cpu',

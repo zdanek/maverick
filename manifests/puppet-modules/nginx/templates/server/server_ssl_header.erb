@@ -33,7 +33,13 @@ server {
   listen       <%= @listen_ip %>:<%= @ssl_port %> <% if @ssl_listen_option %>ssl<% end %><% if @http2 == 'on' %> http2<% end %><% if @spdy == 'on' %> spdy<% end %><% if @listen_options %> <%= @listen_options %><% end %>;
   <%- end -%>
 <%= scope.function_template(["nginx/server/server_ssl_ipv6_listen.erb"]) %>
-  server_name  <%= @rewrite_www_to_non_www ? @server_name.join("  ").gsub(/(^| )(www\.)?(?=[a-z0-9])/, '') : @server_name.join(" ") %>;
+<%- if @rewrite_www_to_non_www -%>
+  server_name  <%= @server_name.join("  ").gsub(/(^| )(www\.)?(?=[a-z0-9])/, '') %>;
+<%- elsif @rewrite_non_www_to_www -%>
+  server_name  <%= @server_name.join("  ").gsub(/(^| )(?=[a-z0-9])/, 'www.') %>;
+<%- else %>
+  server_name  <%= @server_name.join(" ") %>;
+<%- end -%>
 
 <%= scope.function_template(["nginx/server/server_ssl_settings.erb"]) %>
 <% if @maintenance -%>
@@ -67,26 +73,38 @@ server {
 <% if defined? @gzip_types -%>
   gzip_types <%= @gzip_types %>;
 <% end -%>
+<% if defined? @gzip_static -%>
+  gzip_static <%= @gzip_static %>;
+<% end -%>
 <% if @index_files and @index_files.count > 0 -%>
   index <% Array(@index_files).each do |i| %> <%= i %><% end %>;
 <% end -%>
 <% if defined? @autoindex -%>
   autoindex <%= @autoindex %>;
 <% end -%>
+<% if defined? @autoindex_exact_size -%>
+  autoindex_exact_size <%= @autoindex_exact_size %>;
+<% end -%>
+<% if defined? @autoindex_format -%>
+  autoindex_format <%= @autoindex_format %>;
+<% end -%>
+<% if defined? @autoindex_localtime -%>
+  autoindex_localtime <%= @autoindex_localtime %>;
+<% end -%>
 <% if @absolute_redirect -%>
   absolute_redirect <%= @absolute_redirect %>;
 <% end -%>
 <% if @access_log.is_a?(Array) -%>
   <%- @access_log.each do |log_item| -%>
-  access_log            <%= log_item %> <%= @format_log %>;
+  access_log            <%= log_item %><% if @format_log %> <%= @format_log%><% end %>;
   <%- end -%>
 <% elsif @access_log == 'absent' -%>
 <% elsif @access_log == 'off' -%>
   access_log            off;
 <% elsif not @access_log -%>
-  access_log            <%= scope['::nginx::config::log_dir'] %>/ssl-<%= @name_sanitized %>.access.log <%= @format_log %>;
+  access_log            <%= scope['::nginx::config::log_dir'] %>/ssl-<%= @name_sanitized %>.access.log<% if @format_log %> <%= @format_log%><% end %>;
 <% else -%>
-  access_log            <%= @access_log %> <%= @format_log %>;
+  access_log            <%= @access_log %><% if @format_log %> <%= @format_log%><% end %>;
 <% end -%>
 <% if @error_log.is_a?(Array) -%>
   <%- @error_log.each do |log_item| -%>
@@ -151,4 +169,4 @@ server {
 <% Array(@passenger_env_var).each do |key,value| -%>
   passenger_env_var  <%= key %> <%= value %>;
 <% end -%>
-<%= scope.function_template(["nginx/server/locations/headers.erb"]) %>
+  <%= scope.function_template(["nginx/server/locations/headers.erb"]) %>

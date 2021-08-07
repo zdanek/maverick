@@ -1,20 +1,6 @@
-# Class: nginx::config
-#
-# This module manages NGINX bootstrap and configuration
-#
-# Parameters:
-#
-# There are no default parameters for this class.
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
-#
-# This class file is not called directly
+# @summary Manage NGINX bootstrap and configuration
+# @api private
 class nginx::config {
-
   assert_private()
 
   $client_body_temp_path          = $nginx::client_body_temp_path
@@ -28,6 +14,7 @@ class nginx::config {
   $global_owner                   = $nginx::global_owner
   $global_group                   = $nginx::global_group
   $global_mode                    = $nginx::global_mode
+  $limit_req_zone                 = $nginx::limit_req_zone
   $log_dir                        = $nginx::log_dir
   $log_user                       = $nginx::log_user
   $log_group                      = $nginx::log_group
@@ -54,8 +41,12 @@ class nginx::config {
   $client_body_timeout            = $nginx::client_body_timeout
   $send_timeout                   = $nginx::send_timeout
   $lingering_timeout              = $nginx::lingering_timeout
+  $lingering_close                = $nginx::lingering_close
+  $lingering_time                 = $nginx::lingering_time
+  $reset_timedout_connection      = $nginx::reset_timedout_connection
   $etag                           = $nginx::etag
   $events_use                     = $nginx::events_use
+  $debug_connections              = $nginx::debug_connections
   $fastcgi_cache_inactive         = $nginx::fastcgi_cache_inactive
   $fastcgi_cache_key              = $nginx::fastcgi_cache_key
   $fastcgi_cache_keys_zone        = $nginx::fastcgi_cache_keys_zone
@@ -72,6 +63,7 @@ class nginx::config {
   $gzip_proxied                   = $nginx::gzip_proxied
   $gzip_types                     = $nginx::gzip_types
   $gzip_vary                      = $nginx::gzip_vary
+  $gzip_static                    = $nginx::gzip_static
   $http_raw_prepend               = $nginx::http_raw_prepend
   $http_raw_append                = $nginx::http_raw_append
   $http_cfg_prepend               = $nginx::http_cfg_prepend
@@ -118,15 +110,31 @@ class nginx::config {
   $server_tokens                  = $nginx::server_tokens
   $spdy                           = $nginx::spdy
   $http2                          = $nginx::http2
+  $ssl_buffer_size                = $nginx::ssl_buffer_size
+  $ssl_ciphers                    = $nginx::ssl_ciphers
+  $ssl_crl                        = $nginx::ssl_crl
+  $ssl_dhparam                    = $nginx::ssl_dhparam
+  $ssl_ecdh_curve                 = $nginx::ssl_ecdh_curve
+  $ssl_session_cache              = $nginx::ssl_session_cache
+  $ssl_session_timeout            = $nginx::ssl_session_timeout
+  $ssl_session_tickets            = $nginx::ssl_session_tickets
+  $ssl_session_ticket_key         = $nginx::ssl_session_ticket_key
   $ssl_stapling                   = $nginx::ssl_stapling
+  $ssl_stapling_file              = $nginx::ssl_stapling_file
+  $ssl_stapling_responder         = $nginx::ssl_stapling_responder
+  $ssl_stapling_verify            = $nginx::ssl_stapling_verify
+  $ssl_trusted_certificate        = $nginx::ssl_trusted_certificate
+  $ssl_password_file              = $nginx::ssl_password_file
+  $ssl_prefer_server_ciphers      = $nginx::ssl_prefer_server_ciphers
+  $ssl_protocols                  = $nginx::ssl_protocols
+  $ssl_verify_depth               = $nginx::ssl_verify_depth
   $types_hash_bucket_size         = $nginx::types_hash_bucket_size
   $types_hash_max_size            = $nginx::types_hash_max_size
   $worker_connections             = $nginx::worker_connections
   $worker_processes               = $nginx::worker_processes
   $worker_rlimit_nofile           = $nginx::worker_rlimit_nofile
-  $ssl_prefer_server_ciphers      = $nginx::ssl_prefer_server_ciphers
-  $ssl_protocols                  = $nginx::ssl_protocols
-  $ssl_ciphers                    = $nginx::ssl_ciphers
+  $pcre_jit                       = $nginx::pcre_jit
+  $include_modules_enabled        = $nginx::include_modules_enabled
 
   # Non-configurable settings
   $conf_template                  = 'nginx/conf.d/nginx.conf.erb'
@@ -150,6 +158,7 @@ class nginx::config {
   file { "${conf_dir}/conf.d":
     ensure => directory,
   }
+
   if $confd_purge {
     # Err on the side of caution - make sure *both* $server_purge and
     # $confd_purge are set if $confd_only is set, before purging files
@@ -160,6 +169,7 @@ class nginx::config {
         recurse => true,
         notify  => Class['nginx::service'],
       }
+
       File["${conf_dir}/conf.stream.d"] {
         purge   => true,
         recurse => true,
@@ -171,6 +181,7 @@ class nginx::config {
   file { "${conf_dir}/conf.mail.d":
     ensure => directory,
   }
+
   if $confd_purge == true {
     File["${conf_dir}/conf.mail.d"] {
       purge   => true,
@@ -178,8 +189,9 @@ class nginx::config {
     }
   }
 
-  file {$run_dir:
+  file { $run_dir:
     ensure => directory,
+    mode   => '0644',
   }
 
   if $nginx::manage_snippets_dir {
@@ -196,16 +208,18 @@ class nginx::config {
   }
 
   if $client_body_temp_path {
-    file {$client_body_temp_path:
+    file { $client_body_temp_path:
       ensure => directory,
       owner  => $daemon_user,
+      mode   => '0700',
     }
   }
 
   if $proxy_temp_path {
-    file {$proxy_temp_path:
+    file { $proxy_temp_path:
       ensure => directory,
       owner  => $daemon_user,
+      mode   => '0700',
     }
   }
 
@@ -216,22 +230,26 @@ class nginx::config {
       group  => $sites_available_group,
       mode   => $sites_available_mode,
     }
+
     file { "${conf_dir}/sites-enabled":
       ensure => directory,
       owner  => $sites_available_owner,
       group  => $sites_available_group,
       mode   => $sites_available_mode,
     }
+
     if $server_purge {
       File["${conf_dir}/sites-available"] {
         purge   => true,
         recurse => true,
       }
+
       File["${conf_dir}/sites-enabled"] {
         purge   => true,
         recurse => true,
       }
     }
+
     # No real reason not to make these even if $stream is not enabled.
     file { "${conf_dir}/streams-enabled":
       ensure => directory,
@@ -239,12 +257,14 @@ class nginx::config {
       group  => $sites_available_group,
       mode   => $sites_available_mode,
     }
+
     file { "${conf_dir}/streams-available":
       ensure => directory,
       owner  => $sites_available_owner,
       group  => $sites_available_group,
       mode   => $sites_available_mode,
     }
+
     if $server_purge {
       File["${conf_dir}/streams-enabled"] {
         purge   => true,
@@ -256,11 +276,13 @@ class nginx::config {
   file { "${conf_dir}/nginx.conf":
     ensure  => file,
     content => template($conf_template),
+    tag     => 'nginx_config_file',
   }
 
   file { "${conf_dir}/mime.types":
     ensure  => file,
     content => epp($mime_template),
+    tag     => 'nginx_config_file',
   }
 
   file { "${temp_dir}/nginx.d":

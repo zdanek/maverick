@@ -11,7 +11,7 @@
 #   Sets the file or database containing global trusted Certificate Authority or global client certificates.
 # 
 # @param ldap_trusted_global_cert_type
-#   Sets the the certificate parameter of the global trusted Certificate Authority or global client certificates.
+#   Sets the certificate parameter of the global trusted Certificate Authority or global client certificates.
 # 
 # @param ldap_shared_cache_size
 #   Size in bytes of the shared-memory cache
@@ -47,7 +47,7 @@
 #   }
 #
 # @see https://httpd.apache.org/docs/current/mod/mod_ldap.html for additional documentation.
-#
+# @note Unsupported platforms: CentOS: 8; RedHat: 8
 class apache::mod::ldap (
   $apache_version                                  = undef,
   $package_name                                    = undef,
@@ -60,21 +60,20 @@ class apache::mod::ldap (
   $ldap_opcache_ttl                                = undef,
   $ldap_trusted_mode                               = undef,
   String $ldap_path                                = '/ldap-status',
-){
-
-  include ::apache
+) {
+  include apache
   $_apache_version = pick($apache_version, $apache::apache_version)
   ::apache::mod { 'ldap':
     package => $package_name,
   }
   # Template uses $_apache_version
-  file { 'apache-mod-ldap.conf':
+  file { 'ldap.conf':
     ensure  => file,
-    path    => "${::apache::mod_dir}/ldap.conf",
-    mode    => $::apache::file_mode,
+    path    => "${apache::mod_dir}/ldap.conf",
+    mode    => $apache::file_mode,
     content => template('apache/mod/ldap.conf.erb'),
-    require => Exec["mkdir ${::apache::mod_dir}"],
-    before  => File[$::apache::mod_dir],
+    require => Exec["mkdir ${apache::mod_dir}"],
+    before  => File[$apache::mod_dir],
     notify  => Class['apache::service'],
   }
 }

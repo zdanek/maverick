@@ -7,12 +7,24 @@ describe 'openssl' do
 
       it { is_expected.to compile.with_all_deps }
 
-      it { is_expected.to contain_package('openssl').with_ensure('present') }
+      context 'on OpenBSD', if: facts[:osfamily] == 'OpenBSD' do
+        it { is_expected.to contain_package('openssl') }
+      end
 
-      if facts[:osfamily] == 'Debian'
+      context 'on not OpenBSD', if: facts[:osfamily] != 'OpenBSD' do
+        it {
+          is_expected.to contain_package('openssl')
+            .with_ensure('present')
+            .with_name('openssl')
+        }
+      end
+
+      context 'on Debian', if: facts[:osfamily] == 'Debian' do
         it { is_expected.to contain_package('ca-certificates') }
         it { is_expected.to contain_exec('update-ca-certificates').with_refreshonly('true') }
-      elsif facts[:osfamily] == 'RedHat'
+      end
+
+      context 'on RedHat', if: facts[:osfamily] == 'RedHat' do
         if facts[:operatingsystemrelease].to_i >= 6
           it { is_expected.to contain_package('ca-certificates') }
         else

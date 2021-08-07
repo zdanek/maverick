@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # is_absolute_path.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:is_absolute_path, :type => :rvalue, :arity => 1, :doc => <<-'DOC') do |args|
+  newfunction(:is_absolute_path, type: :rvalue, arity: 1, doc: <<-'DOC') do |args|
     @summary
       **Deprecated:** Returns boolean true if the string represents an absolute path in the filesystem.
 
@@ -37,7 +39,7 @@ module Puppet::Parser::Functions
 
     path = args[0]
     # This logic was borrowed from
-    # [lib/puppet/file_serving/base.rb](https://github.com/puppetlabs/puppet/blob/master/lib/puppet/file_serving/base.rb)
+    # [lib/puppet/file_serving/base.rb](https://github.com/puppetlabs/puppet/blob/main/lib/puppet/file_serving/base.rb)
     # Puppet 2.7 and beyond will have Puppet::Util.absolute_path? Fall back to a back-ported implementation otherwise.
     if Puppet::Util.respond_to?(:absolute_path?)
       value = (Puppet::Util.absolute_path?(path, :posix) || Puppet::Util.absolute_path?(path, :windows))
@@ -49,8 +51,8 @@ module Puppet::Parser::Functions
       slash = '[\\\\/]'
       name = '[^\\\\/]+'
       regexes = {
-        :windows => %r{^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))}i,
-        :posix => %r{^/},
+        windows: %r{^(([A-Z]:#{slash})|(#{slash}#{slash}#{name}#{slash}#{name})|(#{slash}#{slash}\?#{slash}#{name}))}i,
+        posix: %r{^/},
       }
       value = !!(path =~ regexes[:posix]) || !!(path =~ regexes[:windows]) # rubocop:disable Style/DoubleNegation : No alternative known
     end
