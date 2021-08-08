@@ -67,6 +67,9 @@ class maverick_dev::px4 (
                 "bionic": {
                     ensure_packages(["gazebo9", "libgazebo9-dev"])
                 }
+                "focal": {
+                    ensure_packages(["gazebo9", "libgazebo9-dev"])
+                }
                 default: {
                     ensure_packages(["gazebo7", "libgazebo7-dev"])
                 }
