@@ -11,6 +11,8 @@
 #
 # @param gstreamer_installtype
 #   Whether to install gstreamer through source code or native packages.
+# @param gstreamer_sourcetype
+#   Which build system to use to build from source
 # @param gstreamer_version
 #   Which git version to use to clone and compile/install
 # @param libx264
@@ -18,7 +20,8 @@
 #
 class maverick_vision::gstreamer (
     Enum['source', 'native'] $gstreamer_installtype = "source",
-    String $gstreamer_version = "1.18.3",
+    Enum['legacy', 'cerbero', 'meson'] $gstreamer_sourcetype = "cerbero",
+    String $gstreamer_version = "1.18.4",
     Enum['installed', 'absent'] $libx264 = "installed",
 ) {
     install_python_module { "pip-websockets":
@@ -118,250 +121,304 @@ class maverick_vision::gstreamer (
         # exec { "gstreamer-installed": }
 
 	} elsif $gstreamer_installtype == "source" {
-        # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
-        if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
-            $gst_plugins_good_src = "https://github.com/fnoop/gst-plugins-good.git"
-            $gst_plugins_good_revision = "1.10.2-patched"
-            ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
-            ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "libjack-jackd2-dev", "libvpx-dev"])
-            ensure_packages(["mesa-utils"])
-        } else {
-            $gst_plugins_good_src = "https://github.com/GStreamer/gst-plugins-good.git"
-            $gst_plugins_good_revision = $gstreamer_version
-        }
-        
-        # Work out libpython path
-        /*
-        if $architecture == "armv7l" or $architecture == "armv6l" {
-            $libpython_path = "/usr/lib/arm-linux-gnueabihf"
-        } elsif $architecture == "amd64" {
-            $libpython_path = "/usr/lib/x86_64-linux-gnu"
-        } else {
-            $libpython_path = "${::architecture}-linux-gnu"
-        }
-        */
-        $libpython_path = "/srv/maverick/software/python/lib"
-
-        ensure_packages(["libgirepository1.0-dev"])
-        install_python_module { "pip-pygobject":
-            pkgname     => "PyGObject",
-            ensure      => present,
-            require     => Package["libgirepository1.0-dev"],
-        }
-
-        # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
-        if ! ("install_flag_gstreamer" in $installflags) {
-            
-            # Work out gobject package dependency
-            if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
-                $_gobject_package = "python-gobject-2-dev"
+        if $gstreamer_sourcetype == "legacy" {
+            # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
+            if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
+                $gst_plugins_good_src = "https://github.com/fnoop/gst-plugins-good.git"
+                $gst_plugins_good_revision = "1.10.2-patched"
+                ensure_packages(["libgudev-1.0-dev", "dh-autoreconf", "automake", "autoconf", "libtool", "autopoint", "cdbs", "gtk-doc-tools", "dpkg-dev"])
+                ensure_packages(["libshout3-dev", "libaa1-dev", "libflac-dev", "libsoup2.4-dev", "libraw1394-dev", "libiec61883-dev", "libavc1394-dev", "liborc-0.4-dev", "libcaca-dev", "libdv4-dev", "libxv-dev", "libgtk-3-dev", "libtag1-dev", "libwavpack-dev", "libpulse-dev", "libjack-jackd2-dev", "libvpx-dev"])
+                ensure_packages(["mesa-utils"])
             } else {
-                $_gobject_package = "python-gobject-dev"
+                $gst_plugins_good_src = "https://github.com/GStreamer/gst-plugins-good.git"
+                $gst_plugins_good_revision = $gstreamer_version
             }
-            # Install necessary dependencies and compile
-            ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev", "libnice-dev"])
-            package { ["libx264-dev"]:
-                ensure      => $libx264,
-            } ->
-   
-            file { "/srv/maverick/var/build/gstreamer":
+            
+            # Work out libpython path
+            /*
+            if $architecture == "armv7l" or $architecture == "armv6l" {
+                $libpython_path = "/usr/lib/arm-linux-gnueabihf"
+            } elsif $architecture == "amd64" {
+                $libpython_path = "/usr/lib/x86_64-linux-gnu"
+            } else {
+                $libpython_path = "${::architecture}-linux-gnu"
+            }
+            */
+            $libpython_path = "/srv/maverick/software/python/lib"
+
+            ensure_packages(["libgirepository1.0-dev"])
+            install_python_module { "pip-pygobject":
+                pkgname     => "PyGObject",
+                ensure      => present,
+                require     => Package["libgirepository1.0-dev"],
+            }
+
+            # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
+            if ! ("install_flag_gstreamer" in $installflags) {
+                
+                # Work out gobject package dependency
+                if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
+                    $_gobject_package = "python-gobject-2-dev"
+                } else {
+                    $_gobject_package = "python-gobject-dev"
+                }
+                # Install necessary dependencies and compile
+                ensure_packages(["libglib2.0-dev", "autogen", "autoconf", "autopoint", "libtool-bin", "bison", "flex", "gettext", "gtk-doc-tools", $_gobject_package, "gobject-introspection", "liborc-0.4-dev", "python-gi", "python-gi-dev", "nasm", "libxext-dev", "libnice-dev"])
+                package { ["libx264-dev"]:
+                    ensure      => $libx264,
+                } ->
+    
+                file { "/srv/maverick/var/build/gstreamer":
+                    ensure      => directory,
+                    owner       => "mav",
+                    group       => "mav",
+                    mode        => "755",
+                } ->
+
+                oncevcsrepo { "git-gstreamer_core":
+                    gitsource   => "https://github.com/GStreamer/gstreamer.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/core",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_plugins_base":
+                    gitsource   => "https://github.com/GStreamer/gst-plugins-base.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-base",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_plugins_good":
+                    gitsource   => $gst_plugins_good_src,
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-good",
+                    revision    => $gst_plugins_good_revision,
+                } ->
+                oncevcsrepo { "git-gstreamer_plugins_bad":
+                    gitsource   => "https://github.com/GStreamer/gst-plugins-bad.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_plugins_ugly":
+                    gitsource   => "https://github.com/GStreamer/gst-plugins-ugly.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_libav":
+                    gitsource   => "https://github.com/GStreamer/gst-libav.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-libav",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_gst_python":
+                    gitsource   => "https://github.com/GStreamer/gst-python.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-python",
+                    revision    => $gstreamer_version,
+                } ->
+                oncevcsrepo { "git-gstreamer_gst_rtsp_server":
+                    gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                    revision    => $gstreamer_version,
+                } ->
+                
+                exec { "gstreamer_core-build":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/core/autogen.sh --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/core",
+                    creates     => "/srv/maverick/software/gstreamer/bin/gst-launch-1.0",
+                    require     => [ Package["libglib2.0-dev", "bison", "flex", "gettext"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ], # ensure we have all the dependencies satisfied
+                    before      => Exec["gstreamer_gst_rtsp_server"],
+                }->
+                exec { "gstreamer_gst_plugins_base":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-base/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_base.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-base",
+                    creates     => "/srv/maverick/software/gstreamer/bin/gst-play-1.0",
+                    require     => [ Oncevcsrepo["git-gstreamer_plugins_base"], Package["libgirepository1.0-dev"], Exec["gstreamer_core-build"] ]
+                } ->
+                exec { "gstreamer_gst_plugins_good":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-good/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --enable-v4l2-probe --with-libv4l2 --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_good.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-good",
+                    creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstjpeg.so",
+                    require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Exec["gstreamer_gst_plugins_base"] ]
+                }
+                if $raspberry_present == "yes" {
+                    exec { "gstreamer_gst_plugins_bad":
+                        user        => "mav",
+                        timeout     => 0,
+                        environment => [
+                            "CFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                            "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                            "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
+                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", 
+                            "EGL_CFLAGS=/opt/vc/include",
+                            "EGL_LIBS=/opt/vc/lib",
+                            "GLES2_CFLAGS=/opt/vc/include",
+                            "GLES2_LIBS=/opt/vc/lib"
+                        ],
+                        # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl -enable-opengl --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux' CPPFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux'  CXXFLAGS+='-Wno-redundant-decls' LDFLAGS+='-L/opt/vc/lib' && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                        # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl --enable-gles2 --with-gles2-module-name=/opt/vc/lib/libGLESv2.so --with-egl-module-name=/opt/vc/lib/libEGL.so --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                        command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --enable-egl --enable-gles2 --disable-opengl --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                        cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
+                        creates     => "/srv/maverick/software/gstreamer/lib/libgstgl-1.0.so",
+                        require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"] ]
+                    }
+                } else {
+                    exec { "gstreamer_gst_plugins_bad":
+                        user        => "mav",
+                        timeout     => 0,
+                        environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                        command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --disable-openexr --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_plugins_bad.configure.log 2>&1 && /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1 && /usr/bin/make install >>/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
+                        cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
+                        creates     => "/srv/maverick/software/gstreamer/lib/libgstbadbase-1.0.so",
+                        require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"], Package["libnice-dev"], ]
+                    }
+                }
+                exec { "gstreamer_gst_plugins_ugly":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_ugly.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
+                    creates     => "/srv/maverick/software/gstreamer/share/locale/en_GB/LC_MESSAGES/gst-plugins-ugly-1.0.mo",
+                    require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_plugins_ugly"], Exec["gstreamer_gst_plugins_base"] ]
+                } ->
+                exec { "gstreamer_gst_libav":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "AS=gcc"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-libav/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_libav.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-libav",
+                    creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstlibav.so",
+                    require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_libav"], Exec["gstreamer_gst_plugins_base"] ]
+                } ->
+                exec { "gstreamer_gst_python":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "PYTHON=/srv/maverick/software/python/bin/python3"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=${libpython_path} --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
+                    creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpython.so",
+                    require     => [ Package[$_gobject_package], Oncevcsrepo["git-gstreamer_gst_python"], Exec["gstreamer_gst_plugins_base"] ]
+                } ->
+                exec { "gstreamer_gst_rtsp_server":
+                    user        => "mav",
+                    timeout     => 0,
+                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
+                    creates     => "/srv/maverick/software/gstreamer/lib/libgstrtspserver-1.0.so",
+                    require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Exec["gstreamer_gst_plugins_base"] ]
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_gstreamer":
+                    ensure      => present,
+                    require     => Exec["gstreamer_gst_plugins_bad"],
+                }
+        
+                # Install vaapi for Intel platform
+                # if $::hardwaremodel == "x86_64" {
+                if defined(Class["maverick_hardware::intel"]) and getvar("maverick_hardware::intel::intel_graphics") {
+                    ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
+                    oncevcsrepo { "git-gstreamer_vaapi":
+                        gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
+                        dest        => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
+                        revision    => $gstreamer_version,
+                    } ->
+                    exec { "gstreamer_vaapi":
+                        user        => "mav",
+                        timeout     => 0,
+                        environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                        command     => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_vaapi.build.out 2>&1",
+                        cwd         => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
+                        creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstvaapi.so",
+                        require     => [ Exec["gstreamer_gst_plugins_base"], Package["libva1"], Package["libdrm-dev"] ]
+                    }
+                }
+                
+                # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
+                # See https://github.com/goodrobots/maverick/issues/242
+                if ($raspberry_present == "yes") {
+                    oncevcsrepo { "git-gstreamer_omx":
+                        gitsource   => "https://github.com/fnoop/gst-omx-rpi.git",
+                        dest        => "/srv/maverick/var/build/gstreamer/gst-omx",
+                    } ->
+                    exec { "gstreamer_gst_omx":
+                        user        => "mav",
+                        timeout     => 0,
+                        environment => [
+                            "CFLAGS=-DOMX_SKIP64BIT -I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                            "CPPFLAGS=-I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
+                            "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
+                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
+                        ],
+                        command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_omx.configure.out 2>&1; /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.install.out 2>&1",
+                        cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
+                        creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
+                        require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
+                    } ->
+                    file { "/etc/xdg":
+                        ensure      => directory,
+                    } ->
+                    exec { "cp-xdg-conf":
+                        command     => "/bin/cp /srv/maverick/var/build/gstreamer/gst-omx/config/rpi/gstomx.conf /etc/xdg",
+                        unless      => "/bin/ls /etc/xdg/gstomx.conf",
+                    }
+                }
+            }
+        } elsif $gstreamer_sourcetype == "cerbero" {
+            # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
+            file { ["/srv/maverick/var/build/gstreamer", "/srv/maverick/software/gstreamer", "/srv/maverick/.cerbero"]:
                 ensure      => directory,
                 owner       => "mav",
                 group       => "mav",
                 mode        => "755",
             } ->
-
-            oncevcsrepo { "git-gstreamer_core":
-                gitsource   => "https://github.com/GStreamer/gstreamer.git",
-                dest        => "/srv/maverick/var/build/gstreamer/core",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_plugins_base":
-                gitsource   => "https://github.com/GStreamer/gst-plugins-base.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-base",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_plugins_good":
-                gitsource   => $gst_plugins_good_src,
-                dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-good",
-                revision    => $gst_plugins_good_revision,
-            } ->
-            oncevcsrepo { "git-gstreamer_plugins_bad":
-                gitsource   => "https://github.com/GStreamer/gst-plugins-bad.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_plugins_ugly":
-                gitsource   => "https://github.com/GStreamer/gst-plugins-ugly.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_libav":
-                gitsource   => "https://github.com/GStreamer/gst-libav.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-libav",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_gst_python":
-                gitsource   => "https://github.com/GStreamer/gst-python.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-python",
-                revision    => $gstreamer_version,
-            } ->
-            oncevcsrepo { "git-gstreamer_gst_rtsp_server":
-                gitsource   => "https://github.com/GStreamer/gst-rtsp-server.git",
-                dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-                revision    => $gstreamer_version,
-            } ->
-            
-            exec { "gstreamer_core-build":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/core/autogen.sh --disable-gtk-doc --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_core.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/core",
-                creates     => "/srv/maverick/software/gstreamer/bin/gst-launch-1.0",
-                require     => [ Package["libglib2.0-dev", "bison", "flex", "gettext"], Oncevcsrepo["git-gstreamer_core"], Package["libgirepository1.0-dev"] ], # ensure we have all the dependencies satisfied
-                before      => Exec["gstreamer_gst_rtsp_server"],
-            }->
-            exec { "gstreamer_gst_plugins_base":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-plugins-base/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_base.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-base",
-                creates     => "/srv/maverick/software/gstreamer/bin/gst-play-1.0",
-                require     => [ Oncevcsrepo["git-gstreamer_plugins_base"], Package["libgirepository1.0-dev"], Exec["gstreamer_core-build"] ]
-            } ->
-            exec { "gstreamer_gst_plugins_good":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-plugins-good/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --enable-v4l2-probe --with-libv4l2 --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_good.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-good",
-                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstjpeg.so",
-                require     => [ Oncevcsrepo["git-gstreamer_plugins_good"], Exec["gstreamer_gst_plugins_base"] ]
-            }
-            if $raspberry_present == "yes" {
-                exec { "gstreamer_gst_plugins_bad":
-                    user        => "mav",
-                    timeout     => 0,
-                    environment => [
-                        "CFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
-                        "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
-                        "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
-                        "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", 
-                        "EGL_CFLAGS=/opt/vc/include",
-                        "EGL_LIBS=/opt/vc/lib",
-                        "GLES2_CFLAGS=/opt/vc/include",
-                        "GLES2_LIBS=/opt/vc/lib"
-                    ],
-                    # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl -enable-opengl --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} CFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux' CPPFLAGS+='-Wno-error -Wno-redundant-decls -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux'  CXXFLAGS+='-Wno-redundant-decls' LDFLAGS+='-L/opt/vc/lib' && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
-                    # command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-examples --disable-x11 --disable-qt --enable-egl --enable-gles2 --with-gles2-module-name=/opt/vc/lib/libGLESv2.so --with-egl-module-name=/opt/vc/lib/libEGL.so --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
-                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --enable-egl --enable-gles2 --disable-opengl --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && make && make install >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
-                    cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
-                    creates     => "/srv/maverick/software/gstreamer/lib/libgstgl-1.0.so",
-                    require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"] ]
-                }
-            } else {
-                exec { "gstreamer_gst_plugins_bad":
-                    user        => "mav",
-                    timeout     => 0,
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                    command     => "/srv/maverick/var/build/gstreamer/gst-plugins-bad/autogen.sh --disable-gtk-doc --disable-qt --disable-openexr --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_plugins_bad.configure.log 2>&1 && /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1 && /usr/bin/make install >>/srv/maverick/var/log/build/gstreamer_plugins_bad.build.out 2>&1",
-                    cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-bad",
-                    creates     => "/srv/maverick/software/gstreamer/lib/libgstbadbase-1.0.so",
-                    require     => [ Oncevcsrepo["git-gstreamer_plugins_bad"], Exec["gstreamer_gst_plugins_base"], Package["libnice-dev"], ]
-                }
-            }
-            exec { "gstreamer_gst_plugins_ugly":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_plugins_ugly.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-plugins-ugly",
-                creates     => "/srv/maverick/software/gstreamer/share/locale/en_GB/LC_MESSAGES/gst-plugins-ugly-1.0.mo",
-                require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_plugins_ugly"], Exec["gstreamer_gst_plugins_base"] ]
-            } ->
-            exec { "gstreamer_gst_libav":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "AS=gcc"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-libav/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_libav.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-libav",
-                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstlibav.so",
-                require     => [ Package["libx264-dev"], Oncevcsrepo["git-gstreamer_libav"], Exec["gstreamer_gst_plugins_base"] ]
-            } ->
-            exec { "gstreamer_gst_python":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib", "PYTHON=/srv/maverick/software/python/bin/python3"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-python/autogen.sh --with-libpython-dir=${libpython_path} --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_python.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-python",
-                creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstpython.so",
-                require     => [ Package[$_gobject_package], Oncevcsrepo["git-gstreamer_gst_python"], Exec["gstreamer_gst_plugins_base"] ]
-            } ->
-            exec { "gstreamer_gst_rtsp_server":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/gst-rtsp-server/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_gst_rtsp_server.build.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
-                creates     => "/srv/maverick/software/gstreamer/lib/libgstrtspserver-1.0.so",
-                require     => [ Oncevcsrepo["git-gstreamer_gst_rtsp_server"], Exec["gstreamer_gst_plugins_base"] ]
-            } ->
-            file { "/srv/maverick/var/build/.install_flag_gstreamer":
-                ensure      => present,
-                require     => Exec["gstreamer_gst_plugins_bad"],
-            }
-    
-            # Install vaapi for Intel platform
-            # if $::hardwaremodel == "x86_64" {
-            if defined(Class["maverick_hardware::intel"]) and getvar("maverick_hardware::intel::intel_graphics") {
-                ensure_packages(["libdrm-dev", "libudev-dev", "libxrandr-dev"])
-                oncevcsrepo { "git-gstreamer_vaapi":
-                    gitsource   => "https://github.com/GStreamer/gstreamer-vaapi.git",
-                    dest        => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
+            if ! ("install_flag_gstreamer" in $installflags) {
+                oncevcsrepo { "git-gstreamer_cerbero":
+                    gitsource   => "https://gitlab.freedesktop.org/gstreamer/cerbero",
+                    dest        => "/srv/maverick/var/build/gstreamer/cerbero",
                     revision    => $gstreamer_version,
-                } ->
-                exec { "gstreamer_vaapi":
-                    user        => "mav",
-                    timeout     => 0,
-                    environment => ["PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                    command     => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi/autogen.sh --disable-gtk-doc --with-pkg-config-path=/srv/maverick/software/gstreamer/lib/pkgconfig --prefix=/srv/maverick/software/gstreamer && /usr/bin/make -j${::processorcount} && /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_vaapi.build.out 2>&1",
-                    cwd         => "/srv/maverick/var/build/gstreamer/gstreamer-vaapi",
-                    creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstvaapi.so",
-                    require     => [ Exec["gstreamer_gst_plugins_base"], Package["libva1"], Package["libdrm-dev"] ]
                 }
+            } ->
+            file { "/srv/maverick/.cerbero/custom.cbc":
+                content => "prefix='/srv/maverick/software/gstreamer'",
+            } ->
+            exec { "gstreamer_build-bootstrap":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom bootstrap -y --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.bootstrap.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                creates     => "/srv/maverick/var/build/gstreamer/cerbero/build/build-tools/bin/ninja",
+            } ->
+            exec { "gstreamer_build-core":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gstreamer-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.core.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+            } ->
+            exec { "gstreamer_build-plugins_base":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gst-plugins-base-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.plugins_base.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+            } ->
+            exec { "gstreamer_build-plugins_good":
+                user        => "mav",
+                timeout     => 0,
+                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gst-plugins-good-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.plugins_good.out 2>&1",
+                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
             }
-            
-            # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
-            # See https://github.com/goodrobots/maverick/issues/242
-            if ($raspberry_present == "yes") {
-                oncevcsrepo { "git-gstreamer_omx":
-                    gitsource   => "https://github.com/fnoop/gst-omx-rpi.git",
-                    dest        => "/srv/maverick/var/build/gstreamer/gst-omx",
-                } ->
-                exec { "gstreamer_gst_omx":
-                    user        => "mav",
-                    timeout     => 0,
-                    environment => [
-                        "CFLAGS=-DOMX_SKIP64BIT -I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
-                        "CPPFLAGS=-I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
-                        "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
-                        "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
-                    ],
-                    command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_omx.configure.out 2>&1; /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.install.out 2>&1",
-                    cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
-                    creates     => "/srv/maverick/software/gstreamer/lib/gstreamer-1.0/libgstomx.so",
-                    require     => [ Oncevcsrepo["git-gstreamer_omx"], Exec["gstreamer_gst_plugins_base"] ]
-                } ->
-                file { "/etc/xdg":
-                    ensure      => directory,
-                } ->
-                exec { "cp-xdg-conf":
-                    command     => "/bin/cp /srv/maverick/var/build/gstreamer/gst-omx/config/rpi/gstomx.conf /etc/xdg",
-                    unless      => "/bin/ls /etc/xdg/gstomx.conf",
-                }
-            }
+        } elsif $gstreamer_sourcetype == "meson" {
+            warning("Error: gstreamer meson build not supported yet")
     	} else {
     	    # If we don't build gstreamer, we still need something for other manifest dependencies
     	    file { "/srv/maverick/var/build/.install_flag_gstreamer":
