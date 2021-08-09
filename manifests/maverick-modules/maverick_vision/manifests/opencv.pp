@@ -22,25 +22,25 @@
 #
 class maverick_vision::opencv (
     Boolean $contrib = true,
-    String $opencv_version = "4.4.0",
+    String $opencv_version = "4.5.3",
     Enum['Release', 'Debug'] $release = "Release",
     Boolean $precompile_headers = false,
     Boolean $armv7l_optimize = false,
-    String $openvino_version = "2020.4",
+    String $openvino_version = "2021.4",
     Boolean $openvino = false,
 ) {
-    
+
     # Ensure gstreamer, tbb and openblas resources are applied before this class
     require maverick_vision::gstreamer
     require maverick_vision::visionlibs
-    
+
     # Install dependencies
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04") {
-        ensure_packages(["libpng-dev"])
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04" or $operatingsystemrelease == "20.04") {
+        ensure_packages(["libpng-dev", "libgdcm-dev"])
     } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") {
-        ensure_packages(["libjasper-dev", "libpng12-dev"])
+        ensure_packages(["libjasper-dev", "libpng12-dev", "libgdcm2-dev"])
     }
-    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev"])
+    ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["libglew-dev"])
     ensure_packages(["qt5-default"])
 
@@ -58,8 +58,8 @@ class maverick_vision::opencv (
             owner       => "mav",
             group       => "mav",
             mode        => "755",
-        } 
-        
+        }
+
         # Run cmake and generate build files
         if $contrib == true {
             oncevcsrepo { "git-opencv_contrib":
@@ -76,14 +76,14 @@ class maverick_vision::opencv (
             $_creates           = "/srv/maverick/var/build/opencv/build/lib/libopencv_highgui.so"
             $_install_creates   = "/srv/maverick/software/opencv/lib/libopencv_highgui.so"
         }
-        
+
         # Turn off precompiling headers by default, as it uses a lot of space
         if $precompile_headers == false {
             $_pchstr = "-DENABLE_PRECOMPILED_HEADERS=NO"
         } else {
             $_pchstr = ""
         }
-    
+
         if $armv7l_optimize == true {
             $_armopts = "-DENABLE_NEON=OFF -DENABLE_VFPV3=OFF -DCMAKE_CXX_FLAGS='-march=native -mfpu=neon-fp-armv8 -mneon-for-64bits' "
             $_armenv = "CXXFLAGS=-march=native -mfpu=neon-fp-armv8 -mneon-for-64bits"
@@ -91,7 +91,7 @@ class maverick_vision::opencv (
             $_armopts = "-DENABLE_NEON=OFF -DENABLE_VFPV3=OFF"
             $_armenv = ""
         }
-        
+
         if $maverick_vision::visionlibs::tbb == true {
             $_tbbopts = "-DCMAKE_INSTALL_RPATH=/srv/maverick/software/tbb/lib -DWITH_TBB=ON -DBUILD_TBB=OFF"
         } else {
@@ -124,7 +124,7 @@ class maverick_vision::opencv (
         } else {
             $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
-    
+
         if Numeric($memorysize_mb) < 1000 {
             $_makej = 1
         } elsif Numeric($memorysize_mb) < 2000 {
@@ -148,7 +148,7 @@ class maverick_vision::opencv (
             command     => $_command,
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => "/srv/maverick/var/build/opencv/build/Makefile",
-            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "libgdcm2-dev", "liblapacke-dev", "libgtk2.0-dev", "qt5-default"] ], # ensure we have all the dependencies satisfied
+            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "liblapacke-dev", "libgtk2.0-dev", "qt5-default"] ], # ensure we have all the dependencies satisfied
         } ->
         exec { "opencv-build":
             user        => "mav",
@@ -179,7 +179,7 @@ class maverick_vision::opencv (
             ensure      => present,
         }
     }
-    
+
     file { "/etc/profile.d/40-maverick-opencv-path.sh":
         mode        => "644",
         owner       => "root",
