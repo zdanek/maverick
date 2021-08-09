@@ -42,7 +42,7 @@ class maverick_vision (
     Boolean $orb_slam2 = false,
     Boolean $vision_landing = true,
     Boolean $vision_seek = true,
-    Boolean $camera_manager = true,
+    Boolean $camera_manager = false,
     Boolean $collision_avoidance = false,
     Boolean $rtabmap = false,
 ) {
