@@ -18,7 +18,7 @@ class maverick_analysis::collect (
     Boolean $active = true,
     Enum['source', 'binary'] $install_type = "source",
     String $git_source = "https://github.com/collectd/collectd.git",
-    String $git_revision = "collectd-5.11.0",
+    String $git_revision = "collectd-5.12.0",
 ) {
     # Install from source
     if $install_type == "source" {
