@@ -457,6 +457,9 @@ class maverick_vision::gstreamer (
                     command     => "/srv/maverick/software/python/bin/meson install -C build >/srv/maverick/var/log/build/gstreamer_build.install.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
                     creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+                } ->
+                file { "/srv/maverick/var/build/.install_flag_gstreamer":
+                    ensure      => present,
                 }
             }
         } else {
