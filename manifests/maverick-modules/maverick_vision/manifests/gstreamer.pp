@@ -440,7 +440,7 @@ class maverick_vision::gstreamer (
                 exec { "gstreamer_build-meson":
                     user        => "mav",
                     timeout     => 0,
-                    command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/gstreamer build >/srv/maverick/var/log/build/gstreamer_build.meson.out 2>&1",
+                    command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/gstreamer -Dlibdir=/srv/maverick/software/gstreamer/lib build >/srv/maverick/var/log/build/gstreamer_build.meson.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
                     creates     => "/srv/maverick/var/build/gstreamer/gst-build/build/subprojects/gstreamer",
                 } ->
