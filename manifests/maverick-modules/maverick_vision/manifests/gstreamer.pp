@@ -429,7 +429,7 @@ class maverick_vision::gstreamer (
                 owner       => "mav",
                 group       => "mav",
                 mode        => "755",
-            } ->
+            }
             if ! ("install_flag_gstreamer" in $installflags) {
                 oncevcsrepo { "git-gstreamer_gstbuild":
                     gitsource   => "https://gitlab.freedesktop.org/gstreamer/gst-build.git",
@@ -443,6 +443,7 @@ class maverick_vision::gstreamer (
                     command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/gstreamer -Dlibdir=/srv/maverick/software/gstreamer/lib build >/srv/maverick/var/log/build/gstreamer_build.meson.out 2>&1",
                     cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
                     creates     => "/srv/maverick/var/build/gstreamer/gst-build/build/subprojects/gstreamer",
+                    require     => Install_python_module["pip-meson"],
                 } ->
                 exec { "gstreamer_build-ninja":
                     user        => "mav",
