@@ -20,7 +20,7 @@
 #
 class maverick_vision::gstreamer (
     Enum['source', 'native'] $gstreamer_installtype = "source",
-    Enum['legacy', 'cerbero', 'meson'] $gstreamer_sourcetype = "cerbero",
+    Enum['legacy', 'cerbero', 'meson'] $gstreamer_sourcetype = "meson",
     String $gstreamer_version = "1.18.4",
     Enum['installed', 'absent'] $libx264 = "installed",
 ) {
@@ -48,11 +48,9 @@ class maverick_vision::gstreamer (
         }
 
         if ($raspberry_present == "yes") {
-    		ensure_packages(["gstreamer1.0-omx"])
-    		
-
-    		### Raspberry gst rtspserver now available as binary packages
-    		/*
+            ensure_packages(["gstreamer1.0-omx"])
+            ### Raspberry gst rtspserver now available as binary packages
+            /*
             # Even if raspberry gstreamer is binary install, it doesn't include rtsp so install from source
             if ! ("install_flag_gst-rtsp-server" in $installflags) {
                 if $::operatingsystemmajrelease == "8" {
@@ -116,11 +114,11 @@ class maverick_vision::gstreamer (
                 ensure      => present,
             }
         }
-        
+
         # Create a blank exec as a resource for other manifests to use as a dependency
         # exec { "gstreamer-installed": }
 
-	} elsif $gstreamer_installtype == "source" {
+    } elsif $gstreamer_installtype == "source" {
         if $gstreamer_sourcetype == "legacy" {
             # Work out which gst-plugins-good we want, if we're an odroid with active MFC device use patched tree for hardware codec
             if $odroid_present == "yes" and $camera_odroidmfc == "yes" {
@@ -133,7 +131,7 @@ class maverick_vision::gstreamer (
                 $gst_plugins_good_src = "https://github.com/GStreamer/gst-plugins-good.git"
                 $gst_plugins_good_revision = $gstreamer_version
             }
-            
+
             # Work out libpython path
             /*
             if $architecture == "armv7l" or $architecture == "armv6l" {
@@ -155,7 +153,7 @@ class maverick_vision::gstreamer (
 
             # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
             if ! ("install_flag_gstreamer" in $installflags) {
-                
+
                 # Work out gobject package dependency
                 if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
                     $_gobject_package = "python-gobject-2-dev"
@@ -167,7 +165,7 @@ class maverick_vision::gstreamer (
                 package { ["libx264-dev"]:
                     ensure      => $libx264,
                 } ->
-    
+
                 file { "/srv/maverick/var/build/gstreamer":
                     ensure      => directory,
                     owner       => "mav",
@@ -215,7 +213,7 @@ class maverick_vision::gstreamer (
                     dest        => "/srv/maverick/var/build/gstreamer/gst-rtsp-server",
                     revision    => $gstreamer_version,
                 } ->
-                
+
                 exec { "gstreamer_core-build":
                     user        => "mav",
                     timeout     => 0,
@@ -316,7 +314,7 @@ class maverick_vision::gstreamer (
                     ensure      => present,
                     require     => Exec["gstreamer_gst_plugins_bad"],
                 }
-        
+
                 # Install vaapi for Intel platform
                 # if $::hardwaremodel == "x86_64" {
                 if defined(Class["maverick_hardware::intel"]) and getvar("maverick_hardware::intel::intel_graphics") {
@@ -336,7 +334,7 @@ class maverick_vision::gstreamer (
                         require     => [ Exec["gstreamer_gst_plugins_base"], Package["libva1"], Package["libdrm-dev"] ]
                     }
                 }
-                
+
                 # Recent gstreamer OMX broken on raspberry, must install raspbian binary packages
                 # See https://github.com/goodrobots/maverick/issues/242
                 if ($raspberry_present == "yes") {
@@ -380,52 +378,94 @@ class maverick_vision::gstreamer (
                     gitsource   => "https://gitlab.freedesktop.org/gstreamer/cerbero",
                     dest        => "/srv/maverick/var/build/gstreamer/cerbero",
                     revision    => $gstreamer_version,
+                } ->
+                file { "/srv/maverick/.cerbero/custom.cbc":
+                    content => "prefix='/srv/maverick/software/gstreamer'",
+                } ->
+                exec { "gstreamer_build-bootstrap":
+                    user        => "mav",
+                    timeout     => 0,
+                    #environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom bootstrap -y --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.bootstrap.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                    creates     => "/srv/maverick/var/build/gstreamer/cerbero/build/build-tools/bin/ninja",
+                } ->
+                exec { "gstreamer_build-core":
+                    user        => "mav",
+                    timeout     => 0,
+                    #environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build gstreamer-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.core.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                    creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+                } ->
+                exec { "gstreamer_build-plugins_base":
+                    user        => "mav",
+                    timeout     => 0,
+                    #environment => ["LD_LIBRARY_PATH=/srv/maverick/software/gstreamer/lib", "LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build gst-plugins-base-1.0 >/srv/maverick/var/log/build/gstreamer_build.plugins_base.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                    #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+                } ->
+                exec { "gstreamer_build-plugins_good":
+                    user        => "mav",
+                    timeout     => 0,
+                    #environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
+                    #command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build gst-plugins-good-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.plugins_good.out 2>&1",
+                    command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled build gst-plugins-good-1.0 >/srv/maverick/var/log/build/gstreamer_build.plugins_good.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
+                    #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
                 }
-            } ->
-            file { "/srv/maverick/.cerbero/custom.cbc":
-                content => "prefix='/srv/maverick/software/gstreamer'",
-            } ->
-            exec { "gstreamer_build-bootstrap":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom bootstrap -y --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.bootstrap.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
-                creates     => "/srv/maverick/var/build/gstreamer/cerbero/build/build-tools/bin/ninja",
-            } ->
-            exec { "gstreamer_build-core":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gstreamer-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.core.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
-                creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
-            } ->
-            exec { "gstreamer_build-plugins_base":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gst-plugins-base-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.plugins_base.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
-                #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
-            } ->
-            exec { "gstreamer_build-plugins_good":
-                user        => "mav",
-                timeout     => 0,
-                environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/gstreamer/lib"],
-                command     => "/srv/maverick/var/build/gstreamer/cerbero/cerbero-uninstalled -c custom build --force gst-plugins-good-1.0 --jobs 0 >/srv/maverick/var/log/build/gstreamer_build.plugins_good.out 2>&1",
-                cwd         => "/srv/maverick/var/build/gstreamer/cerbero",
-                #creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
             }
         } elsif $gstreamer_sourcetype == "meson" {
-            warning("Error: gstreamer meson build not supported yet")
-    	} else {
-    	    # If we don't build gstreamer, we still need something for other manifest dependencies
-    	    file { "/srv/maverick/var/build/.install_flag_gstreamer":
+            ensure_packages(["ninja-build"])
+            install_python_module { "pip-meson":
+                pkgname     => "meson",
+                ensure      => exactly,
+                version     => "0.57.0",
+            } ->
+            # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
+            file { ["/srv/maverick/var/build/gstreamer", "/srv/maverick/software/gstreamer"]:
+                ensure      => directory,
+                owner       => "mav",
+                group       => "mav",
+                mode        => "755",
+            } ->
+            if ! ("install_flag_gstreamer" in $installflags) {
+                oncevcsrepo { "git-gstreamer_gstbuild":
+                    gitsource   => "https://gitlab.freedesktop.org/gstreamer/gst-build.git",
+                    dest        => "/srv/maverick/var/build/gstreamer/gst-build",
+                    revision    => $gstreamer_version,
+                    require     => Package["ninja-build"],
+                } ->
+                exec { "gstreamer_build-meson":
+                    user        => "mav",
+                    timeout     => 0,
+                    command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/gstreamer build >/srv/maverick/var/log/build/gstreamer_build.meson.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
+                    creates     => "/srv/maverick/var/build/gstreamer/gst-build/build/subprojects/gstreamer",
+                } ->
+                exec { "gstreamer_build-ninja":
+                    user        => "mav",
+                    timeout     => 0,
+                    command     => "/usr/bin/ninja -C build >/srv/maverick/var/log/build/gstreamer_build.ninja.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
+                    creates     => "/srv/maverick/var/build/gstreamer/gst-build/build/subprojects/gstreamer/libs/gst/base/libgstbase-1.0.so",
+                } ->
+                exec { "gstreamer_build-meson-install":
+                    user        => "mav",
+                    timeout     => 0,
+                    command     => "/srv/maverick/software/python/bin/meson install -C build >/srv/maverick/var/log/build/gstreamer_build.install.out 2>&1",
+                    cwd         => "/srv/maverick/var/build/gstreamer/gst-build",
+                    creates     => "/srv/maverick/software/gstreamer/bin/gst-inspect-1.0",
+                }
+            }
+        } else {
+            # If we don't build gstreamer, we still need something for other manifest dependencies
+            file { "/srv/maverick/var/build/.install_flag_gstreamer":
                 ensure      => present,
             }
-    	}
-	
+        }
+
         # Set profile scripts for custom gstreamer location
         file { "/etc/profile.d/50-maverick-gstreamer-path.sh":
             mode        => "644",
