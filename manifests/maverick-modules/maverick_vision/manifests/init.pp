@@ -40,7 +40,7 @@ class maverick_vision (
     Boolean $aruco = true,
     Boolean $apriltag = true,
     Boolean $orb_slam2 = false,
-    Boolean $vision_landing = true,
+    Boolean $vision_landing = false,
     Boolean $vision_seek = true,
     Boolean $camera_manager = false,
     Boolean $collision_avoidance = false,
