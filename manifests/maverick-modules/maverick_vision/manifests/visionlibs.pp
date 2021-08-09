@@ -16,11 +16,11 @@
 # 
 class maverick_vision::visionlibs (
     Boolean $tbb = true,
-    String $tbb_version = "v2020.3",
+    String $tbb_version = "v2021.3.0",
     Boolean $openblas = true,
-    String $openblas_version = "v0.3.10",
+    String $openblas_version = "v0.3.17",
 ) {
-    
+
     if $openblas == true {
         # If ~/var/build/.install_flag_openblas exists, skip pulling source and compiling
         if ! ("install_flag_openblas" in $installflags) {
@@ -53,32 +53,35 @@ class maverick_vision::visionlibs (
         # If ~/var/build/.install_flag_tbb exists, skip pulling source and compiling
         if ! ("install_flag_tbb" in $installflags) {
             oncevcsrepo { "git-tbb":
-                gitsource   => "https://github.com/intel/tbb",
+                gitsource   => "https://github.com/oneapi-src/oneTBB",
                 dest        => "/srv/maverick/var/build/tbb",
                 revision    => $tbb_version,
             } ->
-            exec { "tbb-make":
-                command => "/usr/bin/make",
-                cwd     => "/srv/maverick/var/build/tbb",
+            file { "/srv/maverick/var/build/tbb/build":
+                ensure => directory,
+                owner  => "mav",
+                group  => "mav",
+            } ->
+            exec { "tbb-cmake":
+                command => "/usr/bin/cmake -DTBB4PY_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/tbb .. >/srv/maverick/var/log/build/tbb.cmake.log 2>&1",
+                cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
+                #creates => "",
             } ->
-            file { "/srv/maverick/software/tbb":
-                ensure  => directory,
-                owner   => "mav",
-                group   => "mav",
-            } ->
-            file { "/srv/maverick/var/build/tbb/install.sh":
-                source  => "puppet:///modules/maverick_vision/tbb_install.sh",
-                mode    => "0755",
-                owner   => "mav",
-                group   => "mav",
+            exec { "tbb-build":
+                command => "/usr/bin/cmake --build . >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                cwd     => "/srv/maverick/var/build/tbb/build",
+                timeout => 0,
+                user    => "mav",
+                #creates => "",
             } ->
             exec { "tbb-install":
-                command => "/srv/maverick/var/build/tbb/install.sh",
+                command => "/usr/bin/cmake -DCOMPONENT=devel -P cmake_install.cmake >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                cwd     => "/srv/maverick/var/build/tbb/build",
+                timeout => 0,
                 user    => "mav",
-                cwd     => "/srv/maverick/var/build/tbb",
-                creates => "/srv/maverick/software/tbb/lib",
+                #creates => "",
             } ->
             file { "/srv/maverick/var/build/.install_flag_tbb":
                 ensure  => present,
