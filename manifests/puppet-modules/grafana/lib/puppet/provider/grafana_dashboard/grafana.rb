@@ -76,10 +76,8 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
     folders unless @folders
 
     begin
-      @folders.each do |folder|
-        @folder = folder if folder['title'] == resource[:folder]
-      end
-      raise format('Folder not found: %s', resource[:folder]) unless @folder['title'] == resource[:folder]
+      @folder = @folders.find { |folder| folder['title'] == resource[:folder] }
+      raise format('Folder not found: %s', resource[:folder]) unless @folder
     rescue JSON::ParserError
       raise format('Fail to parse folder %s: %s', resource[:folder], response.body)
     end
@@ -108,7 +106,8 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
   def find_dashboard
     return unless dashboards.find { |x| x['title'] == resource[:title] }
 
-    response = send_request('GET', format('%s/dashboards/db/%s', resource[:grafana_api_path], slug))
+    response = send_request('GET', format('%s/dashboards/uid/%s', resource[:grafana_api_path], slug))
+
     if response.code != '200'
       raise format('Fail to retrieve dashboard %s (HTTP response: %s/%s)', resource[:title], response.code, response.body)
     end
@@ -133,6 +132,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
     data = {
       dashboard: dashboard.merge('title' => resource[:title],
                                  'id' => @dashboard ? @dashboard['id'] : nil,
+                                 'uid' => slug,
                                  'version' => @dashboard ? @dashboard['version'] + 1 : 0),
       folderId: @folder ? @folder['id'] : nil,
       overwrite: !@dashboard.nil?
@@ -148,7 +148,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
   end
 
   def content
-    @dashboard.reject { |k, _| k =~ %r{^id|version|title$} }
+    @dashboard.reject { |k, _| k =~ %r{^id|uid|version|title$} }
   end
 
   def content=(value)
@@ -160,7 +160,7 @@ Puppet::Type.type(:grafana_dashboard).provide(:grafana, parent: Puppet::Provider
   end
 
   def destroy
-    response = send_request('DELETE', format('%s/dashboards/db/%s', resource[:grafana_api_path], slug))
+    response = send_request('DELETE', format('%s/dashboards/uid/%s', resource[:grafana_api_path], slug))
 
     return unless response.code != '200'
     raise Puppet::Error, format('Failed to delete dashboard %s (HTTP response: %s/%s', resource[:title], response.code, response.body)

@@ -734,7 +734,7 @@ if [ "z$_rubydev" == "z" ]; then
 fi
 
 # Check that puppet is installed through gem
-declare -A GEMVERSIONS=( [puppet]=7.9.0 [hiera]=3.7.0 [facter]=4.2.2 [puppet-strings]=2.8.0 )
+declare -A GEMVERSIONS=( [puppet]=7.10.0 [hiera]=3.7.0 [facter]=4.2.3 [puppet-strings]=2.8.0 )
 for pkg in "hiera" "facter" "puppet" "puppet-strings"; do
     if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
         echo "Installing $pkg from gems"

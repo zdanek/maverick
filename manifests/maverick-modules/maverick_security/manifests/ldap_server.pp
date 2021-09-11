@@ -23,13 +23,13 @@ class maverick_security::ldap_server (
     String $cert_orgunit = "Robots",
     String $cert_cname = "slapd",
 ) {
-    
+
     # Retrieve CA passphrase for signing
     $ca_passphrase = getvar("maverick_security::ssl::ca_passphrase")
 
     # Dependency for augeas shellvar provider
     ensure_packages(["ruby-augeas"])
-    
+
     if $server_type == "openldap" {
         # Setup rsyslog logging for openldap slapd
         file { "/etc/rsyslog.d/10-slapd.conf":
@@ -55,7 +55,7 @@ class maverick_security::ldap_server (
         } ->
         class { 'openldap::server': 
             # confdir   => '/srv/maverick/config/security/ldap',
-            provider  => 'olc',
+            # provider  => 'olc',
             #owner     => 'mav',
             #group     => 'mav',
             ldaps_ifs => ['/'],

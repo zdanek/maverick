@@ -1,10 +1,13 @@
 OpenLDAP
 ========
 
-[![Puppet Forge Version](http://img.shields.io/puppetforge/v/camptocamp/openldap.svg)](https://forge.puppetlabs.com/camptocamp/openldap)
-[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/camptocamp/openldap.svg)](https://forge.puppetlabs.com/camptocamp/openldap)
-[![Build Status](https://img.shields.io/travis/camptocamp/puppet-openldap/master.svg)](https://travis-ci.org/camptocamp/puppet-openldap)
-[![Puppet Forge Endorsement](https://img.shields.io/puppetforge/e/camptocamp/openldap.svg)](https://forge.puppetlabs.com/camptocamp/openldap)
+[![Build Status](https://github.com/voxpupuli/puppet-openldap/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-openldap/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-openldap/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-openldap/actions/workflows/release.yml)
+[![Puppet Forge Version](http://img.shields.io/puppetforge/v/puppet/openldap.svg)](https://forge.puppetlabs.com/puppet/openldap)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/puppet/openldap.svg)](https://forge.puppetlabs.com/puppet/openldap)
+[![Puppet Forge Endorsement](https://img.shields.io/puppetforge/e/puppet/openldap.svg)](https://forge.puppetlabs.com/puppet/openldap)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-openldap)
+[![Apache v2 License](https://img.shields.io/github/license/voxpupuli/puppet-openldap.svg)](LICENSE)
 [![Donated by Camptocamp](https://img.shields.io/badge/donated%20by-camptocamp-fb7047.svg)](#transfer-notice)
 
 Overview
@@ -13,18 +16,18 @@ Overview
 The openldap module allows you to easily manage OpenLDAP with Puppet.
 By default it will use OLC (cn=config).
 
-Features supported per provider
--------------------------------
+Features supported
+------------------
 
-Object      | olc (slapd.d) | augeas (slapd.conf)
-------------|---------------|-----------
-global_conf | Y             | N
-database    | Y             | Y
-module      | Y             | N
-overlay     | Y             | N
-access      | Y             | N
-index       | Y             | N
-schema      | Y             | N
+Object      | olc (slapd.d)
+------------|--------------
+global_conf | Y
+database    | Y
+module      | Y
+overlay     | Y
+access      | Y
+index       | Y
+schema      | Y
 
 Usage
 -----
@@ -79,14 +82,6 @@ class { 'openldap::server':
 }
 ```
 
-To force using slapd.conf:
-
-```puppet
-class { 'openldap::server':
-  provider => 'augeas',
-}
-```
-
 Configuring a global parameter:
 
 ```puppet
@@ -102,7 +97,7 @@ Configuring multiple olc serverIDs for multiple master or mirror mode
 openldap::server::globalconf { 'ServerID':
   ensure  => present,
   value   => { 'ServerID' => [ '1 ldap://master1.example.com', '2 ldap://master2.example.com' ] }
-} 
+}
 ```
 
 Configuring security for global
@@ -110,7 +105,7 @@ Configuring security for global
 ```puppet
 openldap::server::globalconf { 'Security':
   ensure  => present,
-	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=0' ] } 
+	value   => { 'Security' => [ 'simple_bind=128', 'ssf=128', 'tls=0' ] }
 ```
 
 ### Configuring a database
@@ -188,7 +183,7 @@ openldap::server::access { '0 on dc=example,dc=com':
 ```
 
 from the openldap [documentation](http://www.openldap.org/doc/admin24/slapdconf2.html)
-> The frontend is a special database that is used to hold database-level 
+> The frontend is a special database that is used to hold database-level
 options that should be applied to all the other databases. Subsequent database
 definitions may also override some frontend settings.
 

@@ -1,6 +1,6 @@
 {
   "name": "puppet-openldap",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "author": "Vox Pupuli",
   "summary": "Puppet OpenLDAP module",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">=4.13.1 < 7.0.0"
+      "version_requirement": ">= 4.13.1 < 9.0.0"
     },
     {
       "name": "puppetlabs/augeas_core",
@@ -18,7 +18,7 @@
     },
     {
       "name": "herculesteam/augeasproviders_core",
-      "version_requirement": ">=2.0.0 < 3.0.0"
+      "version_requirement": ">=2.0.0 < 4.0.0"
     },
     {
       "name": "herculesteam/augeasproviders_shellvar",
@@ -30,15 +30,16 @@
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "14.04",
         "16.04",
-        "18.04"
+        "18.04",
+        "20.04"
       ]
     },
     {
@@ -51,8 +52,8 @@
     {
       "operatingsystem": "OpenSUSE",
       "operatingsystemrelease": [
-          "15"
-        ]
+        "15"
+      ]
     },
     {
       "operatingsystem": "RedHat",
@@ -65,14 +66,15 @@
       "operatingsystem": "FreeBSD",
       "operatingsystemrelease": [
         "11",
-        "12"
+        "12",
+        "13"
       ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 5.5.10 < 6.0.0"
+      "version_requirement": ">= 6.1.0 < 8.0.0"
     }
   ],
   "pdk-version": "1.15.0",

@@ -1,11 +1,13 @@
 # grafana
 
-[![Build Status](https://travis-ci.org/voxpupuli/puppet-grafana.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-grafana)
-[![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-grafana/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-grafana)
+[![Build Status](https://github.com/voxpupuli/puppet-grafana/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-grafana/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-grafana/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-grafana/actions/workflows/release.yml)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
 [![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/grafana.svg)](https://forge.puppetlabs.com/puppet/grafana)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-grafana)
+[![Apache-2 License](https://img.shields.io/github/license/voxpupuli/puppet-grafana.svg)](LICENSE)
 
 #### Table of Contents
 
@@ -28,9 +30,8 @@ InfluxDB and OpenTSDB.
 
 ## Module Description
 
-Version 2.x of this module is designed to work with version 2.x of Grafana.
-If you would like to continue to use Grafana 1.x, please use version 1.x of
-this module.
+With the 9.0.0 release of this module we only support Grafana 6.x/7.x/8.x.
+Version 8 of the module was tested successfully on Grafana 6 and 7.
 
 ## Setup
 
@@ -565,6 +566,8 @@ Organziation must exist if specified.
 `ensure` is required. If the resource should be `present` or `absent`
 
 `name` is optional if the name will differ from example_team above.
+
+`home_dashboard_folder` is optional. Sets the folder where home dashboard resides. Dashboard folder must exist.
 
 `home_dashboard` is optional. Sets the home dashboard for team. Dashboard must exist.
 
@@ -1168,9 +1171,9 @@ This task can be used to change the password for the admin user in grafana
 
 ## Limitations
 
-This module has been tested on Ubuntu 14.04, using each of the 'archive', 'docker'
-and 'package' installation methods. Other configurations should work with minimal,
-if any, additional effort.
+This module has been tested on every operating system in the metadata.json, using
+each of the 'archive', 'docker' and 'package' installation methods. Other
+configurations should work with minimal, if any, additional effort.
 
 ## Development
 

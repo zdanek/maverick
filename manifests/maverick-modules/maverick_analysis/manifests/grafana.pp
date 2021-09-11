@@ -51,14 +51,12 @@ class maverick_analysis::grafana (
 ) {
 
     if $active == true {
-    
         ensure_packages(["sqlite3"])
 
-        # python attrs package needs to be exactly 19.1.0 for grafanalib
+        # python attrs package needed for grafanalib
         install_python_module { "grafanalib-attrs":
             pkgname     => "attrs",
-            ensure      => exactly,
-            version     => "19.1.0",
+            ensure      => installed,
         }
 
         file { ["/srv/maverick/data/analysis/grafana", "/srv/maverick/data/analysis/grafana/dashboards", "/srv/maverick/data/analysis/grafana/logs", "/srv/maverick/data/analysis/grafana/provisioning", "/srv/maverick/data/analysis/grafana/provisioning/datasources", "/srv/maverick/data/analysis/grafana/provisioning/dashboards", "/srv/maverick/var/log/analysis/grafana"]:
@@ -71,7 +69,7 @@ class maverick_analysis::grafana (
             ensure      => absent,
             force       => true,
         }
-    
+
         if $joule_present == "yes" {
             $_dashboard = "system-dashboard-joule.json"
         } elsif $raspberry_present == "yes" {
@@ -79,7 +77,7 @@ class maverick_analysis::grafana (
         } else {
             $_dashboard = "system-dashboard-generic.json"
         }
-    
+
         /*
         if $raspberry_present == "yes" or $tegra_present == "yes" {
             # If we're on tegra, need to do a bit of hackery
@@ -123,7 +121,6 @@ class maverick_analysis::grafana (
                     logs            => "/srv/maverick/data/analysis/grafana/logs",
                     plugins         => "/srv/maverick/data/analysis/grafana/plugins",
                     provisioning    => "/srv/maverick/data/analysis/grafana/provisioning",
-                
                 },
                 server   => {
                   http_port     => $port,
@@ -163,11 +160,13 @@ class maverick_analysis::grafana (
             test_url => '/public/img/grafana_icon.svg',
         } ->
         # Create maverick org in grafana
+        /*
         exec { "grafana-maverickorg":
             unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org' |grep Maverick",
             command         => "/bin/sleep 10; /usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org values(10,0,'Maverick','','','','','','','','2017-06-20 11:02:55','2017-06-20 11:15:51')\"", # sleep is to give grafana enough time to fire up and release the db
             user            => "mav",
         } ->
+        */
         # Delete old mav user
         exec { "grafana-deloldmavuser":
             onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where id=10' |grep mav",
@@ -182,78 +181,57 @@ class maverick_analysis::grafana (
         } ->
         # Link mav user to org
         exec { "grafana-linkmav":
-            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"10\" and user_id=\"100\"' |grep Viewer",
-            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','10','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
+            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"1\" and user_id=\"100\"' |grep Viewer",
+            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','1','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
             user            => "mav",
         }
-    
+
         # Deploy the provisioning config
         file { "/srv/maverick/data/analysis/grafana/provisioning/datasources/influx.yaml":
             source          => "puppet:///modules/maverick_analysis/grafana-influx.yaml",
             owner           => "mav",
             group           => "mav",
             notify          => Service["maverick-grafana"],
-        }
+        } ->
         file { "/srv/maverick/data/analysis/grafana/provisioning/dashboards/dashboards.yaml":
             source          => "puppet:///modules/maverick_analysis/grafana-dashboards.yaml",
             owner           => "mav",
             group           => "mav",
             notify          => Service["maverick-grafana"],
-        }
-        
+        } ->
+
         # Deploy provisioning dashboards
         file { "/srv/maverick/data/analysis/grafana/dashboards/system_dashboard.json":
             content         => template("maverick_analysis/${_dashboard}"),
             owner           => "mav",
             group           => "mav",
-        }
+        } ->
         file { "/srv/maverick/data/analysis/grafana/dashboards/flight-dashboard-ardupilot.json":
             content         => template("maverick_analysis/flight-dashboard-ardupilot.json"),
             owner           => "mav",
             group           => "mav",
-        }
+        } ->
         file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf2-ardupilot.json":
             content         => template("maverick_analysis/flight-ekf2-ardupilot.json"),
             owner           => "mav",
             group           => "mav",
-        }
+        }->
         file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf3-ardupilot.json":
             content         => template("maverick_analysis/flight-ekf3-ardupilot.json"),
             owner           => "mav",
             group           => "mav",
-        }
+        } ->
         file { "/srv/maverick/data/analysis/grafana/dashboards/flight-ekf2ekf3-ardupilot.json":
             content         => template("maverick_analysis/flight-ekf2ekf3-ardupilot.json"),
             owner           => "mav",
             group           => "mav",
-        }
+        } ->
         file { "/srv/maverick/data/analysis/grafana/dashboards/mavexplorer-mavgraphs.json":
             content         => template("maverick_analysis/mavexplorer-mavgraphs.json"),
             owner           => "mav",
             group           => "mav",
         }
-    
-        /*
-        # Delete old admin user
-        exec { "grafana-deloldadminuser":
-            onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where id=1' |grep admin",
-            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"delete from main.user where id=1\"",
-            user            => "mav",
-        } ->
-        # Create admin user in grafana
-        exec { "grafana-adminuser":
-            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user' |grep admin",
-            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(101,0,'${admin_user}','${admin_user}','Maverick Admin','${admin_hash}','${admin_salt}','${admin_rand}','',10,1,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43')\"",
-            user            => "mav",
-        } ->
-        # Link admin user to org
-        exec { "grafana-linkadmin":
-            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"10\" and user_id=\"101\"' |grep Admin",
-            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('101','10','101','Admin','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
-            user            => "mav",
-        } ->
-        */
-    
+
         /*
         ### NEW - Not working yet
         exec { "grafana-reset-admin-password":
@@ -274,7 +252,7 @@ class maverick_analysis::grafana (
             password          => $mav_password,
         }
         */
-        
+
         if defined(Class["::maverick_web"]) {
             nginx::resource::location { "web-analysis-graphs":
                 location    => "/analysis/grafana/",
@@ -283,7 +261,7 @@ class maverick_analysis::grafana (
                 require     => [ Class["nginx"] ],
             }
         }
-    
+
         if $grafana_firewall_rules == true {
             if defined(Class["::maverick_security"]) {
                 maverick_security::firewall::firerule { "grafana":
