@@ -30,7 +30,7 @@ class maverick_ros::ros1 (
     String $installdir = "/srv/maverick/software/ros",
     Boolean $module_mavros = true,
     Boolean $module_realsense = true,
-    Boolean $module_opencv = true,
+    Boolean $module_opencv = false,
     Boolean $module_apriltag = true,
 ) {
     # If installtype is set then use it and skip autodetection
