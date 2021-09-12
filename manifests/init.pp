@@ -1,9 +1,8 @@
-### Declare defines here so they can be accessed everywhere
-define speak ($message = "", $level = "") {
-    notify { $name:
-        message     => $message,
-        loglevel    => $level,
-    }
+# Workaround for broken service provider in Raspbian #1004
+if $::operatingsystem == 'Raspbian' {
+  Service {
+    provider => systemd,
+  }
 }
 
 # Workaround for slow pip checks: https://github.com/stankevich/puppet-python/issues/291
