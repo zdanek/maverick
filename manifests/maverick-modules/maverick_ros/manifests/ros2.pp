@@ -57,6 +57,13 @@ class maverick_ros::ros2 (
                             default: { $_installtype = "source" }
                         }
                     }
+                    "focal": {
+                        $autodist = "foxy"
+                        case $architecture {
+                            "amd64", "arm64", "aarch64", "armhf": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
                     default: {
                         $autodist = undef
                         $_installtype = undef
@@ -89,7 +96,7 @@ class maverick_ros::ros2 (
     } else {
         $_installtype = false
     }
-    
+
     if $distribution == "auto" and $installtype == "auto" {
         $_distribution = $autodist
     } else {
@@ -98,14 +105,14 @@ class maverick_ros::ros2 (
 
     if $_installtype and $_distribution {
         # Install dependencies
-        
+
         # Work out distro name
         if $::lsbdistid == "ubilinux" and $::lsbmajdistrelease == "4" {
             $_distro = "stretch"
         } else {
             $_distro = $::lsbdistcodename
         }
-        
+
         # Create symlink to usual vendor install directory
         if ! defined(File["/opt/ros"]) {
             file { ["/opt/ros"]:
@@ -185,7 +192,7 @@ class maverick_ros::ros2 (
                 group       => "mav",
                 mode        => "755",
             }
-            
+
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
             install_python_module { ["colcon-common-extensions", "rosdep", "vcstool", "rosinstall-generator", "lark-parser"]:
                 ensure  => present,
