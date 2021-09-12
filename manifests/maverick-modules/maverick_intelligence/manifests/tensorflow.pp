@@ -20,13 +20,13 @@
 #
 class maverick_intelligence::tensorflow (
     String $source = "https://github.com/tensorflow/tensorflow.git",
-    String $source_version = "v2.2.0",
+    String $source_version = "v2.6.0",
     String $bazel_version = "3.4.1",
-    String $version = "2", # 1 or 2
+    String $binary_version = "2.6.0",
     Optional[Enum['armv6l', 'armv7l']] $arch = undef,
     Optional[Enum['pip', 'source']] $install_type = undef,
 ) {
-    
+
     # Work out if source is install is necessary
     if ! empty($install_type) {
         $_install_type = $install_type
@@ -46,30 +46,18 @@ class maverick_intelligence::tensorflow (
     install_python_module { "tensorflow-cython":
         pkgname     => "cython",
         ensure      => present,
-    }    
+    }
 
     if $_install_type == "pip" {
         if ($::raspberry_present == "yes" and $::architecture == "armv7l") or $arch == "armv7l"  {
-            if $version == "1" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl"
-            } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_armv7l.whl"
-            }
+            $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_armv7l.whl"
         } elsif ($::raspberry_present == "yes" and $::architecture == "armv6l") or $arch == "armv6l" {
             warning("No tensorflow install available for Pi Zero/armv6l")
         } elsif ($::tegra_present == "yes") {
-            if $version == "1" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-1.15.0-cp37-cp37m-linux_aarch64.whl"
-            } elsif $version == "2" {
-                $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_aarch64.whl"
-            }
+            $tensorflow_url = "https://github.com/PINTO0309/Tensorflow-bin/raw/master/tensorflow-2.1.0-cp37-cp37m-linux_aarch64.whl"
         } else {
             $tensorflow_url = ""
-            if $version == "1" {
-                $tensorflow_pkgname = "tensorflow"
-            } else {
-                $tensorflow_pkgname = "tensorflow==2.1.0"
-            }
+            $tensorflow_pkgname = "tensorflow"
         }
 
         if $tensorflow_url == "" {
@@ -99,7 +87,7 @@ class maverick_intelligence::tensorflow (
             } else {
                 $java_home = ""
             }
-    
+
             file { "/srv/maverick/var/build/tensorflow":
                 ensure      => directory,
                 owner       => "mav",
