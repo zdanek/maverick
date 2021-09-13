@@ -16,7 +16,8 @@
 # 
 class maverick_vision::visionlibs (
     Boolean $tbb = true,
-    String $tbb_version = "v2021.3.0",
+    #String $tbb_version = "v2021.3.0",
+    String $tbb_version = "master",
     Boolean $openblas = true,
     String $openblas_version = "v0.3.17",
 ) {
@@ -51,6 +52,11 @@ class maverick_vision::visionlibs (
 
     if $tbb == true {
         # If ~/var/build/.install_flag_tbb exists, skip pulling source and compiling
+        if $raspberry_present == "yes" {
+            $_RPIFLAGS = "-DCMAKE_CXX_FLAGS=-latomic -DOPENCV_EXTRA_EXE_LINKER_FLAGS=-latomic"
+        } else {
+            $_RPIFLAGS = ""
+        }
         if ! ("install_flag_tbb" in $installflags) {
             oncevcsrepo { "git-tbb":
                 gitsource   => "https://github.com/oneapi-src/oneTBB",
@@ -63,21 +69,21 @@ class maverick_vision::visionlibs (
                 group  => "mav",
             } ->
             exec { "tbb-cmake":
-                command => "/usr/bin/cmake -DTBB4PY_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/tbb .. >/srv/maverick/var/log/build/tbb.cmake.log 2>&1",
+                command => "/usr/bin/cmake ${_RPIFLAGS} -DTBB4PY_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/tbb .. >/srv/maverick/var/log/build/tbb.cmake.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
                 #creates => "",
             } ->
             exec { "tbb-build":
-                command => "/usr/bin/cmake --build . >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                command => "/usr/bin/cmake ${_RPIFLAGS} --build . >/srv/maverick/var/log/build/tbb.build.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
                 #creates => "",
             } ->
             exec { "tbb-install":
-                command => "/usr/bin/cmake -DCOMPONENT=devel -P cmake_install.cmake >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                command => "/usr/bin/cmake ${_RPIFLAGS} -DCOMPONENT=devel -P cmake_install.cmake >/srv/maverick/var/log/build/tbb.build.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
