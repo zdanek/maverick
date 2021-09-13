@@ -60,7 +60,7 @@ class maverick_ros::ros2 (
                     "focal": {
                         $autodist = "foxy"
                         case $architecture {
-                            "amd64", "arm64", "aarch64", "armhf": { $_installtype = "native" }
+                            "amd64", "arm64", "aarch64": { $_installtype = "native" }
                             default: { $_installtype = "source" }
                         }
                     }
@@ -79,6 +79,10 @@ class maverick_ros::ros2 (
                     }
                     "9": { # stretch
                         $autodist = "eloquent"
+                        $_installtype = "source"
+                    }
+                    "10": { # buster
+                        $autodist = "foxy"
                         $_installtype = "source"
                     }
                     default: {
@@ -194,7 +198,7 @@ class maverick_ros::ros2 (
             }
 
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
-            install_python_module { ["colcon-common-extensions", "rosdep", "vcstool", "rosinstall-generator", "lark-parser"]:
+            install_python_module { ["colcon-common-extensions", "lark-parser"]:
                 ensure  => present,
             } ->
             package { ["libasio-dev", "libtinyxml2-dev"]:

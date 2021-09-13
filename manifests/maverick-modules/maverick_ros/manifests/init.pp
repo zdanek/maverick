@@ -23,6 +23,11 @@ class maverick_ros (
         require     => Package["dirmngr"],
     }
 
+    # Install common python modules to ros1 and ros2
+    install_python_module { ["rosdep", "vcstool", "rosinstall-generator"]:
+        ensure  => present,
+    }
+
     if $ros1 == true {
         class { "maverick_ros::ros1": }
     }

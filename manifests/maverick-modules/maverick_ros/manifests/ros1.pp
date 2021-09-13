@@ -207,7 +207,7 @@ class maverick_ros::ros1 (
         package { ["python-rosdep", "python3-rosdep", "python-catkin-tools", "python3-catkin-tools", "python-wstool", "python3-wstool", "python-vcstools", "python3-vcstools"]:
             ensure      => absent,
         } ->
-        install_python_module { ["rosdep", "wstool", "trollius", "rospkg", "catkin-pkg", "rosinstall", "rosinstall-generator", "vcstool", "sip", "osrf-pycommon"]:
+        install_python_module { ["wstool", "trollius", "rospkg", "catkin-pkg", "rosinstall", "sip", "osrf-pycommon"]:
             ensure      => present,
         } ->
         install_python_module { "catkin-tools":
