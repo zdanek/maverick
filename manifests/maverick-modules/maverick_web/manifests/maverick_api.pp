@@ -24,7 +24,7 @@ class maverick_web::maverick_api (
         depth       => undef,
     }
     # Install psystemd pip dependency
-    ensure_packages(["libsystemd-dev"])
+    ensure_packages(["libsystemd-dev", "rustc"])
 
     install_python_module { "api-tornado":
         pkgname     => "tornado",
@@ -50,6 +50,7 @@ class maverick_web::maverick_api (
         pkgname     => "cryptography",
         ensure      => atleast,
         version     => "2.9.2",
+        require     => Package["rustc"],
     } ->
     install_python_module { "api-aiosqlite":
         pkgname     => "aiosqlite",
