@@ -97,7 +97,7 @@ class maverick_ros::ros1 (
                     }
                 }
             }
-            "Debian": {
+            "Debian", "Raspbian": {
                 case $::operatingsystemmajrelease {
                     # For Debian OS use version number instead of codename, for derivatives like rasbian and ubilinux
                     "8": { # jessie

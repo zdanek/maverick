@@ -17,12 +17,12 @@ class maverick_analysis::influx (
     Integer $http_port = 6020,
     Integer $collectd_listener_port = 6021,
 ) {
-    
+
     # Install Go
     ensure_packages(["golang", "curl"])
 
     # Install influx repo
-    if $::operatingsystem == "Debian" {
+    if $::operatingsystem == "Debian" or $::operatingsystem == "Raspbian" {
         if $::operatingsystemmajrelease == "7" {
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian wheezy stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         } elsif $::operatingsystemmajrelease == "8" {
@@ -35,7 +35,7 @@ class maverick_analysis::influx (
     } elsif $::operatingsystem == "Ubuntu" {
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
             $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} artful stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
-        } else {    
+        } else {
             $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
         }
     }
@@ -97,7 +97,7 @@ class maverick_analysis::influx (
             require     => [ Service["influxdb"], Class["maverick_analysis::collect"] ],
         }
     }
-    
+
     # Install python library
     install_python_module { "pip-influxdb":
         ensure          => atleast,
