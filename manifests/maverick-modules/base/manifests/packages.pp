@@ -58,6 +58,7 @@ class base::packages (
         "libusb-1.0-0-dev",
         "gnupg2",
         "net-tools",
+        "iptables-persistent",
     ])
 
     if $operatingsystem == "Ubuntu" {
@@ -71,14 +72,14 @@ class base::packages (
         }
         ensure_packages(["software-properties-common"])
     }
-    
+
     # These packages should be removed from all installs.  
     # Usually these are included in the default OS build and are not necessary, or cause some conflict or unwanted behaviour
     # We have to list them independently because putting them in a package [] doesn't seem to deal with dependencies
     if ($operatingsystem == "CentOS") or ($operatingsystem == "Fedora") or ($operatingsystem == "RedHat") {
         package { "fprintd-pam": ensure => absent } ->
         package { "fprintd": ensure => absent } ->
-        package { "libfprint": ensure => absent } 
+        package { "libfprint": ensure => absent }
     }
 
     # Remove ModeManager which conflicts with APM/Pixhawk
@@ -95,7 +96,7 @@ class base::packages (
     package { "popularity-contest":
         ensure      => absent,
     }
-    
+
     # Add ruby-dev, needed for some gems to update/install
     ensure_packages(["ruby-dev"])
 }
