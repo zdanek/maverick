@@ -53,7 +53,7 @@ class maverick_vision::visionlibs (
     if $tbb == true {
         # If ~/var/build/.install_flag_tbb exists, skip pulling source and compiling
         if $raspberry_present == "yes" {
-            $_RPIFLAGS = "-DCMAKE_CXX_FLAGS=-latomic -DOPENCV_EXTRA_EXE_LINKER_FLAGS=-latomic"
+            $_RPIFLAGS = "-DCMAKE_CXX_FLAGS=-latomic"
         } else {
             $_RPIFLAGS = ""
         }
@@ -69,25 +69,25 @@ class maverick_vision::visionlibs (
                 group  => "mav",
             } ->
             exec { "tbb-cmake":
-                command => "/usr/bin/cmake ${_RPIFLAGS} -DTBB4PY_BUILD=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/tbb .. >/srv/maverick/var/log/build/tbb.cmake.log 2>&1",
+                command => "/usr/bin/cmake ${_RPIFLAGS} -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DTBB_TEST=OFF -DTBB4PY_BUILD=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/tbb .. >/srv/maverick/var/log/build/tbb.cmake.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
-                #creates => "",
+                creates => "/srv/maverick/var/build/tbb/build/CMakeCache.txt",
             } ->
             exec { "tbb-build":
-                command => "/usr/bin/cmake ${_RPIFLAGS} --build . >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                command => "/usr/bin/cmake --build . --target all --config Release >/srv/maverick/var/log/build/tbb.build.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
-                #creates => "",
+                creates => "/srv/maverick/var/build/tbb/build/src/tbb/CMakeFiles/tbb.dir/version.cpp.o",
             } ->
             exec { "tbb-install":
-                command => "/usr/bin/cmake ${_RPIFLAGS} -DCOMPONENT=devel -P cmake_install.cmake >/srv/maverick/var/log/build/tbb.build.log 2>&1",
+                command => "/usr/bin/cmake ${_RPIFLAGS} -P cmake_install.cmake >/srv/maverick/var/log/build/tbb.install.log 2>&1",
                 cwd     => "/srv/maverick/var/build/tbb/build",
                 timeout => 0,
                 user    => "mav",
-                #creates => "",
+                creates => "/srv/maverick/software/tbb/lib/libtbb.so.12",
             } ->
             file { "/srv/maverick/var/build/.install_flag_tbb":
                 ensure  => present,
