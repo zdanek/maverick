@@ -166,6 +166,11 @@ class maverick_vision::opencv (
         exec { "opencv-install":
             user        => "mav",
             timeout     => 0,
+            environment => [
+                "LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
+                "CPATH=/srv/maverick/software/tbb/include",
+            ],
             command     => "/usr/bin/make install >/srv/maverick/var/log/build/opencv.install.out 2>&1",
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => $_install_creates,
