@@ -22,7 +22,7 @@ class maverick_ros::ros2 (
     Enum['native', 'source', 'auto'] $installtype = "auto",
     String $distribution = "auto",
     String $builddir = "/srv/maverick/var/build/ros2",
-    String $installdir = "/srv/maverick/software/ros2",
+    String $installdir = "/srv/maverick/software/ros",
     String $metapackage = "ros-base", # desktop or ros-base
     Boolean $ros1_bridge = true,
 ) {
@@ -126,7 +126,16 @@ class maverick_ros::ros2 (
                 group       => "root",
             }
         }
-        file { ["${installdir}", "${installdir}/${_distribution}"]:
+        if ! defined(File["${installdir}"]) {
+            file { ["${installdir}"]:
+                ensure      => directory,
+                owner       => "mav",
+                group       => "mav",
+                mode        => "755",
+                require     => File["/opt/ros"],
+            }
+        }
+        file { "${installdir}/${_distribution}":
             ensure      => directory,
             owner       => "mav",
             group       => "mav",
@@ -137,12 +146,14 @@ class maverick_ros::ros2 (
             ensure      => link,
             target      => "${installdir}/${_distribution}",
             force       => true,
-        } ->
+        }
+        /*
         file { "${installdir}/current":
             ensure      => link,
             target      => "${installdir}/${_distribution}",
             force       => true,
         }
+        */
 
         # Install python module that provides autocomplete        
         install_python_module { "ros2-argcomplete":
@@ -189,6 +200,14 @@ class maverick_ros::ros2 (
             $_osdistro = ""
         }
 
+        # If raspberry, set atomic linker flag
+        if $raspberry_present == "yes" {
+            #$_RPIFLAGS = "-DCMAKE_CXX_FLAGS=-latomic"
+            $_RPIFLAGS = "--cmake-args \"-DCMAKE_SHARED_LINKER_FLAGS='-latomic'\" \"-DCMAKE_EXE_LINKER_FLAGS='-latomic'\""
+        } else {
+            $_RPIFLAGS = ""
+        }
+
         if ! ("install_flag_ros2" in $installflags) {
             file { ["${builddir}", "${builddir}/src", "/etc/ros", "/etc/ros/rosdep"]:
                 ensure      => directory,
@@ -216,38 +235,50 @@ class maverick_ros::ros2 (
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/rosinstall_generator ros_base --rosdistro ${_distribution} --deps >ros2.repos",
                 creates => "${builddir}/ros2.repos",
+                timeout => 0,
                 user    => "mav",
             } ->
             exec { "ros2-vcs-import":
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/vcs import src <ros2.repos",
                 creates => "${builddir}/src/ros2cli",
+                timeout => 0,
                 user    => "mav",
             } ->
             exec { "ros2-rosdep-init":
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/rosdep init",
                 creates => "/etc/ros/rosdep/sources.list.d/20-default.list",
+                timeout => 0,
                 user    => "mav",
             } ->
             exec { "ros2-rosdep-update":
                 cwd     => "${builddir}",
+                environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
                 command => "/srv/maverick/software/python/bin/rosdep update",
                 user    => "mav",
+                timeout => 0,
                 creates => "/srv/maverick/.ros/rosdep/sources.cache",
             } ->
             exec { "ros2-rosdep-install":
                 cwd     => "${builddir}",
+                environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
                 command => "/srv/maverick/software/python/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} ${_osdistro} -y --skip-keys 'console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers'",
                 user    => "mav",
+                timeout => 0,
             } ->
             exec { "ros2-colcon-build":
                 cwd     => "${builddir}",
                 environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"],
-                command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-skip ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
+                #command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-skip ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
+                command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args ${_RPIFLAGS} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
                 user    => "mav",
                 creates => "/srv/maverick/software/ros2/${_distribution}/ros2cli/bin/ros2",
                 timeout => 0,
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_ros2":
+                ensure      => present,
+                #require     => Exec["ros2-colcon-build"],
             }
             if $ros1_bridge == true {
                 exec { "ros2-rosinstall-ros1_bridge":
@@ -272,10 +303,6 @@ class maverick_ros::ros2 (
                     user    => "mav",
                     timeout => 0,
                 }
-            }
-            file { "/srv/maverick/var/build/.install_flag_ros2":
-                ensure      => present,
-                require     => Exec["ros2-colcon-build"],
             }
         }
     }

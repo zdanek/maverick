@@ -51,7 +51,7 @@ class maverick_vision::visionlibs (
     }
 
     if $tbb == true {
-        # If ~/var/build/.install_flag_tbb exists, skip pulling source and compiling
+        # If raspberry, set atomic linker flag
         if $raspberry_present == "yes" {
             $_RPIFLAGS = "-DCMAKE_CXX_FLAGS=-latomic"
         } else {

@@ -29,9 +29,9 @@ class maverick_ros::ros1 (
     String $builddir = "/srv/maverick/var/build/ros_catkin_ws",
     String $installdir = "/srv/maverick/software/ros",
     Boolean $module_mavros = true,
-    Boolean $module_realsense = true,
+    Boolean $module_realsense = false,
     Boolean $module_opencv = false,
-    Boolean $module_apriltag = true,
+    Boolean $module_apriltag = false,
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
@@ -275,7 +275,8 @@ class maverick_ros::ros1 (
 
         # Force osdistro for raspberry
         if $raspberry_present == "yes" {
-            $_osdistro = "--os=debian:${::lsbdistcodename}"
+            #$_osdistro = "--os=debian:${::lsbdistcodename}"
+            $_osdistro = "debian:${::lsbdistcodename}"
         } else {
             $_osdistro = ""
         }
@@ -296,13 +297,17 @@ class maverick_ros::ros1 (
                 require         => [ Install_python_module["rosdep"], Install_python_module["wstool"], Install_python_module["rosinstall"], Install_python_module["rosinstall-generator"] ],
             } ->
             exec { "rosdep-update":
+                path            => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
+                environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
                 user            => "mav",
-                command         => "/srv/maverick/software/python/bin/rosdep update",
+                timeout         => 0,
+                command         => "rosdep update --rosdistro ${_distribution} -y >/srv/maverick/var/log/build/ros.rosdep_update.out 2>&1",
                 creates         => "/srv/maverick/.ros/rosdep/sources.cache",
+                cwd             => "${builddir}",
             } ->
             exec { "catkin_rosinstall":
                 path            => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
-                command         => "rosinstall_generator ${buildtype} --rosdistro ${_distribution} --deps --tar > ${_distribution}-${buildtype}.rosinstall",
+                command         => "rosinstall_generator ${buildtype} --rosdistro ${_distribution} --deps --tar --wet-only > ${_distribution}-${buildtype}.rosinstall",
                 cwd             => "${builddir}",
                 user            => "mav",
                 creates         => "${builddir}/${_distribution}-${buildtype}.rosinstall",
@@ -316,7 +321,8 @@ class maverick_ros::ros1 (
             } ->
             exec { "catkin_rosdep":
                 path            => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
-                command         => "rosdep install --from-paths src --ignore-packages-from-source --rosdistro ${_distribution} -y >/srv/maverick/var/log/build/ros.rosdep.out 2>&1",
+                command         => "rosdep install --from-paths src --ignore-packages-from-source --os=${_osdistro} --rosdistro ${_distribution} -y >/srv/maverick/var/log/build/ros.rosdep_install.out 2>&1",
+                environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
                 cwd             => "${builddir}",
                 user            => "mav",
                 timeout         => 0,
@@ -324,6 +330,7 @@ class maverick_ros::ros1 (
             exec { "catkin_make":
                 command         => "${builddir}/src/catkin/bin/catkin_make_isolated --install --install-space ${installdir}/${_distribution} -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DSETUPTOOLS_DEB_LAYOUT=OFF -DCMAKE_BUILD_TYPE=Release -j${buildparallel} >/srv/maverick/var/log/build/ros.catkin_make.out 2>&1",
                 cwd             => "${builddir}",
+                environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
                 user            => "mav",
                 creates         => "${installdir}/${_distribution}/lib/rosbag/topic_renamer.py",
                 timeout         => 0,
@@ -453,8 +460,8 @@ class maverick_ros::ros1 (
                     user        => "mav",
                     cwd         => "/srv/maverick/var/build/catkin_ws_apriltag",
                     path        => ["/srv/maverick/software/python/bin", "/usr/bin", "/bin"],
-                    environment => ["PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.8/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.8/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/apriltag"],
-                    command     => "catkin build -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DSETUPTOOLS_DEB_LAYOUT=OFF -j2 -l2 >/srv/maverick/var/log/build/apriltag-catkin-build.out 2>&1",
+                    environment => ["LDFLAGS=-Wl,-rpath,/srv/maverick/software/python/lib", "LD_LIBRARY_PATH=/srv/maverick/software/python/lib", "PYTHONPATH=/srv/maverick/software/ros/${_distribution}/lib/python3.8/site-packages:/srv/maverick/software/ros/${_distribution}/lib/python3/dist-packages:/srv/maverick/software/python/lib/python3.8/site-packages", "CMAKE_PREFIX_PATH=/opt/ros/${_distribution}:/srv/maverick/software/opencv:/srv/maverick/software/apriltag"],
+                    command     => "catkin build -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DPYTHON_INCLUDE_DIR=/srv/maverick/software/python/include/python3.8 -DPYTHON_LIBRARY=/srv/maverick/software/python/lib/libpython3.8.so -DCATKIN_ENABLE_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DSETUPTOOLS_DEB_LAYOUT=OFF -j2 -l2 >/srv/maverick/var/log/build/apriltag-catkin-build.out 2>&1",
                     creates     => "/opt/ros/current/share/apriltag_ros",
                     timeout     => 0,
                 } ->
