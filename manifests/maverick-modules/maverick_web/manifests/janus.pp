@@ -108,15 +108,6 @@ class maverick_web::janus (
             dest        => "/srv/maverick/var/build/janus-gateway",
         } ->
         exec { "janus-autogen":
-            environment => [
-                "PKG_CONFIG_PATH=/srv/maverick/software/libwebsockets/lib/pkgconfig",
-                "LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "CPATH=/srv/maverick/software/libwebsockets/include",
-                "CMAKE_PREFIX_PATH=/srv/maverick/software/libwebsockets",
-                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets",
-                "CFLAGS=-I/srv/maverick/software/libwebsockets/include",
-            ],
             command     => "/srv/maverick/var/build/janus-gateway/autogen.sh >/srv/maverick/var/log/build/janus.autogen.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
             creates     => "/srv/maverick/var/build/janus-gateway/configure",
@@ -131,7 +122,7 @@ class maverick_web::janus (
                 "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
                 "CPATH=/srv/maverick/software/libwebsockets/include",
                 "CMAKE_PREFIX_PATH=/srv/maverick/software/libwebsockets",
-                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets",
+                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets -Wl,-rpath=/srv/maverick/software/libwebsockets/lib",
                 "CFLAGS=-I/srv/maverick/software/libwebsockets/include",
             ],
             command     => "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway --enable-websockets-event-handler --disable-aes-gcm >/srv/maverick/var/log/build/janus.configure.log 2>&1",
