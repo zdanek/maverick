@@ -27,7 +27,7 @@ class maverick_security (
 	Boolean $rkhunter = false,
 	Boolean $clamav = false,
 	Boolean $ssl = true,
-	Boolean $ldap_server = true,
+	Boolean $ldap_server = false,
 	Boolean $disable_services = true,
 	) {
     

@@ -14,7 +14,7 @@
 #   
 class maverick_security::ldap_server (
     String $server_type = "openldap",
-    String $base = "dc=maverick,dc=one",
+    String $base = "dc=mvrk,dc=org",
     String $roothash = "{SHA512}8dba3660197daf7642b9eaeaf77ef817ae9471f3b3d672bfb4fd94100dd5801cd9c990dd64938822e17643b8810cd31ee0ae87b9370884a7d880cfbc5307a573", # youcanbemywingman
     String $cert_country = "US",
     String $cert_state = "State of Being",
@@ -70,7 +70,7 @@ class maverick_security::ldap_server (
           ensure    => present,
           rootdn    => "cn=admin,${base}",
           rootpw    => $roothash,
-          # directory => "/srv/maverick/data/security/ldap/maverick.one",
+          # directory => "/srv/maverick/data/security/ldap/mvrk.org",
         }
 
         # Create ldap ssl and data directory
