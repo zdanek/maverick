@@ -301,7 +301,7 @@ class maverick_web::janus (
             proto       => "tcp"
         }
         maverick_security::firewall::firerule { "webrtc-rtp":
-            ports       => [$rtprange_start, $rtprange_end],
+            ports       => ["${rtprange_start}-${rtprange_end}"],
             ips         => lookup("firewall_ips"),
             proto       => "udp"
         }
