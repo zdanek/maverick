@@ -1,47 +1,27 @@
-# @summary Main linux class, includes all other classes
+# = Class: firewall::linux
 #
-# @param ensure
-#   Controls the state of the ipv4 iptables service on your system. Valid options: 'running' or 'stopped'. Defaults to 'running'.
+# Installs the `iptables` package for Linux operating systems and includes
+# the appropriate sub-class for any distribution specific services and
+# additional packages.
 #
-# @param ensure_v6
-#   Controls the state of the ipv6 iptables service on your system. Valid options: 'running' or 'stopped'. Defaults to 'running'.
+# == Parameters:
 #
-# @param pkg_ensure
-#   Controls the state of the iptables package on your system. Valid options: 'present' or 'latest'. Defaults to 'latest'.
-#
-# @param service_name
-#   Specify the name of the IPv4 iptables service. Defaults defined in firewall::params.
-#
-# @param service_name_v6
-#   Specify the name of the IPv6 iptables service. Defaults defined in firewall::params.
-#
-# @param package_name
-#   Specify the platform-specific package(s) to install. Defaults defined in firewall::params.
-#
-# @param ebtables_manage
-#   Controls whether puppet manages the ebtables package or not. If managed, the package will use the value of pkg_ensure.
-#
-# @api private
+# [*ensure*]
+#   Ensure parameter passed onto Service[] resources. When `running` the
+#   service will be started on boot, and when `stopped` it will not.
+#   Default: running
 #
 class firewall::linux (
   $ensure          = running,
-  $ensure_v6       = undef,
   $pkg_ensure      = present,
-  $service_name    = $firewall::params::service_name,
-  $service_name_v6 = $firewall::params::service_name_v6,
-  $package_name    = $firewall::params::package_name,
+  $service_name    = $::firewall::params::service_name,
+  $service_name_v6 = $::firewall::params::service_name_v6,
+  $package_name    = $::firewall::params::package_name,
   $ebtables_manage = false,
 ) inherits ::firewall::params {
   $enable = $ensure ? {
-    'running' => true,
-    'stopped' => false,
-  }
-
-  $_ensure_v6 = pick($ensure_v6, $ensure)
-
-  $_enable_v6 = $_ensure_v6 ? {
-    'running' => true,
-    'stopped' => false,
+    running => true,
+    stopped => false,
   }
 
   package { 'iptables':
@@ -57,19 +37,17 @@ class firewall::linux (
   case $::operatingsystem {
     'RedHat', 'CentOS', 'Fedora', 'Scientific', 'SL', 'SLC', 'Ascendos',
     'CloudLinux', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'Amazon', 'XenServer',
-    'VirtuozzoLinux', 'Rocky': {
+    'VirtuozzoLinux': {
       class { "${title}::redhat":
         ensure          => $ensure,
-        ensure_v6       => $_ensure_v6,
         enable          => $enable,
-        enable_v6       => $_enable_v6,
         package_name    => $package_name,
         service_name    => $service_name,
         service_name_v6 => $service_name_v6,
         require         => Package['iptables'],
       }
     }
-    'Debian', 'Ubuntu': {
+    'Debian', 'Ubuntu', 'Raspbian': {
       class { "${title}::debian":
         ensure       => $ensure,
         enable       => $enable,

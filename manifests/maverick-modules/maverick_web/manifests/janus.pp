@@ -24,15 +24,69 @@ class maverick_web::janus (
     Boolean $active = true,
     Boolean $http_transport = true,
     Integer $https_port = 6012,
+    Boolean $libnice_install = true,
     Boolean $websockets_install = true,
     Boolean $websockets_transport = true,
     Integer $websockets_port = 6011,
     Integer $rtp_stream_port = 6013,
     Integer $rtsp_stream_port = 6010,
+    Integer $rtprange_start = 40000,
+    Integer $rtprange_end = 45000,
     String  $stream_type = "rtsp",
 ) {
 
-    ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "libnice-dev"])
+    ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "meson", "ninja-build"])
+
+    if $libnice_install == true {
+        if ! ("install_flag_libnice" in $installflags) {
+            oncevcsrepo { "git-libnice":
+                gitsource   => "https://github.com/libnice/libnice",
+                dest        => "/srv/maverick/var/build/libnice",
+                revision    => "0.1.18",
+            } ->
+            exec { "libnice-meson":
+                command     => "/usr/bin/meson --prefix=/srv/maverick/software/libnice --libdir=/srv/maverick/software/libnice/lib build",
+                cwd         => "/srv/maverick/var/build/libnice",
+                timeout     => 0,
+                user        => "mav",
+                creates     => "/srv/maverick/var/build/libnice/build",
+                require     => Package["meson"],
+            } ->
+            exec { "libnice-ninja":
+                command     => "/usr/bin/ninja -C build",
+                cwd         => "/srv/maverick/var/build/libnice",
+                timeout     => 0,
+                user        => "mav",
+                #creates     => "/srv/maverick/var/build/libnice/build",
+                require     => Package["ninja-build"],
+            } ->
+            exec { "libnice-ninja-install":
+                command     => "/usr/bin/ninja -C build install",
+                cwd         => "/srv/maverick/var/build/libnice",
+                timeout     => 0,
+                user        => "mav",
+                creates     => "/srv/maverick/software/libnice/lib/libnice.so.",
+            } ->
+            file { "/srv/maverick/var/build/.install_flag_libnice":
+                ensure      => present,
+                owner       => "mav",
+                group       => "mav",
+            }
+        }
+        # Add environment config for libnice
+        file { "/etc/profile.d/42-maverick-libnice-pkgconfig.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/libnice/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+        } ->
+        file { "/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh":
+            mode        => "644",
+            owner       => "root",
+            group       => "root",
+            content     => 'NEWPATH="/srv/maverick/software/libnice/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+        }
+    }
 
     if $websockets_install == true {
         if ! ("install_flag_libwebsockets" in $installflags) {
@@ -111,19 +165,19 @@ class maverick_web::janus (
             command     => "/srv/maverick/var/build/janus-gateway/autogen.sh >/srv/maverick/var/log/build/janus.autogen.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
             creates     => "/srv/maverick/var/build/janus-gateway/configure",
-            require     => [ Package['libsrtp2-dev'], Package["libnice-dev"], Package["libopus-dev"] ],
+            require     => [ Package['libsrtp2-dev'], Package["libopus-dev"], File["/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh"] ],
             timeout     => 0,
             user        => "mav",
         } ->
         exec { "janus-configure":
             environment => [
-                "PKG_CONFIG_PATH=/srv/maverick/software/libwebsockets/lib/pkgconfig",
-                "LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "CPATH=/srv/maverick/software/libwebsockets/include",
+                "PKG_CONFIG_PATH=/srv/maverick/software/libwebsockets/lib/pkgconfig:/srv/maverick/software/libnice/lib/pkgconfig",
+                "LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib:/srv/maverick/software/libnice/lib",
+                "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib:/srv/maverick/software/libnice/lib",
+                "CPATH=/srv/maverick/software/libwebsockets/include:/srv/maverick/software/libnice/include",
                 "CMAKE_PREFIX_PATH=/srv/maverick/software/libwebsockets",
-                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets -Wl,-rpath=/srv/maverick/software/libwebsockets/lib",
-                "CFLAGS=-I/srv/maverick/software/libwebsockets/include",
+                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets -L/srv/maverick/software/libnice/lib -lnice -Wl,-rpath=/srv/maverick/software/libnice/lib,-rpath=/srv/maverick/software/libwebsockets/lib",
+                "CFLAGS=-I/srv/maverick/software/libwebsockets/include -I/srv/maverick/software/libnice/include",
             ],
             command     => "/srv/maverick/var/build/janus-gateway/configure --prefix=/srv/maverick/software/janus-gateway --enable-websockets-event-handler --disable-aes-gcm >/srv/maverick/var/log/build/janus.configure.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
@@ -136,10 +190,10 @@ class maverick_web::janus (
                 "PKG_CONFIG_PATH=/srv/maverick/software/libwebsockets/lib/pkgconfig",
                 "LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
                 "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "CPATH=/srv/maverick/software/libwebsockets/include",
+                "CPATH=/srv/maverick/software/libwebsockets/include:/srv/maverick/software/libnice/include",
                 "CMAKE_PREFIX_PATH=/srv/maverick/software/libwebsockets",
-                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets",
-                "CFLAGS=-I/srv/maverick/software/libwebsockets/include",
+                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets -L/srv/maverick/software/libnice/lib -lnice -Wl,-rpath=/srv/maverick/software/libnice/lib,-rpath=/srv/maverick/software/libwebsockets/lib",
+                "CFLAGS=-I/srv/maverick/software/libwebsockets/include -I/srv/maverick/software/libnice/include",
             ],
             command     => "/usr/bin/make >/srv/maverick/var/log/build/janus.build.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
@@ -152,10 +206,10 @@ class maverick_web::janus (
                 "PKG_CONFIG_PATH=/srv/maverick/software/libwebsockets/lib/pkgconfig",
                 "LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
                 "LD_LIBRARY_PATH=/srv/maverick/software/libwebsockets/lib",
-                "CPATH=/srv/maverick/software/libwebsockets/include",
+                "CPATH=/srv/maverick/software/libwebsockets/include:/srv/maverick/software/libnice/include",
                 "CMAKE_PREFIX_PATH=/srv/maverick/software/libwebsockets",
-                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets",
-                "CFLAGS=-I/srv/maverick/software/libwebsockets/include",
+                "LDFLAGS=-L/srv/maverick/software/libwebsockets/lib -lwebsockets -L/srv/maverick/software/libnice/lib -lnice -Wl,-rpath=/srv/maverick/software/libnice/lib,-rpath=/srv/maverick/software/libwebsockets/lib",
+                "CFLAGS=-I/srv/maverick/software/libwebsockets/include -I/srv/maverick/software/libnice/include",
             ],
             command     => "/usr/bin/make install >/srv/maverick/var/log/build/janus.install.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
@@ -245,6 +299,11 @@ class maverick_web::janus (
             ports       => [$websockets_port, $https_port],
             ips         => lookup("firewall_ips"),
             proto       => "tcp"
+        }
+        maverick_security::firewall::firerule { "webrtc-rtp":
+            ports       => [$rtprange_start, $rtprange_end],
+            ips         => lookup("firewall_ips"),
+            proto       => "udp"
         }
     }
 

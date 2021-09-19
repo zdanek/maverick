@@ -58,7 +58,6 @@ class base::packages (
         "libusb-1.0-0-dev",
         "gnupg2",
         "net-tools",
-        "iptables-persistent",
     ])
 
     if $operatingsystem == "Ubuntu" {

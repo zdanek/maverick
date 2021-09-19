@@ -1,16 +1,11 @@
-# frozen_string_literal: true
-
-#
-# firewall.rb
-#
 class Puppet::Provider::Firewall < Puppet::Provider
+
   # Prefetch our rule list. This is ran once every time before any other
   # action (besides initialization of each object).
   def self.prefetch(resources)
-    debug('[prefetch(resources)]')
+    debug("[prefetch(resources)]")
     instances.each do |prov|
-      resource = resources[prov.name] || resources[prov.name.downcase]
-      if resource
+      if resource = resources[prov.name] || resources[prov.name.downcase]
         resource.provider = prov
       end
     end
@@ -20,7 +15,7 @@ class Puppet::Provider::Firewall < Puppet::Provider
   # existing status with properties[:foo].
   def properties
     if @property_hash.empty?
-      @property_hash = query || { ensure: :absent }
+      @property_hash = query || {:ensure => :absent}
       @property_hash[:ensure] = :absent if @property_hash.empty?
     end
     @property_hash.dup
@@ -30,7 +25,7 @@ class Puppet::Provider::Firewall < Puppet::Provider
   # getting some double entendre here....
   def query
     self.class.instances.each do |instance|
-      if instance.name == name || instance.name.downcase == name
+      if instance.name == self.name or instance.name.downcase == self.name
         return instance.properties
       end
     end

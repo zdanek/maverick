@@ -1,36 +1,42 @@
-# frozen_string_literal: true
-
 require 'ipaddr'
 
-module Puppet::Util
-  # IPCidr object wrapper for IPAddr
-  class IPCidr < IPAddr
-    def initialize(ipaddr, family = Socket::AF_UNSPEC)
-      super(ipaddr, family)
-    rescue ArgumentError => e
-      raise ArgumentError, "Invalid address from IPAddr.new: #{ipaddr}" if %r{invalid address}.match?(e.message)
-      raise e
-    end
-
-    def netmask
-      _to_string(@mask_addr)
-    end
-
-    def prefixlen
-      m = case @family
-          when Socket::AF_INET
-            IN4MASK
-          when Socket::AF_INET6
-            IN6MASK
+# IPCidr object wrapper for IPAddr
+module Puppet
+  module Util
+    class IPCidr < IPAddr
+      def initialize(ipaddr)
+        begin
+          super(ipaddr)
+        rescue ArgumentError => e
+          if e.message =~ /invalid address/
+            raise ArgumentError, "Invalid address from IPAddr.new: #{ipaddr}"
           else
-            raise 'unsupported address family'
+            raise e
           end
-      return Regexp.last_match(1).length if %r{\A(1*)(0*)\z} =~ (@mask_addr & m).to_s(2)
-      raise 'bad addr_mask format'
-    end
+        end
+      end
 
-    def cidr
-      "#{self}/#{prefixlen}"
+      def netmask
+        _to_string(@mask_addr)
+      end
+
+      def prefixlen
+        m = case @family
+            when Socket::AF_INET
+              IN4MASK
+            when Socket::AF_INET6
+              IN6MASK
+            else
+              raise "unsupported address family"
+            end
+        return $1.length if /\A(1*)(0*)\z/ =~ (@mask_addr & m).to_s(2)
+        raise "bad addr_mask format"
+      end
+
+      def cidr
+        cidr = sprintf("%s/%s", self.to_s, self.prefixlen)
+        cidr
+      end
     end
   end
 end
