@@ -120,7 +120,6 @@ class maverick_web::janus (
                 timeout => 0,
                 user    => "mav",
                 creates => "/srv/maverick/software/libwebsockets/lib/blah",
-                before  => Exec["janus-build"],
             } ->
             file { "/srv/maverick/var/build/.install_flag_libwebsockets":
                 ensure      => present,
