@@ -12,18 +12,20 @@ OS images are available for the following platforms.  Volunteers to produce imag
 
 | Vendor | Model | Download | Hash | SD Card |
 | --- | --- | --- | --- | --- |
-| Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberry.img.xz) | 47dd8cafc7cd37404ac25e3947077574b91771eb6a2872eb775d0c8ec4540f62 | 16Gb |
+| Raspberry Pi | [All Models](#raspberryraspberry-lite-instructions) | [1.2.0beta5](http://mvrk.org/downloads/maverick-1.2.0beta5-raspberry.img.xz) | 473834e534a2867e8ce118b6321dc09561ec4a0b7214f074ada02974264d20f9 | 16Gb |
+<!--
 | Raspberry Pi | [Lite (Pi Zero/W)](#raspberryraspberry-lite-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-raspberrylite.img.xz) | 05e1503296251f8ff433de1f66e6d560080b8ee11635619dee985962af6a669c | 16Gb |
 | Nvidia | [Jetson Nano](#jetson-nano-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-nano.img.bz2) | b0d2bcf7254831600c39a9529578e000c2732d8def99900e4e5d1a3342ac258f | 32Gb |
 | PC | [Desktop VM (VirtualBox)](#desktop-vm-instructions) | [1.2.0beta4](http://www.maverick.one/maverick/downloads/maverick-1.2.0beta4-desktopvm.zip) | 3fe27a04b2fc6fbfe84e6e88e5910173b9e7d7417533ed07212e54b2cedfbc44 | 16Gb |
+-->
 
-Legacy Downloads (These platforms are still somewhat supported but we no longer have the harware to build updated images)
+Legacy Downloads (These platforms are still somewhat supported but we no longer have the hardware to build updated images)
 
 | Vendor | Model | Download | Hash | SD Card |
 | --- | --- | --- | --- | --- |
-| Aaeon Up | [All Models](#aaeon-up-boards-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-up.iso) | d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324 | 16Gb |
-| Nvidia | [Tegra TX1](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx1.tgz) | 6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5 | 16Gb |
-| Nvidia | [Tegra TX2](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://www.maverick.one/maverick/downloads/maverick-1.1.5-tegratx2.tgz) | 388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7 | 16Gb
+| Aaeon Up | [All Models](#aaeon-up-boards-legacy-version-only) | [1.1.5](http://mvrk.org/downloads/maverick-1.1.5-up.iso) | d205e6bd08a0a571fe9d59a3478e56c55ab001cd54e637757a656593e56d2324 | 16Gb |
+| Nvidia | [Tegra TX1](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://mvrk.org/downloads/maverick-1.1.5-tegratx1.tgz) | 6c67ed960702867c2214ed727bac3d52c02e4887b0879dc97394cb9cd47a00e5 | 16Gb |
+| Nvidia | [Tegra TX2](#nvidia-tegra-tx1tx2-instructions-legacy-version-only) | [1.1.5](http://mvrk.org/downloads/maverick-1.1.5-tegratx2.tgz) | 388da6175d41a1c93994413453e2488831cea58d41bb5a87d56479477eb9a6a7 | 16Gb
 
 ?> sha256 hashes can be calculated for downloaded files by running `sha256sum <downloaded-file>`, and the output compared to the hashes above to ensure integrity.
 
