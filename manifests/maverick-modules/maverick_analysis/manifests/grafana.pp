@@ -151,14 +151,7 @@ class maverick_analysis::grafana (
         service { "grafana-server":
             ensure      => "stopped",
             enable      => false,
-        } ->
-        http_conn_validator { 'grafana-postdelay' :
-            host    => $host,
-            port    => $port,
-            use_ssl => false,
-            verify_peer => false,
-            test_url => '/public/img/grafana_icon.svg',
-        } ->
+        }
         # Create maverick org in grafana
         /*
         exec { "grafana-maverickorg":
