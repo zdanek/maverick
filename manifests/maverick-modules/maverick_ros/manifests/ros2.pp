@@ -22,7 +22,7 @@ class maverick_ros::ros2 (
     Enum['native', 'source', 'auto'] $installtype = "auto",
     String $distribution = "auto",
     String $builddir = "/srv/maverick/var/build/ros2",
-    String $installdir = "/srv/maverick/software/ros",
+    String $installdir = "/srv/maverick/software/ros2",
     String $metapackage = "ros-base", # desktop or ros-base
     Boolean $ros1_bridge = true,
 ) {
