@@ -23,7 +23,7 @@ then
 
 elif [ $PROXY_PROVIDER == "mavproxy" ]
 then
-    /usr/bin/screen -c /srv/maverick/config/mavlink/mavproxy-$1.screen.conf -S $SCREEN_NAME -D -m /usr/local/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD $MAVPROXY_FLOW --state-basedir=/srv/maverick/var/log/mavlink-$1 $MAVPROXY_ARGS
+    /usr/bin/screen -c /srv/maverick/config/mavlink/mavproxy-$1.screen.conf -S $SCREEN_NAME -D -m /srv/maverick/software/python/bin/mavproxy.py --master $MAVPROXY_PORT --baud $MAVPROXY_BAUD $MAVPROXY_FLOW --state-basedir=/srv/maverick/var/log/mavlink-$1 $MAVPROXY_ARGS
 
 elif [ $PROXY_PROVIDER == "cmavnode" ]
 then

@@ -24,15 +24,6 @@ class base::maverick (
         group   => "mav",
         mode    => "755",
     }
-    
-    # Make sure the entire /usr/local is owned by mav user.
-    # /usr/local/ is used to install user-specific stuff, 
-    #  in particular we install python stuff as mav user that sometimes gets put here
-    file { "/usr/local":
-        owner   => "mav",
-        group   => "mav",
-        recurse => true,
-    }
 
     # If the gitbranch fact is set, use that to set the branch while setting up maverick
     if $::gitbranch {

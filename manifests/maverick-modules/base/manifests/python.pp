@@ -90,23 +90,6 @@ class base::python (
         }
     }
 
-    # Install python using python module
-    # This installs python 2.7
-    /*
-    class { "python":
-        version    => 'system',
-        dev        => 'present',
-        virtualenv => 'present',
-        gunicorn   => 'absent',
-    } ->
-    # Ensure python lib directories are owned by mav so we can install into them later
-    file { ["/usr/local/lib/python2.7", "/usr/local/lib/python2.7/dist-packages", "/usr/local/lib/python2.7/site-packages", "/usr/local/lib/python3.6", "/usr/local/lib/python3.6/dist-packages", "/usr/local/lib/python3.6/site-packages"]:
-        owner       => "mav",
-        group       => "mav",
-        mode        => "0755",
-    }
-    */
-
     # Install basic useful python modules
     # These all install into python3
     install_python_module { 'pip-setuptools':
