@@ -106,7 +106,6 @@ class maverick_ros::ros2 (
     } else {
         $_distribution = $distribution
     }
-
     if $_installtype and $_distribution {
         # Install dependencies
 
@@ -147,13 +146,11 @@ class maverick_ros::ros2 (
             target      => "${installdir}/${_distribution}",
             force       => true,
         }
-        /*
         file { "${installdir}/current":
             ensure      => link,
             target      => "${installdir}/${_distribution}",
             force       => true,
         }
-        */
 
         # Install python module that provides autocomplete        
         install_python_module { "ros2-argcomplete":
