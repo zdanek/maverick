@@ -417,20 +417,20 @@ class maverick_vision::gstreamer (
                 }
             }
         } elsif $gstreamer_sourcetype == "meson" {
-            ensure_packages(["ninja-build"])
-            install_python_module { "pip-meson":
-                pkgname     => "meson",
-                ensure      => exactly,
-                version     => "0.57.0",
-            } ->
-            # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
-            file { ["/srv/maverick/var/build/gstreamer", "/srv/maverick/software/gstreamer"]:
-                ensure      => directory,
-                owner       => "mav",
-                group       => "mav",
-                mode        => "755",
-            }
             if ! ("install_flag_gstreamer" in $installflags) {
+                ensure_packages(["ninja-build"])
+                install_python_module { "pip-meson":
+                    pkgname     => "meson",
+                    ensure      => exactly,
+                    version     => "0.57.0",
+                } ->
+                # Compile and install gstreamer from source, unless the install flag ~/var/build/.install_flag_gstreamer is already set
+                file { ["/srv/maverick/var/build/gstreamer", "/srv/maverick/software/gstreamer"]:
+                    ensure      => directory,
+                    owner       => "mav",
+                    group       => "mav",
+                    mode        => "755",
+                }
                 oncevcsrepo { "git-gstreamer_gstbuild":
                     gitsource   => "https://gitlab.freedesktop.org/gstreamer/gst-build.git",
                     dest        => "/srv/maverick/var/build/gstreamer/gst-build",
@@ -461,6 +461,8 @@ class maverick_vision::gstreamer (
                 } ->
                 file { "/srv/maverick/var/build/.install_flag_gstreamer":
                     ensure      => present,
+                    owner       => "mav",
+                    group       => "mav",
                 }
             }
         } else {
