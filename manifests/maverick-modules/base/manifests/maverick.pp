@@ -15,10 +15,9 @@ class base::maverick (
     String $maverick_branch = "stable",
     Boolean $git_credentials_cache = true,
 ) {
-   
-   # Note: The mav user is setup in base::users
-   
-   file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/code/maverick", "/srv/maverick/code/maverick/custom-modules", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib", "/srv/maverick/.virtualenvs"]:
+
+    # Note: The mav user is setup in base::users
+    file { ["/srv/", "/srv/maverick", "/srv/maverick/software", "/srv/maverick/code", "/srv/maverick/code/maverick", "/srv/maverick/code/maverick/custom-modules", "/srv/maverick/data", "/srv/maverick/data/logs", "/srv/maverick/config", "/srv/maverick/config/maverick", "/srv/maverick/config/maverick/local-nodes", "/srv/maverick/var", "/srv/maverick/var/build", "/srv/maverick/var/log", "/srv/maverick/var/log/build", "/srv/maverick/var/log/maverick", "/srv/maverick/var/run", "/srv/maverick/var/lib", "/srv/maverick/.virtualenvs"]:
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
@@ -47,11 +46,11 @@ class base::maverick (
     oncevcsrepo { "git-maverick":
         gitsource   => "https://github.com/goodrobots/maverick.git",
         dest        => "/srv/maverick/software/maverick",
-	    revision    => $_gitbranch,
+        revision    => $_gitbranch,
     } ->
     file { "/srv/maverick/software/maverick/conf/devices":
         ensure  => directory,
-        group   => "mav",        
+        group   => "mav",
     }
     file { "/srv/maverick/config/maverick/localconf.json":
         source      => "puppet:///modules/base/maverick-localconf.json",
@@ -71,7 +70,7 @@ class base::maverick (
         command     => '/bin/sed /etc/sudoers -i -r -e \'s#"$#:/srv/maverick/software/maverick/bin:/srv/maverick/software/python/bin"#\'',
         unless      => "/bin/grep 'secure_path' /etc/sudoers |/bin/grep 'software/maverick/bin.*software/python/bin'"
     }
-    
+
     # Add environment marker
     file { "/srv/maverick/config/maverick/maverick-environment.conf":
         ensure      => file,
@@ -116,7 +115,7 @@ class base::maverick (
         target  => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_network/files/wifi-setup",
         require => Oncevcsrepo["git-maverick"],
     }
-    
+
     # Remove old branch file
     exec { "move-oldbranchfile":
         command     => "/bin/mv /srv/maverick/config/maverick-branch.conf /srv/maverick/config/maverick",
@@ -129,11 +128,11 @@ class base::maverick (
         content => "MAVERICK_BRANCH=${_gitbranch}",
         replace => false,
     }
-    
+
     # Migrate old fnoop origin to goodrobots
     exec { "mavfnoop-to-mavgoodrobots":
         command => "/usr/bin/git remote set-url origin https://github.com/goodrobots/maverick.git",
-        onlyif  => "/usr/bin/git remote -v |grep fnoop",    
+        onlyif  => "/usr/bin/git remote -v |grep fnoop",
     }
 
     # Ensure desktop config directory exists and prevent auto directory creation
@@ -149,19 +148,13 @@ class base::maverick (
         mode    => "644",
         content => "enabled=False",
     }
-    
+
     file { "/srv/maverick/.cache":
         ensure  => directory,
         owner   => "mav",
         group   => "mav",
     } ->
-    file { "/srv/maverick/.cache/pip":
-        ensure  => directory,
-        owner   => "mav",
-        group   => "mav",
-        recurse => true,
-    }
-    
+
     # Create a 'firstboot' service that runs on boot and calls configure if required
     file { "/etc/systemd/system/maverick-firstboot.service":
         source      => "puppet:///modules/base/maverick-firstboot.service",
