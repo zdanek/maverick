@@ -27,7 +27,7 @@ class ProcessLog(ProcessEvent):
         self.dashboard_links()
         self.dashboard_errors()
         # Set favourite dashboards for the mav user
-        # self.star_dashboards()
+        self.star_dashboards()
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
@@ -281,7 +281,7 @@ class ProcessLog(ProcessEvent):
         userid = cursor.fetchone()[0]
         cursor.execute("SELECT id from dashboard where title='Flight Logs Index'")
         flightindexid = cursor.fetchone()[0]
-        cursor.execute("SELECT id from dashboard where title='Error Events Index'")
+        cursor.execute("SELECT id from dashboard where title='Flight Errors Index'")
         errorindexid = cursor.fetchone()[0]
         cursor.execute("SELECT id from dashboard where title='System Dashboard'")
         systemdashid = cursor.fetchone()[0]
