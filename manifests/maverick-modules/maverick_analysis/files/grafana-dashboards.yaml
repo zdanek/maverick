@@ -2,10 +2,14 @@ apiVersion: 1
 
 providers:
 - name: 'dashboards'
-  orgId: 1
+  orgId: 10
   folder: ''
+  folderUid: 'iceman'
   type: file
   disableDeletion: false
+  updateIntervalSeconds: 10
+  allowUiUpdates: false
   editable: false
   options:
     path: /srv/maverick/data/analysis/grafana/dashboards
+    foldersFromFilesStructure: false

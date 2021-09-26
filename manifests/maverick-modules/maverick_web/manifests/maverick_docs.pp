@@ -7,7 +7,7 @@
 #
 # @param server_hostname
 #   Specifies which webserver vhost to use for the documentation.  Should not be set in normal circumstances.
-# @param arudpilot_docs
+# @param ardupilot_docs
 #   If true, compile and install the Ardupilot reference documentation.
 # @param ardupilot_builddir
 #   Path to clone github repo and build docs

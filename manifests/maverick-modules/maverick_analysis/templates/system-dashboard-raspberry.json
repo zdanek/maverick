@@ -4823,5 +4823,6 @@
   },
   "timezone": "browser",
   "title": "System Dashboard",
-  "version": 10
+  "version": 11,
+  "uid": "system-dashboard"
 }

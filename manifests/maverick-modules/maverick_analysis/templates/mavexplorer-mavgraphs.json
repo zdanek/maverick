@@ -4425,5 +4425,6 @@
   },
   "timezone": "browser",
   "title": "MAVExplorer Mavgraphs",
-  "version": 7
+  "version": 8,
+  "uid": "mavexplorer-mavgraphs"
 }

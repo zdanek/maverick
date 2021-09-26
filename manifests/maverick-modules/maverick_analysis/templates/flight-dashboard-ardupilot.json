@@ -8863,5 +8863,6 @@
   },
   "timezone": "browser",
   "title": "Flight Data Analysis",
-  "version": 6
+  "version": 7,
+  "uid": "flight-dashboard-ardupilot"
 }

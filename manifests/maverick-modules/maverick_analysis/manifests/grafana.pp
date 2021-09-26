@@ -112,7 +112,7 @@ class maverick_analysis::grafana (
             source      => "puppet:///modules/maverick_analysis/grafana.service",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         } ->
-        class { "::grafana": 
+        class { "::grafana":
             cfg_location        => "/srv/maverick/config/analysis/grafana.ini",
             cfg => {
                 app_mode => 'production',
@@ -138,12 +138,6 @@ class maverick_analysis::grafana (
             version               => $grafana_version,
             notify                => Service[grafana-server],
         } ->
-        /*
-        exec { "grafana-hold-package":
-            command     => "/usr/bin/apt-mark hold grafana",
-            unless      => "/usr/bin/apt-mark showhold grafana",
-        } ->
-        */
         service { "grafana":
             ensure      => "stopped",
             enable      => false,
@@ -151,15 +145,13 @@ class maverick_analysis::grafana (
         service { "grafana-server":
             ensure      => "stopped",
             enable      => false,
-        }
+        } ->
         # Create maverick org in grafana
-        /*
         exec { "grafana-maverickorg":
             unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org' |grep Maverick",
             command         => "/bin/sleep 10; /usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org values(10,0,'Maverick','','','','','','','','2017-06-20 11:02:55','2017-06-20 11:15:51')\"", # sleep is to give grafana enough time to fire up and release the db
             user            => "mav",
         } ->
-        */
         # Delete old mav user
         exec { "grafana-deloldmavuser":
             onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where id=10' |grep mav",
@@ -172,10 +164,16 @@ class maverick_analysis::grafana (
             command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.user values(100,0,'mav','mav','Maverick User','${mav_password}','${mav_salt}','yICOZzT82L','',10,0,0,'','2017-06-21 12:54:43','2017-06-21 12:54:43',1,'2017-06-21 12:54:43', 0)\"",
             user            => "mav",
         } ->
+        # Delete old mav user link
+        exec { "grafana-deloldmavuserlink":
+            onlyif          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where id=100 and org_id=1' |grep Viewer",
+            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"delete from main.org_user where id=100\"",
+            user            => "mav",
+        } ->
         # Link mav user to org
         exec { "grafana-linkmav":
-            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"1\" and user_id=\"100\"' |grep Viewer",
-            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','1','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
+            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org_user where org_id=\"10\" and user_id=\"100\"' |grep Viewer",
+            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org_user values('100','10','100','Viewer','2017-06-21 13:43:38','2017-06-21 13:43:38')\"",
             user            => "mav",
         }
 
@@ -225,13 +223,15 @@ class maverick_analysis::grafana (
             group           => "mav",
         }
 
-        /*
         ### NEW - Not working yet
+        /*
         exec { "grafana-reset-admin-password":
-            command         => "/usr/sbin/grafana-cli -d admin reset-admin-password ${admin_password} --config=/srv/maverick/config/analysis/grafana.ini",
+            command         => "/usr/sbin/grafana-cli admin reset-admin-password ${admin_password} --config=/srv/maverick/config/analysis/grafana.ini",
             #unless          => "",
             cwd             => "/usr/share/grafana",
-        } ->
+        }
+        */
+        /*
         grafana_organization { 'maverick':
             grafana_url      => "http://${host}:${port}",
             grafana_user     => $admin_user,
