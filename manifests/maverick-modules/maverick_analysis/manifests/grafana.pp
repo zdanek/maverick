@@ -231,27 +231,14 @@ class maverick_analysis::grafana (
             cwd             => "/usr/share/grafana",
         }
         */
-        /*
-        grafana_organization { 'maverick':
-            grafana_url      => "http://${host}:${port}",
-            grafana_user     => $admin_user,
-            grafana_password => $admin_password,
-        } ->
-        grafana_user { 'mav':
-            grafana_url      => "http://${host}:${port}",
-            grafana_user      => $admin_user,
-            grafana_password  => $admin_password,
-            full_name         => 'Maverick User',
-            password          => $mav_password,
-        }
-        */
 
         if defined(Class["::maverick_web"]) {
-            nginx::resource::location { "web-analysis-graphs":
+            nginx::resource::location { "web-analysis-graphs-http":
                 location    => "/analysis/grafana/",
                 proxy       => "http://localhost:${port}/",
                 server      => getvar("maverick_web::server_fqdn"),
                 require     => [ Class["nginx"] ],
+                ssl         => true,
             }
         }
 
