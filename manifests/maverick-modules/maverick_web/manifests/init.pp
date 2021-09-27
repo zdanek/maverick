@@ -52,9 +52,9 @@ class maverick_web (
     Boolean $maverick_discovery = true,
     String $server_fqdn = $::fqdn,
     String $ssl_location = "/srv/maverick/data/security/ssl/web",
-    Boolean $janus = true,
+    Boolean $webrtc = true,
 ) {
-    
+
     # Remove deprecated maverick-web-legacy repo
     file { "/srv/maverick/software/maverick-web-legacy":
         ensure  => absent,
@@ -83,11 +83,11 @@ class maverick_web (
     if $nodejs == true {
         class { "maverick_web::nodejs": }
     }
-    
+
     if $cloud9 == true {
         class { "maverick_web::cloud9": }
     }
-    
+
     if $codeserver == true {
         class { "maverick_web::codeserver": }
     }
@@ -102,13 +102,13 @@ class maverick_web (
         group       => "mav",
         mode        => "755",
     }
-    
+
     if $webserver == true {
         class { "maverick_web::nginx": 
             port    => $webserver_port,
             ssl_port => $webserver_sslport,
         }
-        
+
         # Create hole in firewall for webserver
         if defined(Class["::maverick_security"]) {
             maverick_security::firewall::firerule { "webserver":
@@ -119,11 +119,11 @@ class maverick_web (
         }
 
     }
-    
+
     if $maverick_docs == true {
         class { "maverick_web::maverick_docs": }
     }
-    
+
     if $ssl == true {
         class { "maverick_web::ssl": }
     }
@@ -131,7 +131,7 @@ class maverick_web (
     if $maverick_discovery == true {
         class { "maverick_web::maverick_discovery": }
     }
-    
+
     if $maverick_api == true {
         class { "maverick_web::maverick_api": }
     }
@@ -139,8 +139,8 @@ class maverick_web (
     if $maverick_web == true {
         class { "maverick_web::maverick_web": }
     }
- 
-    if $janus == true {
-        class { "maverick_web::janus": }
-    }   
+
+    if $webrtc == true {
+        class { "maverick_web::webrtc": }
+    }
 }

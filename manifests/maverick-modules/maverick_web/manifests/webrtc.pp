@@ -1,6 +1,6 @@
 # @summary
-#   Maverick_web::Janus class
-#   This class installs and manages the Janus WebRTC gateway.
+#   Maverick_web::webrtc class
+#   This class installs and manages the WebRTC gateway.  Currently only Janus is supported.
 #
 # @example Declaring the class
 #   This class is included from maverick_web class and should not be included from elsewhere
@@ -20,7 +20,7 @@
 #   If set to "rtp", this 'listens' on a udp port for incoming rdp stream, for visiond in udp mode
 #   Recommended to set to "rtsp" mode, so other clients can share the connection
 #
-class maverick_web::janus (
+class maverick_web::webrtc (
     Boolean $active = true,
     Boolean $http_transport = true,
     Integer $https_port = 6012,
