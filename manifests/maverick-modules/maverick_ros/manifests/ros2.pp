@@ -29,7 +29,7 @@ class maverick_ros::ros2 (
 
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
-        if $ros2_installed == "no" { 
+        if $ros2_installed == "no" {
             notice("ROS2: Native installation requested")
         }
         $_installtype = "native"
@@ -214,20 +214,11 @@ class maverick_ros::ros2 (
             }
 
             $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2
-            install_python_module { ["colcon-common-extensions", "lark-parser"]:
+            ensure_packages(["libasio-dev", "libtinyxml2-dev", "libcunit1-dev"])
+            install_python_module { ["colcon-common-extensions", "lark-parser", "flake8"]:
                 ensure  => present,
+                require => Package["libasio-dev"],
             } ->
-            package { ["libasio-dev", "libtinyxml2-dev"]:
-                ensure  => present,
-            } ->
-            /*
-            exec { "ros2-src-repo":
-                cwd     => "${builddir}",
-                command => "/usr/bin/wget https://raw.githubusercontent.com/ros2/ros2/dashing/ros2.repos",
-                creates => "${builddir}/ros2.repos",
-                user    => "mav",
-            } ->
-            */
             exec { "ros2-rosinstall":
                 cwd     => "${builddir}",
                 command => "/srv/maverick/software/python/bin/rosinstall_generator ros_base --rosdistro ${_distribution} --deps >ros2.repos",
@@ -260,22 +251,20 @@ class maverick_ros::ros2 (
             exec { "ros2-rosdep-install":
                 cwd     => "${builddir}",
                 environment     => ["ROS_OS_OVERRIDE=${_osdistro}", "ROS_PYTHON_VERSION=3"],
-                command => "/srv/maverick/software/python/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} ${_osdistro} -y --skip-keys 'console_bridge fastcdr fastrtps libopensplice67 libopensplice69 rti-connext-dds-5.3.1 urdfdom_headers'",
+                command => "/srv/maverick/software/python/bin/rosdep install --from-paths src --ignore-src --rosdistro ${_distribution} ${_osdistro} -y --skip-keys 'console_bridge fastcdr fastrtps rti-connext-dds-5.3.1 urdfdom_headers'",
                 user    => "mav",
                 timeout => 0,
             } ->
             exec { "ros2-colcon-build":
                 cwd     => "${builddir}",
                 environment => ["PYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3", "PATH=/srv/maverick/software/python/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"],
-                #command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_TESTING=0 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=/srv/maverick/software/python/bin/python3 --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} --packages-skip ros1_bridge >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
-                command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args ${_RPIFLAGS} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution} >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
+                command => "/srv/maverick/software/python/bin/colcon build --cmake-force-configure --cmake-args ${_RPIFLAGS} -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Release --catkin-skip-building-tests --install-base /srv/maverick/software/ros2/${_distribution}/ --merge-install >/srv/maverick/var/log/build/ros2.colcon.build 2>&1",
                 user    => "mav",
                 creates => "/srv/maverick/software/ros2/${_distribution}/ros2cli/bin/ros2",
                 timeout => 0,
             } ->
             file { "/srv/maverick/var/build/.install_flag_ros2":
                 ensure      => present,
-                #require     => Exec["ros2-colcon-build"],
             }
             if $ros1_bridge == true {
                 exec { "ros2-rosinstall-ros1_bridge":
