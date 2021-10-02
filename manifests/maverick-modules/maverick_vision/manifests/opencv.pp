@@ -94,7 +94,7 @@ class maverick_vision::opencv (
         }
 
         if $maverick_vision::visionlibs::tbb == true {
-            $_tbbopts = "-DCMAKE_INSTALL_RPATH=/srv/maverick/software/tbb/lib -DWITH_TBB=ON -DBUILD_TBB=OFF"
+            $_tbbopts = "-DCMAKE_INSTALL_RPATH=/srv/maverick/software/tbb/lib -DWITH_TBB=ON -DBUILD_TBB=OFF -DTBB_DIR=/srv/maverick/software/tbb"
         } else {
             $_tbbopts = "-DWITH_TBB=OFF -DBUILD_TBB=OFF"
         }
@@ -116,14 +116,14 @@ class maverick_vision::opencv (
         */
 
         if $::hardwaremodel == "x86_64" {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DBUILD_opencv_python2=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_IPP=ON -DWITH_OPENVX=ON -DWITH_INTELPERC=ON -DWITH_VA=ON -DWITH_VA_INTEL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON -DENABLE_FAST_MATH=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } elsif $tegra_present == "yes" {
             ensure_packages(["cuda-cufft-dev-10-2", "cuda-npp-dev-10-2"])
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=ON -DWITH_OPENNI2=ON -DWITH_CUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCUDA_FAST_MATH=ON -DWITH_CUBLAS=ON -D ENABLE_NEON=ON -D CUDA_ARCH_PTX= -D CUDA_ARCH_BIN=5.3,6.2,7.2 -D WITH_CUDNN=ON -D OPENCV_DNN_CUDA=ON -D CUDNN_VERSION='8.0' -D CUDNN_INCLUDE_DIR='/usr/include/' ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DBUILD_opencv_python2=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=ON -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=ON -DWITH_OPENNI2=ON -DWITH_CUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.2 -DCUDA_FAST_MATH=ON -DWITH_CUBLAS=ON -D ENABLE_NEON=ON -D CUDA_ARCH_PTX= -D CUDA_ARCH_BIN=5.3,6.2,7.2 -D WITH_CUDNN=ON -D OPENCV_DNN_CUDA=ON -D CUDNN_VERSION='8.0' -D CUDNN_INCLUDE_DIR='/usr/include/' ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } elsif $raspberry_present == "yes" {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DBUILD_opencv_python2=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_armopts} ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         } else {
-            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
+            $_command           = "/usr/bin/cmake -DCMAKE_INSTALL_PREFIX=/srv/maverick/software/opencv -DOPENCV_GENERATE_PKGCONFIG=YES -DCMAKE_BUILD_TYPE=${release} ${_pchstr} -DOPENCV_ENABLE_NONFREE=ON -DINSTALL_C_EXAMPLES=OFF -DBUILD_opencv_python2=OFF -DPYTHON3_EXECUTABLE=/srv/maverick/software/python/bin/python3 -DINSTALL_PYTHON_EXAMPLES=ON ${contribstr} -DBUILD_EXAMPLES=ON -DWITH_LIBV4L=OFF -DWITH_EIGEN=ON -DWITH_OPENGL=ON -DENABLE_OPENGL=ON -DWITH_GSTREAMER=ON -DWITH_QT=OFF -DWITH_OPENNI2=ON ${_tbbopts} .. >/srv/maverick/var/log/build/opencv.cmake.out 2>&1"
         }
 
         if Numeric($memorysize_mb) < 1000 {
@@ -138,6 +138,7 @@ class maverick_vision::opencv (
             timeout     => 0,
             environment => [
                 "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig",
+                "TBB_DIR=/srv/maverick/software/tbb",
                 "TBB_LIB_DIR=/srv/maverick/software/tbb/lib",
                 "LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
                 "LD_LIBRARY_PATH=/srv/maverick/software/tbb/lib:/srv/maverick/software/gstreamer/lib",
