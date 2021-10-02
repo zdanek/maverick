@@ -14,7 +14,7 @@
 #
 class maverick_intelligence (
     Boolean $tensorflow = true,
-    Boolean $pytorch = true,
+    Boolean $pytorch = false,
 ) {
 
     if $tensorflow == true and $raspberry_present != "yes" and $tegra_present != "yes" {
