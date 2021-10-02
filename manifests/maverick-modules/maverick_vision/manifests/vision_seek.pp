@@ -83,7 +83,8 @@ class maverick_vision::vision_seek (
         notify      => Exec["libseek-udev-control"],
     } ->
     exec { "libseek-udev-control":
-        command         => "/sbin/udevadm control --reload-rules && /sbin/udevadm trigger",
+        path            => ["/sbin", "/usr/bin"],
+        command         => "udevadm control --reload-rules && udevadm trigger",
         refreshonly     => true
     }
 
