@@ -69,7 +69,8 @@ class maverick_hardware::peripheral::realsense (
                 notify      => Exec["realsense-legacy-udev-control"],
             } ->
             exec { "realsense-legacy-udev-control":
-                command         => "/sbin/udevadm control --reload-rules && /sbin/udevadm trigger",
+                path            => ["/usr/bin", "/sbin"],
+                command         => "udevadm control --reload-rules && udevadm trigger",
                 refreshonly     => true
             } ->
             file { "/srv/maverick/var/build/.install_flag_realsense-legacy":
@@ -202,7 +203,8 @@ class maverick_hardware::peripheral::realsense (
                 notify      => Exec["realsense-sdk2-udev-update"],
             } ->
             exec { "realsense-sdk2-udev-update":
-                command         => "/sbin/udevadm control --reload-rules && /sbin/udevadm trigger",
+                path            => ["/usr/bin", "/sbin"],
+                command         => "udevadm control --reload-rules && udevadm trigger",
                 refreshonly     => true
             } ->
             file { "/srv/maverick/var/build/.install_flag_realsense-sdk2":
