@@ -146,10 +146,16 @@ class maverick_analysis::grafana (
             ensure      => "stopped",
             enable      => false,
         } ->
+        # Set admin password
+        exec { "grafana-adminpass":
+            unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.user where login=\"admin\"' |grep ${admin_hash}",
+            command         => "/bin/sleep 10; /usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"update main.user set password='${admin_hash}', salt='${admin_salt}', rands='${admin_rand}' where login='admin'\"",
+            user            => "mav",
+        } ->
         # Create maverick org in grafana
         exec { "grafana-maverickorg":
             unless          => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db 'select * from main.org' |grep Maverick",
-            command         => "/bin/sleep 10; /usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org values(10,0,'Maverick','','','','','','','','2017-06-20 11:02:55','2017-06-20 11:15:51')\"", # sleep is to give grafana enough time to fire up and release the db
+            command         => "/usr/bin/sqlite3 /srv/maverick/data/analysis/grafana/grafana.db \"insert into main.org values(10,0,'Maverick','','','','','','','','2017-06-20 11:02:55','2017-06-20 11:15:51')\"", # sleep is to give grafana enough time to fire up and release the db
             user            => "mav",
         } ->
         # Delete old mav user
