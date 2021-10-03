@@ -82,6 +82,7 @@ class ProcessLog(ProcessEvent):
             self.logtype = None
             try:
                 log = DFReader_text(filename, False)
+                logger.debug("xxx")
                 counter = 0
                 for i in range(10):
                     entry = log.recv_msg()
@@ -91,7 +92,7 @@ class ProcessLog(ProcessEvent):
                     self.logtype = "text"
                 log._rewind()
             except Exception as e:
-                logger.debug("DFReader_text exception:"+repr(e))
+                logger.debug(f"DFReader_text exception: File is not a text log, trying as binary log")
             if not self.logtype:
                 try:
                     log = DFReader_binary(filename, False)
