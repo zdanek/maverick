@@ -23,11 +23,13 @@ class ProcessLog(ProcessEvent):
         logger.debug("Starting ProcessLog.__init__")
         logger.debug("App influx_database:" + app.influx_database)
         self.app = app
-        # Run dashboard methods once at init to create blank index dashboards
-        self.dashboard_links()
-        self.dashboard_errors()
-        # Set favourite dashboards for the mav user
-        self.star_dashboards()
+        if 'grafana_enabled' in self.app.config and (self.app.config['grafana_enabled'] != "False" and self.app.config['grafana_enabled'] != "no"):
+            logger.debug(f"xxx: {self.app.config['grafana_enabled']}")
+            # Run dashboard methods once at init to create blank index dashboards
+            self.dashboard_links()
+            self.dashboard_errors()
+            # Set favourite dashboards for the mav user
+            self.star_dashboards()
         
     def process_IN_CLOSE_WRITE(self, event):
         logger.debug("Received IN_CLOSE_WRITE event")
@@ -126,7 +128,8 @@ class ProcessLog(ProcessEvent):
         # Log an initial meta entry to indicate logfile is processing
         try:
             self.meta_entry(filename, 0, 0, ekf_data, "processing in progress")
-            self.dashboard_links()
+            if 'grafana_enabled' in self.app.config and (self.app.config['grafana_enabled'] != "False" and self.app.config['grafana_enabled'] != "no"):
+                self.dashboard_links()
         except Exception as e:
             logger.critical("Error processing log entry: "+ str(repr(e)))
             return False
@@ -232,8 +235,9 @@ class ProcessLog(ProcessEvent):
         try:
             self.meta_entry(filename, int(first_epoch/1000000000), int(last_epoch/1000000000), ekf_data, "processed")
             #self.archive_file(filename)
-            self.dashboard_links()
-            self.dashboard_errors()
+            if 'grafana_enabled' in self.app.config and (self.app.config['grafana_enabled'] != "False" and self.app.config['grafana_enabled'] != "no"):
+                self.dashboard_links()
+                self.dashboard_errors()
         except Exception as e:
             logger.critical("Error processing log entry: "+ str(repr(e)))
             
