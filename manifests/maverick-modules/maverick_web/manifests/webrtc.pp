@@ -44,12 +44,16 @@ class maverick_web::webrtc (
                 dest        => "/srv/maverick/var/build/libnice",
                 revision    => "0.1.18",
             } ->
+            install_python_module { "meson":
+                pkgname => "meson",
+                ensure  => present,
+            } ->
             exec { "libnice-meson":
-                command     => "/usr/bin/meson --prefix=/srv/maverick/software/libnice --libdir=/srv/maverick/software/libnice/lib build",
+                command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/libnice --libdir=/srv/maverick/software/libnice/lib build",
                 cwd         => "/srv/maverick/var/build/libnice",
                 timeout     => 0,
                 user        => "mav",
-                creates     => "/srv/maverick/var/build/libnice/build",
+                creates     => "/srv/maverick/var/build/libnice/build/build.ninja",
                 require     => Package["meson"],
             } ->
             exec { "libnice-ninja":
