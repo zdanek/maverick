@@ -144,6 +144,11 @@ class base::python (
         pkgname     => "flake8",
         ensure      => present,
         timeout     => 0,
+    } ->
+    install_python_module { "pip-pexpect":
+        pkgname     => "pexpect",
+        ensure      => present,
+        timeout     => 0,
     }
 
     # Install PyRIC and netifaces, python modules necessary to run maverick --netinfo
