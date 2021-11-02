@@ -10,6 +10,8 @@
 	// "maverick_intelligence::tensorflow": false, // Temporarily disabled until gpu build in place
 
 	// "maverick_intelligence::openkai": true,
+
+	"base::desktop::enable": true,
 	
 	// Flight Controller (fc) mavlink setup
 	// "maverick_fc::mavlink_proxy": "mavproxy", // Default mavlink proxy type to use
@@ -38,7 +40,7 @@
 
 	// Add classes here
 	"classes":		[
-	    "maverick_network"
+	    // "maverick_network"
 	]
 	
 }
