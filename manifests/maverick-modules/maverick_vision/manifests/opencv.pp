@@ -35,14 +35,15 @@ class maverick_vision::opencv (
     require maverick_vision::visionlibs
 
     # Install dependencies
-    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "18.04" or $operatingsystemrelease == "20.04") {
-        ensure_packages(["libpng-dev", "libgdcm-dev"])
-    } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") {
-        ensure_packages(["libjasper-dev", "libpng12-dev", "libgdcm2-dev"])
+    if $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "17.04" or $operatingsystemrelease == "17.10" or $operatingsystemrelease == "20.04") {
+        ensure_packages(["libgdcm-dev"])
+    } elsif $operatingsystem == "Ubuntu" and ($operatingsystemrelease == "16.04" or $operatingsystemrelease == "16.10") or $operatingsystemrelease == "18.04" {
+        ensure_packages(["libgdcm2-dev"])
     }
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["libglew-dev"])
     ensure_packages(["qt5-default"])
+    ensure_packages(["libpng-dev"])
 
     # If ~/var/build/.install_flag_opencv exists, skip pulling source and compiling
     if ! ("install_flag_opencv" in $installflags) {
