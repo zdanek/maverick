@@ -17,11 +17,11 @@ class maverick_intelligence (
     Boolean $pytorch = true,
 ) {
 
-    if $tensorflow == true and $raspberry_present != "yes" {
+    if $tensorflow == true and $raspberry_present != "yes" and $tegra_present != "yes" {
         class { "maverick_intelligence::tensorflow": }
     }
 
-    if $pytorch == true and $raspberry_present != "yes" {
+    if $pytorch == true and $raspberry_present != "yes" and $tegra_present != "yes" {
         class { "maverick_intelligence::pytorch": }
     }
 
