@@ -58,6 +58,7 @@ class base::packages (
         "libusb-1.0-0-dev",
         "gnupg2",
         "net-tools",
+        "ruby-augeas",
     ])
 
     if $operatingsystem == "Ubuntu" {

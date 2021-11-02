@@ -28,7 +28,7 @@ class maverick_security::ldap_server (
     $ca_passphrase = getvar("maverick_security::ssl::ca_passphrase")
 
     # Dependency for augeas shellvar provider
-    ensure_packages(["ruby-augeas"])
+    #ensure_packages(["ruby-augeas"])
 
     if $server_type == "openldap" {
         # Setup rsyslog logging for openldap slapd
