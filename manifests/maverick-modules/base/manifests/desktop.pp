@@ -58,10 +58,10 @@ class base::desktop (
         
         # Tegra graphical/multi-user systemd target is broken
         if $tegra_present == "yes" {
-            service { "lightdm":
-                ensures     => running,
-                enable      => true,
-            }
+            #service { "lightdm":
+                #ensure      => running,
+                #enable      => true,
+            #}
         }
     } elsif $enable == false {
         exec { "stop-desktop-target":
