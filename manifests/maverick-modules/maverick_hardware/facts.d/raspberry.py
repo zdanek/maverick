@@ -33,6 +33,7 @@ class Raspberry(object):
             'a01040': ['Unknown', '2 Model B', '1.0', 1024, '(Mfg by Sony)'],
             'a01041': ['Q1 2015', '2 Model B', '1.1', 1024, '(Mfg by Sony)'],
             'a21041': ['Q1 2015', '2 Model B', '1.1', 1024, '(Mfg by Embest)'],
+            'a22042': ['Q3 2016', '2 Model B (with BCM2837)', '1.2', 1024, '(Mfg by Embest)'],
             '900021': ['Q3 2016', 'A+', '1.1', 512, '(Mfg by Sony)'],
             '900032': ['Q2 2016?', 'B+', '1.2', 512, '(Mfg by Sony)'],
             '900092': ['Q4 2015', 'Zero', '1.2', 512, '(Mfg by Sony)'],
@@ -50,7 +51,13 @@ class Raspberry(object):
             '9020e0': ['Q4 2018', '3 Model A+', '1.0', 512,	'(Mfg by Sony)'],
             'a03111': ['Q2 2019', '4 Model B', '1.1', 1024,	'(Mfg by Sony)'],
             'b03111': ['Q2 2019', '4 Model B', '1.1', 2048,	'(Mfg by Sony)'],
-            'c03111': ['Q2 2019', '4 Model B', '1.1', 4096,	'(Mfg by Sony)']
+            'b03112': ['Q2 2019', '4 Model B', '1.2', 2048, '(Mfg by Sony)'],
+            'b03114': ['Q2 2020', '4 Model B', '1.4', 2048, '(Mfg by Sony)'],
+            'c03111': ['Q2 2019', '4 Model B', '1.1', 4096,	'(Mfg by Sony)'],
+            'c03112': ['Q2 2019', '4 Model B', '1.2', 4096, '(Mfg by Sony)'],
+            'c03114': ['Q2 2020', '4 Model B', '1.4', 4096, '(Mfg by Sony)'],
+            'd03114': ['Q2 2020', '4 Model B', '1.4', 8192, '(Mfg by Sony)'],
+            '902120': ['Q1 2021', 'Zero 2 W', '1.6', 512, '']
         }
         count = 0
         f = open('/proc/cpuinfo', 'r')
