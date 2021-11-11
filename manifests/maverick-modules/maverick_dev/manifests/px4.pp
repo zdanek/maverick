@@ -102,10 +102,6 @@ class maverick_dev::px4 (
         pkgname     => 'pyulog',
         ensure      => present,
     } ->
-    install_python_module { 'pip-px4-empy':
-        pkgname     => 'empy',
-        ensure      => present,
-    } ->
     install_python_module { 'pip-px4-toml':
         pkgname     => 'toml',
         ensure      => present,
@@ -201,7 +197,7 @@ class maverick_dev::px4 (
             timeout     => 0,
             cwd         => "/srv/maverick/software/px4",
             creates     => "/srv/maverick/software/px4/build/px4_sitl_default/bin/px4",
-            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
+            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-empy'] ],
         }
     }
 
@@ -234,7 +230,7 @@ class maverick_dev::px4 (
             timeout     => 0,
             cwd         => "/srv/maverick/software/px4",
             creates     => "/srv/maverick/software/px4/build/px4_sitl_default/bin/px4",
-            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-px4-empy'] ],
+            require     => [ Install_python_module['pip-px4-pandas'], Install_python_module['pip-px4-jinja2'], Install_python_module['pip-empy'] ],
         } ->
         file { "/srv/maverick/software/maverick/bin/px4sitl.sh":
             ensure      => link,

@@ -25,13 +25,19 @@ class maverick_dev (
     Boolean $px4sitl_px4dev = true,
     Integer $file_watchers = 8192,
 ) {
-   
+
     # Create various dev directories
     file { ["/srv/maverick/data/dev", "/srv/maverick/data/dev/mavlink", "/srv/maverick/config/dev", "/srv/maverick/var/log/dev"]:
         ensure      => directory,
         mode        => "755",
         owner       => "mav",
         group       => "mav",
+    }
+
+    # Install empy, required by px4 and ardupilot
+    install_python_module { 'pip-empy':
+        pkgname     => 'empy',
+        ensure      => present,
     }
 
     # Install files needed to service sitl instances

@@ -32,7 +32,7 @@ define maverick_dev::fwbuildwaf (
             command     => "/srv/maverick/software/ardupilot/waf configure --python=/srv/maverick/software/python/bin/python3 --board ${board} && /srv/maverick/software/ardupilot/waf ${vehicle} >/srv/maverick/var/log/build/ardupilot-fw-${vehicle}.build.log 2>&1",
             cwd         => "/srv/maverick/software/ardupilot",
             creates     => "/srv/maverick/software/ardupilot/build/${board}/bin/${buildfile}",
-            require     => Install_python_module['pip-future']
+            require     => [ Install_python_module['pip-future'], Install_python_module['pip-empy'] ],
         }
     }
 }
