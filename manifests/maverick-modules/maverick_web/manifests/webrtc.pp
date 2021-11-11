@@ -24,8 +24,6 @@ class maverick_web::webrtc (
     Boolean $active = true,
     Boolean $http_transport = true,
     Integer $https_port = 6012,
-    Boolean $libnice_install = true,
-    Boolean $websockets_install = true,
     Boolean $websockets_transport = true,
     Integer $websockets_port = 6011,
     Integer $rtp_stream_port = 6013,
@@ -37,119 +35,115 @@ class maverick_web::webrtc (
 
     ensure_packages(["libmicrohttpd-dev", "libjansson-dev", "libssl-dev", "libsrtp2-dev", "libsofia-sip-ua-dev", "libglib2.0-dev", "libopus-dev", "libogg-dev", "libcurl4-openssl-dev", "liblua5.3-dev", "libconfig-dev", "gengetopt", "libwebsockets-dev", "meson", "ninja-build"])
 
-    if $libnice_install == true {
-        if ! ("install_flag_libnice" in $installflags) {
-            oncevcsrepo { "git-libnice":
-                gitsource   => "https://github.com/libnice/libnice",
-                dest        => "/srv/maverick/var/build/libnice",
-                revision    => "0.1.18",
-            } ->
-            install_python_module { "meson":
-                pkgname => "meson",
-                ensure  => present,
-            } ->
-            exec { "libnice-meson":
-                command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/libnice --libdir=/srv/maverick/software/libnice/lib build",
-                cwd         => "/srv/maverick/var/build/libnice",
-                timeout     => 0,
-                user        => "mav",
-                creates     => "/srv/maverick/var/build/libnice/build/build.ninja",
-                require     => Package["meson"],
-            } ->
-            exec { "libnice-ninja":
-                command     => "/usr/bin/ninja -C build",
-                cwd         => "/srv/maverick/var/build/libnice",
-                timeout     => 0,
-                user        => "mav",
-                #creates     => "/srv/maverick/var/build/libnice/build",
-                require     => Package["ninja-build"],
-            } ->
-            exec { "libnice-ninja-install":
-                command     => "/usr/bin/ninja -C build install",
-                cwd         => "/srv/maverick/var/build/libnice",
-                timeout     => 0,
-                user        => "mav",
-                creates     => "/srv/maverick/software/libnice/lib/libnice.so.",
-            } ->
-            file { "/srv/maverick/var/build/.install_flag_libnice":
-                ensure      => present,
-                owner       => "mav",
-                group       => "mav",
-            }
-        }
-        # Add environment config for libnice
-        file { "/etc/profile.d/42-maverick-libnice-pkgconfig.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libnice/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+    if ! ("install_flag_libnice" in $installflags) {
+        oncevcsrepo { "git-libnice":
+            gitsource   => "https://github.com/libnice/libnice",
+            dest        => "/srv/maverick/var/build/libnice",
+            revision    => "0.1.18",
         } ->
-        file { "/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libnice/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+        install_python_module { "meson":
+            pkgname => "meson",
+            ensure  => present,
+        } ->
+        exec { "libnice-meson":
+            command     => "/srv/maverick/software/python/bin/meson --prefix=/srv/maverick/software/libnice --libdir=/srv/maverick/software/libnice/lib build",
+            cwd         => "/srv/maverick/var/build/libnice",
+            timeout     => 0,
+            user        => "mav",
+            creates     => "/srv/maverick/var/build/libnice/build/build.ninja",
+            require     => Package["meson"],
+        } ->
+        exec { "libnice-ninja":
+            command     => "/usr/bin/ninja -C build",
+            cwd         => "/srv/maverick/var/build/libnice",
+            timeout     => 0,
+            user        => "mav",
+            #creates     => "/srv/maverick/var/build/libnice/build",
+            require     => Package["ninja-build"],
+        } ->
+        exec { "libnice-ninja-install":
+            command     => "/usr/bin/ninja -C build install",
+            cwd         => "/srv/maverick/var/build/libnice",
+            timeout     => 0,
+            user        => "mav",
+            creates     => "/srv/maverick/software/libnice/lib/libnice.so.",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_libnice":
+            ensure      => present,
+            owner       => "mav",
+            group       => "mav",
         }
     }
+    # Add environment config for libnice
+    file { "/etc/profile.d/42-maverick-libnice-pkgconfig.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/libnice/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+    } ->
+    file { "/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/libnice/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+    }
 
-    if $websockets_install == true {
-        if ! ("install_flag_libwebsockets" in $installflags) {
-            oncevcsrepo { "git-libwebsockets":
-                gitsource   => "https://github.com/warmcat/libwebsockets",
-                dest        => "/srv/maverick/var/build/libwebsockets",
-                revision    => "v4.2.2",
-            } ->
-            file { "/srv/maverick/var/build/libwebsockets/build":
-                ensure => directory,
-                owner  => "mav",
-                group  => "mav",
-            } ->
-            exec { "libwebsockets-cmake":
-                command => "/usr/bin/cmake -DLWS_MAX_SMP=1 -DLWS_WITHOUT_EXTENSIONS=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fpic -DCMAKE_INSTALL_PREFIX:PATH=/srv/maverick/software/libwebsockets .. >/srv/maverick/var/log/build/libwebsockets.cmake.log 2>&1",
-                cwd     => "/srv/maverick/var/build/libwebsockets/build",
-                timeout => 0,
-                user    => "mav",
-                creates => "/srv/maverick/var/build/libwebsockets/build/CMakeCache.txt",
-            } ->
-            exec { "libwebsockets-build":
-                command => "/usr/bin/make >/srv/maverick/var/log/build/libwebsockets.build.log 2>&1",
-                cwd     => "/srv/maverick/var/build/libwebsockets/build",
-                timeout => 0,
-                user    => "mav",
-                creates => "/srv/maverick/var/build/libwebsockets/build/blah",
-            } ->
-            exec { "libwebsockets-install":
-                command => "/usr/bin/make install >/srv/maverick/var/log/build/libwebsockets.install.log 2>&1",
-                cwd     => "/srv/maverick/var/build/libwebsockets/build",
-                timeout => 0,
-                user    => "mav",
-                creates => "/srv/maverick/software/libwebsockets/lib/blah",
-            } ->
-            file { "/srv/maverick/var/build/.install_flag_libwebsockets":
-                ensure      => present,
-                owner       => "mav",
-                group       => "mav",
-            }
-        }
-        # Add environment config for libwebsockets
-        file { "/etc/profile.d/41-maverick-libwebsockets-pkgconfig.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libwebsockets/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+    if ! ("install_flag_libwebsockets" in $installflags) {
+        oncevcsrepo { "git-libwebsockets":
+            gitsource   => "https://github.com/warmcat/libwebsockets",
+            dest        => "/srv/maverick/var/build/libwebsockets",
+            revision    => "v4.2.2",
         } ->
-            file { "/etc/profile.d/41-maverick-libwebsockets-ldlibrarypath.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libwebsockets/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+        file { "/srv/maverick/var/build/libwebsockets/build":
+            ensure => directory,
+            owner  => "mav",
+            group  => "mav",
         } ->
-            file { "/etc/profile.d/41-maverick-libwebsockets-cmake.sh":
-            mode        => "644",
-            owner       => "root",
-            group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/libwebsockets"; export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-${NEWPATH}}; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
+        exec { "libwebsockets-cmake":
+            command => "/usr/bin/cmake -DLWS_MAX_SMP=1 -DLWS_WITHOUT_EXTENSIONS=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS=-fpic -DCMAKE_INSTALL_PREFIX:PATH=/srv/maverick/software/libwebsockets .. >/srv/maverick/var/log/build/libwebsockets.cmake.log 2>&1",
+            cwd     => "/srv/maverick/var/build/libwebsockets/build",
+            timeout => 0,
+            user    => "mav",
+            creates => "/srv/maverick/var/build/libwebsockets/build/CMakeCache.txt",
+        } ->
+        exec { "libwebsockets-build":
+            command => "/usr/bin/make >/srv/maverick/var/log/build/libwebsockets.build.log 2>&1",
+            cwd     => "/srv/maverick/var/build/libwebsockets/build",
+            timeout => 0,
+            user    => "mav",
+            creates => "/srv/maverick/var/build/libwebsockets/build/blah",
+        } ->
+        exec { "libwebsockets-install":
+            command => "/usr/bin/make install >/srv/maverick/var/log/build/libwebsockets.install.log 2>&1",
+            cwd     => "/srv/maverick/var/build/libwebsockets/build",
+            timeout => 0,
+            user    => "mav",
+            creates => "/srv/maverick/software/libwebsockets/lib/blah",
+        } ->
+        file { "/srv/maverick/var/build/.install_flag_libwebsockets":
+            ensure      => present,
+            owner       => "mav",
+            group       => "mav",
         }
+    }
+    # Add environment config for libwebsockets
+    file { "/etc/profile.d/41-maverick-libwebsockets-pkgconfig.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/libwebsockets/lib/pkgconfig"; export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-${NEWPATH}}; if [ -n "${PKG_CONFIG_PATH##*${NEWPATH}}" -a -n "${PKG_CONFIG_PATH##*${NEWPATH}:*}" ]; then export PKG_CONFIG_PATH=$NEWPATH:$PKG_CONFIG_PATH; fi',
+    } ->
+        file { "/etc/profile.d/41-maverick-libwebsockets-ldlibrarypath.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/libwebsockets/lib"; export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-${NEWPATH}}; if [ -n "${LD_LIBRARY_PATH##*${NEWPATH}}" -a -n "${LD_LIBRARY_PATH##*${NEWPATH}:*}" ]; then export LD_LIBRARY_PATH=$NEWPATH:$LD_LIBRARY_PATH; fi',
+    } ->
+        file { "/etc/profile.d/41-maverick-libwebsockets-cmake.sh":
+        mode        => "644",
+        owner       => "root",
+        group       => "root",
+        content     => 'NEWPATH="/srv/maverick/software/libwebsockets"; export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH:-${NEWPATH}}; if [ -n "${CMAKE_PREFIX_PATH##*${NEWPATH}}" -a -n "${CMAKE_PREFIX_PATH##*${NEWPATH}:*}" ]; then export CMAKE_PREFIX_PATH=$NEWPATH:$CMAKE_PREFIX_PATH; fi',
     }
 
     file { "/srv/maverick/config/web/janus":
@@ -168,7 +162,7 @@ class maverick_web::webrtc (
             command     => "/srv/maverick/var/build/janus-gateway/autogen.sh >/srv/maverick/var/log/build/janus.autogen.log 2>&1",
             cwd         => "/srv/maverick/var/build/janus-gateway",
             creates     => "/srv/maverick/var/build/janus-gateway/configure",
-            require     => [ Package['libsrtp2-dev'], Package["libopus-dev"], File["/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh"] ],
+            require     => [ Package['libsrtp2-dev'], Package["libopus-dev"], File["/etc/profile.d/42-maverick-libnice-ldlibrarypath.sh"], Exec["libnice-ninja-install"], Exec["libwebsockets-install"] ],
             timeout     => 0,
             user        => "mav",
         } ->
