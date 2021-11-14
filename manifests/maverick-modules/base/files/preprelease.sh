@@ -25,9 +25,10 @@ find /var/log -type f -delete
 systemctl restart rsyslog
 find /var/log -type f -delete
 
-# Remove tmp user used to initially install OS
-rm -rf /home/tmp
+# Remove tmp and install user used to initially install OS
+rm -rf /home/tmp /home/install
 userdel tmp >/dev/null 2>&1
+userdel install >/dev/null 2>&1
 
 # Clean up ublinux home directory
 if [ -d /home/ubilinux ]; then
