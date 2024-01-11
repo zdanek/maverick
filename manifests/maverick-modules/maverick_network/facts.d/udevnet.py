@@ -7,10 +7,10 @@ class Udevnet(object):
     def __init__(self):
         self.data = {}
         self._data = {}
-        
+
     def udevnet(self):
         # Parse udev database dump, extract network interfaces and add data into dicts keyed by int_field
-        f = subprocess.getoutput(['/sbin/udevadm info -e'])
+        f = subprocess.getoutput(['udevadm info -e'])
         data = f.split("\n")
         counter = 0
         for line in data:

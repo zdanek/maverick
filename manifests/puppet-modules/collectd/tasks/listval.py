@@ -11,7 +11,7 @@ from task_helper import TaskHelper
 HOSTNAME = socket.gethostname()
 class ListVal(TaskHelper):
     def task(self, args):
-        values = subprocess.check_output(['/usr/bin/collectdctl', 'listval']).rstrip().decode().split('\n')
+        values = subprocess.check_output(['/usr/bin/collectdctl', 'listval']).decode("utf-8").rstrip().decode().split('\n')
         metrics = [v.replace(HOSTNAME+'/', '') for v in values]
         return {'metrics': metrics}
 

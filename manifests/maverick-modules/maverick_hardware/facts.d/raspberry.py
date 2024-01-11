@@ -7,7 +7,7 @@ import re, sys, subprocess
 class Raspberry(object):
     def __init__(self):
         self.data = {'present': 'no'}
-        
+
     def cpudata(self):
         # Interrogate cpuinfo as the main source of hardware info for the raspberry
         # Table info is here: http://elinux.org/RPi_HardwareHistory
@@ -65,13 +65,13 @@ class Raspberry(object):
             r = re.search('^(.*)\s+:\s+(.*)', line)
             if not r or not r.groups(0) or not r.groups(0)[0] or not r.groups(0)[1]: continue
             (key,val) = r.groups(0)[0],r.groups(0)[1]
-            if key == "Hardware": 
+            if key == "Hardware":
                 self.data['cpu'] = val
                 if re.search('^BCM', line):
                     self.data['raspberry_present'] = "yes"
             elif key == "processor":
                 count += 1
-            elif key == "Revision": 
+            elif key == "Revision":
                 # If revision is prefixed with 1000 it means the board has been overvolted
                 if re.match('1000', val):
                     rr = re.search('^1000(.*)',val)
@@ -92,22 +92,22 @@ class Raspberry(object):
                     # Raspberry hardware not recognised, exit without returning any facts
                     # self.data['raspberry_present'] = "no"
                     pass
-            elif key == "Serial\t": 
+            elif key == "Serial\t":
                 self.data['serial'] = val
         f.close()
         self.data['cpucores'] = count
-        
+
     def gpudata(self):
         try:
             # Interrogate the raspberry gpu for more info
-            self.data['memcpu'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_mem arm").split("=")[1].rstrip()[:-1]
-            self.data['memgpu'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_mem gpu").split("=")[1].rstrip()[:-1]
-            self.data['mpg2codec'] = subprocess.getoutput("/opt/vc/bin/vcgencmd codec_enabled MPG2").split("=")[1].rstrip()
-            self.data['vc1codec'] = subprocess.getoutput("/opt/vc/bin/vcgencmd codec_enabled WVC1").split("=")[1].rstrip()
-            self.data['cpufreq'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config arm_freq").split("=")[1].rstrip()
-            self.data['ramfreq'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config sdram_freq").split("=")[1].rstrip()
-            self.data['l2cache'] = subprocess.getoutput("/opt/vc/bin/vcgencmd get_config disable_l2cache").split("=")[1].rstrip()
-            fwdata = subprocess.getoutput("/opt/vc/bin/vcgencmd version")
+            self.data['memcpu'] = subprocess.getoutput("vcgencmd get_mem arm").split("=")[1].rstrip()[:-1]
+            self.data['memgpu'] = subprocess.getoutput("vcgencmd get_mem gpu").split("=")[1].rstrip()[:-1]
+            self.data['mpg2codec'] = subprocess.getoutput("vcgencmd codec_enabled MPG2").split("=")[1].rstrip()
+            self.data['vc1codec'] = subprocess.getoutput("vcgencmd codec_enabled WVC1").split("=")[1].rstrip()
+            self.data['cpufreq'] = subprocess.getoutput("vcgencmd get_config arm_freq").split("=")[1].rstrip()
+            self.data['ramfreq'] = subprocess.getoutput("vcgencmd get_config sdram_freq").split("=")[1].rstrip()
+            self.data['l2cache'] = subprocess.getoutput("vcgencmd get_config disable_l2cache").split("=")[1].rstrip()
+            fwdata = subprocess.getoutput("vcgencmd version")
             fwdated = False
             for dat in fwdata.split("\n"):
                 if not fwdated:

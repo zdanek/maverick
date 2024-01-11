@@ -6,10 +6,10 @@ import os, re, sys, subprocess, glob
 class FlirOne(object):
     def __init__(self):
         self.data = {"present": "no", "model": None, "modelid": None}
-        
+
     def detect(self):
         try:
-            devdata = subprocess.check_output(["/usr/bin/lsusb", "-d", "09cb:"])
+            devdata = subprocess.check_output(["/usr/bin/lsusb", "-d", "09cb:"]).decode("utf-8")
             for line in devdata.split("\n"):
                 linefrags = line.split()
                 for frag in linefrags:
@@ -32,7 +32,7 @@ class FlirOne(object):
 if __name__ == '__main__':
     flirone = FlirOne()
     flirone.detect()
-    
+
     # Finally, print the data out in the format expected of a fact provider
     if flirone.data:
         for key,val in sorted(flirone.data.items()):

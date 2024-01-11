@@ -6,7 +6,7 @@ import os, re, sys, subprocess
 class Odroid(object):
     def __init__(self):
         self.data = {'present': 'no'}
-        
+
     def cpudata(self):
         count = 0
         # Define main data container
@@ -15,15 +15,15 @@ class Odroid(object):
             r = re.search('^(.*)\s+:\s+(.*)', line)
             if not r or not r.groups(0) or not r.groups(0)[0] or not r.groups(0)[1]: continue
             (key,val) = r.groups(0)[0],r.groups(0)[1]
-            if key == "Hardware": 
+            if key == "Hardware":
                 self.data['model'] = val
                 if re.search('ODROID', val) or re.search('EXYNOS', val):
                     self.data['present'] = 'yes'
                 if re.search('SAMSUNG EXYNOS', val):
                     self.data['model'] = "Odroid XU4"
-            elif key == "Revision": 
+            elif key == "Revision":
                 self.data['revision'] = val
-            elif key == "Serial": 
+            elif key == "Serial":
                 self.data['serial'] = val
             elif key == "processor":
                 count += 1
@@ -34,7 +34,7 @@ class Odroid(object):
             r = re.search('^(.*):\s+(.*)', line)
             if not r or not r.groups(0) or not r.groups(0)[0] or not r.groups(0)[1]: continue
             (key,val) = r.groups(0)[0],r.groups(0)[1]
-            if key == "MemTotal": 
+            if key == "MemTotal":
                 self.data['memory'] = val
             elif key == "SwapTotal":
                 self.data['swap'] = val
@@ -69,11 +69,11 @@ class Odroid(object):
                 self.data['kernel3x_backups'] = "no"
         except:
             self.data['kernel3x_backups'] = "no"
-            
+
         self.data['kernel_current'] = "no"
         try:
             try:
-                klines = subprocess.check_output(["/usr/bin/mkimage", "-l", "/media/boot/uInitrd"]).split("\n")
+                klines = subprocess.check_output(["/usr/bin/mkimage", "-l", "/media/boot/uInitrd"]).decode("utf-8").split("\n")
             except subprocess.CalledProcessError as e:
                 klines = None
             for kline in klines:
@@ -82,7 +82,7 @@ class Odroid(object):
                     self.data['kernel_current'] = kver
         except:
             pass
-        
+
         if os.path.exists("/srv/maverick/var/build/linux/.install_flag"):
             self.data['kernel_install_flag'] = "yes"
         else:
@@ -102,7 +102,7 @@ if __name__ == '__main__':
         sys.exit(1)
     odroid.storagedata()
     odroid.kernel()
-    
+
     # Finally, print the data out in the format expected of a fact provider
     if odroid.data:
         for key,val in odroid.data.items():

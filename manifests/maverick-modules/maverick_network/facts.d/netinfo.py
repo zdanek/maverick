@@ -181,7 +181,7 @@ class Netinfo(object):
 
     def runall(self):
         pass
-    
+
 #If we're being called as a command, instantiate and report
 if __name__ == '__main__':
     try:
@@ -189,13 +189,13 @@ if __name__ == '__main__':
     except pyric.error as e:
         print("Error running netinfo, pyric not available")
         sys.exit(1)
-    
+
     print("netinfo_present=yes")
     with open ("/etc/hostname", "r") as etc_hostname:
         data=etc_hostname.readlines()
     if data:
         print("netinfo_etchostname="+str(data[0].rstrip()))
-    
+
     print("netinfo_interfaces="+",".join(ifs))
     for _if in ifs:
         _netinfo = Netinfo(_if)
