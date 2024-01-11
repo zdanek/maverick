@@ -135,13 +135,15 @@ class maverick_hardware::raspberry (
             warning("Root filesystem/partition needs expanding, *please reboot* when configure is finished.")
         }
     }
-
+    /*
+do_memory_split was removed from raspi-config
     exec { "raspberry-setgpumem":
         command     => "/usr/bin/raspi-config nonint do_memory_split ${gpumem}",
         unless      => "/bin/grep 'gpu_mem=${gpumem}' /boot/config.txt",
         require     => Package["raspi-config"]
     }
 
+    */
     if $auto_login == false {
         file { "/etc/systemd/system/getty.target.wants/getty@tty1.service":
             ensure  => link,
