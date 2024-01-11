@@ -101,22 +101,22 @@ class maverick_hardware::raspberry (
                 onlyif      => "/usr/bin/dpkg -s openjdk-8-jdk || /usr/bin/dpkg -s openjdk-7-jdk",
             }
         }
-        
+
     }
     if $remove_glpackages == true {
         package { ["libgl1-mesa-dri"]:
             ensure  => purged,
         }
     }
-    
+
     # Install raspberry supporting utils
-    ensure_packages(["raspi-config", "python-rpi.gpio", "python3-rpi.gpio", "rpi-update", "raspi-gpio", "raspberrypi-net-mods", "raspberrypi-sys-mods"])
+    ensure_packages(["raspi-config", "python3-rpi.gpio", "rpi-update", "raspi-gpio", "raspberrypi-net-mods", "raspberrypi-sys-mods"])
     # Install wiringpi through pip as it's not always available through apt
     install_python_module { 'pip-wiringpi':
         pkgname     => 'wiringpi',
         ensure      => present,
     }
-    
+
     # Put raspberry firstboot script in place
     file { "/srv/maverick/software/maverick/bin/maverick-firstboot.sh":
         ensure      => link,
@@ -135,13 +135,13 @@ class maverick_hardware::raspberry (
             warning("Root filesystem/partition needs expanding, *please reboot* when configure is finished.")
         }
     }
-        
+
     exec { "raspberry-setgpumem":
         command     => "/usr/bin/raspi-config nonint do_memory_split ${gpumem}",
         unless      => "/bin/grep 'gpu_mem=${gpumem}' /boot/config.txt",
         require     => Package["raspi-config"]
     }
-    
+
     if $auto_login == false {
         file { "/etc/systemd/system/getty.target.wants/getty@tty1.service":
             ensure  => link,
@@ -155,7 +155,7 @@ class maverick_hardware::raspberry (
             force   => true,
         }
     }
-    
+
     if getvar("base::desktop::enable") == true {
         confval { "rpi-desktop-autologin":
             file        => "/etc/lightdm/lightdm.conf",
@@ -196,7 +196,7 @@ class maverick_hardware::raspberry (
             require     => Package["raspi-config"],
         }
     }
-    
+
     if ($devicetree == true) {
         exec { "raspberry-devicetree":
             command     => "/usr/bin/raspi-config nonint do_devicetree 0",
@@ -224,7 +224,7 @@ class maverick_hardware::raspberry (
             require     => Package["raspi-config"],
         }
     }
-    
+
     if ($i2c == true) {
         exec { "raspberry-i2c":
             command     => "/usr/bin/raspi-config nonint do_i2c 0",
@@ -260,7 +260,7 @@ class maverick_hardware::raspberry (
             enable      => true,
         }
     }
-    
+
     if ($camera == true) {
         exec { "raspberry-camera":
             command     => "/usr/bin/raspi-config nonint do_camera 0; echo 'true' >/etc/raspi-camera",
@@ -274,7 +274,7 @@ class maverick_hardware::raspberry (
             require     => Package["raspi-config"],
         }
     }
-    
+
     if ($xgl == true) {
         package { ["libgl1-mesa-dri", "xcompmgr" ]:
             ensure      => present
@@ -291,13 +291,13 @@ class maverick_hardware::raspberry (
             require     => Package["raspi-config"],
         }
     }
-    
+
     exec { "raspberry-disableconfig":
         command     => "/usr/bin/raspi-config nonint disable_raspi_config_at_boot",
         onlyif      => "/bin/ls /etc/profile.d/raspi-config.sh",
         require     => Package["raspi-config"],
     }
-    
+
     if $v4l2 == true {
         exec { "raspberry-v4l2-kernelmodule":
             command     => "/bin/echo 'bcm2835-v4l2' >>/etc/modules",
@@ -307,7 +307,7 @@ class maverick_hardware::raspberry (
             content     => "options bcm2835_v4l2 gst_v4l2src_is_broken=1"
         }
     }
-    
+
     if ($overpower_usb == true) {
         exec { "overpower_usb_true_add":
             command     => "/bin/echo 'max_usb_current=1' >>/boot/config.txt",
@@ -323,7 +323,7 @@ class maverick_hardware::raspberry (
             onlyif      => "/bin/grep -e '^max_usb_current=1' /boot/config.txt",
         }
     }
-    
+
     # Size swap
     exec { "raspberry-swapsize":
         command     => "/bin/sed -i -e 's/^CONF_SWAPSIZE=.*/CONF_SWAPSIZE=${swapsize}/' /etc/dphys-swapfile",

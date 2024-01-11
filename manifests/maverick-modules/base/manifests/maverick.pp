@@ -48,14 +48,6 @@ class base::maverick (
         dest        => "/srv/maverick/software/maverick",
         revision    => $_gitbranch,
     } ->
-    # fix ownership. If checkout was run by root git would complain that repository is not owned by mav, when invoking next commands as mav
-    file { '/srv/maverick/software/maverick':
-      ensure  => directory,
-      owner   => 'mav',
-      group   => 'mav',
-      recurse => true,
-      force   => true,  # Be cautious with this option
-    } ->
     file { "/srv/maverick/software/maverick/conf/devices":
         ensure  => directory,
     }
