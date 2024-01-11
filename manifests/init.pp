@@ -140,6 +140,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
             submodules  => $submodules,
             require     => File["${dest}"],
             force       => $force,
+            user        => $owner,
         }
     }
 }
@@ -189,7 +190,7 @@ define lineval ($file, $field, $oldvalue, $newvalue, $linesearch) {
 
 node default {
     # This is a 'catch-all' node statement.
-    # Instead of declaring nodes, or using an ENC, we use hiera to assign 
+    # Instead of declaring nodes, or using an ENC, we use hiera to assign
     #  classes and data to nodes in a hierarchical, segregated fashion.
 }
 

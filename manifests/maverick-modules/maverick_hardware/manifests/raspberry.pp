@@ -243,7 +243,7 @@ do_memory_split was removed from raspi-config
 
     if ($serialconsole == false) {
         exec { "raspberry-serial":
-            command     => "/usr/bin/raspi-config nonint do_serial 1",
+            command     => "/usr/bin/raspi-config nonint do_serial_cons 1",
             onlyif      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
         }
@@ -253,7 +253,7 @@ do_memory_split was removed from raspi-config
         }
     } else {
         exec { "raspberry-serial":
-            command     => "/usr/bin/raspi-config nonint do_serial 0",
+            command     => "/usr/bin/raspi-config nonint do_serial_cons 0",
             unless      => "/bin/grep 'console=serial' /boot/cmdline.txt",
             require     => Package["raspi-config"],
         }
