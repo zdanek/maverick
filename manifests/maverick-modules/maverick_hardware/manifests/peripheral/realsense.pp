@@ -157,7 +157,7 @@ class maverick_hardware::peripheral::realsense (
                     before  => Exec["realsense-sdk2-prepbuild"],
                     require => Oncevcsrepo["git-realsense-realsense_sdk2"],
                 }
-                $buildparallel = 1
+                $buildparallel = "${::processorcount}"
             } else {
                 $uvcparam = ""
                 $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)

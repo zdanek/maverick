@@ -37,7 +37,7 @@ startservice() {
         echo " Start: ${green}Success${reset}"
     else
         echo " Start: ${red}Failure${reset}: $srvresult"
-    fi  
+    fi
 }
 
 stopservice() {
@@ -295,7 +295,7 @@ if [ "$SELFUPDATE" == "true" ]; then
         # Checkout new branch
         CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git checkout $MAVERICK_BRANCH)
     fi
-        
+
     # Next, do a git pull to update maverick code
     if [ -e /srv/maverick/software/maverick/conf/puppet.conf ]; then
         if [ $EUID -eq 0 ]; then
@@ -389,15 +389,15 @@ if [ "$UNSHALLOW" == "true" ]; then
         echo "Do you want to unshallow this repo?"
         select yn in "Yes" "No"; do
             case $yn in
-                Yes ) 
+                Yes )
                     break;;
-                No ) 
+                No )
                     exit 1;;
             esac
         done
     fi
-    
-    # If we get here, we're good to go   
+
+    # If we get here, we're good to go
     git fetch --unshallow
     git config remote.origin.fetch |grep '*:refs' >/dev/null 2>&1
     if [ $? -eq 1 ]; then
@@ -628,14 +628,14 @@ if [ -e /srv/maverick/config/maverick/maverick-environment.conf ]; then
 fi
 
 # If environment not set to dev or flight, exit
-if [[ "$ENV" != "dev" && "$ENV" != "flight" && "$ENV" != "bootstrap" && "$ENV" != "minimal" ]]; then 
+if [[ "$ENV" != "dev" && "$ENV" != "flight" && "$ENV" != "bootstrap" && "$ENV" != "minimal" ]]; then
     echo "Error: --env not set to a recognised environment (bootstrap, dev, flight or minimal)"
     echo
     usage
 fi
 
 # If configure not set, exit
-if [ "$CONFIGURE" != "true" ]; then	
+if [ "$CONFIGURE" != "true" ]; then
     echo "Error: configure not set"
     echo
     usage
@@ -734,7 +734,7 @@ if [ "z$_rubydev" == "z" ]; then
 fi
 
 # Check that puppet is installed through gem
-declare -A GEMVERSIONS=( [puppet]=7.24.0 [hiera]=3.7.0 [facter]=4.2.3 [puppet-strings]=2.8.0 )
+declare -A GEMVERSIONS=( [puppet]=7.27.0 [hiera]=3.12.0 [facter]=4.5.1 [puppet-strings]=4.1.2 )
 for pkg in "hiera" "facter" "puppet" "puppet-strings"; do
     if ! gem list $pkg -v ${GEMVERSIONS[$pkg]} -i >/dev/null; then
         echo "Installing $pkg from gems"

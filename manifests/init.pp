@@ -118,7 +118,7 @@ define install_python_module ($ensure, $pkgname=$title, $virtualenv=undef, $time
 
 # oncevcsrepo is a wrapper to only call vcsrepo if a clone doesn't exist at all locally.
 # Otherwise, vcsrepo gets called for each define each puppet run, which can take a long time (and require internet access)
-define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group="mav", $submodules=false, $depth=1, $force=false) {
+define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group="mav", $submodules=false, $depth=1, $force=false, $user="mav") {
     # This depends on gitfiles fact, declared in maverick-modules/base/facts.d/gitrepos.py
     $gitrepos = split($gitrepos, ',')
     if ! ("${dest}/.git" in $gitrepos) {
@@ -140,7 +140,7 @@ define oncevcsrepo ($gitsource, $dest, $revision="master", $owner="mav", $group=
             submodules  => $submodules,
             require     => File["${dest}"],
             force       => $force,
-            user        => $owner,
+            user        => $user,
         }
     }
 }
