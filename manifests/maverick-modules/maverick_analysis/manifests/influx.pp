@@ -31,6 +31,12 @@ class maverick_analysis::influx (
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian stretch stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         } elsif $::operatingsystemmajrelease == "10" {
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian buster stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } elsif $::operatingsystemmajrelease == "11" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian bullseye stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } elsif $::operatingsystemmajrelease == "12" {
+            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian bullseye stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+        } else {
+            fail("Unsupported ${::operatingsystem} release for maverick_analysis::influx: system major: ${::operatingsystemmajrelease}")
         }
     } elsif $::operatingsystem == "Ubuntu" {
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
@@ -38,6 +44,8 @@ class maverick_analysis::influx (
         } else {
             $_influx_command = "/bin/bash -c 'source /etc/lsb-release; echo \"deb https://repos.influxdata.com/\${DISTRIB_ID,,} \${DISTRIB_CODENAME} stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list'"
         }
+    } else {
+        fail("Unsupported OS for maverick_analysis::influx: ${::operatingsystem}")
     }
 
     # Install influx repo key
