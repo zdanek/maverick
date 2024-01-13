@@ -20,7 +20,7 @@ class maverick_ros (
     apt::key { 'ros-repo-key':
         id      => 'C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654',
         server  => 'keyserver.ubuntu.com',
-        require     => Package["dirmngr"],
+        require     => Package["gnupg"],
     }
 
     # Install common python modules to ros1 and ros2

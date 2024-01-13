@@ -35,7 +35,7 @@ class maverick_ros::ros1 (
 ) {
     # If installtype is set then use it and skip autodetection
     if $installtype == "native" {
-        if $ros_installed == "no" { 
+        if $ros_installed == "no" {
             notice("ROS: Native installation requested")
         }
         $_installtype = "native"
@@ -151,7 +151,7 @@ class maverick_ros::ros1 (
 
     if $installtype and $_distribution {
         # Install dependencies
-        ensure_packages(["dirmngr"])
+        ensure_packages(["gnupg"])
         ensure_packages(["libpoco-dev", "libyaml-cpp-dev"])
         # Work out distro name
         if $::lsbdistid == "ubilinux" and $::lsbmajdistrelease == "4" {
@@ -191,7 +191,7 @@ class maverick_ros::ros1 (
         apt::key { 'ros-repo-badkey':
             id      => '421C365BD9FF1F717815A3895523BAEEB01FA116',
             ensure  => absent,
-            require     => Package["dirmngr"],
+            require     => Package["gnupg"],
         } ->
         # Install ROS bootstrap from ros.org packages
         exec { "ros-repo":
@@ -605,7 +605,7 @@ class maverick_ros::ros1 (
             ensure      => link,
             target      => "/srv/maverick/software/maverick/manifests/maverick-modules/maverick_ros/files/rosmaster.sh",
         }
-        
+
         # Create log directories
         file { ["/srv/maverick/var/log/ros", "/srv/maverick/var/log/ros/fc"]:
             ensure      => directory,
@@ -613,7 +613,7 @@ class maverick_ros::ros1 (
             owner       => "mav",
             group       => "mav",
         }
-    
+
         # Install mavros systemd manifest.  Like rosmaster, it's not activated here but used by mavros define
         file { "/etc/systemd/system/maverick-mavros@.service":
             source      => "puppet:///modules/maverick_ros/maverick-mavros@.service",
