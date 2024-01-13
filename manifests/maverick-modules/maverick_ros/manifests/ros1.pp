@@ -127,6 +127,26 @@ class maverick_ros::ros1 (
                             default: { $_installtype = "source" }
                         }
                     }
+                    "11": { # bullseye
+                        case $::raspberry_present {
+                            "yes": { $autodist = "noetic" }
+                            default: { $autodist = "noetic" }
+                        }
+                        case $::architecture {
+                            "amd64", "arm64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
+                    "12": { # bookworm
+                        case $::raspberry_present {
+                            "yes": { $autodist = "noetic" }
+                            default: { $autodist = "noetic" }
+                        }
+                        case $::architecture {
+                            "amd64", "arm64": { $_installtype = "native" }
+                            default: { $_installtype = "source" }
+                        }
+                    }
                     default: {
                         $autodist = undef
                         $_installtype = false
@@ -144,7 +164,7 @@ class maverick_ros::ros1 (
     }
 
     if $_installtype == false {
-        fail("ROS: Cannot decide which ROS install, on ${::operatingsystem} ${::operatingsystemmajrelease} ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
+        fail("ROS: Cannot decide which ROS install, on ${::operatingsystem}, ${::operatingsystemmajrelease}, ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
     }
 
     if $distribution == "auto" and $installtype == "auto" {
