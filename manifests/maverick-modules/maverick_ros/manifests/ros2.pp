@@ -85,6 +85,22 @@ class maverick_ros::ros2 (
                         $autodist = "foxy"
                         $_installtype = "source"
                     }
+                    "11": { # bullseye
+                        if $ros1_bridge == true {
+                            $_ros1_bridge = false
+                            warning("ROS2: ROS1 bridge not supported on ${::operatingsystem} ${::operatingsystemmajrelease}")
+                        }
+                        $autodist = "iron"
+                        $_installtype = "source"
+                    }
+                    "12": { # bookworm
+                        if $ros1_bridge == true {
+                            $_ros1_bridge = false
+                            warning("ROS2: ROS1 bridge not supported on ${::operatingsystem} ${::operatingsystemmajrelease}")
+                        }
+                        $autodist = "humble"
+                        $_installtype = "source"
+                    }
                     default: {
                         $autodist = undef
                         $_installtype = undef
@@ -98,7 +114,15 @@ class maverick_ros::ros2 (
             notice("ROS2: unsupported platform for ${autodist} distribution, installing from source")
         }
     } else {
-        $_installtype = false
+        $_installtype = undef
+    }
+
+    if !$_installtype {
+        fail("ROS2: Cannot decide which ROS2 install, on ${::operatingsystem}, ${::operatingsystemmajrelease}, ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
+    }
+
+    if $_ros1_bridge == undef {
+        $_ros1_bridge = $ros1_bridge
     }
 
     if $distribution == "auto" and $installtype == "auto" {
@@ -152,7 +176,7 @@ class maverick_ros::ros2 (
             force       => true,
         }
 
-        # Install python module that provides autocomplete        
+        # Install python module that provides autocomplete
         install_python_module { "ros2-argcomplete":
             pkgname     => "argcomplete",
             ensure      => present,
@@ -181,6 +205,7 @@ class maverick_ros::ros2 (
         package { "ros-${_distribution}-ros1-bridge":
             ensure      => present,
             require     => Exec["ros_apt_update"],
+            onlyif      => $_ros1_bridge,
         } ->
         package { ["ros-${_distribution}-cv-bridge", "ros-${_distribution}-vision-opencv", "ros-${_distribution}-image-geometry"]:
             ensure      => present,
@@ -267,7 +292,7 @@ class maverick_ros::ros2 (
             file { "/srv/maverick/var/build/.install_flag_ros2":
                 ensure      => present,
             }
-            if $ros1_bridge == true {
+            if $_ros1_bridge == true {
                 exec { "ros2-rosinstall-ros1_bridge":
                     cwd     => "${builddir}",
                     command => "/srv/maverick/software/python/bin/rosinstall_generator ros1_bridge --rosdistro ${_distribution} >ros1_bridge.repos",

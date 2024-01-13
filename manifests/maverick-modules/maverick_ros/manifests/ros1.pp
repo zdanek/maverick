@@ -2,6 +2,8 @@
 #   Maverick_ros::Ros1 class
 #   This class installs/manages ROS (ros.org).
 #
+#   For Raspbery OS starting from Bullseye, ROS 1 is not supported anymore.
+#
 # @example Declaring the class
 #   This class is included from maverick_ros class and should not be included from elsewhere
 #
@@ -93,7 +95,7 @@ class maverick_ros::ros1 (
                     }
                     default: {
                         $autodist = undef
-                        $_installtype = false
+                        $_installtype = undef
                     }
                 }
             }
@@ -127,29 +129,9 @@ class maverick_ros::ros1 (
                             default: { $_installtype = "source" }
                         }
                     }
-                    "11": { # bullseye
-                        case $::raspberry_present {
-                            "yes": { $autodist = "noetic" }
-                            default: { $autodist = "noetic" }
-                        }
-                        case $::architecture {
-                            "amd64", "arm64": { $_installtype = "native" }
-                            default: { $_installtype = "source" }
-                        }
-                    }
-                    "12": { # bookworm
-                        case $::raspberry_present {
-                            "yes": { $autodist = "noetic" }
-                            default: { $autodist = "noetic" }
-                        }
-                        case $::architecture {
-                            "amd64", "arm64": { $_installtype = "native" }
-                            default: { $_installtype = "source" }
-                        }
-                    }
                     default: {
                         $autodist = undef
-                        $_installtype = false
+                        $_installtype = undef
                     }
                 }
             }
@@ -160,11 +142,13 @@ class maverick_ros::ros1 (
             notice("ROS: unsupported platform for ${autodist} distribution, installing from source")
         }
     } else {
-        $_installtype = false
+        $_installtype = undef
     }
 
-    if $_installtype == false {
-        fail("ROS: Cannot decide which ROS install, on ${::operatingsystem}, ${::operatingsystemmajrelease}, ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
+    if !$_installtype {
+        # fail("ROS: Cannot decide which ROS install, on ${::operatingsystem}, ${::operatingsystemmajrelease}, ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
+        warning("ROS 1 is not supported for ${::operatingsystem}, ${::operatingsystemmajrelease}, ${::architecture}. Skipping.")
+        return()
     }
 
     if $distribution == "auto" and $installtype == "auto" {

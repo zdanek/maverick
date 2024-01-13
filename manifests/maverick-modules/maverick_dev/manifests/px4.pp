@@ -271,8 +271,9 @@ class maverick_dev::px4 (
                 require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-px4sitl.service"] ],
             }
         }
-        
+
         if $ros_instance == true {
+            fail("This is broken, need to fix")
             $notifyResources = [ Service["maverick-px4sitl"], Service["maverick-rosmaster@px4dev"] ]
         } else {
             $notifyResources = Service["maverick-px4sitl"]
@@ -433,7 +434,7 @@ class maverick_dev::px4 (
                 content => "mavros@px4dev,MavROS (PX4 SITL)\n",
             }
         }
-    
+
     }
 
     if $cross_compile == true {
@@ -476,6 +477,6 @@ class maverick_dev::px4 (
         file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.px4dev/101.px4dev.status":
             owner   => "mav",
             content => "mavlink@px4dev,Mavlink (PX4 SITL)\n",
-        }        
+        }
     }
 }

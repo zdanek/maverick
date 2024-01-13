@@ -2,6 +2,9 @@
 #   Maverick_ros class
 #   This class controls all other classes in maverick_ros module.
 #
+#   On latest Raspberry Pi OS, ROS1 is not supported, so ros1 is disabled by default. This applies to Ros master as
+#   this is the only supported platform for ros1.
+#
 # @example Declaring the class
 #   This class is included from the environment manifests and is not usually included elsewhere.
 #   It could be included selectively from eg. minimal environment.

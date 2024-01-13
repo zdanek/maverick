@@ -1,4 +1,5 @@
 # @summary
+#   Rosmaster is the core of the ROS 1 system.  It is responsible for managing names and registration of nodes on the system.
 #   This function creates a rosmaster instance.  It is typically called by modules that also create mavlink proxy and mavros instances.
 #
 # @example
@@ -16,10 +17,11 @@ define maverick_ros::rosmaster (
     Integer $port = 11311,
 ) {
 
-    # it can happen, that ROS was not installed properly
+    # it can happen, that ROS 1 was not installed properly, or ROS 1 was not installed at all
     $service_file_path = '/etc/systemd/system/maverick-rosmaster@.service'
     if file($service_file_path, '/dev/null') == '' {
-        fail("No rosmaster service file $service_file_path. Problem with ROS installation.")
+        warning("No rosmaster service file $service_file_path. Problem with ROS 1 installation. Not installing Ros master.")
+        return()
     }
 
     file { "/srv/maverick/config/ros/rosmaster-${name}.conf":

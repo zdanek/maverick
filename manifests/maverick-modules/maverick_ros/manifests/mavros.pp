@@ -36,7 +36,11 @@ define maverick_ros::mavros (
     Optional[Integer] $target_sysid = undef,
     Optional[Integer] $target_cmpid = undef,
 ) {
-    
+
+    notify { "maverick_ros::mavros::${name}":
+        message => "Creating mavros instance ${name}",
+    }
+
     file { "/srv/maverick/config/ros/mavros-${name}.conf":
         ensure      => present,
         owner       => "mav",
@@ -45,7 +49,7 @@ define maverick_ros::mavros (
         content     => template("maverick_ros/mavros.conf.erb"),
         notify      => Service["maverick-mavros@${name}"],
     }
-    
+
     if $active == true {
     	service { "maverick-mavros@${name}":
             ensure      => running,
@@ -59,5 +63,5 @@ define maverick_ros::mavros (
             require     => [ Exec["maverick-systemctl-daemon-reload"], File["/etc/systemd/system/maverick-mavros@.service"] ]
         }
     }
-    
+
 }
