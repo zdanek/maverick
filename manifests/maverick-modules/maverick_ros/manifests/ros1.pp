@@ -93,7 +93,7 @@ class maverick_ros::ros1 (
                     }
                     default: {
                         $autodist = undef
-                        $_installtype = undef
+                        $_installtype = false
                     }
                 }
             }
@@ -129,7 +129,7 @@ class maverick_ros::ros1 (
                     }
                     default: {
                         $autodist = undef
-                        $_installtype = undef
+                        $_installtype = false
                     }
                 }
             }
@@ -141,6 +141,10 @@ class maverick_ros::ros1 (
         }
     } else {
         $_installtype = false
+    }
+
+    if $_installtype == false {
+        fail("ROS: Cannot decide which ROS install, on ${::operatingsystem} ${::operatingsystemmajrelease} ${::architecture}, Install type: ${installtype}, Distribution: ${distribution}, Build type: ${buildtype}")
     }
 
     if $distribution == "auto" and $installtype == "auto" {

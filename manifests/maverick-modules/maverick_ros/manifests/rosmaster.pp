@@ -18,8 +18,8 @@ define maverick_ros::rosmaster (
 
     # it can happen, that ROS was not installed properly
     $service_file_path = '/etc/systemd/system/maverick-rosmaster@.service'
-    if !file_exists($file_path) {
-        fail("No rosmaster service file $file_path. Problem with ROS installation.")
+    if file($service_file_path, '/dev/null') == '' {
+        fail("No rosmaster service file $service_file_path. Problem with ROS installation.")
     }
 
     file { "/srv/maverick/config/ros/rosmaster-${name}.conf":
