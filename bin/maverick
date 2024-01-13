@@ -293,7 +293,11 @@ if [ "$SELFUPDATE" == "true" ]; then
             $(cd /srv/maverick/software/maverick; git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*)
         fi
         # Checkout new branch
-        CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git checkout $MAVERICK_BRANCH)
+        # temporarily force checkout to avoid issues with uncommitted changes, for quicker fixes
+        CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git reset --hard origin/$MAVERICK_BRANCH)
+
+        # orignal code
+        #CHECKOUT=$(cd /srv/maverick/software/maverick; git fetch; git checkout $MAVERICK_BRANCH)
     fi
 
     # Next, do a git pull to update maverick code
@@ -327,7 +331,11 @@ if [ "$SELFUPDATE" == "true" ]; then
             fi
         elif [ $USER == "mav" ]; then
             echo -n "Updating maverick: "
-            cd /srv/maverick/software/maverick; git pull origin;
+            # temporarily force checkout to avoid issues with uncommitted changes, for quicker fixes
+            cd /srv/maverick/software/maverick; git fetch; git reset --hard origin/$MAVERICK_BRANCH
+
+            # original command was:
+#            cd /srv/maverick/software/maverick; git pull origin;
             if [ -d "/srv/maverick/software/visiond" ]; then
                 echo -n "Updating visiond: "
                 cd /srv/maverick/software/visiond; git pull origin;
