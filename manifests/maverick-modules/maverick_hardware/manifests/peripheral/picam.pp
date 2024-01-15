@@ -11,10 +11,10 @@
 class maverick_hardware::peripheral::picam (
     Boolean $docs = false,
 ) {
-    
-    ensure_packages(["python-picamera", "python3-picamera", "omxplayer"])
+
+    ensure_packages(["python3-picamera2"])
     if $docs == true {
         ensure_packages(["pyton-picamera-docs"])
     }
-    
+
 }
