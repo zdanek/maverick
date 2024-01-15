@@ -1,8 +1,13 @@
 // These are defaults for the flight environment.
 {
+	// currently focusing on ardupilot
+	"maverick_dev::px4": false,
+	"maverick_dev::px4sitl_px4dev": false,
+
 	// Turn SITL services off for flight mode
 	"maverick_dev::apsitl_apdev::sitl_active": false, // Whether SITL is active or not
 	"maverick_dev::apsitl_apdev::mavlink_active": false, // Whether mavlink proxy is active or not
+	"maverick_dev::apsitl_apdev::ros_instance": false, // Whether ROS instance for sitl is active or not
 	"maverick_dev::apsitl_apdev::rosmaster_active": false, // Whether ROS master for sitl is active or not
 	"maverick_dev::apsitl_apdev::mavros_active": false, // Whether Mavros for sitl is active or not - requires sitl rosmaster to be active
 	"maverick_dev::apsitl_apdev::api_active": false,
@@ -15,9 +20,16 @@
 
 	// Turn FC services on for flight mode
 	"maverick_fc::mavlink_active": true,
-	"maverick_fc::rosmaster_active": true,
-	"maverick_fc::mavros_active": true,
+//	"maverick_fc::rosmaster_active": true,
+	"maverick_fc::rosmaster_active": false,
+//	"maverick_fc::ros_instance": true,
+	"maverick_fc::ros_instance": false,
+//	"maverick_fc::mavros_active": true,
+	"maverick_fc::mavros_active": false,
 	"maverick_fc::api_active": false,
+
+	"maverick_ros::ros1" : false,
+	"maverick_ros::ros2" : true,
 
 	// Turn off IDEs
 	"maverick_web::cloud9::active": false,
@@ -36,5 +48,5 @@
 	    "maverick_intelligence",
 	    "maverick_analysis"
 	]
-	
+
 }

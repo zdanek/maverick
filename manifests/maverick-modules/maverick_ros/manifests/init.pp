@@ -26,6 +26,7 @@ class maverick_ros (
         require     => Package["gnupg"],
     }
 
+    # bzd - check if this is still valid for ros2
     # Install common python modules to ros1 and ros2
     install_python_module { ["rosdep", "vcstool", "rosinstall-generator"]:
         ensure  => present,

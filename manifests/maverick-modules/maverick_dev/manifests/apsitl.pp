@@ -1,5 +1,5 @@
 # @summary
-#   This function creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl
+#   This function creates an instance of ArduPilot SITL.  It is called by other classes to create an SITL, eg. maverick_dev::apsitl_apdev
 #
 # @example
 #   @@maverick_dev::apsitl { $instance_name:
@@ -128,7 +128,7 @@ define maverick_dev::apsitl (
         group       => "mav",
         mode        => "755",
     }
-    
+
     if $vehicle_type == "copter" {
         $ardupilot_type = "ArduCopter"
         if !$vehicle_frame {
@@ -195,13 +195,13 @@ define maverick_dev::apsitl (
         $ardupilot_frame = $vehicle_frame
         $ardupilot_paramfile = $vehicle_paramfile
     }
-    
+
     # Calculate actual SITL ports from instance multiplier, unless the ports have been specifically set
     if $sitl_port == 6500 {
         $actual_sitl_port = $sitl_port + ($instance_number * 20)
     } else {
         $actual_sitl_port = $sitl_port
-    }    
+    }
 
     if $rcin_port == 6501 {
         $actual_rcin_port = $rcin_port + ($instance_number * 20)
@@ -214,7 +214,7 @@ define maverick_dev::apsitl (
     } else {
         $actual_mavlink_startingtcp = $mavlink_startingtcp
     }
-    
+
     if $mavlink_startingudp == 6507 {
         $actual_mavlink_startingudp = $mavlink_startingudp + ($instance_number * 20)
     } else {
@@ -251,7 +251,7 @@ define maverick_dev::apsitl (
     file { "/srv/maverick/config/mavlink/mavlink_params-${instance_name}.json":
         ensure      => absent,
     }
-    
+
     if $sitl_active == true {
         service { "maverick-apsitl@${instance_name}":
             ensure      => running,
@@ -463,6 +463,6 @@ define maverick_dev::apsitl (
         file { "/srv/maverick/software/maverick/bin/status.d/${status_priority}.${instance_name}/101.mavlink.status":
             owner   => "mav",
             content => "mavlink@${instance_name},Mavlink (${instance_name})\n",
-        }        
+        }
     }
 }
