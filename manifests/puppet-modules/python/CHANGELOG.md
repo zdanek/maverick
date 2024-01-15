@@ -136,7 +136,7 @@ Due to a bug in the release pipeline, release v6.0.1 didn't make it to the forge
 
 **Fixed bugs:**
 
-- Allow python::version to contain a point \(e.g. python3.7\) [\#523](https://github.com/voxpupuli/puppet-python/pull/523) ([baurmatt](https://github.com/baurmatt))
+git - Allow python::version to contain a point \(e.g. python3.7\) [\#523](https://github.com/voxpupuli/puppet-python/pull/523) ([baurmatt](https://github.com/baurmatt))
 - Fix duplicate declaration for python-venv package [\#518](https://github.com/voxpupuli/puppet-python/pull/518) ([baurmatt](https://github.com/baurmatt))
 - Use shell to exec pip commands by default [\#498](https://github.com/voxpupuli/puppet-python/pull/498) ([jamebus](https://github.com/jamebus))
 - Fix a reassigned variable [\#497](https://github.com/voxpupuli/puppet-python/pull/497) ([SaschaDoering](https://github.com/SaschaDoering))

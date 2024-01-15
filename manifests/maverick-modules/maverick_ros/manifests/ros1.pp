@@ -489,6 +489,7 @@ class maverick_ros::ros1 (
                 owner   => "mav",
             } ->
             install_python_module { "empy":
+                version     => "3.3.4",
                 ensure      => present,
             } ->
             # Install vision_opencv from a forked branch, fixed for opencv4 - see https://github.com/ros-perception/vision_opencv/issues/320

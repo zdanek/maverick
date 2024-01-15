@@ -211,8 +211,8 @@ class maverick_vision::opencv (
         mode        => "644",
         owner       => "root",
         group       => "root",
-        #content     => "export PYTHONPATH=\$PYTHONPATH:/srv/maverick/software/opencv/lib/python3.7/site-packages",
-        content     => 'NEWPATH="/srv/maverick/software/opencv/lib/python3.7/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+        #content     => "export PYTHONPATH=\$PYTHONPATH:/srv/maverick/software/opencv/lib/python3.8/site-packages",
+        content     => 'NEWPATH="/srv/maverick/software/opencv/lib/python3.8/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
     } ->
     file { "/etc/profile.d/40-maverick-opencv-cmake.sh":
         mode        => "644",

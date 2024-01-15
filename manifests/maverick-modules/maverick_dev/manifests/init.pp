@@ -37,6 +37,7 @@ class maverick_dev (
     # Install empy, required by px4 and ardupilot
     install_python_module { 'pip-empy':
         pkgname     => 'empy',
+        version     => "3.3.4",
         ensure      => present,
     }
 
@@ -55,7 +56,7 @@ class maverick_dev (
 
     # Install/compile ardupilot and SITL
     if $ardupilot == true {
-        class { "maverick_dev::ardupilot": 
+        class { "maverick_dev::ardupilot":
             sitl    => $apsitl_apdev,
         }
     }
@@ -65,7 +66,7 @@ class maverick_dev (
         class { "maverick_dev::apsitl_apdev": }
     }
 
-    # Install/compile px4 and SITL    
+    # Install/compile px4 and SITL
     if $px4 == true {
         class { "maverick_dev::px4":
             sitl    => $px4sitl_px4dev,
@@ -73,7 +74,7 @@ class maverick_dev (
     }
 
     # Increase kernel inotify watcher limits
-    base::sysctl::conf { 
+    base::sysctl::conf {
         "fs.inotify.max_user_watches": 	value => $file_watchers;
     }
 

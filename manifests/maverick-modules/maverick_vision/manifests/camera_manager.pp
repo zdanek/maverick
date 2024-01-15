@@ -20,7 +20,7 @@ class maverick_vision::camera_manager (
 
     # Ensure gstreamer resources are applied before this class
     require maverick_vision::gstreamer
-    
+
     if ! ("install_flag_camera-manager" in $installflags) {
         ensure_packages(["libavahi-common-dev", "libavahi-core-dev", "libavahi-glib-dev", "libavahi-client-dev"])
         oncevcsrepo { "git-camera-manager":
@@ -31,7 +31,7 @@ class maverick_vision::camera_manager (
         exec { "camera-manager-build":
             user        => "mav",
             timeout     => 0,
-            environment => ["PATH=/srv/maverick/software/python/bin:/usr/bin:/bin", "PYTHON=/srv/maverick/software/python/bin/python3", "PYTHONPATH=/srv/maverick/software/python/lib/python3.7/site-packages", "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig"],
+            environment => ["PATH=/srv/maverick/software/python/bin:/usr/bin:/bin", "PYTHON=/srv/maverick/software/python/bin/python3", "PYTHONPATH=/srv/maverick/software/python/lib/python3.8/site-packages", "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig:/usr/lib/arm-linux-gnueabihf/pkgconfig"],
             command     => "/srv/maverick/var/build/camera-manager/autogen.sh && CFLAGS='-g -O2' /srv/maverick/var/build/camera-manager/configure --enable-avahi --enable-mavlink --disable-systemd --prefix=/srv/maverick/software/camera-manager >/srv/maverick/var/log/build/camera-manager.configure.log 2>&1 && /usr/bin/make -j${::processorcount} && make install >/srv/maverick/var/log/build/camera-manager.build.log 2>&1",
             cwd         => "/srv/maverick/var/build/camera-manager",
             creates     => "/srv/maverick/software/camera-manager/bin/dcm",

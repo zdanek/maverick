@@ -250,7 +250,7 @@ class maverick_vision::gstreamer (
                             "CFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                             "CPPFLAGS=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                             "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
-                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig", 
+                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig",
                             "EGL_CFLAGS=/opt/vc/include",
                             "EGL_LIBS=/opt/vc/lib",
                             "GLES2_CFLAGS=/opt/vc/include",
@@ -349,7 +349,7 @@ class maverick_vision::gstreamer (
                             "CFLAGS=-DOMX_SKIP64BIT -I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                             "CPPFLAGS=-I/srv/maverick/software/gstreamer/include -I/opt/vc/include -I/opt/vc/include/IL -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux",
                             "LDFLAGS=-L/opt/vc/lib -Wl,-rpath,/srv/maverick/software/gstreamer/lib",
-                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig" 
+                            "PKG_CONFIG_PATH=/srv/maverick/software/gstreamer/lib/pkgconfig"
                         ],
                         command     => "/srv/maverick/var/build/gstreamer/gst-omx/autogen.sh --with-omx-target=rpi --disable-gtk-doc --disable-examples --prefix=/srv/maverick/software/gstreamer >/srv/maverick/var/log/build/gstreamer_omx.configure.out 2>&1; /usr/bin/make -j${::processorcount} >/srv/maverick/var/log/build/gstreamer_omx.build.out 2>&1; /usr/bin/make install >/srv/maverick/var/log/build/gstreamer_omx.install.out 2>&1",
                         cwd         => "/srv/maverick/var/build/gstreamer/gst-omx",
@@ -493,7 +493,7 @@ class maverick_vision::gstreamer (
             mode        => "644",
             owner       => "root",
             group       => "root",
-            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/python3.7/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
+            content     => 'NEWPATH="/srv/maverick/software/gstreamer/lib/python3.8/site-packages"; export PYTHONPATH=${PYTHONPATH:-${NEWPATH}}; if [ -n "${PYTHONPATH##*${NEWPATH}}" -a -n "${PYTHONPATH##*${NEWPATH}:*}" ]; then export PYTHONPATH=$NEWPATH:$PYTHONPATH; fi',
         }
         file { "/etc/profile.d/50-maverick-gstreamer-cmake.sh":
             mode        => "644",
@@ -522,5 +522,5 @@ class maverick_vision::gstreamer (
             notify      => Exec["maverick-ldconfig"],
         }
     }
-    
+
 }
