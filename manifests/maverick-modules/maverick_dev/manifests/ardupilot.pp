@@ -40,9 +40,9 @@ class maverick_dev::ardupilot (
     Optional[Boolean] $sitl, # passed from init.pp
     Boolean $armeabi_packages = false, # needed to cross-compile firmware for actual FC boards
     Boolean $install_jsbsim = true,
-    String $jsbsim_source = "http://github.com/JSBSim-Team/jsbsim.git",
+    String $jsbsim_source = "https://github.com/JSBSim-Team/jsbsim.git",
 ) {
-    
+
     # Install ardupilot from git
     oncevcsrepo { "git-ardupilot":
         gitsource   => $ardupilot_source,
@@ -58,7 +58,7 @@ class maverick_dev::ardupilot (
             ensure_packages(["gcc-arm-none-eabi", "binutils-arm-none-eabi", "gdb-arm-none-eabi", "libnewlib-arm-none-eabi", "libstdc++-arm-none-eabi-newlib"], {'ensure'=>'present'})
         }
     }
-    
+
     # If a custom ardupilot repo is specified, configure the upstream automagically
     exec { "ardupilot_setupstream":
         command     => "/usr/bin/git remote add upstream ${ardupilot_upstream}",
@@ -66,7 +66,7 @@ class maverick_dev::ardupilot (
         cwd         => "/srv/maverick/software/ardupilot",
         require     => Oncevcsrepo["git-ardupilot"],
     }
-    
+
     # Compile SITL
     if $sitl and $ardupilot_buildsystem == "waf" {
         # Compile all vehicle types by default for waf build
@@ -90,7 +90,7 @@ class maverick_dev::ardupilot (
         } elsif $ardupilot_vehicle == "antennatracker" {
             $ardupilot_type = "AntennaTracker"
         }
-        fwbuildmake { "sitl_${ardupilot_vehicle}": 
+        fwbuildmake { "sitl_${ardupilot_vehicle}":
             require     => [ Oncevcsrepo["git-ardupilot"], Exec["ardupilot_setupstream"] ],
             board       => "sitl",
             build       => $ardupilot_type,

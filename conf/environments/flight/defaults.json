@@ -4,6 +4,8 @@
 	"maverick_dev::px4": false,
 	"maverick_dev::px4sitl_px4dev": false,
 
+	"maverick_dev::ardupilot::ardupilot_branch": "Copter-4.4.4",
+
 	// Turn SITL services off for flight mode
 	"maverick_dev::apsitl_apdev::sitl_active": false, // Whether SITL is active or not
 	"maverick_dev::apsitl_apdev::mavlink_active": false, // Whether mavlink proxy is active or not
