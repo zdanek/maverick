@@ -36,7 +36,7 @@ export TMPDIR=$TMP
 
 PYTHON=python
 
-# node-gyp uses sytem node or fails with command not found if
+# node-gyp uses system node or fails with command not found if
 # we don't bump this node up in the path
 PATH="$C9_DIR/node/bin/:$C9_DIR/node_modules/.bin:$PATH"
 
@@ -47,7 +47,7 @@ start() {
   fi
 
   check_deps
-  
+
   # Try to figure out the os and arch for binary fetching
   local uname="$(uname -s)"
   local os=
@@ -72,16 +72,16 @@ start() {
       exit 1
     ;;
   esac
-  
+
   if [ "$arch" == "x64" ] && [[ $HOSTTYPE == i*86 ]]; then
     arch=x86 # check if 32 bit bash is installed on 64 bit kernel
   fi
-  
+
   if [ "$os" != "linux" ] && [ "$os" != "darwin" ]; then
     echo "Unsupported Platform: $os $arch" 1>&2
     exit 1
   fi
-  
+
   case $1 in
     "help" )
       echo
@@ -110,15 +110,15 @@ start() {
       # echo "rhc - RedHat OpenShift"
       # echo "gae - Google AppEngine"
     ;;
-    
+
     "install" )
       shift
-    
+
       # make sure dirs are around
       mkdir -p "$C9_DIR"/bin
       mkdir -p "$C9_DIR"/tmp
       mkdir -p "$C9_DIR"/node_modules
-    
+
       # install packages
       while [ $# -ne 0 ]
       do
@@ -132,7 +132,7 @@ start() {
         time eval ${1} $os $arch
         shift
       done
-      
+
       # finalize
       pushd "$C9_DIR"/node_modules/.bin
       for FILE in "$C9_DIR"/node_modules/.bin/*; do
@@ -142,16 +142,16 @@ start() {
         mv "$FILE.tmp-sed" "$FILE"
       done
       popd
-      
+
       echo $VERSION > "$C9_DIR"/installed
       echo :Done.
     ;;
-    
+
     "base" )
       echo "Installing base packages. Use --help for more options"
       start install node tmux_install nak ptyjs collab
     ;;
-    
+
     * )
       start base
     ;;
@@ -161,7 +161,7 @@ start() {
 check_deps() {
   local ERR
   local OS
-  
+
   if [[ `cat /etc/os-release 2>/dev/null` =~ CentOS ]]; then
     OS="CentOS"
   elif [[ `cat /proc/version 2>/dev/null` =~ Ubuntu|Debian ]]; then
@@ -179,7 +179,7 @@ check_deps() {
       ERR=1
     fi
   done
-  
+
   # CentOS
   if [ "$OS" == "CentOS" ]; then
     if ! yum list installed glibc-static >/dev/null 2>&1; then
@@ -188,9 +188,9 @@ check_deps() {
       ERR=1
     fi
   fi
-  
+
   check_python
-  
+
   if [ "$ERR" ]; then exit 1; fi
 }
 
@@ -241,7 +241,7 @@ ensure_local_gyp() {
   fi
   "$NPM" config -g set python "$PYTHON"
   "$NPM" config -g set unsafe-perm true
-  
+
   local GYP_PATH=$C9_DIR/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js
   if [ -f  "$GYP_PATH" ]; then
     ln -s "$GYP_PATH" "$C9_DIR"/node/bin/node-gyp &> /dev/null || :
@@ -249,12 +249,12 @@ ensure_local_gyp() {
 }
 
 node(){
-  # clean up 
-  rm -rf node 
+  # clean up
+  rm -rf node
   rm -rf node.tar.gz
-  
+
   echo :Installing Node $NODE_VERSION
-  
+
   DOWNLOAD https://nodejs.org/dist/"$NODE_VERSION/node-$NODE_VERSION-$1-$2.tar.gz" node.tar.gz
   tar xzf node.tar.gz
   mv "node-$NODE_VERSION-$1-$2" node
@@ -278,7 +278,7 @@ compile_tmux(){
   make
   echo ":Installing libevent"
   make install
- 
+
   cd "$C9_DIR"
   echo ":Compiling ncurses..."
   tar xzf ncurses-5.9.tar.gz
@@ -290,7 +290,7 @@ compile_tmux(){
   make
   echo ":Installing Ncurses"
   make install
- 
+
   cd "$C9_DIR"
   echo ":Compiling tmux..."
   tar xzf tmux-1.9.tar.gz
@@ -307,7 +307,7 @@ compile_tmux(){
 tmux_download(){
   echo ":Downloading tmux source code"
   echo ":N.B: This will take a while. To speed this up install tmux 1.9 manually on your machine and restart this process."
-  
+
   echo ":Downloading Libevent..."
   DOWNLOAD https://raw.githubusercontent.com/c9/install/master/packages/tmux/libevent-2.0.21-stable.tar.gz libevent-2.0.21-stable.tar.gz
   echo ":Downloading Ncurses..."
@@ -320,7 +320,7 @@ check_tmux_version(){
   if [ ! -x "$1" ]; then
     return 1
   fi
-  tmux_version=$($1 -V | sed -e's/^[a-z0-9.-]* //g' | sed -e's/[a-z]*$//')  
+  tmux_version=$($1 -V | sed -e's/^[a-z0-9.-]* //g' | sed -e's/[a-z]*$//')
   if [ ! "$tmux_version" ]; then
     return 1
   fi
@@ -337,13 +337,13 @@ tmux_install(){
   mkdir -p "$C9_DIR/bin"
   if check_tmux_version "$C9_DIR/bin/tmux"; then
     echo ':Existing tmux version is up-to-date'
-  
+
   # If we can support tmux 1.9 or detect upgrades, the following would work:
   elif has "tmux" && check_tmux_version "$(which tmux)"; then
     echo ':A good version of tmux was found, creating a symlink'
     ln -sf "$(which tmux)" "$C9_DIR"/bin/tmux
     return 0
-  
+
   # If tmux is not present or at the wrong version, we will install it
   else
     if [ $os = "darwin" ]; then
@@ -361,13 +361,13 @@ tmux_install(){
         echo ":Could not find make. Please install make and try again."
         exit 100;
       fi
-    
-      tmux_download  
+
+      tmux_download
       compile_tmux
       ln -sf "$C9_DIR"/local/bin/tmux "$C9_DIR"/bin/tmux
     fi
   fi
-  
+
   if ! check_tmux_version "$C9_DIR"/bin/tmux; then
     echo "Installed tmux does not appear to work:"
     exit 100
@@ -394,7 +394,7 @@ nak(){
 
 ptyjs(){
   echo :Installing pty.js
-  
+
   if [ "$arch" == "x64" ] && [ "$os" == "linux" ] ; then
     rm -rf pty.js node_modules/pty.js pty.js.tar.gz \
       && DOWNLOAD https://github.com/c9/install/releases/download/bin/pty-$NODE_VERSION-$os-$arch.tar.gz pty.js.tar.gz \
@@ -413,7 +413,7 @@ ptyjs(){
 
 buildPty() {
   "$NPM" install pty.js@0.3.0
-  
+
   if ! hasPty; then
     echo "Unknown exception installing pty.js"
     "$C9_DIR/node/bin/node" -e "console.log(require('pty.js'))"
@@ -445,28 +445,28 @@ sass(){
 
 typescript(){
   echo :Installing TypeScript
-  "$NPM" install typescript  
+  "$NPM" install typescript
 }
 
 stylus(){
   echo :Installing Stylus
-  "$NPM" install stylus  
+  "$NPM" install stylus
 }
 
 # go(){
-  
+
 # }
 
 # heroku(){
-  
+
 # }
 
 # rhc(){
-  
+
 # }
 
 # gae(){
-  
+
 # }
 
 start "$@"

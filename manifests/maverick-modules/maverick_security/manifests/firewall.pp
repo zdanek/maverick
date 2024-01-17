@@ -17,6 +17,10 @@ class maverick_security::firewall (
         require => Class['maverick_security::firewall_pre'],
     }
 
+    package { ["iptables", "iptables-persistent"]:
+      ensure      => present,
+    }
+
     class { ['maverick_security::firewall_pre', 'maverick_security::firewall_post']:
     }
 
