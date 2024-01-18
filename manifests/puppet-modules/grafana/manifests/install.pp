@@ -93,7 +93,7 @@ class grafana::install {
               architecture => 'amd64,arm64,armhf',
               repos        => 'main',
               key          => {
-                'id'     => '4E40DDF6D76E284A4A6780E48C8C34C524098CB6',
+                'id'     => 'B53AE77BADB630A683046005963FA27710458545',
                 'source' => 'https://packages.grafana.com/gpg.key',
               },
               before       => Package['grafana'],
