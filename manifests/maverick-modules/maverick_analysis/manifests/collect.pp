@@ -52,14 +52,14 @@ class maverick_analysis::collect (
             } ->
             exec { "collectd-make":
                 user        => "mav",
-                command     => "/usr/bin/make >/srv/maverick/var/log/build/collectd-make.log 2>&1",
+                command     => "/usr/bin/make -j ${::processorcount} >/srv/maverick/var/log/build/collectd-make.log 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/src/daemon/collectd",
                 timeout     => 0,
             } ->
             exec { "collectd-install":
                 user        => "mav",
-                command     => "/usr/bin/make install >/srv/maverick/var/log/build/collectd-install 2>&1",
+                command     => "/usr/bin/make -j ${::processorcount} install >/srv/maverick/var/log/build/collectd-install 2>&1",
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/software/collectd/sbin/collectd",
                 timeout     => 0,
@@ -136,13 +136,13 @@ class maverick_analysis::collect (
         service_name    => 'maverick-collectd',
         typesdb         => [$typesdb],
     }
-    
+
     service { "system-collectd":
         name            => 'collectd',
         ensure          => stopped,
         enable          => false,
     }
-    
+
     ### Collectd Plugins
     collectd::plugin::aggregation::aggregator {'cpu':
         plugin           => 'cpu',
