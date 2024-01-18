@@ -34,7 +34,8 @@ class maverick_analysis::influx (
         } elsif $::operatingsystemmajrelease == "11" {
             $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian bullseye stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         } elsif $::operatingsystemmajrelease == "12" {
-            $_influx_command = "/bin/echo \"deb https://repos.influxdata.com/debian bullseye stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
+            # this is a new approach to add the influx repo, documented at influxdata.com. Probably previous releases should be updated to this method.
+            $_influx_command = "/bin/echo \"deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian bullseye stable\" | sudo tee /etc/apt/sources.list.d/influxdb.list"
         } else {
             fail("Unsupported ${::operatingsystem} release for maverick_analysis::influx: system major: ${::operatingsystemmajrelease}")
         }
@@ -49,8 +50,12 @@ class maverick_analysis::influx (
     }
 
     # Install influx repo key
+    exec { "dowloand-key":
+        command => "/usr/bin/wget -q https://repos.influxdata.com/influxdata-archive_compat.key -O /tmp/influxdata-archive_compat.key",
+        creates => "/tmp/influxdata-archive_compat.key",
+    } ->
     exec { "influx-key":
-        command         => "/usr/bin/curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -",
+        command         => "/bin/echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c /tmp/influxdata-archive_compat.key' | sha256sum -c && cat /tmp/influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null",
         creates         => "/etc/apt/sources.list.d/influxdb.list",
     } ->
     exec { "influx-repo":
