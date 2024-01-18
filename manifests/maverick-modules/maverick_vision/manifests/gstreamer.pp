@@ -31,13 +31,13 @@ class maverick_vision::gstreamer (
 
     # Install gstreamer from binary packages.  If raspberry, override installtype must install binary.
     if $gstreamer_installtype == "native" or $raspberry_present == "yes" or $tegra_present == "yes" {
-        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "gstreamer1.0-nice", "python-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-gst-plugins-bad-1.0", "python-gi"])
+        ensure_packages(["libgirepository1.0-dev", "libgstreamer1.0-0", "libgstreamer-plugins-base1.0-dev", "gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0", "libgstrtspserver-1.0-dev", "libgstreamer1.0-dev", "gstreamer1.0-alsa", "gstreamer1.0-plugins-base", "gstreamer1.0-plugins-bad", "gstreamer1.0-plugins-ugly", "gstreamer1.0-tools", "gstreamer1.0-nice", "python3-gst-1.0", "gir1.2-gstreamer-1.0", "gir1.2-gst-plugins-base-1.0", "gir1.2-gst-plugins-bad-1.0", "python3-gi"])
         if $::operatingsystem == "Ubuntu" and versioncmp($::operatingsystemmajrelease, "18") >= 0 {
             package { "gir1.2-clutter-gst-3.0":
                 ensure => present,
             }
         } else {
-            package { "gir1.2-clutter-gst-2.0":
+            package { "gir1.2-clutter-gst-3.0":
                 ensure => present,
             }
         }
@@ -84,7 +84,7 @@ class maverick_vision::gstreamer (
                     mode        => "644",
                 }
             } else {
-                ensure_packages(["gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0"])
+                ensure_packages(["gir1.2gir1.2-gst-rtsp-server-1.0", "gstreamer1.0-rtsp", "libgstrtspserver-1.0-0"])
             }
             */
         }
