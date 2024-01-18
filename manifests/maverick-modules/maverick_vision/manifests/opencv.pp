@@ -42,7 +42,10 @@ class maverick_vision::opencv (
     }
     ensure_packages(["libjpeg-dev", "libtiff5-dev", "libgdal-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "liblapacke-dev", "libgtk2.0-dev"])
     ensure_packages(["libglew-dev"])
-    ensure_packages(["qt5-default"])
+    #ensure_packages(["qt5-default"])
+    # sudo apt-mark manual qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+    # sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+    ensure_packages(["qt5-assistant"])
     ensure_packages(["libpng-dev"])
 
     # If ~/var/build/.install_flag_opencv exists, skip pulling source and compiling
@@ -150,7 +153,7 @@ class maverick_vision::opencv (
             command     => $_command,
             cwd         => "/srv/maverick/var/build/opencv/build",
             creates     => "/srv/maverick/var/build/opencv/build/Makefile",
-            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "liblapacke-dev", "libgtk2.0-dev", "qt5-default"] ], # ensure we have all the dependencies satisfied
+            require     => [ Class["maverick_vision::visionlibs"], Class["maverick_vision::gstreamer"], File["/srv/maverick/var/build/opencv/build"], Package["libjpeg-dev", "libtiff5-dev", "libavcodec-dev", "libavformat-dev", "libswscale-dev", "libv4l-dev", "libxvidcore-dev", "libatlas-base-dev", "gfortran", "libeigen3-dev", "libavresample-dev", "libopenblas-dev", "libgdal-dev", "liblapacke-dev", "libgtk2.0-dev", "qt5-assistant"] ], # ensure we have all the dependencies satisfied
         } ->
         exec { "opencv-build":
             user        => "mav",
