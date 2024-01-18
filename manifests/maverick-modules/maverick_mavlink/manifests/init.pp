@@ -51,14 +51,14 @@ class maverick_mavlink (
     String $mavcesium_apikey = "Auw42O7s-dxnXl0f0HdmOoIAD3bvbPjFOVKDN9nNKrf1uroCCBxetdPowaQF4XaG",
     String $mavcesium_port = "6791",
     String $mavcesium_mavlink_port = "5770",
-    String $mavcesium_source = "https://github.com/SamuelDudley/MAVCesium.git",
+    String $mavcesium_source = "https://github.com/goodrobots/MAVCesium.git",
     Boolean $mavcesium_active = false,
     Boolean $cuav_install = false,
     String $gooey_version = "1.0.2",
     Boolean $mavsdk = true,
     Boolean $dronekit = true,
 ) {
-    
+
     $buildparallel = ceiling((1 + $::processorcount) / 2) # Restrict build parallelization to roughly processors/2 (to restrict memory usage during compilation)
 
     if $mavsdk == true {
@@ -93,7 +93,7 @@ class maverick_mavlink (
         group       => "mav",
         mode        => "755",
     }
-    
+
     # Remove old maverick-params@ service
     file { "/srv/maverick/software/maverick/bin/mavlink_params":
         ensure      => absent,
@@ -200,7 +200,7 @@ class maverick_mavlink (
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
     }
-    
+
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
     if $mavproxy_install and $mavproxy_type == "pip" {
@@ -310,7 +310,7 @@ class maverick_mavlink (
             source      => "puppet:///modules/maverick_mavlink/maverick-mavcesium.service",
             notify      => Exec["maverick-systemctl-daemon-reload"],
         }
-        
+
         if $mavcesium_active == true {
             service { "maverick-mavcesium":
                 ensure      => running,
@@ -399,7 +399,7 @@ class maverick_mavlink (
                 require     => [ Package["libdc1394-22-dev"], Install_python_module["pytest"], ],
                 unless      => "/bin/ls /usr/local/lib/python2.7/dist-packages/cuav*",
             }
-        }      
+        }
         #install_python_module { "pip-cuav":
         #    pkgname     => "cuav",
          #   ensure      => present,
@@ -407,5 +407,5 @@ class maverick_mavlink (
          #   require     => [ Class["maverick_vision::opencv"], Package["libdc1394-22-dev"] ],
         #}
     }
-    
+
 }
