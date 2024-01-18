@@ -46,6 +46,7 @@ class maverick_analysis::collect (
             exec { "collectd-configure":
                 user        => "mav",
                 command     => "/srv/maverick/var/build/collectd/configure --disable-werror --prefix=/srv/maverick/software/collectd >/srv/maverick/var/log/build/collectd-configure.log 2>&1",
+                environment => ['CXXFLAGS="-Wno-error=deprecated-declarations"'],
                 cwd         => "/srv/maverick/var/build/collectd",
                 creates     => "/srv/maverick/var/build/collectd/Makefile",
                 timeout     => 0,

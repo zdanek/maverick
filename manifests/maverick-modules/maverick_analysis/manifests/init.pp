@@ -21,7 +21,7 @@ class maverick_analysis (
     Boolean $grafana = true,
     Boolean $mavlogd = true,
 ) {
-    
+
     # Create status.d directory for maverick status`
     file { "/srv/maverick/software/maverick/bin/status.d/121.analysis":
         ensure      => directory,
@@ -51,12 +51,14 @@ class maverick_analysis (
             }
         }
     }
-    
+
     if $collectd == true {
         # Note class named collect instead of collectd to not conflict with other classes
-        class { "maverick_analysis::collect": }
+        class { "maverick_analysis::collect":
+          install_type => "binary",
+        }
     }
-    
+
     if $grafana == true {
         if defined(Class["mavlogd"]) {
             $_before = Class["mavlogd"]
@@ -68,11 +70,11 @@ class maverick_analysis (
             before      => $_before,
         }
     }
-    
+
     if $mavlogd == true {
         class { "maverick_analysis::mavlogd":
             require     => [ Class["maverick_analysis::collect"], Class["maverick_analysis::influx"], ],
         }
     }
-    
+
 }
