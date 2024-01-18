@@ -204,13 +204,13 @@ class maverick_mavlink (
     ### Mavproxy
     # Install mavproxy globally (not in virtualenv) from pip
     if $mavproxy_install and $mavproxy_type == "pip" {
-        ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
+        ensure_packages(["python3-lxml", "libxml2-dev", "libxslt1-dev"])
         install_python_module { 'pip-mavproxy-global':
             pkgname     => 'MAVProxy',
             ensure      => atleast,
-            version     => "1.6.1",
+            version     => "1.8.69",
             timeout     => 0,
-            require     => Package["python-lxml", "libxml2-dev", "libxslt1-dev"],
+            require     => Package["python3-lxml", "libxml2-dev", "libxslt1-dev"],
         } ->
         file { "/etc/systemd/system/maverick-mavproxy@.service":
             ensure      => absent,
@@ -224,7 +224,7 @@ class maverick_mavlink (
 
     # Install mavproxy from source
     if $mavproxy_install and $mavproxy_type == "source" {
-        ensure_packages(["python-lxml", "libxml2-dev", "libxslt1-dev"])
+        ensure_packages(["python3-lxml", "libxml2-dev", "libxslt1-dev"])
         # First uninstall pip mavproxy, to remove any conflicts
         install_python_module { 'pip-mavproxy-global':
             pkgname     => 'MAVProxy',
