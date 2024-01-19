@@ -50,9 +50,9 @@ class maverick_analysis::influx (
     }
 
     # Install influx repo key
-    exec { "dowloand-key":
-        command => "/usr/bin/wget -q https://repos.influxdata.com/influxdata-archive_compat.key -O /tmp/influxdata-archive_compat.key",
-        creates => "/tmp/influxdata-archive_compat.key",
+    wget::fetch { 'dowloand-influx-repo-key':
+        source => 'https://repos.influxdata.com/influxdata-archive_compat.key',
+        destination => '/tmp/',
     } ->
     exec { "influx-key":
         command         => "/bin/echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c /tmp/influxdata-archive_compat.key' | sha256sum -c && cat /tmp/influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null",
